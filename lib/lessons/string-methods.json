@@ -1,0 +1,182 @@
+{
+  "slug": "string-methods",
+  "title": "String Methods",
+  "emoji": "🛠️",
+  "category": "Working with Strings",
+  "difficulty": "Beginner",
+  "summary": "Learn how to transform, search, and clean text using Python's built-in string methods — the everyday tools every Python programmer reaches for.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Strings are everywhere: names, messages, addresses, emails. Real-world text is messy — it has extra spaces, odd capitalization, or needs to be split apart. Python gives every string a built-in toolkit called **methods**. A method is like a helper function that lives *on* the string itself. You call it with a dot: `\"hello\".upper()`. In this lesson you will learn the most useful ones."
+    },
+    {
+      "type": "heading",
+      "text": "Changing Case"
+    },
+    {
+      "type": "text",
+      "md": "Three methods handle capitalization. They are useful for displaying names nicely or comparing text without worrying about whether someone typed 'PYTHON' or 'python'."
+    },
+    {
+      "type": "code",
+      "code": "name = \"alice wonder\"\n\nprint(name.upper())   # all capitals\nprint(name.lower())   # all lowercase\nprint(name.title())   # first letter of each word capitalised",
+      "output": "ALICE WONDER\nalice wonder\nAlice Wonder",
+      "caption": "upper(), lower(), and title() in action"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Methods are tools on a Swiss Army knife",
+      "md": "Think of a string as a piece of paper, and methods as the tools clipped to the side. You pick the tool you need — `upper()`, `lower()`, `strip()` — and it does its job, handing you back a *new* piece of paper with the result."
+    },
+    {
+      "type": "heading",
+      "text": "Strings Are Immutable — Methods Return NEW Strings"
+    },
+    {
+      "type": "text",
+      "md": "This is one of the most important things to understand: **calling a method does not change the original string**. It always hands you back a brand-new string. You need to save that result in a variable if you want to use it."
+    },
+    {
+      "type": "code",
+      "code": "greeting = \"hello\"\n\n# This does NOT change greeting\ngreeting.upper()\n\nprint(greeting)  # still lowercase!\n\n# You must capture the result\nlouder = greeting.upper()\nprint(louder)",
+      "output": "hello\nHELLO",
+      "caption": "The original string is never changed"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting to save the result",
+      "md": "A very common beginner mistake:\n\n```python\nword = \"python\"\nword.upper()        # result is thrown away!\nprint(word)         # still 'python'\n```\n\nAlways assign the result: `word = word.upper()`."
+    },
+    {
+      "type": "heading",
+      "text": "Cleaning Up Whitespace with strip()"
+    },
+    {
+      "type": "text",
+      "md": "When users type text into a form, they often accidentally add spaces at the start or end. `strip()` removes those for you. `lstrip()` removes only from the left, and `rstrip()` only from the right."
+    },
+    {
+      "type": "code",
+      "code": "user_input = \"   alice@example.com   \"\n\ncleaned = user_input.strip()\nprint(repr(cleaned))  # repr() shows quotes so you can see spaces clearly",
+      "output": "'alice@example.com'",
+      "caption": "strip() removes leading and trailing whitespace"
+    },
+    {
+      "type": "heading",
+      "text": "Finding and Replacing Text"
+    },
+    {
+      "type": "text",
+      "md": "`replace(old, new)` swaps every occurrence of one piece of text with another. `find(text)` tells you *where* something appears — it returns the index (position number), or `-1` if not found."
+    },
+    {
+      "type": "code",
+      "code": "sentence = \"I love cats. Cats are great.\"\n\nprint(sentence.replace(\"cats\", \"dogs\"))\nprint(sentence.replace(\"Cats\", \"Dogs\"))",
+      "output": "I love dogs. Cats are great.\nI love cats. Dogs are great.",
+      "caption": "replace() is case-sensitive — 'cats' and 'Cats' are treated differently"
+    },
+    {
+      "type": "code",
+      "code": "text = \"Python is fun\"\n\nposition = text.find(\"fun\")\nprint(position)   # index where 'fun' starts\n\nmissing = text.find(\"boring\")\nprint(missing)    # -1 means not found",
+      "output": "10\n-1",
+      "caption": "find() returns the starting index, or -1 if absent"
+    },
+    {
+      "type": "heading",
+      "text": "Counting and Checking"
+    },
+    {
+      "type": "text",
+      "md": "`count(text)` tells you how many times something appears. `startswith(text)` and `endswith(text)` check the beginning or end of a string and return `True` or `False`. `isdigit()` checks whether every character is a number."
+    },
+    {
+      "type": "code",
+      "code": "sentence = \"banana banana banana\"\n\nprint(sentence.count(\"banana\"))       # how many times?\nprint(sentence.startswith(\"banana\"))  # True or False?\nprint(sentence.endswith(\"apple\"))     # True or False?\n\ncode = \"12345\"\nprint(code.isdigit())  # True — all digits",
+      "output": "3\nTrue\nFalse\nTrue",
+      "caption": "Counting and checking methods"
+    },
+    {
+      "type": "heading",
+      "text": "Splitting and Joining — A Power Pair"
+    },
+    {
+      "type": "text",
+      "md": "`split()` breaks a string into a **list** of pieces. `join()` does the reverse — it glues a list of strings back together. They work perfectly as a team for reshaping text."
+    },
+    {
+      "type": "code",
+      "code": "csv_line = \"Alice,Bob,Charlie,Diana\"\n\nnames = csv_line.split(\",\")  # split on the comma\nprint(names)\nprint(type(names))",
+      "output": "['Alice', 'Bob', 'Charlie', 'Diana']\n<class 'list'>",
+      "caption": "split() turns a string into a list"
+    },
+    {
+      "type": "code",
+      "code": "names = [\"Alice\", \"Bob\", \"Charlie\"]\n\n# join() is called on the SEPARATOR, not the list\nresult = \" | \".join(names)\nprint(result)",
+      "output": "Alice | Bob | Charlie",
+      "caption": "join() is called on the separator string — this trips up many beginners!"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "split() with no argument splits on any whitespace",
+      "md": "`\"  hello   world  \".split()` returns `['hello', 'world']` — it automatically handles multiple spaces and strips them. Very handy for cleaning up messy input."
+    },
+    {
+      "type": "heading",
+      "text": "Method Chaining"
+    },
+    {
+      "type": "text",
+      "md": "Because each method returns a new string, you can call another method immediately on that result. This is called **chaining** — reading left to right, each method hands its output to the next."
+    },
+    {
+      "type": "code",
+      "code": "raw = \"   HELLO, world!   \"\n\n# strip, then lower, then replace — all in one line\ncleaned = raw.strip().lower().replace(\",\", \"\")\nprint(cleaned)",
+      "output": "hello world!",
+      "caption": "Chaining: strip() -> lower() -> replace()"
+    },
+    {
+      "type": "heading",
+      "text": "A Practical Example: Cleaning User Input"
+    },
+    {
+      "type": "text",
+      "md": "Here is how you might combine several methods to clean up a username before saving it to a database."
+    },
+    {
+      "type": "code",
+      "code": "raw_username = \"  Ali Khan  \"\n\nusername = raw_username.strip().lower().replace(\" \", \"_\")\nprint(username)",
+      "output": "ali_khan",
+      "caption": "strip whitespace, lowercase, replace spaces with underscores"
+    },
+    {
+      "type": "quiz",
+      "question": "What does this code print?\n\n```python\nword = \"python\"\nword.upper()\nprint(word)\n```",
+      "options": [
+        "PYTHON",
+        "Python",
+        "python",
+        "An error is raised"
+      ],
+      "answerIndex": 2,
+      "explanation": "String methods never modify the original string — they return a NEW string. Because the result of word.upper() was never saved, 'word' still holds the original lowercase 'python'."
+    }
+  ],
+  "keyTakeaways": [
+    "String methods are called with a dot: `text.method()` — they are built right into every string.",
+    "Methods never change the original string; they always return a new one. Always save the result.",
+    "`strip()`, `replace()`, and `lower()` are your best friends for cleaning messy text.",
+    "`split()` turns a string into a list; `join()` turns a list back into a string — use them as a pair.",
+    "You can chain methods one after another to transform text in a single readable line."
+  ],
+  "exercise": {
+    "prompt": "You have received a messy list of email addresses as a single string: `\"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"`. Your task: split it on the comma, then clean each email by stripping whitespace and converting to lowercase. Print each cleaned email on its own line.",
+    "starterCode": "raw = \"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"\n\n# Split on comma first\nemails = raw.split(\",\")\n\n# Loop through and clean each one\nfor email in emails:\n    cleaned = ???\n    print(cleaned)",
+    "hint": "Chain .strip() and .lower() on each email inside the loop.",
+    "solution": "raw = \"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"\n\nemails = raw.split(\",\")\n\nfor email in emails:\n    cleaned = email.strip().lower()\n    print(cleaned)"
+  }
+}

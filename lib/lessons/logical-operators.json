@@ -1,0 +1,100 @@
+{
+  "slug": "logical-operators",
+  "title": "Logical Operators",
+  "emoji": "🔗",
+  "category": "Operators",
+  "difficulty": "Beginner",
+  "summary": "Learn how and, or, and not let you combine conditions to make smarter decisions in your code.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're a bouncer at a club. You don't check just one thing — you check **age AND has a ticket**, or you let someone in if they're on the **VIP list OR they're a member**. Code works the same way. Python gives you three **logical operators** — `and`, `or`, and `not` — to combine conditions and write smarter rules."
+    },
+    {
+      "type": "heading",
+      "text": "and — Both Must Be True"
+    },
+    {
+      "type": "text",
+      "md": "`and` returns `True` only when **both** sides are true. If either side is false, the whole thing is false. Think of two locked doors — both must be open to get through.\n\n| Left | Right | Result |\n|------|-------|--------|\n| True | True | **True** |\n| True | False | False |\n| False | True | False |\n| False | False | False |"
+    },
+    {
+      "type": "code",
+      "code": "age = 20\nhas_ticket = True\n\nif age >= 18 and has_ticket:\n    print(\"Welcome in!\")\nelse:\n    print(\"Sorry, you can't enter.\")",
+      "output": "Welcome in!",
+      "caption": "Both conditions must be True for the if-block to run."
+    },
+    {
+      "type": "heading",
+      "text": "or and not"
+    },
+    {
+      "type": "text",
+      "md": "`or` returns `True` if **at least one** side is true — like having two keys and needing only one:\n\n| Left | Right | Result |\n|------|-------|--------|\n| True | True | True |\n| True | False | True |\n| False | True | True |\n| False | False | **False** |\n\n`not` simply flips a value: `not True` → `False`, `not False` → `True`."
+    },
+    {
+      "type": "code",
+      "code": "is_member = False\nis_vip = True\nis_banned = False\n\nif (is_member or is_vip) and not is_banned:\n    print(\"Access granted!\")\nelse:\n    print(\"No access.\")",
+      "output": "Access granted!",
+      "caption": "is_vip makes the or True; not is_banned stays True — so entry is allowed."
+    },
+    {
+      "type": "heading",
+      "text": "Short-Circuit Evaluation"
+    },
+    {
+      "type": "text",
+      "md": "Python is smart about not doing extra work. With `and`, if the **first** part is `False`, Python skips the second — the result is already `False`. With `or`, if the **first** part is `True`, Python skips the second — the result is already `True`. This is called **short-circuit evaluation**."
+    },
+    {
+      "type": "code",
+      "code": "def slow_check():\n    print(\"slow_check ran!\")\n    return True\n\n# False and ... — Python never calls slow_check\nprint(False and slow_check())\n\n# True or ... — Python never calls slow_check\nprint(True or slow_check())",
+      "output": "False\nTrue",
+      "caption": "slow_check() is never called in either line — Python short-circuits both times."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "and/or return the actual operand, not just True/False",
+      "md": "`and` returns the **first falsy value** it hits, or the last value if all are truthy. `or` returns the **first truthy value** it hits, or the last if all are falsy. This enables a handy default pattern:\n\n```python\nname = user_input or \"Guest\"\n```\n\nIf `user_input` is an empty string (falsy), `name` becomes `\"Guest\"`. Elegant!"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't shortcut or like a list",
+      "md": "A very common beginner mistake:\n\n```python\nif color == \"red\" or \"blue\":   # WRONG!\n```\n\nThis does NOT check if `color` is `\"blue\"`. It evaluates `color == \"red\"` OR the string `\"blue\"` — and since `\"blue\"` is always truthy, the whole condition is **always True**, no matter what `color` is.\n\nAlways write the full comparison on both sides:\n\n```python\nif color == \"red\" or color == \"blue\":   # Correct\n```"
+    },
+    {
+      "type": "code",
+      "code": "age = 15\nhas_parent_note = True\nis_registered = False\n\ncan_join = (age >= 18 or has_parent_note) and not is_registered\nprint(can_join)",
+      "output": "True",
+      "caption": "A realistic access check combining and, or, and not in one clean expression."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the following expression evaluate to?\n\nFalse or (True and not False)",
+      "options": [
+        "False",
+        "True",
+        "None",
+        "It raises an error"
+      ],
+      "answerIndex": 1,
+      "explanation": "Work from the inside out: not False → True. Then True and True → True. Finally False or True → True. The answer is True."
+    }
+  ],
+  "keyTakeaways": [
+    "`and` requires both conditions to be True; `or` needs just one; `not` flips a value.",
+    "Short-circuit evaluation means Python stops early when the result is already certain — great for performance.",
+    "`and` and `or` return one of their actual operands, enabling patterns like `value or 'default'`.",
+    "Always write full comparisons on both sides of `or` — never `x == 1 or 2`.",
+    "Use parentheses to make complex conditions readable and unambiguous."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `can_rent_car(age, has_license, is_blacklisted)` that returns `True` only if the person is at least 21 years old, has a license, and is NOT blacklisted. Test it with a few different inputs and print the results.",
+    "starterCode": "def can_rent_car(age, has_license, is_blacklisted):\n    # your logic here\n    pass\n\nprint(can_rent_car(25, True, False))   # Should print True\nprint(can_rent_car(19, True, False))   # Should print False\nprint(can_rent_car(25, True, True))    # Should print False\nprint(can_rent_car(25, False, False))  # Should print False",
+    "hint": "Combine all three conditions with `and` and `not`. You can return the result of the logical expression directly — no if statement needed.",
+    "solution": "def can_rent_car(age, has_license, is_blacklisted):\n    return age >= 21 and has_license and not is_blacklisted\n\nprint(can_rent_car(25, True, False))   # True\nprint(can_rent_car(19, True, False))   # False\nprint(can_rent_car(25, True, True))    # False\nprint(can_rent_car(25, False, False))  # False"
+  }
+}

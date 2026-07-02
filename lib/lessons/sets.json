@@ -1,0 +1,150 @@
+{
+  "slug": "sets",
+  "title": "Sets",
+  "emoji": "🎯",
+  "category": "Data Structures",
+  "difficulty": "Intermediate",
+  "summary": "Learn how sets store unique items and make tasks like removing duplicates and checking membership surprisingly easy.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you have a guest list for a party. You want to make sure every name appears **only once** — no duplicates. That is exactly what a **set** does in Python. A set is a collection of **unique** items. If you try to add the same item twice, Python just shrugs and keeps only one copy.\n\nSets are also unordered, which means Python does not remember what order you put things in. That trade-off unlocks something powerful: checking whether an item is in a set is extremely fast, even with millions of items."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a Set"
+    },
+    {
+      "type": "text",
+      "md": "You can create a set with curly braces `{}`, listing items separated by commas. Python automatically removes any duplicates for you."
+    },
+    {
+      "type": "code",
+      "code": "colors = {\"red\", \"green\", \"blue\", \"red\", \"green\"}\nprint(colors)\nprint(type(colors))",
+      "output": "{'red', 'green', 'blue'}\n<class 'set'>",
+      "caption": "Duplicates vanish automatically — only unique values survive."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Empty {} is a dict, not a set!",
+      "md": "This is a very common beginner trap. Writing `{}` gives you an empty **dictionary**, not an empty set.\n\nTo create an empty set you **must** write `set()`:\n```python\nempty_set = set()   # correct\nempty_dict = {}     # this is a dictionary!\n```"
+    },
+    {
+      "type": "text",
+      "md": "You can also convert any list (or other iterable) into a set using `set()`. This is a handy way to strip duplicates from a list."
+    },
+    {
+      "type": "code",
+      "code": "scores = [90, 85, 90, 100, 85, 70]\nunique_scores = set(scores)\nprint(unique_scores)",
+      "output": "{90, 85, 100, 70}",
+      "caption": "Converting a list to a set removes all duplicate values instantly."
+    },
+    {
+      "type": "heading",
+      "text": "Adding and Removing Items"
+    },
+    {
+      "type": "text",
+      "md": "Sets are mutable — you can change them after creation. Use `add()` to insert a new item and `remove()` or `discard()` to delete one."
+    },
+    {
+      "type": "code",
+      "code": "fruits = {\"apple\", \"banana\"}\n\nfruits.add(\"cherry\")\nprint(fruits)\n\nfruits.add(\"apple\")  # already there — no change\nprint(fruits)",
+      "output": "{'apple', 'banana', 'cherry'}\n{'apple', 'banana', 'cherry'}",
+      "caption": "add() quietly ignores items that are already in the set."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "remove() vs discard() — know the difference",
+      "md": "`remove(item)` raises a **KeyError** if the item is not found.\n`discard(item)` does nothing if the item is missing — no error.\n\nUse `discard()` when you are not sure whether the item exists."
+    },
+    {
+      "type": "code",
+      "code": "fruits = {\"apple\", \"banana\", \"cherry\"}\n\nfruits.discard(\"banana\")   # removes it safely\nfruits.discard(\"mango\")    # mango was never there, but no crash!\n\nprint(fruits)",
+      "output": "{'apple', 'cherry'}",
+      "caption": "discard() is the safe choice when the item might not exist."
+    },
+    {
+      "type": "heading",
+      "text": "Fast Membership Testing"
+    },
+    {
+      "type": "text",
+      "md": "The `in` keyword works with sets just like with lists, but sets are **much faster** for this check — especially when the collection is large. Think of a set like an index at the back of a book: you jump straight to the answer instead of reading every page."
+    },
+    {
+      "type": "code",
+      "code": "allowed_users = {\"alice\", \"bob\", \"carol\"}\n\nif \"bob\" in allowed_users:\n    print(\"Access granted\")\nelse:\n    print(\"Access denied\")\n\nprint(\"dave\" in allowed_users)",
+      "output": "Access granted\nFalse",
+      "caption": "Membership testing with 'in' is one of sets' superpowers."
+    },
+    {
+      "type": "heading",
+      "text": "Set Operations — Math Made Practical"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of two overlapping circles",
+      "md": "Picture a Venn diagram with two circles. **Union** is everything in both circles. **Intersection** is the overlapping middle bit. **Difference** is one circle minus the shared part. Python's set operators do exactly that."
+    },
+    {
+      "type": "text",
+      "md": "Python gives you four key set operations using simple symbols:\n\n- `|` **union** — all items from both sets\n- `&` **intersection** — only items in both sets\n- `-` **difference** — items in the left set but not the right\n- `^` **symmetric difference** — items in one set or the other, but not both"
+    },
+    {
+      "type": "code",
+      "code": "python_devs = {\"alice\", \"bob\", \"carol\"}\njs_devs     = {\"bob\", \"carol\", \"dave\"}\n\nprint(python_devs | js_devs)   # union\nprint(python_devs & js_devs)   # intersection\nprint(python_devs - js_devs)   # difference\nprint(python_devs ^ js_devs)   # symmetric difference",
+      "output": "{'alice', 'bob', 'carol', 'dave'}\n{'bob', 'carol'}\n{'alice'}\n{'alice', 'dave'}",
+      "caption": "All four operations in action with developer team data."
+    },
+    {
+      "type": "heading",
+      "text": "No Indexing — Sets Are Unordered"
+    },
+    {
+      "type": "text",
+      "md": "Because a set has no guaranteed order, you **cannot** access items by position. There is no `my_set[0]`. If you need a specific item, convert the set to a list first — but remember the order may differ every time you run the program."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When to use a set vs a list",
+      "md": "- Use a **list** when order matters or you need duplicates.\n- Use a **set** when you need uniqueness or fast membership checks.\n\nA common pattern: collect data in a list, convert to a set to remove duplicates, then convert back to a sorted list if you need order."
+    },
+    {
+      "type": "code",
+      "code": "tags = [\"python\", \"beginner\", \"python\", \"tutorial\", \"beginner\"]\nunique_tags = sorted(set(tags))\nprint(unique_tags)",
+      "output": "['beginner', 'python', 'tutorial']",
+      "caption": "list -> set -> sorted list is a classic deduplication recipe."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the following code print?\n\n```python\na = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a & b)\n```",
+      "options": [
+        "{1, 2, 3, 4, 5, 6}",
+        "{3, 4}",
+        "{1, 2, 5, 6}",
+        "{1, 2}"
+      ],
+      "answerIndex": 1,
+      "explanation": "The & operator gives the intersection — items that appear in BOTH sets. Only 3 and 4 are in both a and b, so the result is {3, 4}."
+    }
+  ],
+  "keyTakeaways": [
+    "A set stores only unique items — duplicates are silently dropped.",
+    "Use set() to create an empty set; {} alone creates an empty dictionary.",
+    "Use discard() instead of remove() when the item might not exist.",
+    "The |, &, -, and ^ operators let you combine sets like a Venn diagram.",
+    "Sets have no index — use them when you need uniqueness or fast membership checks, not ordered access."
+  ],
+  "exercise": {
+    "prompt": "You have two lists of students who signed up for different workshops. Find: (1) all students who signed up for at least one workshop, (2) students who signed up for BOTH workshops, and (3) students who signed up for the coding workshop but NOT the design workshop. Print each result on its own line.",
+    "starterCode": "coding_workshop = [\"alice\", \"bob\", \"carol\", \"alice\", \"dave\"]\ndesign_workshop = [\"carol\", \"eve\", \"bob\", \"eve\"]\n\n# Convert to sets first\n\n# 1. All students (union)\n\n# 2. Students in both (intersection)\n\n# 3. Coding only, not design (difference)\n",
+    "hint": "Convert each list to a set with set(), then use |, &, and - to compute the three results.",
+    "solution": "coding_workshop = [\"alice\", \"bob\", \"carol\", \"alice\", \"dave\"]\ndesign_workshop = [\"carol\", \"eve\", \"bob\", \"eve\"]\n\ncoding = set(coding_workshop)\ndesign = set(design_workshop)\n\nall_students = coding | design\nboth_workshops = coding & design\ncoding_only = coding - design\n\nprint(\"All students:\", all_students)\nprint(\"Both workshops:\", both_workshops)\nprint(\"Coding only:\", coding_only)"
+  }
+}

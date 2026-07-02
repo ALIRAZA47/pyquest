@@ -1,0 +1,170 @@
+{
+  "slug": "tuples",
+  "title": "Tuples",
+  "emoji": "📦",
+  "category": "Data Structures",
+  "difficulty": "Beginner",
+  "summary": "Learn about tuples — Python's locked-in, ordered sequences — and why their immutability makes them surprisingly powerful.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're filling out a form with your date of birth. Once you write it down, it doesn't change — ever. That's the idea behind a **tuple**. A tuple is an ordered collection of values, just like a list, but with one key difference: **you cannot change it after you create it**. That quality is called *immutability*, and it turns out to be really useful."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a Tuple"
+    },
+    {
+      "type": "text",
+      "md": "You can create a tuple with **parentheses** `()`, separating values with commas. You can also skip the parentheses entirely — Python recognizes the commas and builds a tuple anyway."
+    },
+    {
+      "type": "code",
+      "code": "# With parentheses\ncoordinates = (40.7128, -74.0060)\nprint(coordinates)\n\n# Without parentheses — still a tuple!\nrgb = 255, 128, 0\nprint(rgb)\nprint(type(rgb))",
+      "output": "(40.7128, -74.006)\n(255, 128, 0)\n<class 'tuple'>",
+      "caption": "Both styles produce a tuple. The commas are what really matter."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The Single-Element Trap",
+      "md": "Want a tuple with just one item? You **must** add a trailing comma, or Python treats it as a plain value in parentheses.\n\n```python\nnot_a_tuple = (42)     # This is just the number 42\nis_a_tuple  = (42,)    # This IS a tuple\nprint(type(not_a_tuple))  # <class 'int'>\nprint(type(is_a_tuple))   # <class 'tuple'>\n```\n\nThat lonely trailing comma makes all the difference."
+    },
+    {
+      "type": "heading",
+      "text": "Accessing Elements"
+    },
+    {
+      "type": "text",
+      "md": "Tuples are **indexed** exactly like lists — the first item is at position `0`. You can also use negative indexes to count from the end."
+    },
+    {
+      "type": "code",
+      "code": "person = (\"Alice\", 30, \"engineer\")\n\nprint(person[0])   # first element\nprint(person[-1])  # last element",
+      "output": "Alice\nengineer",
+      "caption": "Square brackets and indexes work the same as with lists."
+    },
+    {
+      "type": "heading",
+      "text": "Tuples Are Immutable"
+    },
+    {
+      "type": "text",
+      "md": "Once a tuple is created, you **cannot** add, remove, or change its values. Try to do so and Python will raise an error. This is a feature, not a bug — it means you can trust the data inside a tuple to stay exactly as you left it."
+    },
+    {
+      "type": "code",
+      "code": "point = (3, 7)\npoint[0] = 10  # This will cause an error!",
+      "output": "TypeError: 'tuple' object does not support item assignment",
+      "caption": "Python enforces immutability by raising a TypeError."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Tuple vs List: Sealed Box vs Open Bag",
+      "md": "Think of a **list** as a reusable shopping bag — you can toss items in, take them out, and rearrange freely. A **tuple** is a sealed box from the factory — everything inside is fixed and guaranteed. Use a sealed box when the contents should never change (like GPS coordinates, RGB colors, or a date)."
+    },
+    {
+      "type": "heading",
+      "text": "Unpacking a Tuple"
+    },
+    {
+      "type": "text",
+      "md": "**Unpacking** lets you assign each element of a tuple to its own variable in one clean line. This is one of the most satisfying features in Python."
+    },
+    {
+      "type": "code",
+      "code": "color = (255, 128, 0)\n\nr, g, b = color\n\nprint(r)  # 255\nprint(g)  # 128\nprint(b)  # 0",
+      "output": "255\n128\n0",
+      "caption": "One line unpacks all three values at once."
+    },
+    {
+      "type": "heading",
+      "text": "Swapping Variables in One Line"
+    },
+    {
+      "type": "text",
+      "md": "Tuple unpacking enables a Python party trick: swapping two variables **without** a temporary helper variable. In most languages this takes three lines; in Python, it takes one."
+    },
+    {
+      "type": "code",
+      "code": "a = \"hello\"\nb = \"world\"\n\na, b = b, a\n\nprint(a)  # world\nprint(b)  # hello",
+      "output": "world\nhello",
+      "caption": "Python packs the right side into a tuple, then unpacks it onto the left."
+    },
+    {
+      "type": "heading",
+      "text": "Returning Multiple Values from a Function"
+    },
+    {
+      "type": "text",
+      "md": "A function can only `return` one thing — but that one thing can be a tuple containing several values. This is the standard Python pattern for returning multiple results."
+    },
+    {
+      "type": "code",
+      "code": "def min_max(numbers):\n    return min(numbers), max(numbers)\n\nscores = [72, 95, 88, 61, 100]\nlowest, highest = min_max(scores)\n\nprint(\"Lowest:\", lowest)\nprint(\"Highest:\", highest)",
+      "output": "Lowest: 61\nHighest: 100",
+      "caption": "The function returns a two-element tuple; unpacking catches both values."
+    },
+    {
+      "type": "heading",
+      "text": "When to Use Tuples vs Lists"
+    },
+    {
+      "type": "text",
+      "md": "Here's a simple rule of thumb:\n\n- Use a **list** when the data might change (a to-do list, a shopping cart).\n- Use a **tuple** when the data is fixed (a coordinate pair, a configuration setting, a date).\n\nTuples also unlock one superpower lists don't have: you can use them as **dictionary keys**, because they are immutable."
+    },
+    {
+      "type": "code",
+      "code": "# Tuples as dictionary keys\nlocation_names = {\n    (40.7128, -74.0060): \"New York City\",\n    (51.5074, -0.1278): \"London\",\n}\n\nprint(location_names[(40.7128, -74.0060)])",
+      "output": "New York City",
+      "caption": "Lists cannot be dictionary keys — tuples can, because they are hashable."
+    },
+    {
+      "type": "heading",
+      "text": "Useful Tuple Methods"
+    },
+    {
+      "type": "text",
+      "md": "Tuples have only two built-in methods — `count()` and `index()` — because there's not much you can do to an immutable sequence."
+    },
+    {
+      "type": "code",
+      "code": "grades = (\"A\", \"B\", \"A\", \"C\", \"A\")\n\nprint(grades.count(\"A\"))    # how many times does 'A' appear?\nprint(grades.index(\"C\"))    # at which index is 'C' ?",
+      "output": "3\n3",
+      "caption": "count() tallies occurrences; index() finds the first position of a value."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Tuples Are Slightly Faster Than Lists",
+      "md": "Because Python knows a tuple can never change, it can store and access tuples more efficiently than lists. For large, fixed datasets this small speed boost can add up. When in doubt, if you know the data won't change, reach for a tuple."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following correctly creates a tuple containing exactly one element — the number 5?",
+      "options": [
+        "x = (5)",
+        "x = [5]",
+        "x = (5,)",
+        "x = tuple{5}"
+      ],
+      "answerIndex": 2,
+      "explanation": "(5) is just the integer 5 in parentheses. [5] is a list. tuple{5} is invalid syntax. Only (5,) — with the trailing comma — creates a single-element tuple."
+    }
+  ],
+  "keyTakeaways": [
+    "A tuple is an ordered, immutable sequence — once created, its contents cannot change.",
+    "A single-element tuple requires a trailing comma: `(42,)` not `(42)`.",
+    "Unpacking lets you assign tuple elements to variables in one line: `a, b, c = my_tuple`.",
+    "Functions can return multiple values by returning a tuple, which you can unpack at the call site.",
+    "Tuples can be used as dictionary keys; lists cannot — because tuples are immutable (hashable)."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `summarize` that takes a list of numbers and returns a tuple containing three values: the minimum, the maximum, and the average (rounded to 2 decimal places). Then unpack and print all three values with clear labels.",
+    "starterCode": "def summarize(numbers):\n    # your code here\n    pass\n\ndata = [4, 17, 3, 9, 22, 5]\nlow, high, avg = summarize(data)\nprint(\"Min:\", low)\nprint(\"Max:\", high)\nprint(\"Avg:\", avg)",
+    "hint": "Use the built-in `min()`, `max()`, and `sum()` functions. To get the average, divide `sum(numbers)` by `len(numbers)`. Wrap your answer in `round(..., 2)`. Return all three values separated by commas.",
+    "solution": "def summarize(numbers):\n    low = min(numbers)\n    high = max(numbers)\n    avg = round(sum(numbers) / len(numbers), 2)\n    return low, high, avg\n\ndata = [4, 17, 3, 9, 22, 5]\nlow, high, avg = summarize(data)\nprint(\"Min:\", low)\nprint(\"Max:\", high)\nprint(\"Avg:\", avg)"
+  }
+}

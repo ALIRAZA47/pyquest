@@ -1,0 +1,155 @@
+{
+  "slug": "context-managers",
+  "title": "Context Managers",
+  "emoji": "🎚️",
+  "category": "Advanced Python",
+  "difficulty": "Advanced",
+  "summary": "Learn how the `with` statement guarantees cleanup even when things go wrong, and how to write your own context managers using classes or a simple decorator.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you borrow a library book. You must return it when you're done — whether you finished reading it, got interrupted, or even spilled coffee on it. Python's **context managers** work the same way: they guarantee that something gets cleaned up after you're done with it, no matter what happens.\n\nThe classic example is opening a file. If your program crashes mid-way, a context manager makes sure the file is still properly closed. No leaks, no corruption, no mess."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem Without Context Managers"
+    },
+    {
+      "type": "code",
+      "code": "# The risky way — what if an error happens before close()?\nf = open(\"data.txt\", \"w\")\nf.write(\"Hello!\")\n# Imagine a crash here...\nf.close()  # This might never run!",
+      "caption": "If anything goes wrong between open() and close(), the file stays open."
+    },
+    {
+      "type": "text",
+      "md": "Leaving files (or database connections, network sockets, locks) open is a real problem. It wastes resources and can corrupt data. The `with` statement was invented to solve this."
+    },
+    {
+      "type": "heading",
+      "text": "The with Statement"
+    },
+    {
+      "type": "code",
+      "code": "# The safe way using a context manager\nwith open(\"data.txt\", \"w\") as f:\n    f.write(\"Hello!\")\n# File is automatically closed here, even if an error occurred",
+      "caption": "The file closes the moment the with block exits — success or error."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Hotel Room Key Card",
+      "md": "Think of `with` like a hotel room. When you check in (`__enter__`), the lights come on and the AC starts. When you check out (`__exit__`), everything shuts off automatically — you don't have to remember to flip every switch yourself."
+    },
+    {
+      "type": "heading",
+      "text": "How It Works: __enter__ and __exit__"
+    },
+    {
+      "type": "text",
+      "md": "Any object can be used with `with` as long as it has two special methods:\n- `__enter__`: runs when the `with` block **starts**. Returns the value assigned to `as`.\n- `__exit__`: runs when the `with` block **ends** — even if an exception was raised.\n\nLet's look at a simple timer context manager built as a class."
+    },
+    {
+      "type": "code",
+      "code": "import time\n\nclass Timer:\n    def __enter__(self):\n        self.start = time.time()  # Record start time\n        return self              # This becomes the 'as' variable\n\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        elapsed = time.time() - self.start\n        print(f\"Elapsed: {elapsed:.3f} seconds\")\n        return False  # Don't suppress any exceptions\n\nwith Timer() as t:\n    total = sum(range(1_000_000))",
+      "output": "Elapsed: 0.042 seconds",
+      "caption": "A reusable Timer that reports how long a block of code took."
+    },
+    {
+      "type": "text",
+      "md": "The three parameters in `__exit__` (`exc_type`, `exc_val`, `exc_tb`) tell you whether an exception happened inside the block. If everything went fine, all three are `None`. If you return `True` from `__exit__`, Python suppresses the exception. Returning `False` (or `None`) lets it propagate normally."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Returning False is Usually Right",
+      "md": "In most context managers you should return `False` from `__exit__`. Returning `True` silently swallows errors, which makes bugs hard to find. Only suppress exceptions intentionally and deliberately."
+    },
+    {
+      "type": "heading",
+      "text": "A Full Example: Custom File Logger"
+    },
+    {
+      "type": "code",
+      "code": "class ManagedFile:\n    def __init__(self, filename, mode):\n        self.filename = filename\n        self.mode = mode\n\n    def __enter__(self):\n        self.file = open(self.filename, self.mode)\n        return self.file\n\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.file.close()\n        if exc_type:\n            print(f\"An error occurred: {exc_val}\")\n        return False\n\nwith ManagedFile(\"notes.txt\", \"w\") as f:\n    f.write(\"Context managers are great!\")",
+      "caption": "A class-based context manager that closes the file and logs any errors."
+    },
+    {
+      "type": "heading",
+      "text": "The Easier Way: contextlib.contextmanager"
+    },
+    {
+      "type": "text",
+      "md": "Writing a whole class just for setup and teardown can feel like a lot. Python's `contextlib` module gives you a much simpler option: the `@contextmanager` decorator. You write a **generator function** with exactly one `yield`. Everything before the `yield` is setup; everything after is teardown."
+    },
+    {
+      "type": "code",
+      "code": "from contextlib import contextmanager\n\n@contextmanager\ndef timer():\n    import time\n    start = time.time()\n    yield              # The with block runs right here\n    elapsed = time.time() - start\n    print(f\"Elapsed: {elapsed:.3f} seconds\")\n\nwith timer():\n    total = sum(range(1_000_000))",
+      "output": "Elapsed: 0.039 seconds",
+      "caption": "The @contextmanager decorator turns a generator into a context manager with far less code."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "yield the Value You Want as the 'as' Variable",
+      "md": "If you want `with my_cm() as x:` to bind something to `x`, just `yield` that value. For example, `yield connection` makes `connection` available inside the block."
+    },
+    {
+      "type": "code",
+      "code": "from contextlib import contextmanager\n\n@contextmanager\ndef managed_file(path, mode):\n    f = open(path, mode)\n    try:\n        yield f       # f is available as the 'as' variable\n    finally:\n        f.close()     # Always runs, even on error\n\nwith managed_file(\"notes.txt\", \"w\") as f:\n    f.write(\"Written safely!\")  ",
+      "caption": "Use try/finally inside a @contextmanager to guarantee cleanup even when exceptions occur."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting try/finally in @contextmanager",
+      "md": "If you use `@contextmanager` without wrapping the `yield` in `try/finally`, an exception inside the `with` block will skip your cleanup code entirely. Always use `try: yield ... finally: cleanup()` when teardown is important."
+    },
+    {
+      "type": "heading",
+      "text": "Real-World Uses"
+    },
+    {
+      "type": "text",
+      "md": "Context managers show up everywhere in real Python programs:\n- **Files**: `open()` is the most common built-in context manager.\n- **Database connections**: open a connection, do work, close it.\n- **Locks (threading)**: acquire a lock, do protected work, release it.\n- **Temporary directories**: create a temp folder, use it, delete it.\n- **Timers and profilers**: measure how long a block takes.\n- **Mocking in tests**: patch a function, run the test, unpatch it."
+    },
+    {
+      "type": "code",
+      "code": "import threading\n\nlock = threading.Lock()\n\n# Without context manager (risky):\nlock.acquire()\ntry:\n    print(\"Protected work\")\nfinally:\n    lock.release()\n\n# With context manager (clean and safe):\nwith lock:\n    print(\"Protected work\")",
+      "output": "Protected work\nProtected work",
+      "caption": "Locks are context managers — the with statement always releases the lock."
+    },
+    {
+      "type": "heading",
+      "text": "Nesting and Multiple Context Managers"
+    },
+    {
+      "type": "code",
+      "code": "# You can open multiple context managers on one line\nwith open(\"input.txt\", \"r\") as src, open(\"output.txt\", \"w\") as dst:\n    for line in src:\n        dst.write(line.upper())",
+      "caption": "Comma-separated context managers in a single with statement — both close cleanly."
+    },
+    {
+      "type": "quiz",
+      "question": "What is the primary purpose of a context manager in Python?",
+      "options": [
+        "To make code run faster by caching results",
+        "To guarantee that setup and cleanup code always runs, even if an error occurs",
+        "To define custom operators for objects",
+        "To automatically import required modules"
+      ],
+      "answerIndex": 1,
+      "explanation": "Context managers guarantee that teardown code (like closing a file or releasing a lock) always executes when a block exits — whether it exited normally or because an exception was raised. Speed, operators, and imports are unrelated."
+    }
+  ],
+  "keyTakeaways": [
+    "The `with` statement guarantees cleanup code runs even when exceptions occur.",
+    "Any class with `__enter__` and `__exit__` methods can be used as a context manager.",
+    "The `@contextmanager` decorator lets you write a context manager as a simple generator function with one `yield`.",
+    "Always wrap `yield` in `try/finally` inside `@contextmanager` to ensure teardown always runs.",
+    "Context managers are used everywhere: files, locks, database connections, timers, and test mocking."
+  ],
+  "exercise": {
+    "prompt": "Write a context manager called `suppress_errors` using `@contextmanager` that silently catches and prints any exception that occurs inside the `with` block, instead of letting it crash the program. After handling the error, execution should continue normally after the `with` block.\n\nExample usage:\n```\nwith suppress_errors():\n    print(1 / 0)  # ZeroDivisionError — should be caught and printed\nprint(\"Program continues here\")\n```",
+    "starterCode": "from contextlib import contextmanager\n\n@contextmanager\ndef suppress_errors():\n    # Your code here\n    pass\n\nwith suppress_errors():\n    print(1 / 0)\nprint(\"Program continues here\")",
+    "hint": "Inside the @contextmanager function, wrap the `yield` in a `try/except Exception as e:` block. In the except branch, print the error. Catching the exception here and not re-raising it is what makes the program continue.",
+    "solution": "from contextlib import contextmanager\n\n@contextmanager\ndef suppress_errors():\n    try:\n        yield\n    except Exception as e:\n        print(f\"Suppressed error: {e}\")\n\nwith suppress_errors():\n    print(1 / 0)\nprint(\"Program continues here\")"
+  }
+}

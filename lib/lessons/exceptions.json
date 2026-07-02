@@ -1,0 +1,169 @@
+{
+  "slug": "exceptions",
+  "title": "try / except",
+  "emoji": "🧯",
+  "category": "Error Handling",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to catch errors before they crash your program, handle different exception types gracefully, and always clean up after yourself.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every program eventually runs into trouble. Maybe a user types letters when you expected a number. Maybe a file you need has been deleted. Maybe you divided by zero by accident.\n\nWhen something goes wrong, Python raises an **exception** — a signal that says \"I don't know how to continue.\" If you don't handle it, your program **crashes**.\n\nThe good news: Python gives you a way to catch those signals and decide what to do instead of crashing."
+    },
+    {
+      "type": "heading",
+      "text": "What Does a Crash Look Like?"
+    },
+    {
+      "type": "code",
+      "code": "number = int(\"hello\")  # can't convert \"hello\" to a number",
+      "output": "ValueError: invalid literal for int() with base 10: 'hello'",
+      "caption": "Python stops immediately and prints an error message called a traceback."
+    },
+    {
+      "type": "text",
+      "md": "That red wall of text is called a **traceback**. It tells you what went wrong and where. The last line is the most important — it names the exception type (`ValueError`) and gives a short description.\n\nInstead of letting Python crash, we can **catch** the exception ourselves."
+    },
+    {
+      "type": "heading",
+      "text": "The try / except Block"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a safety net",
+      "md": "Imagine a trapeze artist. The `try` block is the daring move. The `except` block is the safety net below. If the move goes perfectly, the net is never used. If something goes wrong, the net catches them — and the show goes on."
+    },
+    {
+      "type": "code",
+      "code": "try:\n    number = int(\"hello\")\nexcept ValueError:\n    print(\"That wasn't a valid number!\")",
+      "output": "That wasn't a valid number!",
+      "caption": "The program no longer crashes. We caught the ValueError and handled it."
+    },
+    {
+      "type": "text",
+      "md": "Here is the basic structure:\n\n- `try:` — put the **risky code** here\n- `except SomeError:` — put the **recovery code** here, which runs only if that specific error happens\n\nIf no error occurs, the `except` block is completely skipped."
+    },
+    {
+      "type": "heading",
+      "text": "Common Exception Types"
+    },
+    {
+      "type": "text",
+      "md": "Python has many built-in exception types. Here are the ones beginners encounter most often:\n\n- **`ValueError`** — right type, wrong value (e.g. `int(\"hello\")`)\n- **`TypeError`** — wrong type entirely (e.g. `\"2\" + 2`)\n- **`ZeroDivisionError`** — dividing by zero\n- **`KeyError`** — looking up a dictionary key that doesn't exist\n- **`IndexError`** — accessing a list index that doesn't exist\n- **`FileNotFoundError`** — trying to open a file that isn't there"
+    },
+    {
+      "type": "code",
+      "code": "scores = {\"Alice\": 95, \"Bob\": 87}\n\ntry:\n    print(scores[\"Charlie\"])\nexcept KeyError:\n    print(\"No score found for that name.\")",
+      "output": "No score found for that name.",
+      "caption": "Catching a KeyError when a dictionary key doesn't exist."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [10, 20, 30]\n\ntry:\n    print(numbers[99])\nexcept IndexError:\n    print(\"That index is out of range!\")",
+      "output": "That index is out of range!",
+      "caption": "Catching an IndexError when a list index doesn't exist."
+    },
+    {
+      "type": "heading",
+      "text": "Catch Specific Exceptions — Not Everything"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Avoid bare except — it hides real bugs",
+      "md": "It is tempting to write `except:` with no error type to catch absolutely everything. **Don't.** A bare `except` will silence bugs you didn't intend to handle — like a typo in a variable name — making them nearly impossible to track down.\n\nAlways name the specific exception you expect, like `except ValueError:`."
+    },
+    {
+      "type": "code",
+      "code": "# BAD: catches everything, even bugs you didn't mean to handle\ntry:\n    result = 10 / 0\nexcept:\n    print(\"Something went wrong\")\n\n# GOOD: only catches the specific error you expect\ntry:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero!\")",
+      "output": "Cannot divide by zero!",
+      "caption": "Always be specific about which exception you're catching."
+    },
+    {
+      "type": "text",
+      "md": "You can also catch **multiple exception types** in one `except` clause by grouping them in parentheses:"
+    },
+    {
+      "type": "code",
+      "code": "def safe_divide(a, b):\n    try:\n        return a / b\n    except (ZeroDivisionError, TypeError):\n        print(\"Invalid input for division.\")\n        return None\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))\nprint(safe_divide(10, \"x\"))",
+      "output": "5.0\nInvalid input for division.\nNone\nInvalid input for division.\nNone",
+      "caption": "One except clause handles two different exception types."
+    },
+    {
+      "type": "heading",
+      "text": "Capturing the Error Message with \"as e\""
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want to see the error message Python would have shown, but handle it gracefully. Use `as e` to capture the exception object — then you can print it or log it."
+    },
+    {
+      "type": "code",
+      "code": "try:\n    value = int(\"abc\")\nexcept ValueError as e:\n    print(\"Caught an error:\", e)",
+      "output": "Caught an error: invalid literal for int() with base 10: 'abc'",
+      "caption": "The variable e holds the exception object. Printing it shows the error message."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Log the error, don't silence it",
+      "md": "In real programs, it is good practice to at least **print** or **log** the error message when you catch an exception. That way, if something unexpected happens, you have a clue about what went wrong instead of a mystery."
+    },
+    {
+      "type": "heading",
+      "text": "else and finally"
+    },
+    {
+      "type": "text",
+      "md": "A `try` block can have two optional extra clauses:\n\n- **`else:`** runs only if the `try` block succeeded (no exception was raised)\n- **`finally:`** runs no matter what — whether an exception happened or not. It is perfect for cleanup like closing files."
+    },
+    {
+      "type": "code",
+      "code": "try:\n    number = int(input(\"Enter a number: \"))\nexcept ValueError:\n    print(\"That was not a number.\")\nelse:\n    print(\"Great! You entered:\", number)\nfinally:\n    print(\"Thanks for using the program!\")",
+      "caption": "else runs on success; finally always runs."
+    },
+    {
+      "type": "code",
+      "code": "# Simulating both paths\n# --- Path 1: valid input ---\ntry:\n    number = int(\"42\")\nexcept ValueError:\n    print(\"Not a number.\")\nelse:\n    print(\"Success! Got:\", number)\nfinally:\n    print(\"Always runs.\")\n\nprint(\"---\")\n\n# --- Path 2: invalid input ---\ntry:\n    number = int(\"oops\")\nexcept ValueError:\n    print(\"Not a number.\")\nelse:\n    print(\"Success! Got:\", number)\nfinally:\n    print(\"Always runs.\")",
+      "output": "Success! Got: 42\nAlways runs.\n---\nNot a number.\nAlways runs.",
+      "caption": "else only runs when there is no exception; finally runs in both cases."
+    },
+    {
+      "type": "heading",
+      "text": "A Real-World Example"
+    },
+    {
+      "type": "code",
+      "code": "def read_config(filename):\n    try:\n        file = open(filename)\n    except FileNotFoundError:\n        print(f\"Config file '{filename}' not found. Using defaults.\")\n        return {}\n    else:\n        content = file.read()\n        file.close()\n        print(\"Config loaded successfully.\")\n        return content\n    finally:\n        print(\"read_config() finished.\")\n\nread_config(\"settings.txt\")",
+      "output": "Config file 'settings.txt' not found. Using defaults.\nread_config() finished.",
+      "caption": "A function that gracefully handles a missing file and always reports when it is done."
+    },
+    {
+      "type": "quiz",
+      "question": "What is the purpose of the `finally` block in a try/except statement?",
+      "options": [
+        "It runs only when an exception is raised.",
+        "It runs only when no exception is raised.",
+        "It runs no matter what — whether an exception happened or not.",
+        "It replaces the except block when no error type is specified."
+      ],
+      "answerIndex": 2,
+      "explanation": "The finally block always runs — after the try block and after any except or else block. It is designed for cleanup code that must execute regardless of what happened, like closing a file or releasing a resource."
+    }
+  ],
+  "keyTakeaways": [
+    "Unhandled exceptions crash your program — use try/except to catch them gracefully.",
+    "Always catch specific exception types (like ValueError or KeyError), never use a bare except.",
+    "Use `as e` to capture and inspect the error message.",
+    "The `else` block runs only when no exception occurred; `finally` always runs — great for cleanup.",
+    "Knowing common exception names (ValueError, TypeError, KeyError, IndexError, ZeroDivisionError, FileNotFoundError) helps you write targeted handlers."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `safe_int` that takes a single argument and tries to convert it to an integer. If it succeeds, return the integer. If a ValueError occurs, print a friendly message and return 0. Test it with both a valid string like \"42\" and an invalid one like \"banana\".",
+    "starterCode": "def safe_int(value):\n    # Your code here\n    pass\n\nprint(safe_int(\"42\"))      # should print 42\nprint(safe_int(\"banana\"))  # should print a message and return 0",
+    "hint": "Wrap `int(value)` in a try block. Catch ValueError in the except block, print your message there, and return 0.",
+    "solution": "def safe_int(value):\n    try:\n        return int(value)\n    except ValueError as e:\n        print(f\"Could not convert to int: {e}\")\n        return 0\n\nprint(safe_int(\"42\"))      # 42\nprint(safe_int(\"banana\"))  # Could not convert to int: ..., then 0"
+  }
+}

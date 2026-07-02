@@ -1,0 +1,180 @@
+{
+  "slug": "input-output",
+  "title": "Input & Output",
+  "emoji": "⌨️",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how to talk to your programs — print things to the screen and ask the user for information.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every useful program needs two things: a way to **show information** to the user, and a way to **receive information** from the user. In Python, `print()` handles the first part and `input()` handles the second. Together they let you build programs that feel alive — programs that respond to the person using them."
+    },
+    {
+      "type": "heading",
+      "text": "Printing to the Screen"
+    },
+    {
+      "type": "text",
+      "md": "You have already seen `print()` in action. At its simplest, you pass it a value and it displays that value on screen, then moves to the next line automatically."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello, world!\")\nprint(42)\nprint(3.14)",
+      "output": "Hello, world!\n42\n3.14",
+      "caption": "print() works with text, whole numbers, and decimals"
+    },
+    {
+      "type": "heading",
+      "text": "Printing Multiple Values at Once"
+    },
+    {
+      "type": "text",
+      "md": "You can pass **several values** to `print()` separated by commas. Python puts a space between each one by default."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Your score:\", 95, \"out of\", 100)",
+      "output": "Your score: 95 out of 100",
+      "caption": "Commas separate the values; spaces appear automatically"
+    },
+    {
+      "type": "heading",
+      "text": "Customising the Separator"
+    },
+    {
+      "type": "text",
+      "md": "That automatic space is controlled by a special keyword argument called `sep` (short for separator). You can change it to anything — a dash, a comma, or even nothing at all."
+    },
+    {
+      "type": "code",
+      "code": "print(\"2026\", \"07\", \"02\", sep=\"-\")\nprint(\"cat\", \"dog\", \"fish\", sep=\" | \")\nprint(\"a\", \"b\", \"c\", sep=\"\")",
+      "output": "2026-07-02\ncat | dog | fish\nabc",
+      "caption": "sep lets you choose what goes between each value"
+    },
+    {
+      "type": "heading",
+      "text": "Controlling the Line Ending"
+    },
+    {
+      "type": "text",
+      "md": "By default `print()` adds a newline at the end, so the next print starts on a fresh line. You can change this with the `end` keyword argument. Setting `end=\"\"` makes the next print continue on the **same line**."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Loading\", end=\"\")\nprint(\".\", end=\"\")\nprint(\".\", end=\"\")\nprint(\".\")",
+      "output": "Loading...",
+      "caption": "end=\"\" removes the automatic newline"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Think of print() like a typewriter",
+      "md": "A typewriter prints characters and then **automatically moves to the next line** when you hit Enter. `end` is like deciding whether to hit Enter or not. `sep` is like choosing what you type between words."
+    },
+    {
+      "type": "heading",
+      "text": "Asking the User for Input"
+    },
+    {
+      "type": "text",
+      "md": "`input()` pauses your program, shows a message (called a **prompt**), and waits for the user to type something and press Enter. Whatever they type is handed back to you as a value you can store in a variable."
+    },
+    {
+      "type": "code",
+      "code": "name = input(\"What is your name? \")\nprint(\"Nice to meet you,\", name)",
+      "output": "What is your name? Alice\nNice to meet you, Alice",
+      "caption": "input() always returns what the user typed"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "input() ALWAYS gives you a string",
+      "md": "Even if the user types `42`, Python gives you the **text** `\"42\"`, not the number `42`. If you try to do maths with it without converting, you will get a surprising result.\n\n```python\nage = input(\"How old are you? \")  # user types 20\nprint(age + 1)  # ERROR: can't add string and number\n```\n\nAlways convert with `int()` or `float()` when you need a number."
+    },
+    {
+      "type": "heading",
+      "text": "Converting Input to a Number"
+    },
+    {
+      "type": "text",
+      "md": "Wrap `input()` in `int()` to get a whole number, or `float()` to get a decimal number. This is one of the most common patterns you will write."
+    },
+    {
+      "type": "code",
+      "code": "age = int(input(\"How old are you? \"))\nnext_year = age + 1\nprint(\"Next year you will be\", next_year)",
+      "output": "How old are you? 20\nNext year you will be 21",
+      "caption": "int() converts the string \"20\" into the number 20"
+    },
+    {
+      "type": "heading",
+      "text": "F-strings: Clean, Readable Output"
+    },
+    {
+      "type": "text",
+      "md": "An **f-string** lets you embed variables directly inside a string. Put an `f` before the opening quote and wrap your variable names in `{}`. Python replaces each `{}` with the variable's value. This is usually much neater than using commas in `print()`."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Maria\"\nage = 28\nprint(f\"Hello, {name}! You are {age} years old.\")",
+      "output": "Hello, Maria! You are 28 years old.",
+      "caption": "f-strings keep your output readable at a glance"
+    },
+    {
+      "type": "text",
+      "md": "You can even put simple expressions inside the `{}`."
+    },
+    {
+      "type": "code",
+      "code": "price = 4.5\nquantity = 3\nprint(f\"Total: ${price * quantity:.2f}\")",
+      "output": "Total: $13.50",
+      "caption": ":.2f rounds the number to 2 decimal places inside the f-string"
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "text",
+      "md": "Here is a small interactive script that uses everything from this lesson: `input()`, type conversion, and an f-string for friendly output."
+    },
+    {
+      "type": "code",
+      "code": "name = input(\"What is your name? \")\nyear_born = int(input(\"What year were you born? \"))\ncurrent_year = 2026\nage = current_year - year_born\nprint(f\"Hi {name}! You are around {age} years old.\")",
+      "output": "What is your name? Sam\nWhat year were you born? 1995\nHi Sam! You are around 31 years old.",
+      "caption": "A complete interactive greeting program"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Leave a space inside the prompt string",
+      "md": "Write `input(\"Your name: \")` with a trailing space inside the quotes. Without it, the cursor appears right after the colon — `Your name:_` — which looks cramped and is harder to read."
+    },
+    {
+      "type": "quiz",
+      "question": "A user types the number 5 when your program runs `score = input(\"Score: \")`. What is the value of `score` afterwards?",
+      "options": [
+        "The integer 5",
+        "The float 5.0",
+        "The string \"5\"",
+        "Nothing — input() does not return a value"
+      ],
+      "answerIndex": 2,
+      "explanation": "input() always returns a string, no matter what the user types. To use it as a number you must convert it: int(score) or float(score)."
+    }
+  ],
+  "keyTakeaways": [
+    "print() can take multiple values separated by commas, with sep controlling what goes between them and end controlling the line ending.",
+    "input(prompt) pauses the program, shows a prompt, and returns whatever the user typed as a string.",
+    "Always convert input to int() or float() before doing any arithmetic with it.",
+    "F-strings (f\"Hello, {name}\") are the cleanest way to embed variables inside text.",
+    "A well-placed space at the end of your input prompt makes your program look polished."
+  ],
+  "exercise": {
+    "prompt": "Build a simple tip calculator. Ask the user for the meal cost (as a decimal number) and the tip percentage they want to leave (as a whole number). Then print the tip amount and the total to pay, both rounded to 2 decimal places. Use an f-string for the output.",
+    "starterCode": "meal = float(input(\"Meal cost ($): \"))\ntip_percent = int(input(\"Tip percentage (%): \"))\n# your code here",
+    "hint": "Tip amount = meal * (tip_percent / 100). Total = meal + tip_amount. Use :.2f inside your f-string to format to 2 decimal places.",
+    "solution": "meal = float(input(\"Meal cost ($): \"))\ntip_percent = int(input(\"Tip percentage (%): \"))\ntip_amount = meal * (tip_percent / 100)\ntotal = meal + tip_amount\nprint(f\"Tip: ${tip_amount:.2f}\")\nprint(f\"Total: ${total:.2f}\")"
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "slug": "encapsulation",
+  "title": "Encapsulation",
+  "emoji": "🔒",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to bundle data with methods and control who can touch what inside your classes.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you own a vending machine. It has money inside, a stock of snacks, and a bunch of mechanical parts. You don't want customers reaching in and grabbing cash or swapping parts around — you only want them interacting through the buttons on the front.\n\nThat idea — **bundling data together with the actions that use it, and controlling what the outside world can touch** — is called **encapsulation**. It is one of the core ideas in object-oriented programming, and Python has a clean way to express it."
+    },
+    {
+      "type": "heading",
+      "text": "Bundling Data and Methods Together"
+    },
+    {
+      "type": "text",
+      "md": "A class already does the bundling for you. When you put attributes and methods inside a class, they travel together as one unit. That is the first half of encapsulation.\n\nHere is a simple `BankAccount` class that keeps a balance and exposes only safe operations:"
+    },
+    {
+      "type": "code",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\n    def get_balance(self):\n        return self.balance\n\naccount = BankAccount(\"Alice\", 100)\naccount.deposit(50)\nprint(account.get_balance())",
+      "output": "150",
+      "caption": "Data (owner, balance) and behaviour (deposit, get_balance) live together."
+    },
+    {
+      "type": "text",
+      "md": "Right now `balance` is fully public — anyone can read or change it directly. That may be fine for simple scripts, but as code grows you usually want tighter control. That is the second half of encapsulation: **access control**."
+    },
+    {
+      "type": "heading",
+      "text": "Public, Protected, and Private: Python's Conventions"
+    },
+    {
+      "type": "text",
+      "md": "Python does not have a `private` keyword like some other languages. Instead, it uses **naming conventions** that are universally respected by Python programmers:\n\n- **No underscore** (`name`) — public. Anyone can use it.\n- **Single underscore** (`_name`) — protected. It says: *\"this is internal; use it only if you really know what you are doing.\"*\n- **Double underscore** (`__name`) — private. Python applies **name mangling** to make accidental access harder."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a house",
+      "md": "- **Public** attributes are your front porch — everyone is welcome.\n- **Protected** attributes are your living room — family and close friends, not strangers.\n- **Private** attributes are your safe — you decide who gets the combination."
+    },
+    {
+      "type": "code",
+      "code": "class Employee:\n    def __init__(self, name, salary):\n        self.name = name          # public\n        self._department = \"Engineering\"  # protected\n        self.__salary = salary    # private (name-mangled)\n\nemp = Employee(\"Bob\", 80000)\nprint(emp.name)          # fine\nprint(emp._department)   # works but signals \"be careful\"\n# print(emp.__salary)    # AttributeError!",
+      "output": "Bob\nEngineering",
+      "caption": "Underscores communicate intent to other programmers."
+    },
+    {
+      "type": "heading",
+      "text": "Name Mangling Up Close"
+    },
+    {
+      "type": "text",
+      "md": "When Python sees `__salary` inside a class named `Employee`, it quietly renames it to `_Employee__salary`. This is called **name mangling**. It stops subclasses from accidentally overwriting the same attribute, and it makes naive outside access fail with an `AttributeError`.\n\nYou *can* still get to it if you know the mangled name — Python trusts you not to abuse that."
+    },
+    {
+      "type": "code",
+      "code": "class Employee:\n    def __init__(self, name, salary):\n        self.name = name\n        self.__salary = salary\n\nemp = Employee(\"Bob\", 80000)\n# The mangled name still works if you need it:\nprint(emp._Employee__salary)",
+      "output": "80000",
+      "caption": "Name mangling creates _ClassName__attr, not true invisibility."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Python trusts you",
+      "md": "Python's philosophy is *\"we are all consenting adults here.\"* There is no hard wall. The underscore conventions are a **social contract** — they say *\"please don't touch this\"*, not *\"you cannot touch this.\"* Respect them and expect others to do the same."
+    },
+    {
+      "type": "heading",
+      "text": "Protecting Invariants With Methods"
+    },
+    {
+      "type": "text",
+      "md": "The real reason to hide data is to **protect invariants** — rules that must always be true. For example, a bank balance should never go negative. If `balance` is public, anyone can write `account.balance = -999`. If you hide it and only allow changes through `withdraw()`, you can enforce the rule in one place."
+    },
+    {
+      "type": "code",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.__balance = balance\n\n    def deposit(self, amount):\n        if amount <= 0:\n            raise ValueError(\"Deposit must be positive\")\n        self.__balance += amount\n\n    def withdraw(self, amount):\n        if amount > self.__balance:\n            raise ValueError(\"Not enough funds\")\n        self.__balance -= amount\n\n    def get_balance(self):\n        return self.__balance\n\nacc = BankAccount(\"Alice\", 200)\nacc.deposit(50)\nacc.withdraw(30)\nprint(acc.get_balance())",
+      "output": "220",
+      "caption": "All balance changes go through methods that check the rules."
+    },
+    {
+      "type": "heading",
+      "text": "The @property Decorator"
+    },
+    {
+      "type": "text",
+      "md": "Calling `get_balance()` works, but Python has a cleaner way: the **`@property` decorator**. It lets you expose a private attribute as if it were a plain attribute, while still running code when someone reads or writes it.\n\nYou write one method for **getting** (reading) and optionally one for **setting** (writing)."
+    },
+    {
+      "type": "code",
+      "code": "class Temperature:\n    def __init__(self, celsius):\n        self.__celsius = celsius\n\n    @property\n    def celsius(self):\n        return self.__celsius\n\n    @celsius.setter\n    def celsius(self, value):\n        if value < -273.15:\n            raise ValueError(\"Temperature below absolute zero!\")\n        self.__celsius = value\n\n    @property\n    def fahrenheit(self):\n        return self.__celsius * 9 / 5 + 32\n\nt = Temperature(25)\nprint(t.celsius)      # calls the getter\nprint(t.fahrenheit)   # computed on the fly\nt.celsius = 100       # calls the setter\nprint(t.fahrenheit)",
+      "output": "25\n77.0\n212.0",
+      "caption": "@property makes attribute access look clean while hiding the logic."
+    },
+    {
+      "type": "text",
+      "md": "Notice that `fahrenheit` has no setter — it is **read-only**. Trying to assign to it would raise an `AttributeError`. That is intentional: Fahrenheit is computed from Celsius, so letting someone set it directly would be confusing."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Start public, go private when needed",
+      "md": "You do not need to hide everything from day one. Start with public attributes. When you find yourself needing to **validate** or **compute** a value, that is your signal to convert it to a `@property`. Python makes this refactor easy because callers never see the difference — `obj.celsius` looks the same whether it is a plain attribute or a property."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting the setter means read-only",
+      "md": "If you define a `@property` getter but forget to add a `@name.setter`, the attribute is **read-only**. Trying to assign to it raises `AttributeError: can't set attribute`. This is often what you want — but when it catches you by surprise it can be confusing. Always check whether you need a setter."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "code": "class User:\n    def __init__(self, username, age):\n        self.username = username   # public\n        self._role = \"member\"      # protected convention\n        self.__age = age           # private, validated via property\n\n    @property\n    def age(self):\n        return self.__age\n\n    @age.setter\n    def age(self, value):\n        if not isinstance(value, int) or value < 0:\n            raise ValueError(\"Age must be a non-negative integer\")\n        self.__age = value\n\n    def profile(self):\n        return f\"{self.username} ({self.__age}) — {self._role}\"\n\nu = User(\"alice99\", 28)\nprint(u.profile())\nu.age = 29\nprint(u.age)",
+      "output": "alice99 (28) — member\n29",
+      "caption": "A realistic class combining all three access levels and @property."
+    },
+    {
+      "type": "quiz",
+      "question": "What happens when you try to access `obj.__secret` from outside the class where `__secret` was defined?",
+      "options": [
+        "Python raises a SyntaxError immediately.",
+        "Python raises an AttributeError because the name has been mangled to _ClassName__secret.",
+        "Python returns None silently.",
+        "Python prints a deprecation warning but still returns the value."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python applies name mangling: `__secret` inside `MyClass` becomes `_MyClass__secret`. Accessing `obj.__secret` from outside fails with AttributeError because that exact name no longer exists on the object. You can still reach it via the mangled name, but that is intentionally awkward."
+    }
+  ],
+  "keyTakeaways": [
+    "Encapsulation means bundling data with the methods that operate on it, and controlling access to keep internals safe.",
+    "Use no underscore for public, `_single` for protected (internal by convention), and `__double` for private (name-mangled).",
+    "Python has no true private — the underscore system is a respected social contract, not a hard lock.",
+    "Use `@property` to expose computed or validated attributes with clean attribute-style syntax.",
+    "Hiding internals protects invariants: rules (like 'balance >= 0') that must always hold are enforced in one place."
+  ],
+  "exercise": {
+    "prompt": "Create a `Rectangle` class that stores width and height as private attributes. Use `@property` with setters to expose them, validating that each value is a positive number. Add a read-only `area` property that returns width * height. Test it by creating a rectangle, printing its area, updating one dimension, and printing the area again.",
+    "starterCode": "class Rectangle:\n    def __init__(self, width, height):\n        # store as private attributes\n        pass\n\n    # add @property and setter for width\n    # add @property and setter for height\n    # add read-only @property for area\n\n# Test\nr = Rectangle(4, 5)\nprint(r.area)   # 20\nr.width = 10\nprint(r.area)   # 50",
+    "hint": "Remember: `@property` defines the getter, and `@width.setter` defines the setter for a property called `width`. In the setter, check that the value is greater than zero before assigning to `self.__width`.",
+    "solution": "class Rectangle:\n    def __init__(self, width, height):\n        self.__width = 0\n        self.__height = 0\n        self.width = width    # use setter for validation\n        self.height = height\n\n    @property\n    def width(self):\n        return self.__width\n\n    @width.setter\n    def width(self, value):\n        if value <= 0:\n            raise ValueError(\"Width must be positive\")\n        self.__width = value\n\n    @property\n    def height(self):\n        return self.__height\n\n    @height.setter\n    def height(self, value):\n        if value <= 0:\n            raise ValueError(\"Height must be positive\")\n        self.__height = value\n\n    @property\n    def area(self):\n        return self.__width * self.__height\n\nr = Rectangle(4, 5)\nprint(r.area)   # 20\nr.width = 10\nprint(r.area)   # 50"
+  }
+}

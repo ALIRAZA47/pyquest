@@ -1,0 +1,166 @@
+{
+  "slug": "string-formatting",
+  "title": "String Formatting & f-strings",
+  "emoji": "🎨",
+  "category": "Working with Strings",
+  "difficulty": "Beginner",
+  "summary": "Learn how to build beautiful, dynamic strings in Python using f-strings — the modern, readable way to mix variables and text.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you want to greet a user by name, show a price with exactly two decimal places, or print a tidy table of numbers. You *could* glue strings together with `+`, but that gets messy fast. **String formatting** is Python's clean solution: a way to embed values directly inside a string, right where you need them."
+    },
+    {
+      "type": "heading",
+      "text": "Meet f-strings"
+    },
+    {
+      "type": "text",
+      "md": "An **f-string** is a string with a lowercase `f` in front of the opening quote. Inside the string, anything you put between `{curly braces}` gets evaluated and inserted automatically. That's it — no gluing, no conversion, no fuss."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Alice\"\nage = 30\n\ngreeting = f\"Hello, {name}! You are {age} years old.\"\nprint(greeting)",
+      "output": "Hello, Alice! You are 30 years old.",
+      "caption": "The f before the quote activates f-string mode. Curly braces are replaced with the variable's value."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a mail merge",
+      "md": "Remember those letters that say *\"Dear [YOUR NAME], you have won...\"*? An f-string works the same way — you write a template with placeholders, and Python fills them in automatically."
+    },
+    {
+      "type": "heading",
+      "text": "Embedding Expressions"
+    },
+    {
+      "type": "text",
+      "md": "The curly braces in an f-string can hold any Python **expression** — not just variable names. You can do math, call functions, or combine values, all inside the string."
+    },
+    {
+      "type": "code",
+      "code": "items = 4\nprice_each = 2.5\n\nprint(f\"You bought {items} items.\")\nprint(f\"Total: {items * price_each}\")\nprint(f\"2 + 2 = {2 + 2}\")\nprint(f\"Name uppercase: {'alice'.upper()}\")",
+      "output": "You bought 4 items.\nTotal: 10.0\n2 + 2 = 4\nName uppercase: ALICE",
+      "caption": "You can put math, method calls, or any expression right inside the braces."
+    },
+    {
+      "type": "heading",
+      "text": "Format Specs: Controlling How Values Look"
+    },
+    {
+      "type": "text",
+      "md": "After the variable name inside the braces, you can add a colon `:` followed by a **format spec** — a small code that tells Python exactly how to display the value. This is incredibly useful for numbers, alignment, and readability."
+    },
+    {
+      "type": "heading",
+      "text": "Decimal Places with :.2f"
+    },
+    {
+      "type": "code",
+      "code": "price = 9.5\ntax = 0.08\ntotal = price * (1 + tax)\n\nprint(f\"Price:  ${price:.2f}\")\nprint(f\"Total:  ${total:.2f}\")",
+      "output": "Price:  $9.50\nTotal:  $10.26",
+      "caption": ":.2f means: format as a fixed-point float with exactly 2 decimal places."
+    },
+    {
+      "type": "text",
+      "md": "The spec `:.2f` breaks down like this:\n- `.2` — show 2 digits after the decimal point\n- `f` — treat the number as a **f**loat (fixed-point)\n\nYou can change `2` to any number: `:.0f` gives no decimals, `:.4f` gives four."
+    },
+    {
+      "type": "heading",
+      "text": "Thousands Separator with :,"
+    },
+    {
+      "type": "code",
+      "code": "population = 8100000000\nrevenue = 1234567.89\n\nprint(f\"World population: {population:,}\")\nprint(f\"Revenue: ${revenue:,.2f}\")",
+      "output": "World population: 8,100,000,000\nRevenue: $1,234,567.89",
+      "caption": "The comma in the format spec adds thousand-separators, making large numbers much easier to read."
+    },
+    {
+      "type": "heading",
+      "text": "Alignment and Padding"
+    },
+    {
+      "type": "text",
+      "md": "When printing tables or columns, you often want values to line up neatly. Format specs let you set a **minimum width** and choose left (`<`), right (`>`), or center (`^`) alignment."
+    },
+    {
+      "type": "code",
+      "code": "print(f\"{'Item':<12} {'Price':>8}\")\nprint(f\"{'Coffee':<12} {3.50:>8.2f}\")\nprint(f\"{'Sandwich':<12} {7.99:>8.2f}\")\nprint(f\"{'Orange Juice':<12} {4.25:>8.2f}\")",
+      "output": "Item            Price\nCoffee           3.50\nSandwich         7.99\nOrange Juice     4.25",
+      "caption": ":<12 means left-align in a field 12 chars wide. :>8.2f means right-align in 8 chars with 2 decimal places."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Format spec cheat sheet",
+      "md": "| Spec | Meaning | Example |\n|------|---------|--------|\n| `:.2f` | 2 decimal places | `3.50` |\n| `:,` | thousands separator | `1,000,000` |\n| `:>10` | right-align, width 10 | `     hello` |\n| `:<10` | left-align, width 10 | `hello     ` |\n| `:^10` | center, width 10 | `  hello   ` |\n| `:,.2f` | both comma and decimals | `1,234.56` |"
+    },
+    {
+      "type": "heading",
+      "text": "Multiline f-strings"
+    },
+    {
+      "type": "text",
+      "md": "You can use triple quotes (`\"\"\"`) with f-strings to write strings that span multiple lines. This is great for building longer messages or simple reports."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Bob\"\nbalance = 1025.5\ntransactions = 3\n\nreport = f\"\"\"\nAccount Summary\n---------------\nHolder:       {name}\nBalance:      ${balance:,.2f}\nTransactions: {transactions}\n\"\"\"\nprint(report)",
+      "output": "\nAccount Summary\n---------------\nHolder:       Bob\nBalance:      $1,025.50\nTransactions: 3\n",
+      "caption": "Triple-quoted f-strings keep your newlines and indentation intact."
+    },
+    {
+      "type": "heading",
+      "text": "Older Formatting Styles (for recognition)"
+    },
+    {
+      "type": "text",
+      "md": "You will sometimes see older Python code using two other formatting styles. You don't need to write them, but knowing what they look like helps you read existing code."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Carol\"\nage = 25\n\n# .format() style — older but still common\nprint(\"Hello, {}! You are {} years old.\".format(name, age))\n\n# % style — the oldest way, rarely used now\nprint(\"Hello, %s! You are %d years old.\" % (name, age))",
+      "output": "Hello, Carol! You are 25 years old.\nHello, Carol! You are 25 years old.",
+      "caption": "Both do the same job as f-strings. Prefer f-strings in new code — they are cleaner and easier to read."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't forget the f!",
+      "md": "A very common mistake is writing a string with curly braces but **forgetting the `f` prefix**. Python will not substitute anything — it will print the literal braces and variable name.\n\n```python\nname = \"Dave\"\nprint(\"Hello, {name}\")   # Wrong! Prints: Hello, {name}\nprint(f\"Hello, {name}\")  # Right!  Prints: Hello, Dave\n```\n\nIf your curly-brace substitution is not working, check for the missing `f` first."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Curly braces inside f-strings",
+      "md": "If you actually need to print a literal `{` or `}` character inside an f-string, double them up: `{{` prints `{` and `}}` prints `}`.\n\n```python\nprint(f\"Set notation: {{1, 2, 3}}\")\n# Output: Set notation: {1, 2, 3}\n```"
+    },
+    {
+      "type": "quiz",
+      "question": "What will the following code print?\n\n```python\nvalue = 1234567.891\nprint(f\"{value:,.1f}\")\n```",
+      "options": [
+        "1234567.891",
+        "1,234,567.9",
+        "1234567.9",
+        "1,234,567.891"
+      ],
+      "answerIndex": 1,
+      "explanation": "The format spec `,.1f` combines two things: the comma (`,`) adds thousand-separators, and `.1f` rounds to one decimal place. So 1234567.891 becomes 1,234,567.9."
+    }
+  ],
+  "keyTakeaways": [
+    "Put `f` before a string to make it an f-string — then use `{variable}` to embed any value or expression.",
+    "Add a format spec after a colon inside the braces: `:.2f` for 2 decimal places, `:,` for thousands separators, `:<10` or `:>10` for alignment.",
+    "You can put any Python expression inside the braces — math, function calls, method calls.",
+    "Triple-quoted f-strings (`f\"\"\"...\"\"\"`) span multiple lines and are great for reports or messages.",
+    "You may see `.format()` and `%` formatting in older code — they work, but f-strings are the modern, preferred choice."
+  ],
+  "exercise": {
+    "prompt": "Write a Python program that defines three variables: a product name (string), a unit price (float), and a quantity (integer). Then print a formatted receipt that shows the product name left-aligned in a 20-character field, the unit price formatted to 2 decimal places, the quantity, and the total cost (price × quantity) formatted with 2 decimal places and a dollar sign.",
+    "starterCode": "product = \"Wireless Keyboard\"\nprice = 49.99\nquantity = 3\n\n# Your formatted receipt here\n",
+    "hint": "Use f-strings with `:<20` to left-align the product name, and `:.2f` to format the prices. Multiply price by quantity inside the braces for the total.",
+    "solution": "product = \"Wireless Keyboard\"\nprice = 49.99\nquantity = 3\ntotal = price * quantity\n\nprint(f\"{'Product':<20} {'Price':>8} {'Qty':>5} {'Total':>10}\")\nprint(f\"{'-'*47}\")\nprint(f\"{product:<20} ${price:>7.2f} {quantity:>5} ${total:>9.2f}\")\nprint(f\"{'-'*47}\")\nprint(f\"{'TOTAL':<20} {'':>8} {'':>5} ${total:>9.2f}\")"
+  }
+}

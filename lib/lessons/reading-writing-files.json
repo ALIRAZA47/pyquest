@@ -1,0 +1,154 @@
+{
+  "slug": "reading-writing-files",
+  "title": "Reading & Writing Files",
+  "emoji": "📄",
+  "category": "Files & Data",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to open, read, write, and safely close files in Python using the recommended `with` block.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Programs that only work in memory forget everything the moment they stop running. **Files** let your program remember things — save a score, store a to-do list, or process a data set. In this lesson you will learn how Python opens files, reads their contents, and writes new content back — all without losing data by accident."
+    },
+    {
+      "type": "heading",
+      "text": "Opening a File with open()"
+    },
+    {
+      "type": "text",
+      "md": "Python's built-in `open()` function is the key that unlocks any file. You give it two things:\n- The **path** to the file (e.g. `\"notes.txt\"`)\n- The **mode** — what you intend to do with the file\n\nThe most common modes are:\n- `\"r\"` — **read** an existing file (default)\n- `\"w\"` — **write** a new file (overwrites if it already exists!)\n- `\"a\"` — **append** to the end of an existing file without erasing it"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a file like a notebook",
+      "md": "Opening in `\"r\"` mode is like picking up a notebook to read it. Opening in `\"w\"` mode is like tearing out all the pages and starting fresh. Opening in `\"a\"` mode is like flipping to the last blank page and continuing where you left off."
+    },
+    {
+      "type": "heading",
+      "text": "Why Closing Files Matters"
+    },
+    {
+      "type": "text",
+      "md": "When Python opens a file, the operating system reserves a small resource called a **file handle**. If you forget to close the file, that handle leaks — your program holds the file open longer than needed, which can prevent other programs (or even your own code) from accessing it, and data you wrote may not be fully saved to disk.\n\nThe old way required remembering to call `f.close()` by hand. It is easy to forget, especially when errors happen."
+    },
+    {
+      "type": "code",
+      "code": "# Old style — you must remember to close manually\nf = open(\"notes.txt\", \"r\")\ncontent = f.read()\nf.close()  # easy to forget!\nprint(content)",
+      "caption": "Manual close — works, but risky if an error occurs before close()"
+    },
+    {
+      "type": "heading",
+      "text": "The Right Way: with open(...) as f:"
+    },
+    {
+      "type": "text",
+      "md": "Python has a much safer pattern called a **context manager**. When you use `with open(...) as f:`, Python automatically closes the file the moment the indented block finishes — even if an error crashes your code halfway through. You never have to remember `f.close()`."
+    },
+    {
+      "type": "code",
+      "code": "# Recommended style — file closes automatically\nwith open(\"notes.txt\", \"r\", encoding=\"utf-8\") as f:\n    content = f.read()\n\n# File is already closed here, safely\nprint(content)",
+      "caption": "The with block guarantees the file is closed when the block exits"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always pass encoding=\"utf-8\"",
+      "md": "Different computers use different default text encodings. Specifying `encoding=\"utf-8\"` makes your code behave the same on every machine and handles accented characters, emoji, and non-English text correctly."
+    },
+    {
+      "type": "heading",
+      "text": "Reading Files"
+    },
+    {
+      "type": "text",
+      "md": "Once a file is open in `\"r\"` mode, you have several ways to read its contents:"
+    },
+    {
+      "type": "code",
+      "code": "# read() — loads the entire file as one big string\nwith open(\"poem.txt\", \"r\", encoding=\"utf-8\") as f:\n    all_text = f.read()\nprint(all_text)",
+      "output": "Roses are red,\nViolets are blue,\nPython is great,\nAnd so are you.",
+      "caption": "read() gives you everything at once"
+    },
+    {
+      "type": "code",
+      "code": "# readline() — reads one line at a time\nwith open(\"poem.txt\", \"r\", encoding=\"utf-8\") as f:\n    first_line = f.readline()\n    second_line = f.readline()\nprint(first_line)\nprint(second_line)",
+      "output": "Roses are red,\n\nViolets are blue,\n",
+      "caption": "readline() moves a bookmark forward each call"
+    },
+    {
+      "type": "code",
+      "code": "# readlines() — returns a list, one string per line\nwith open(\"poem.txt\", \"r\", encoding=\"utf-8\") as f:\n    lines = f.readlines()\nprint(lines)",
+      "output": "['Roses are red,\\n', 'Violets are blue,\\n', 'Python is great,\\n', 'And so are you.']",
+      "caption": "readlines() is handy when you need to work with specific line numbers"
+    },
+    {
+      "type": "code",
+      "code": "# Iterating directly — the most memory-efficient approach\nwith open(\"poem.txt\", \"r\", encoding=\"utf-8\") as f:\n    for line in f:\n        print(line.strip())  # strip() removes the trailing newline",
+      "output": "Roses are red,\nViolets are blue,\nPython is great,\nAnd so are you.",
+      "caption": "Looping over a file object reads one line at a time without loading everything into memory"
+    },
+    {
+      "type": "heading",
+      "text": "Writing Files"
+    },
+    {
+      "type": "text",
+      "md": "Open with `\"w\"` mode and call `write()` to save text. Remember: `\"w\"` **erases** the file first if it already exists."
+    },
+    {
+      "type": "code",
+      "code": "# Write mode — creates the file (or overwrites it)\nwith open(\"greeting.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"Hello, world!\\n\")\n    f.write(\"This file was created by Python.\\n\")\n\nprint(\"File written!\")",
+      "output": "File written!",
+      "caption": "write() does not add a newline automatically — you must include \\n yourself"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"w\" mode silently erases existing content",
+      "md": "If `greeting.txt` already had text in it, opening with `\"w\"` destroys that text immediately — before you write a single byte. If you want to **add** to an existing file, use `\"a\"` (append) mode instead."
+    },
+    {
+      "type": "heading",
+      "text": "Appending to a File"
+    },
+    {
+      "type": "code",
+      "code": "# Append mode — adds to the end without erasing\nwith open(\"log.txt\", \"a\", encoding=\"utf-8\") as f:\n    f.write(\"User logged in at 09:00\\n\")\n\n# Run again and it adds another line instead of replacing\nwith open(\"log.txt\", \"a\", encoding=\"utf-8\") as f:\n    f.write(\"User logged out at 10:30\\n\")\n\nwith open(\"log.txt\", \"r\", encoding=\"utf-8\") as f:\n    print(f.read())",
+      "output": "User logged in at 09:00\nUser logged out at 10:30\n",
+      "caption": "Append mode is perfect for log files that grow over time"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "write() only accepts strings",
+      "md": "Unlike `print()`, the `write()` method does not accept numbers or lists directly. You must convert them first:\n```python\nf.write(str(42) + \"\\n\")   # correct\nf.write(42)               # TypeError!\n```"
+    },
+    {
+      "type": "quiz",
+      "question": "You want to add a new line to the end of an existing file without deleting its current contents. Which mode should you use?",
+      "options": [
+        "\"r\" — read mode",
+        "\"w\" — write mode",
+        "\"a\" — append mode",
+        "\"x\" — exclusive creation mode"
+      ],
+      "answerIndex": 2,
+      "explanation": "Append mode (\"a\") opens the file and moves to the very end, so anything you write is added after existing content. Write mode (\"w\") would erase the file first, which is not what you want here."
+    }
+  ],
+  "keyTakeaways": [
+    "Use `open(path, mode, encoding=\"utf-8\")` to open files; mode is `\"r\"`, `\"w\"`, or `\"a\"`.",
+    "Always use `with open(...) as f:` — it closes the file automatically, even if an error occurs.",
+    "`read()` loads everything, `readline()` loads one line, and looping over `f` is the most memory-efficient option.",
+    "`write()` saves text but does NOT add a newline — you must include `\\n` yourself.",
+    "`\"w\"` mode erases existing content; use `\"a\"` to safely append without destroying old data."
+  ],
+  "exercise": {
+    "prompt": "Create a program that does three things in order:\n1. Writes a shopping list (at least three items, one per line) to a file called `shopping.txt`.\n2. Appends one more item to the same file.\n3. Reads the file back and prints each line with its line number (e.g. `1: Apples`).",
+    "starterCode": "# Step 1: Write the initial shopping list\nwith open(\"shopping.txt\", \"w\", encoding=\"utf-8\") as f:\n    pass  # replace with your write() calls\n\n# Step 2: Append one more item\n\n# Step 3: Read back and print with line numbers\n",
+    "hint": "For the numbered printing, use `enumerate(f, start=1)` when looping over the file — it gives you both the number and the line at once.",
+    "solution": "# Step 1: Write the initial shopping list\nwith open(\"shopping.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"Apples\\n\")\n    f.write(\"Bread\\n\")\n    f.write(\"Milk\\n\")\n\n# Step 2: Append one more item\nwith open(\"shopping.txt\", \"a\", encoding=\"utf-8\") as f:\n    f.write(\"Eggs\\n\")\n\n# Step 3: Read back and print with line numbers\nwith open(\"shopping.txt\", \"r\", encoding=\"utf-8\") as f:\n    for number, line in enumerate(f, start=1):\n        print(f\"{number}: {line.strip()}\")\n"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "slug": "polymorphism",
+  "title": "Polymorphism",
+  "emoji": "🎭",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Learn how the same code can work with many different types of objects — and why that makes your programs flexible and powerful.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you have a TV remote. You press the volume-up button and the volume goes up — whether you own a Sony, Samsung, or LG TV. The button is the same. The behavior underneath is different for each brand.\n\nThat idea is **polymorphism** (poly = many, morph = form). In Python, you can call the same method name on different objects, and each object responds in its own way. Your code stays clean and simple while handling many different types."
+    },
+    {
+      "type": "heading",
+      "text": "A Simple Example: Animals That Speak"
+    },
+    {
+      "type": "text",
+      "md": "Let's create a few animal classes. Each one has a `speak()` method, but each animal makes a different sound."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat:\n    def speak(self):\n        return \"Meow!\"\n\nclass Duck:\n    def speak(self):\n        return \"Quack!\"\n\ndog = Dog()\ncat = Cat()\nduck = Duck()\n\nprint(dog.speak())\nprint(cat.speak())\nprint(duck.speak())",
+      "output": "Woof!\nMeow!\nQuack!",
+      "caption": "Three classes, same method name, three different results."
+    },
+    {
+      "type": "text",
+      "md": "Notice that all three classes define a `speak()` method. Python doesn't care which class an object comes from — it just looks for a method called `speak` and calls it. This is polymorphism in action."
+    },
+    {
+      "type": "heading",
+      "text": "Calling Them Uniformly in a Loop"
+    },
+    {
+      "type": "text",
+      "md": "The real power shows up when you put different objects in a list and treat them all the same way."
+    },
+    {
+      "type": "code",
+      "code": "animals = [Dog(), Cat(), Duck(), Dog()]\n\nfor animal in animals:\n    print(animal.speak())",
+      "output": "Woof!\nMeow!\nQuack!\nWoof!",
+      "caption": "One loop, four objects of different types — same call, different behavior."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Universal Remote Analogy",
+      "md": "Think of the `for` loop as a universal remote. It sends the same signal (`speak()`) to every device in the list. Each device — Dog, Cat, Duck — interprets that signal in its own way. You write the loop once, and it works for every animal, even ones you add later."
+    },
+    {
+      "type": "heading",
+      "text": "Duck Typing: If It Quacks Like a Duck..."
+    },
+    {
+      "type": "text",
+      "md": "Python uses a philosophy called **duck typing**: if an object has the method you need, Python will use it — no questions asked about what *type* it is.\n\nThe saying goes: *\"If it walks like a duck and quacks like a duck, it's a duck.\"* Python doesn't check IDs. It just checks behavior."
+    },
+    {
+      "type": "code",
+      "code": "class Robot:\n    def speak(self):\n        return \"Beep boop!\"\n\n# Robot has nothing to do with animals, but it has speak()\nanimals = [Dog(), Cat(), Robot()]\n\nfor creature in animals:\n    print(creature.speak())",
+      "output": "Woof!\nMeow!\nBeep boop!",
+      "caption": "Robot is not an animal, but it has speak() — so the loop works just fine."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "You Don't Need a Shared Parent Class",
+      "md": "Duck typing means your classes don't have to inherit from the same base class to work together polymorphically. They just need to share the same method **name** and **signature**. This is one of Python's great strengths — it keeps things flexible and simple."
+    },
+    {
+      "type": "heading",
+      "text": "Polymorphism You Already Know: len() and +"
+    },
+    {
+      "type": "text",
+      "md": "You've already been using polymorphism without realizing it! Python's built-in functions like `len()` and the `+` operator work on many different types."
+    },
+    {
+      "type": "code",
+      "code": "print(len(\"hello\"))       # works on a string\nprint(len([1, 2, 3]))     # works on a list\nprint(len({\"a\": 1}))     # works on a dictionary\n\nprint(\"cat\" + \"fish\")     # + joins strings\nprint([1, 2] + [3, 4])   # + joins lists\nprint(10 + 5)             # + adds numbers",
+      "output": "5\n3\n1\ncatfish\n[1, 2, 3, 4]\n15",
+      "caption": "len() and + behave differently depending on the type — that's polymorphism."
+    },
+    {
+      "type": "text",
+      "md": "Python calls the appropriate underlying method for each type. When you write `len(\"hello\")`, Python calls the string's internal length method. When you write `len([1, 2, 3])`, it calls the list's internal length method. Same interface, different behavior."
+    },
+    {
+      "type": "heading",
+      "text": "Method Overriding"
+    },
+    {
+      "type": "text",
+      "md": "Another form of polymorphism is **method overriding** — when a child class replaces a method it inherited from a parent class."
+    },
+    {
+      "type": "code",
+      "code": "class Animal:\n    def speak(self):\n        return \"...\"\n\nclass Dog(Animal):\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat(Animal):\n    def speak(self):\n        return \"Meow!\"\n\nclass Fish(Animal):\n    pass  # Fish doesn't override speak()\n\nanimals = [Dog(), Cat(), Fish()]\n\nfor animal in animals:\n    print(animal.speak())",
+      "output": "Woof!\nMeow!\n...",
+      "caption": "Dog and Cat override speak(). Fish inherits the default from Animal."
+    },
+    {
+      "type": "text",
+      "md": "The parent class `Animal` provides a default `speak()` that returns `\"...\"`. Dog and Cat **override** it with their own version. Fish doesn't bother, so it falls back to the parent's version. All three still respond to `speak()` — that's polymorphism through method overriding."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting the Method Name Must Match Exactly",
+      "md": "Polymorphism only works if the method names match **exactly**. If you write `speak()` in one class and `Speak()` or `make_sound()` in another, Python won't treat them as interchangeable — it will raise an `AttributeError` when it can't find the method.\n\nAlways double-check your spelling and capitalization when designing a shared interface."
+    },
+    {
+      "type": "heading",
+      "text": "A Practical Shape Example"
+    },
+    {
+      "type": "code",
+      "code": "import math\n\nclass Circle:\n    def __init__(self, radius):\n        self.radius = radius\n\n    def area(self):\n        return math.pi * self.radius ** 2\n\nclass Rectangle:\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\nshapes = [Circle(5), Rectangle(4, 6), Circle(3)]\n\nfor shape in shapes:\n    print(f\"Area: {shape.area():.2f}\")",
+      "output": "Area: 78.54\nArea: 24.00\nArea: 28.27",
+      "caption": "Circle and Rectangle each compute area differently, but the loop calls area() the same way on both."
+    },
+    {
+      "type": "quiz",
+      "question": "Which statement best describes polymorphism in Python?",
+      "options": [
+        "Only objects from the same class can share method names.",
+        "Different objects can respond to the same method name in their own unique way.",
+        "Polymorphism requires all classes to inherit from a single parent.",
+        "You must import a special library to use polymorphism."
+      ],
+      "answerIndex": 1,
+      "explanation": "Polymorphism means different objects can share the same method name and each respond in their own way. In Python, this works even without a shared parent class — thanks to duck typing. As long as an object has the method you're calling, Python will use it."
+    }
+  ],
+  "keyTakeaways": [
+    "Polymorphism lets you call the same method name on different objects and get behavior appropriate to each.",
+    "Duck typing means Python only cares whether an object *has* the method — not what type or class it belongs to.",
+    "You can loop over a mixed list of objects and call the same method on all of them — a huge code simplification.",
+    "Method overriding is polymorphism: child classes replace parent methods with their own version.",
+    "Built-ins like `len()` and `+` are everyday examples of polymorphism you already use."
+  ],
+  "exercise": {
+    "prompt": "Create three classes: `Trumpet`, `Guitar`, and `Piano`. Each should have a `play()` method that returns a short description of the sound that instrument makes (e.g., `\"Trumpet goes: Toot toot!\"`). Then create a list containing one of each instrument and loop through it, printing the result of `play()` for each.",
+    "starterCode": "class Trumpet:\n    def play(self):\n        pass  # fill this in\n\nclass Guitar:\n    def play(self):\n        pass  # fill this in\n\nclass Piano:\n    def play(self):\n        pass  # fill this in\n\ninstruments = [Trumpet(), Guitar(), Piano()]\n\nfor instrument in instruments:\n    print(instrument.play())",
+    "hint": "Replace each `pass` with a `return` statement that gives back a fun string describing the sound. Then the loop will handle the rest!",
+    "solution": "class Trumpet:\n    def play(self):\n        return \"Trumpet goes: Toot toot!\"\n\nclass Guitar:\n    def play(self):\n        return \"Guitar goes: Strum strum!\"\n\nclass Piano:\n    def play(self):\n        return \"Piano goes: Plink plink!\"\n\ninstruments = [Trumpet(), Guitar(), Piano()]\n\nfor instrument in instruments:\n    print(instrument.play())"
+  }
+}

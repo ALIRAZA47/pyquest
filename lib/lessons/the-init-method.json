@@ -1,0 +1,152 @@
+{
+  "slug": "the-init-method",
+  "title": "The __init__ Constructor",
+  "emoji": "🎬",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Learn how __init__ automatically sets up a new object the moment it is created, and why that makes your classes so much more powerful.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine ordering a coffee. The moment you place the order, the barista already knows: what size, what flavour, your name for the cup. You did not have to hand those details over one by one after the cup appeared — they came built-in from the start.\n\nThat is exactly what `__init__` does for Python objects. It is a special method that runs **automatically** the instant you create a new instance of a class. By the time you have a shiny new object in your hands, all its starting details are already set."
+    },
+    {
+      "type": "heading",
+      "text": "Classes vs Instances — a quick reminder"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Blueprint vs Building",
+      "md": "A **class** is like an architect's blueprint. It describes what every building of that type will look like. An **instance** is one actual building constructed from that blueprint. You can build many buildings from one blueprint, and each building can have its own address, colour, and number of floors."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    pass\n\nrex = Dog()   # rex is one instance\nbella = Dog() # bella is a different instance\n\nprint(rex)   # different objects in memory\nprint(bella)",
+      "output": "<__main__.Dog object at 0x10a1f2d30>\n<__main__.Dog object at 0x10a1f2e50>",
+      "caption": "Two instances from the same class — both are Dogs, but they live at different places in memory."
+    },
+    {
+      "type": "text",
+      "md": "Right now `Dog` is empty. Every dog is identical and anonymous. Let's fix that with `__init__`."
+    },
+    {
+      "type": "heading",
+      "text": "Writing Your First __init__"
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\nrex = Dog(\"Rex\", \"Labrador\")\nprint(rex.name)\nprint(rex.breed)",
+      "output": "Rex\nLabrador",
+      "caption": "Python calls __init__ automatically. You pass the arguments after the class name."
+    },
+    {
+      "type": "text",
+      "md": "Let's break down what happened line by line:\n\n- `def __init__(self, name, breed):` — defines the setup method. It always receives `self` as its first argument.\n- `self.name = name` — stores the value of `name` **on the object itself**. Think of it as pinning a name tag to that specific dog.\n- `Dog(\"Rex\", \"Labrador\")` — Python creates a new `Dog` and immediately calls `__init__` with `\"Rex\"` and `\"Labrador\"`. You never see that call — Python makes it for you."
+    },
+    {
+      "type": "heading",
+      "text": "What is 'self'?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Self = 'this very object'",
+      "md": "`self` is just a name (you could technically use any word, but **never do** — always use `self`). It refers to the specific instance being set up right now. When Python runs `rex = Dog(\"Rex\", \"Labrador\")`, it passes `rex` as `self` automatically. So `self.name = name` really means `rex.name = \"Rex\"`."
+    },
+    {
+      "type": "heading",
+      "text": "Each Instance Has Its Own Attributes"
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\nrex = Dog(\"Rex\", \"Labrador\")\nbella = Dog(\"Bella\", \"Poodle\")\n\nprint(rex.name, rex.breed)\nprint(bella.name, bella.breed)",
+      "output": "Rex Labrador\nBella Poodle",
+      "caption": "rex and bella are separate objects. Changing one does not affect the other."
+    },
+    {
+      "type": "heading",
+      "text": "Default Parameter Values"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want a sensible default so callers do not have to provide every value. You can give `__init__` parameters default values just like any other Python function."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def __init__(self, name, breed=\"Unknown\"):\n        self.name = name\n        self.breed = breed\n\ndog1 = Dog(\"Max\", \"Beagle\")  # breed provided\ndog2 = Dog(\"Buddy\")          # breed uses default\n\nprint(dog1.name, dog1.breed)\nprint(dog2.name, dog2.breed)",
+      "output": "Max Beagle\nBuddy Unknown",
+      "caption": "If you skip 'breed', Python uses the default value 'Unknown'."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Put defaults at the end",
+      "md": "Parameters with defaults must always come **after** parameters without defaults. `def __init__(self, name, breed=\"Unknown\")` is fine. `def __init__(self, breed=\"Unknown\", name)` would raise a `SyntaxError`."
+    },
+    {
+      "type": "heading",
+      "text": "You Never Call __init__ Directly"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't call __init__ yourself",
+      "md": "You should **never** write `rex.__init__(\"Rex\", \"Labrador\")` in normal code. Python calls it for you when you write `Dog(\"Rex\", \"Labrador\")`. Calling it manually would run the setup code a second time on an already-created object, which is almost always a bug."
+    },
+    {
+      "type": "heading",
+      "text": "A Richer Example"
+    },
+    {
+      "type": "code",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n        print(f\"{self.owner} deposited ${amount}. Balance: ${self.balance}\")\n\naccount = BankAccount(\"Alice\", 100)\naccount.deposit(50)",
+      "output": "Alice deposited $50. Balance: $150",
+      "caption": "__init__ sets up owner and balance; deposit uses self to access them later."
+    },
+    {
+      "type": "text",
+      "md": "Notice that `deposit` can read `self.owner` and `self.balance` because `__init__` stored them on the object. Every method in the class can access attributes set in `__init__` through `self`."
+    },
+    {
+      "type": "heading",
+      "text": "Computed Attributes"
+    },
+    {
+      "type": "text",
+      "md": "Not every attribute has to come directly from a parameter. You can compute values inside `__init__` too."
+    },
+    {
+      "type": "code",
+      "code": "class Rectangle:\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n        self.area = width * height  # computed at creation time\n\nr = Rectangle(5, 3)\nprint(r.area)",
+      "output": "15",
+      "caption": "self.area is calculated once during __init__ and stored on the object."
+    },
+    {
+      "type": "quiz",
+      "question": "What does Python do when you write `dog = Dog(\"Rex\", \"Labrador\")`?",
+      "options": [
+        "It creates a new Dog object and you must call __init__ separately to set it up.",
+        "It creates a new Dog object and automatically calls __init__(self, \"Rex\", \"Labrador\") for you.",
+        "It calls __init__ but you still need to assign self.name and self.breed manually afterwards.",
+        "It raises an error because __init__ is a private method."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python creates the new instance and immediately calls __init__ with the arguments you provided. You never need to call __init__ yourself — it is automatic."
+    }
+  ],
+  "keyTakeaways": [
+    "`__init__` runs automatically every time you create a new instance — you never call it yourself.",
+    "Use `self.attribute = value` inside `__init__` to store data on the specific object being created.",
+    "Arguments you pass at `Dog(\"Rex\")` flow directly into `__init__`'s parameters (after `self`).",
+    "Default parameter values let callers skip optional arguments: `def __init__(self, name, breed=\"Unknown\")`.",
+    "A class is the blueprint; an instance is a real object built from it — each instance has its own independent attributes."
+  ],
+  "exercise": {
+    "prompt": "Create a class called `Movie` with an `__init__` method that accepts `title`, `director`, and `year`. Give `year` a default value of 2024. Then create two Movie instances: one with all three arguments, and one using only `title` and `director`. Print the `title` and `year` of each.",
+    "starterCode": "class Movie:\n    def __init__(self, title, director, year=2024):\n        # store title, director, and year on self\n        pass\n\n# Create two instances here\n",
+    "hint": "Inside __init__, write self.title = title, self.director = director, and self.year = year. Then create instances like Movie(\"Inception\", \"Nolan\", 2010) and Movie(\"Untitled\", \"Smith\").",
+    "solution": "class Movie:\n    def __init__(self, title, director, year=2024):\n        self.title = title\n        self.director = director\n        self.year = year\n\nm1 = Movie(\"Inception\", \"Christopher Nolan\", 2010)\nm2 = Movie(\"Untitled\", \"Jordan Smith\")\n\nprint(m1.title, m1.year)\nprint(m2.title, m2.year)"
+  }
+}

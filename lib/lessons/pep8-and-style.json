@@ -1,0 +1,157 @@
+{
+  "slug": "pep8-and-style",
+  "title": "PEP 8 & Style",
+  "emoji": "📏",
+  "category": "Writing Pythonic Code",
+  "difficulty": "Beginner",
+  "summary": "Learn Python's official style guide, PEP 8, and discover how clean, consistent code makes you a better teammate and a better programmer.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine two restaurants. One has a clean kitchen where every knife has its place, every label is readable, and the prep cook always knows where to find things. The other has pots everywhere, handwritten labels no one can read, and chaos at rush hour. Both produce food — but only one runs smoothly.\n\nCode works the same way. Python gives you a lot of freedom in *how* you write it, but the Python community agreed on a shared rulebook called **PEP 8**. When everyone follows the same style, code becomes much easier to read, debug, and share."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "What is PEP 8?",
+      "md": "**PEP** stands for *Python Enhancement Proposal*. PEP 8 is proposal number 8, written in 2001, and it defines the official style guide for Python code. It covers everything from indentation to naming to blank lines."
+    },
+    {
+      "type": "heading",
+      "text": "Indentation: Use 4 Spaces"
+    },
+    {
+      "type": "text",
+      "md": "Python uses indentation to define blocks of code (like the body of a function or loop). PEP 8 says: **always use 4 spaces per level**. Never use tabs, and never use 2 spaces — consistency is everything."
+    },
+    {
+      "type": "code",
+      "code": "# Good: 4 spaces per level\ndef greet(name):\n    message = \"Hello, \" + name\n    print(message)\n\n# Bad: 2 spaces (avoid)\ndef greet_bad(name):\n  message = \"Hello, \" + name\n  print(message)",
+      "caption": "Stick to 4 spaces — your future self will thank you."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Tabs vs. Spaces",
+      "md": "Mixing tabs and spaces in the same file causes a `TabError` in Python 3. Most code editors can be set to **insert 4 spaces when you press Tab** — turn that on and you never have to think about it again."
+    },
+    {
+      "type": "heading",
+      "text": "Naming Conventions"
+    },
+    {
+      "type": "text",
+      "md": "PEP 8 has clear rules for naming things. Different kinds of names use different styles:\n\n- **Variables and functions** → `snake_case` (all lowercase, words joined by underscores)\n- **Classes** → `PascalCase` (each word starts with a capital letter, no underscores)\n- **Constants** → `UPPER_CASE` (all caps, words joined by underscores)"
+    },
+    {
+      "type": "code",
+      "code": "# Variables and functions: snake_case\nuser_name = \"Alice\"\nmax_score = 100\n\ndef calculate_total(price, tax_rate):\n    return price * (1 + tax_rate)\n\n# Classes: PascalCase\nclass ShoppingCart:\n    pass\n\n# Constants: UPPER_CASE\nMAX_RETRIES = 3\nPI = 3.14159",
+      "caption": "Each naming style signals what kind of thing you are looking at."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Naming is like signage",
+      "md": "Think of naming styles like road signs. ALL CAPS means a constant warning (don't change this!), PascalCase is a proper noun (a named thing, like a class), and snake_case is everyday directions. You know what to expect before you even read the full name."
+    },
+    {
+      "type": "heading",
+      "text": "Spaces Around Operators"
+    },
+    {
+      "type": "text",
+      "md": "PEP 8 says to put **one space on each side** of most operators. This gives your code room to breathe and makes it much easier to scan."
+    },
+    {
+      "type": "code",
+      "code": "# Good: spaces around operators\nx = 5 + 3\nresult = x * 2 - 1\nis_valid = x > 0 and x < 10\n\n# Bad: cramped (avoid)\nx=5+3\nresult=x*2-1",
+      "caption": "Spaces make math expressions readable at a glance."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Exception: keyword arguments",
+      "md": "When passing keyword arguments to a function, do **not** add spaces around the `=`. Write `print(end=\"\")` not `print(end = \"\")`. This is one of PEP 8's few exceptions."
+    },
+    {
+      "type": "heading",
+      "text": "Line Length and Blank Lines"
+    },
+    {
+      "type": "text",
+      "md": "PEP 8 originally recommended keeping lines under **79 characters**. Many modern teams allow up to **99 characters**. Either way, the goal is that you never have to scroll sideways to read code.\n\nBlank lines also matter:\n- Use **two blank lines** before and after a top-level function or class definition.\n- Use **one blank line** between methods inside a class.\n- Use blank lines inside a function to separate logical steps."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\n\ndef circle_area(radius):\n    \"\"\"Return the area of a circle.\"\"\"\n    return math.pi * radius ** 2\n\n\ndef circle_perimeter(radius):\n    \"\"\"Return the perimeter of a circle.\"\"\"\n    return 2 * math.pi * radius\n\n\narea = circle_area(5)\nprint(area)",
+      "output": "78.53981633974483",
+      "caption": "Two blank lines separate top-level functions — this is the standard."
+    },
+    {
+      "type": "heading",
+      "text": "Import Order"
+    },
+    {
+      "type": "text",
+      "md": "When you import modules, PEP 8 says to group them in this order, with a blank line between each group:\n\n1. **Standard library** imports (built into Python, e.g. `math`, `os`)\n2. **Third-party** imports (installed via pip, e.g. `requests`, `pandas`)\n3. **Local** imports (your own modules)"
+    },
+    {
+      "type": "code",
+      "code": "# 1. Standard library\nimport math\nimport os\n\n# 2. Third-party\nimport requests\n\n# 3. Local modules\nimport my_utils",
+      "caption": "Grouping imports makes dependencies obvious at a glance."
+    },
+    {
+      "type": "heading",
+      "text": "Tools That Do the Work For You"
+    },
+    {
+      "type": "text",
+      "md": "You do not have to memorize every PEP 8 rule. The Python ecosystem has tools that check and even fix your code automatically:\n\n- **`black`** — an opinionated auto-formatter. Run it and your code is instantly PEP 8 compliant. Zero arguments needed.\n- **`flake8`** or **`ruff`** — linters that *highlight* style problems without changing your code, so you can learn from them.\n\nMost professional teams run one of these tools automatically before every commit."
+    },
+    {
+      "type": "code",
+      "code": "# Install black (run this in your terminal, not in Python)\n# pip install black\n\n# Then format any file:\n# black my_script.py\n\n# Install ruff (a fast modern linter):\n# pip install ruff\n\n# Check a file for style issues:\n# ruff check my_script.py",
+      "caption": "These commands run in your terminal, not inside a Python script."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Set up your editor",
+      "md": "VS Code, PyCharm, and most other editors can run `black` or `ruff` automatically every time you save a file. Search your editor's extensions for \"Black Formatter\" or \"Ruff\" and enable \"format on save\" — then style is never your problem again."
+    },
+    {
+      "type": "heading",
+      "text": "Why Style Matters for Teams"
+    },
+    {
+      "type": "text",
+      "md": "When you code alone, style is a courtesy to your future self. When you work with a team, style is a **necessity**. A consistent codebase means:\n\n- New teammates can read the code without a guide\n- Code reviews focus on logic, not formatting debates\n- Git diffs are cleaner — one changed idea, not fifty reformatted lines\n- Bugs hide less easily in well-structured code\n\nThe Zen of Python (type `import this` in Python) says: *Readability counts.* PEP 8 is how Python lives that value."
+    },
+    {
+      "type": "quiz",
+      "question": "Which naming style does PEP 8 recommend for a Python function?",
+      "options": [
+        "camelCase — e.g. calculateTotal",
+        "PascalCase — e.g. CalculateTotal",
+        "snake_case — e.g. calculate_total",
+        "UPPER_CASE — e.g. CALCULATE_TOTAL"
+      ],
+      "answerIndex": 2,
+      "explanation": "PEP 8 uses snake_case for functions and variables (words joined by underscores, all lowercase). PascalCase is reserved for class names, and UPPER_CASE is for constants."
+    }
+  ],
+  "keyTakeaways": [
+    "PEP 8 is Python's official style guide — it covers indentation, naming, spacing, and more.",
+    "Use 4 spaces for indentation, snake_case for functions/variables, PascalCase for classes, and UPPER_CASE for constants.",
+    "Spaces around operators and blank lines between functions make code much easier to scan.",
+    "Tools like `black` (auto-formatter) and `ruff` or `flake8` (linters) enforce style automatically so you don't have to memorize every rule.",
+    "Consistent style is an act of kindness to your teammates — and to the future version of you."
+  ],
+  "exercise": {
+    "prompt": "The code below has several PEP 8 violations: wrong indentation, bad naming, missing spaces, and mixed-up import order. Fix all the style issues so the code passes PEP 8.",
+    "starterCode": "import requests\nimport math\n\nMaxSpeed=120\n\ndef calculateDistance(SpeedKph,TimeHours):\n  return SpeedKph*TimeHours\n\nresult=calculateDistance(MaxSpeed,2.5)\nprint(result)",
+    "hint": "Look for: 4-space indentation, snake_case function/variable names, UPPER_CASE constant, spaces around operators, and imports in the right order (standard library before third-party).",
+    "solution": "import math\n\nimport requests\n\nMAX_SPEED = 120\n\n\ndef calculate_distance(speed_kph, time_hours):\n    return speed_kph * time_hours\n\n\nresult = calculate_distance(MAX_SPEED, 2.5)\nprint(result)"
+  }
+}

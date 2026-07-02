@@ -1,0 +1,155 @@
+{
+  "slug": "comments",
+  "title": "Comments & Documentation",
+  "emoji": "💭",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how to leave helpful notes in your code using comments — so future-you (and teammates) always understand what your program is doing and why.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine opening a book you wrote a year ago and finding a single sentence with no context: `x = x * 1.08`. What does that mean? Is it a tax calculation? A tip? An interest rate? Without a note, you'd have to guess.\n\nComments solve this problem. They are messages you leave inside your code — for yourself, for teammates, for anyone who reads your program later. Python completely ignores them when running your code. They exist purely for **humans**."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Comment"
+    },
+    {
+      "type": "text",
+      "md": "A comment starts with the `#` symbol (called a **hash** or **pound sign**). Everything after `#` on that line is ignored by Python. You can put a comment on its own line, or at the end of a line of code."
+    },
+    {
+      "type": "code",
+      "code": "# This is a comment. Python ignores this line completely.\nprint(\"Hello!\")  # This prints a greeting to the user",
+      "output": "Hello!",
+      "caption": "Both comment styles: a full-line comment and an inline comment"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Comments are sticky notes",
+      "md": "Think of your code as a recipe and comments as the sticky notes you add to the margins — \"use unsalted butter here\" or \"mom's trick: add vanilla last\". The notes don't change the recipe, but they make it a lot easier to follow."
+    },
+    {
+      "type": "heading",
+      "text": "Full-Line vs Inline Comments"
+    },
+    {
+      "type": "text",
+      "md": "There are two common places to put a comment:\n\n- **Full-line comments** sit on their own line, above the code they describe.\n- **Inline comments** sit at the end of a line of code, separated by at least two spaces.\n\nFull-line comments are great for explaining a block of logic. Inline comments work well for a quick note on a single line."
+    },
+    {
+      "type": "code",
+      "code": "# Calculate the total price with 8% sales tax\nprice = 49.99\ntax_rate = 0.08\ntotal = price + (price * tax_rate)  # add tax to original price\nprint(total)",
+      "output": "53.9892",
+      "caption": "Full-line comment describes the goal; inline comment clarifies the math"
+    },
+    {
+      "type": "heading",
+      "text": "Why Comments Matter"
+    },
+    {
+      "type": "text",
+      "md": "You might be thinking: *\"I'll just remember what my code does.\"* That's what everyone thinks — and then they come back three weeks later and have no idea what they wrote.\n\nComments matter because:\n- **Code shows WHAT happens.** Comments explain **WHY**.\n- Other people (or future-you) will need to understand your decisions.\n- A well-commented program is a gift to your future self."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Comment the WHY, not the WHAT",
+      "md": "A bad comment just restates the code in English: `# add 1 to x` above `x = x + 1` tells you nothing new.\n\nA great comment explains the reason: `# start index at 1 because position 0 is reserved for the header row`. That's the kind of note that saves hours of confusion."
+    },
+    {
+      "type": "heading",
+      "text": "Good Comments vs Bad Comments"
+    },
+    {
+      "type": "code",
+      "code": "# BAD: just restates the code\nx = x + 1  # add 1 to x\n\n# GOOD: explains WHY\nx = x + 1  # skip the first item, which is always a placeholder",
+      "caption": "Same code, very different comment quality"
+    },
+    {
+      "type": "text",
+      "md": "The best comments are the ones that would make a future reader say *\"oh, that's why they did it that way!\"* If the code already reads clearly on its own, you might not need a comment at all."
+    },
+    {
+      "type": "heading",
+      "text": "Commenting Out Code"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want to **temporarily disable** a line of code without deleting it — maybe you're testing something, or you're not sure if you'll need it again. You can turn any line into a comment by adding `#` at the front."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Alice\"\nprint(\"Hello, \" + name)\n# print(\"Goodbye, \" + name)  # disabled for now",
+      "output": "Hello, Alice",
+      "caption": "The second print is commented out — Python skips it entirely"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't leave dead code forever",
+      "md": "Commenting out code is fine while you're experimenting. But if you leave large blocks of commented-out code in your file for weeks, it gets confusing — readers wonder if it's important or just old junk.\n\nAs a rule: once you're sure you don't need it, **delete it**. Your version control system (like Git) keeps the history anyway."
+    },
+    {
+      "type": "heading",
+      "text": "Multi-Line Comments"
+    },
+    {
+      "type": "text",
+      "md": "Python doesn't have a special multi-line comment syntax. The common approach is simply to start several lines in a row with `#`."
+    },
+    {
+      "type": "code",
+      "code": "# This function converts a temperature\n# from Celsius to Fahrenheit.\n# Formula: F = (C * 9/5) + 32\ndef celsius_to_fahrenheit(c):\n    return (c * 9 / 5) + 32\n\nprint(celsius_to_fahrenheit(100))",
+      "output": "212.0",
+      "caption": "Three comment lines together explain the function before it starts"
+    },
+    {
+      "type": "heading",
+      "text": "Docstrings: Comments for Functions"
+    },
+    {
+      "type": "text",
+      "md": "Python has a special kind of documentation string called a **docstring**. You write it using triple quotes (`\"\"\"`) right inside a function. It's not technically a comment (Python can read it), but it serves the same purpose: explaining what the function does.\n\nDocstrings are the standard way to document functions, and tools like `help()` can display them automatically."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    \"\"\"Return a friendly greeting for the given name.\"\"\"\n    return \"Hello, \" + name + \"!\"\n\nprint(greet(\"Maria\"))\nprint(help(greet))",
+      "output": "Hello, Maria!\nHelp on function greet in module __main__:\n\ngreet(name)\n    Return a friendly greeting for the given name.",
+      "caption": "The docstring appears when you call help() on the function"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Docstrings vs comments",
+      "md": "Use `#` comments for quick notes anywhere in your code. Use `\"\"\"docstrings\"\"\"` to document **what a function does** — they follow the `def` line and describe the function's purpose, inputs, and return value."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these is an example of a GOOD comment?",
+      "options": [
+        "# set y to 10\ny = 10",
+        "# retry limit set to 3 because the API sometimes times out on first attempt\nretry_limit = 3",
+        "# this is a variable\nretry_limit = 3",
+        "# code below\nretry_limit = 3"
+      ],
+      "answerIndex": 1,
+      "explanation": "A good comment explains WHY a decision was made, not just WHAT the code does. Option 1, 2, and 3 all just describe what the code does (or say nothing useful). Option 2 tells the reader something they couldn't figure out from the code alone — that 3 was chosen because of real-world API behavior."
+    }
+  ],
+  "keyTakeaways": [
+    "Comments start with `#` and are completely ignored by Python — they're for humans only.",
+    "Comment the WHY, not the WHAT — explain your reasoning, not just what the line does.",
+    "You can disable code temporarily by putting `#` at the start of a line.",
+    "Use `\"\"\"triple-quoted docstrings\"\"\"` right inside functions to explain what they do.",
+    "Clean up old commented-out code once you're sure it's no longer needed."
+  ],
+  "exercise": {
+    "prompt": "Below is a short program that calculates a restaurant bill. It works, but it has no comments and a confusing docstring. Your tasks:\n1. Add a full-line comment above the tip calculation explaining WHY 18% was chosen.\n2. Add an inline comment on the `total` line explaining what it represents.\n3. Replace the placeholder docstring with a real one describing what `calculate_bill` does.",
+    "starterCode": "def calculate_bill(subtotal):\n    \"\"\"TODO: write a real docstring here.\"\"\"\n    tip = subtotal * 0.18\n    total = subtotal + tip\n    return total\n\nprint(calculate_bill(50.00))",
+    "hint": "For the docstring, describe what the function receives (a subtotal amount) and what it returns (the total including an 18% tip). For the tip comment, think about why a restaurant might hardcode 18% instead of asking the user.",
+    "solution": "def calculate_bill(subtotal):\n    \"\"\"Calculate the total restaurant bill including an 18% tip.\n\n    Args:\n        subtotal: The pre-tip cost of the meal in dollars.\n\n    Returns:\n        The total amount due including tip.\n    \"\"\"\n    # 18% is the restaurant's default tip rate for parties of 6 or more\n    tip = subtotal * 0.18\n    total = subtotal + tip  # full amount the customer owes\n    return total\n\nprint(calculate_bill(50.00))"
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "slug": "strings-basics",
+  "title": "Strings Basics",
+  "emoji": "📜",
+  "category": "Working with Strings",
+  "difficulty": "Beginner",
+  "summary": "Learn how to create, combine, and work with text in Python — one of the most essential skills in any program.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Almost every program works with text — names, messages, addresses, commands. In Python, a piece of text is called a **string**. Understanding strings is one of the very first superpowers you will use as a programmer. This lesson shows you how to create them, combine them, measure them, and avoid a few sneaky traps."
+    },
+    {
+      "type": "heading",
+      "text": "What is a String?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A String is a Necklace of Characters",
+      "md": "Imagine threading letters onto a string of beads, one after another: `H`, `e`, `l`, `l`, `o`. The whole necklace is a **string**. Each bead is a single character. Python keeps them in order and remembers every one."
+    },
+    {
+      "type": "text",
+      "md": "You create a string by wrapping text in quotes. Python accepts **single quotes** `'...'`, **double quotes** `\"...\"`, or **triple quotes** `'''...'''` / `\"\"\"...\"\"\"`. All three styles produce strings — choose whichever makes your code easiest to read."
+    },
+    {
+      "type": "heading",
+      "text": "Single and Double Quotes"
+    },
+    {
+      "type": "code",
+      "code": "greeting = 'Hello, world!'\nname = \"Alice\"\n\nprint(greeting)\nprint(name)",
+      "output": "Hello, world!\nAlice",
+      "caption": "Single quotes and double quotes both work the same way."
+    },
+    {
+      "type": "text",
+      "md": "There is no difference between single and double quotes in Python — pick one and be consistent. The real reason both exist is so you can **include one type of quote inside the other** without any trouble."
+    },
+    {
+      "type": "code",
+      "code": "# Include an apostrophe using double quotes\nmessage = \"It's a great day!\"\n\n# Include double quotes using single quotes\nquote = 'She said \"hello\" to everyone.'\n\nprint(message)\nprint(quote)",
+      "output": "It's a great day!\nShe said \"hello\" to everyone.",
+      "caption": "Mixing quote styles lets you include the other kind of quote inside your string."
+    },
+    {
+      "type": "heading",
+      "text": "Triple-Quoted Strings"
+    },
+    {
+      "type": "text",
+      "md": "Triple quotes let you write a string that spans **multiple lines** without any extra tricks. Everything between the opening `\"\"\"` and closing `\"\"\"` (or `'''`) becomes part of the string, line breaks included."
+    },
+    {
+      "type": "code",
+      "code": "poem = \"\"\"\nRoses are red,\nViolets are blue,\nPython is fun,\nAnd so are you!\n\"\"\"\n\nprint(poem)",
+      "output": "\nRoses are red,\nViolets are blue,\nPython is fun,\nAnd so are you!\n",
+      "caption": "Triple quotes preserve every newline exactly as you typed it."
+    },
+    {
+      "type": "heading",
+      "text": "Escape Sequences"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you need to put a special character inside a string — a line break, a tab, or a literal quote — but you cannot just type it directly. Python uses a **backslash `\\`** as an escape signal: it tells Python that the next character has a special meaning.\n\nThe most common escape sequences are:\n- `\\n` — newline (moves to the next line)\n- `\\t` — tab (inserts a horizontal tab)\n- `\\\\` — a literal backslash\n- `\\'` — a single quote inside a single-quoted string\n- `\\\"` — a double quote inside a double-quoted string"
+    },
+    {
+      "type": "code",
+      "code": "print(\"Line one\\nLine two\")\nprint(\"Name:\\tAlice\")\nprint(\"C:\\\\Users\\\\Alice\")\nprint('She said \\'hi\\'.')",
+      "output": "Line one\nLine two\nName:\tAlice\nC:\\Users\\Alice\nShe said 'hi'.",
+      "caption": "Escape sequences let you embed special characters inside any string."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Windows File Paths and Backslashes",
+      "md": "On Windows, folder paths use backslashes: `C:\\Users\\Alice`. If you type this directly in a string, Python will misread `\\U` and `\\A` as escape sequences. Always **double the backslashes** (`C:\\\\Users\\\\Alice`) or use a raw string: `r'C:\\Users\\Alice'`."
+    },
+    {
+      "type": "heading",
+      "text": "Combining Strings with + and *"
+    },
+    {
+      "type": "text",
+      "md": "You can glue strings together with the **`+` operator** — this is called **concatenation**. You can also repeat a string a fixed number of times using the **`*` operator**."
+    },
+    {
+      "type": "code",
+      "code": "first = \"Good\"\nrest = \" morning!\"\nfull = first + rest\nprint(full)\n\nline = \"-\" * 20\nprint(line)",
+      "output": "Good morning!\n--------------------",
+      "caption": "+ joins strings together; * repeats a string."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "You Cannot + a String and a Number",
+      "md": "Python does not automatically convert numbers to text. `\"Score: \" + 10` will raise a `TypeError`. You must convert the number first: `\"Score: \" + str(10)`. This is a very common beginner mistake!"
+    },
+    {
+      "type": "code",
+      "code": "score = 42\nmessage = \"Your score is: \" + str(score)\nprint(message)",
+      "output": "Your score is: 42",
+      "caption": "Use str() to convert a number before concatenating it with a string."
+    },
+    {
+      "type": "heading",
+      "text": "Measuring Length with len()"
+    },
+    {
+      "type": "text",
+      "md": "`len()` is a built-in Python function that tells you how many characters are in a string — spaces and punctuation included. Think of it as counting every bead on that necklace."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\nsentence = \"Hello, world!\"\n\nprint(len(word))\nprint(len(sentence))",
+      "output": "6\n13",
+      "caption": "len() counts every character, including spaces and punctuation."
+    },
+    {
+      "type": "heading",
+      "text": "Strings are Immutable"
+    },
+    {
+      "type": "text",
+      "md": "Here is something important: once a string is created, **you cannot change any individual character inside it**. This property is called **immutability** — strings are locked in place. If you want a different string, you create a new one."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Alice\"\n# This will cause an error:\n# name[0] = \"B\"   <-- TypeError!\n\n# The right way: build a new string\nname = \"B\" + name[1:]\nprint(name)",
+      "output": "Balice",
+      "caption": "You cannot modify a string in place. Instead, build and assign a new string."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Why Are Strings Immutable?",
+      "md": "Immutability makes strings **safe and predictable**. When you pass a string to a function, you know the original cannot be secretly changed. Python can also optimize memory by reusing identical strings behind the scenes."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Reassigning is Fine",
+      "md": "You can always **replace** the whole string by assigning a new value to the variable: `name = \"Bob\"`. That does not mutate the old string — it just points the variable at a brand-new one."
+    },
+    {
+      "type": "quiz",
+      "question": "What will the following code print?\n\n```python\nword = \"hi\"\nresult = word * 3 + \"!\"\nprint(result)\n```",
+      "options": [
+        "hi3!",
+        "hihihi!",
+        "hi hi hi !",
+        "Error"
+      ],
+      "answerIndex": 1,
+      "explanation": "`word * 3` repeats the string \"hi\" three times, giving `\"hihihi\"`. Then `+ \"!\"` concatenates the exclamation mark, producing `\"hihihi!\"`."
+    }
+  ],
+  "keyTakeaways": [
+    "Strings can be created with single quotes, double quotes, or triple quotes — all work the same way.",
+    "Escape sequences like `\\n` (newline) and `\\t` (tab) let you embed special characters inside a string.",
+    "Use `+` to join strings and `*` to repeat them; always convert numbers with `str()` before concatenating.",
+    "`len()` counts every character in a string, including spaces and punctuation.",
+    "Strings are immutable — you cannot change a character in place; instead, build a new string."
+  ],
+  "exercise": {
+    "prompt": "Create a variable called `full_name` by concatenating a first name and a last name with a space in between. Then print a message that reads: \"Hello, [full_name]! Your name has [N] characters.\" — where N is the length of the full name (not counting the greeting itself).",
+    "starterCode": "first = \"Ada\"\nlast = \"Lovelace\"\n\n# Combine first and last with a space\nfull_name = \n\n# Print the greeting\n",
+    "hint": "Use + to join the strings (don't forget the space!), then use len(full_name) to get the length, and str() to convert it before concatenating into the message.",
+    "solution": "first = \"Ada\"\nlast = \"Lovelace\"\n\nfull_name = first + \" \" + last\n\nprint(\"Hello, \" + full_name + \"! Your name has \" + str(len(full_name)) + \" characters.\")"
+  }
+}

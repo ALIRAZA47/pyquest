@@ -1,0 +1,162 @@
+{
+  "slug": "if-statements",
+  "title": "if / elif / else",
+  "emoji": "🚦",
+  "category": "Control Flow",
+  "difficulty": "Beginner",
+  "summary": "Learn how to make your Python programs make decisions using if, elif, and else — the building blocks of all program logic.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every useful program needs to make decisions. Should we show an error message or a success message? Is the user old enough? Did they guess the right number?\n\nIn Python, we use **if statements** to ask a yes-or-no question and run different code depending on the answer. This is one of the most important ideas in all of programming."
+    },
+    {
+      "type": "heading",
+      "text": "Your First if Statement"
+    },
+    {
+      "type": "text",
+      "md": "An `if` statement checks whether a condition is **True**. If it is, Python runs the indented block of code beneath it. If not, Python skips it entirely.\n\nThe structure always looks like this:\n\n```\nif condition:\n    do something\n```\n\nNotice the **colon** at the end of the `if` line, and the **4-space indent** on the next line. Both are required."
+    },
+    {
+      "type": "code",
+      "code": "temperature = 35\n\nif temperature > 30:\n    print(\"It's hot outside!\")\n\nprint(\"Done checking the weather.\")",
+      "output": "It's hot outside!\nDone checking the weather.",
+      "caption": "The message prints because 35 > 30 is True."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a gate",
+      "md": "Imagine a bouncer at a club. They check your ID. **If** you're old enough, you get in. The `if` statement is that gate — only the code inside the indented block runs when the condition passes."
+    },
+    {
+      "type": "heading",
+      "text": "Indentation is Everything"
+    },
+    {
+      "type": "text",
+      "md": "Python uses **indentation** (spaces at the start of a line) to know which lines belong inside an `if` block. Most Python code uses **4 spaces** per level. This is not just style — it changes how your program behaves."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Indentation errors will crash your program",
+      "md": "Forgetting to indent, or mixing tabs and spaces, causes an `IndentationError`. Always use **4 spaces** (not a tab character) for each level. Most editors handle this for you automatically."
+    },
+    {
+      "type": "code",
+      "code": "score = 45\n\nif score >= 50:\n    print(\"You passed!\")   # indented — inside the if\n    print(\"Great work.\")   # also inside the if\n\nprint(\"Thanks for playing.\")  # NOT indented — always runs",
+      "output": "Thanks for playing.",
+      "caption": "score is 45, so the indented lines are skipped. The last line always runs."
+    },
+    {
+      "type": "heading",
+      "text": "Adding else: a Fallback"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want to do one thing if a condition is true, and a *different* thing if it is false. That is exactly what `else` is for. It runs when the `if` condition is **False**."
+    },
+    {
+      "type": "code",
+      "code": "age = 16\n\nif age >= 18:\n    print(\"You can vote!\")\nelse:\n    print(\"You cannot vote yet.\")",
+      "output": "You cannot vote yet.",
+      "caption": "16 >= 18 is False, so the else block runs."
+    },
+    {
+      "type": "heading",
+      "text": "elif: Checking More Options"
+    },
+    {
+      "type": "text",
+      "md": "What if you have more than two possibilities? Use **`elif`** (short for \"else if\") to check additional conditions, one after another. Python stops at the first one that is True."
+    },
+    {
+      "type": "code",
+      "code": "grade = 75\n\nif grade >= 90:\n    print(\"A\")\nelif grade >= 80:\n    print(\"B\")\nelif grade >= 70:\n    print(\"C\")\nelse:\n    print(\"Below C\")",
+      "output": "C",
+      "caption": "Python checks each condition top to bottom and stops at the first True one."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Order matters with elif",
+      "md": "Python checks conditions **in order** and stops as soon as one matches. Put your most specific conditions first. If you put `grade >= 70` before `grade >= 90`, a score of 95 would print `\"C\"` — not what you want!"
+    },
+    {
+      "type": "heading",
+      "text": "Truthy and Falsy Values"
+    },
+    {
+      "type": "text",
+      "md": "Python does not only accept `True` or `False` in an `if` condition. Many values are treated as **truthy** (count as True) or **falsy** (count as False).\n\n- **Falsy**: `0`, `\"\"` (empty string), `[]` (empty list), `None`\n- **Truthy**: any non-zero number, any non-empty string or list\n\nThis lets you write very clean, readable checks."
+    },
+    {
+      "type": "code",
+      "code": "name = \"\"\n\nif name:\n    print(\"Hello,\", name)\nelse:\n    print(\"No name provided.\")",
+      "output": "No name provided.",
+      "caption": "An empty string is falsy, so the else branch runs."
+    },
+    {
+      "type": "heading",
+      "text": "Nested if Statements"
+    },
+    {
+      "type": "text",
+      "md": "You can put an `if` statement *inside* another `if` block. This is called **nesting**. It is useful when you need to check one thing only after a first condition passes."
+    },
+    {
+      "type": "code",
+      "code": "has_ticket = True\nis_vip = False\n\nif has_ticket:\n    print(\"Welcome!\")\n    if is_vip:\n        print(\"Enjoy the VIP lounge.\")\n    else:\n        print(\"Head to the general area.\")\nelse:\n    print(\"Sorry, no ticket, no entry.\")",
+      "output": "Welcome!\nHead to the general area.",
+      "caption": "The inner if only runs because has_ticket is True."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Don't nest too deeply",
+      "md": "More than 2-3 levels of nesting makes code hard to read. If you find yourself indenting 5 times, look for a way to simplify using `elif` or by breaking logic into separate functions."
+    },
+    {
+      "type": "heading",
+      "text": "The One-Line Conditional Expression"
+    },
+    {
+      "type": "text",
+      "md": "Python has a compact way to write a simple if/else in a single line, called a **conditional expression** (sometimes called a ternary expression). It follows this pattern:\n\n```\nvalue = thing_if_true if condition else thing_if_false\n```\n\nUse this only for simple choices — it can hurt readability if overused."
+    },
+    {
+      "type": "code",
+      "code": "points = 120\nlabel = \"Winner\" if points >= 100 else \"Keep trying\"\nprint(label)",
+      "output": "Winner",
+      "caption": "A concise way to assign a value based on a condition."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code print?\n\n```python\nx = 10\nif x > 20:\n    print(\"big\")\nelif x > 5:\n    print(\"medium\")\nelse:\n    print(\"small\")\n```",
+      "options": [
+        "big",
+        "medium",
+        "small",
+        "Nothing — it causes an error"
+      ],
+      "answerIndex": 1,
+      "explanation": "x is 10. The first condition (10 > 20) is False, so Python moves to elif. The second condition (10 > 5) is True, so it prints \"medium\" and stops — it never reaches the else."
+    }
+  ],
+  "keyTakeaways": [
+    "Use `if condition:` (with a colon) to run code only when a condition is True.",
+    "Always indent the code block inside an `if`, `elif`, or `else` by 4 spaces — indentation is how Python knows what belongs inside.",
+    "`elif` lets you check multiple conditions in order; Python stops at the first True one.",
+    "`else` is the fallback that runs when no previous condition matched.",
+    "For a simple two-way choice in one line, use the conditional expression: `a if condition else b`."
+  ],
+  "exercise": {
+    "prompt": "Write a program that asks for a number (you can just assign it directly, no need for input) and prints: \"Positive\" if it is greater than 0, \"Negative\" if it is less than 0, or \"Zero\" if it equals 0. Then, on the same run, also print \"Even\" or \"Odd\" for non-zero numbers (you can skip this check for zero).",
+    "starterCode": "number = 7  # try changing this value\n\n# Your if / elif / else logic here\n",
+    "hint": "Use the modulo operator `%` to check if a number is even: `number % 2 == 0` is True when it divides evenly by 2. You can nest a second if/else inside the first branch.",
+    "solution": "number = 7\n\nif number > 0:\n    print(\"Positive\")\n    if number % 2 == 0:\n        print(\"Even\")\n    else:\n        print(\"Odd\")\nelif number < 0:\n    print(\"Negative\")\n    if number % 2 == 0:\n        print(\"Even\")\n    else:\n        print(\"Odd\")\nelse:\n    print(\"Zero\")"
+  }
+}

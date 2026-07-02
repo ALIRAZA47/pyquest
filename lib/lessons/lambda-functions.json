@@ -1,0 +1,154 @@
+{
+  "slug": "lambda-functions",
+  "title": "Lambda Functions",
+  "emoji": "🅻",
+  "category": "Functions",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to write compact, one-line anonymous functions with lambda, and discover exactly when they make your code cleaner — and when they don't.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know how to define a function with `def`. But sometimes you need a tiny, throwaway function — one so small that giving it a name and a whole block of code feels like overkill. That's where **lambda functions** come in.\n\nA lambda is a way to write a simple function in a single line, right where you need it. Think of it as a sticky note: perfect for a quick job, not meant to hang on the wall forever."
+    },
+    {
+      "type": "heading",
+      "text": "The Basic Syntax"
+    },
+    {
+      "type": "text",
+      "md": "The syntax looks a little different from `def`, but it follows a simple pattern:\n\n`lambda parameters: expression`\n\n- **`lambda`** — the keyword that starts it\n- **parameters** — the inputs (just like a regular function's arguments)\n- **expression** — a single calculation or value to return (no `return` keyword needed)"
+    },
+    {
+      "type": "code",
+      "code": "# A regular function\ndef double(x):\n    return x * 2\n\n# The exact same thing as a lambda\nlambda x: x * 2",
+      "caption": "These two do identical things — the lambda is just more compact."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Lambda as a sticky note",
+      "md": "Imagine you need to leave a quick note for someone: \"multiply by 2\". You wouldn't write a formal memo — you'd scribble it on a sticky note. A lambda is that sticky note. It's a tiny, in-place function for a task you need right now, not something you plan to reuse across your whole program."
+    },
+    {
+      "type": "heading",
+      "text": "Where Lambdas Actually Shine: sorted()"
+    },
+    {
+      "type": "text",
+      "md": "The most common place you'll see lambdas in real Python code is as the `key=` argument to `sorted()`, `min()`, and `max()`. These functions let you say *how* to compare items — and a lambda is a perfect fit because the logic is usually just one expression."
+    },
+    {
+      "type": "code",
+      "code": "names = [\"Alice\", \"Bob\", \"Charlie\", \"Di\"]\n\n# Sort by the LENGTH of each name, shortest first\nsorted_names = sorted(names, key=lambda name: len(name))\nprint(sorted_names)",
+      "output": "['Bob', 'Di', 'Alice', 'Charlie']",
+      "caption": "The lambda receives each name and returns its length — sorted() uses that to order the list."
+    },
+    {
+      "type": "code",
+      "code": "products = [\n    {\"name\": \"apple\",  \"price\": 0.99},\n    {\"name\": \"banana\", \"price\": 0.49},\n    {\"name\": \"cherry\", \"price\": 3.99},\n]\n\n# Find the cheapest product\ncheapest = min(products, key=lambda p: p[\"price\"])\nprint(cheapest[\"name\"])",
+      "output": "banana",
+      "caption": "lambda p: p[\"price\"] tells min() what number to compare — without needing a named helper function."
+    },
+    {
+      "type": "heading",
+      "text": "Lambdas with map() and filter()"
+    },
+    {
+      "type": "text",
+      "md": "`map()` applies a function to every item in a list. `filter()` keeps only the items for which a function returns `True`. Both accept a function as their first argument — lambdas fit naturally here."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, 2, 3, 4, 5]\n\n# Square every number\nsquared = list(map(lambda n: n ** 2, numbers))\nprint(squared)\n\n# Keep only even numbers\nevens = list(filter(lambda n: n % 2 == 0, numbers))\nprint(evens)",
+      "output": "[1, 4, 9, 16, 25]\n[2, 4]",
+      "caption": "map and filter each receive the lambda and apply it across the list."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "List comprehensions are often cleaner",
+      "md": "Many experienced Python developers prefer **list comprehensions** over `map`/`filter` with lambdas because they read more like plain English:\n\n```python\nsquared = [n ** 2 for n in numbers]\nevens   = [n for n in numbers if n % 2 == 0]\n```\n\nBoth approaches work — pick whichever feels more readable to you and your team."
+    },
+    {
+      "type": "heading",
+      "text": "Lambdas with Multiple Parameters"
+    },
+    {
+      "type": "text",
+      "md": "A lambda can accept more than one parameter — just separate them with commas, the same way you would in a `def`."
+    },
+    {
+      "type": "code",
+      "code": "add = lambda x, y: x + y\nprint(add(3, 7))",
+      "output": "10",
+      "caption": "Two parameters, one expression. Clean and simple."
+    },
+    {
+      "type": "heading",
+      "text": "The Key Limit: One Expression Only"
+    },
+    {
+      "type": "text",
+      "md": "A lambda can only contain a **single expression** — it cannot contain statements like `if/else` blocks, `for` loops, `print()` calls, or `return`. The moment your logic needs more than one step, reach for a regular `def` instead."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "You can't put statements inside a lambda",
+      "md": "This will cause a **SyntaxError**:\n\n```python\n# WRONG — statements are not allowed\nlambda x:\n    if x > 0:\n        return x\n    return -x\n```\n\nInstead, write a proper function:\n\n```python\ndef absolute_value(x):\n    if x > 0:\n        return x\n    return -x\n```\n\nIf the logic doesn't fit on one line comfortably, it doesn't belong in a lambda."
+    },
+    {
+      "type": "heading",
+      "text": "Assigning a Lambda to a Name — Usually a Smell"
+    },
+    {
+      "type": "text",
+      "md": "You *can* assign a lambda to a variable, like `double = lambda x: x * 2`. But Python's own style guide (PEP 8) warns against this. If you're giving the function a name anyway, just use `def` — it's more readable, easier to debug, and plays nicer with tools."
+    },
+    {
+      "type": "code",
+      "code": "# Technically works, but discouraged\ndouble = lambda x: x * 2\n\n# Preferred — clearer and just as short\ndef double(x):\n    return x * 2",
+      "caption": "When you need a named function, def is the right tool."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Named lambdas are harder to debug",
+      "md": "When a named lambda raises an error, the traceback shows `<lambda>` instead of the function's name — which makes debugging much harder. A `def` function always shows its actual name in tracebacks, making problems easier to find."
+    },
+    {
+      "type": "heading",
+      "text": "When to Use Lambda vs. def"
+    },
+    {
+      "type": "text",
+      "md": "Here's a simple rule of thumb:\n\n- **Use `lambda`** when you need a short, one-expression function *inline* — especially as a `key=` argument or with `map`/`filter`.\n- **Use `def`** when the logic has multiple steps, when you'll reuse the function, or when giving it a name makes your intent clearer.\n\nReadability always wins."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following is a valid use of a lambda function?",
+      "options": [
+        "lambda x: x = x + 1",
+        "sorted(words, key=lambda w: len(w))",
+        "lambda x: for i in range(x): print(i)",
+        "lambda x, y: return x + y"
+      ],
+      "answerIndex": 1,
+      "explanation": "Option 2 is correct. Passing a lambda as the key= argument to sorted() is one of the most idiomatic uses of lambdas in Python. Options 1, 3, and 4 are all invalid: you can't use assignment (=), for loops, or the return keyword inside a lambda — those are statements, and lambdas only accept a single expression."
+    }
+  ],
+  "keyTakeaways": [
+    "A lambda is a one-line anonymous function: `lambda params: expression`.",
+    "They shine as `key=` arguments in `sorted()`, `min()`, and `max()`.",
+    "Lambdas only support a single expression — no loops, assignments, or multi-line logic.",
+    "Assigning a lambda to a name is usually a sign you should use `def` instead.",
+    "When in doubt, choose `def` — it's easier to read, test, and debug."
+  ],
+  "exercise": {
+    "prompt": "You have a list of student records, each a dictionary with a `\"name\"` and a `\"score\"`. Use `sorted()` with a `lambda` to sort the students by score from **highest to lowest**. Then use `filter()` with a `lambda` to create a list of only the students who passed (score >= 60). Print both results.",
+    "starterCode": "students = [\n    {\"name\": \"Alice\",   \"score\": 88},\n    {\"name\": \"Bob\",     \"score\": 54},\n    {\"name\": \"Charlie\", \"score\": 72},\n    {\"name\": \"Diana\",   \"score\": 60},\n    {\"name\": \"Ethan\",   \"score\": 41},\n]\n\n# Sort by score, highest first\nranked = sorted(students, key=lambda s: _____, reverse=_____)\nprint(\"Ranked:\", ranked)\n\n# Keep only students with score >= 60\npassing = list(filter(lambda s: _____, students))\nprint(\"Passing:\", passing)",
+    "hint": "For sorted(): the key should extract the score from each student dict, and reverse=True flips the order to descending. For filter(): the lambda should return True when the student's score is 60 or higher.",
+    "solution": "students = [\n    {\"name\": \"Alice\",   \"score\": 88},\n    {\"name\": \"Bob\",     \"score\": 54},\n    {\"name\": \"Charlie\", \"score\": 72},\n    {\"name\": \"Diana\",   \"score\": 60},\n    {\"name\": \"Ethan\",   \"score\": 41},\n]\n\n# Sort by score, highest first\nranked = sorted(students, key=lambda s: s[\"score\"], reverse=True)\nprint(\"Ranked:\", ranked)\n\n# Keep only students with score >= 60\npassing = list(filter(lambda s: s[\"score\"] >= 60, students))\nprint(\"Passing:\", passing)"
+  }
+}

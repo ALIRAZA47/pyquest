@@ -1,0 +1,100 @@
+{
+  "slug": "iterators",
+  "title": "Iterators",
+  "emoji": "🔄",
+  "category": "Advanced Python",
+  "difficulty": "Advanced",
+  "summary": "Discover what actually happens inside a for loop, and learn to build your own iterable objects using __iter__ and __next__.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have used `for` loops to walk through lists, strings, and ranges. But have you ever wondered **what Python is actually doing under the hood?** The answer involves two concepts: **iterables** and **iterators**.\n\n- An **iterable** is anything you *can* loop over — a list, a string, a range.\n- An **iterator** is the object that *does* the looping — it remembers your position and hands you the next item on demand.\n\nThink of a book (iterable) and a bookmark (iterator). The book holds all the pages. The bookmark tracks which page you are on and knows which comes next."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Playlist vs Play Button",
+      "md": "A music **playlist** is an iterable — it contains songs but does not play anything by itself. Hitting **play** creates an iterator that starts at track 1, plays it, then moves to track 2. You can start the playlist from the top as many times as you like, each time getting a fresh iterator."
+    },
+    {
+      "type": "heading",
+      "text": "iter() and next() — The Core Tools"
+    },
+    {
+      "type": "text",
+      "md": "Python exposes two built-in functions for working with iterators directly.\n\n- `iter(obj)` — asks an iterable for its iterator.\n- `next(iterator)` — asks the iterator for the next value.\n\nWhen no more items remain, `next()` raises `StopIteration` — Python's signal that the sequence is finished. You can also pass a **default value** as a second argument so `next()` returns that instead of raising: `next(it, \"done\")`."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [10, 20, 30]\nit = iter(numbers)          # get an iterator from the list\n\nprint(next(it))             # 10\nprint(next(it))             # 20\nprint(next(it))             # 30\nprint(next(it, \"no more\"))  # safe default — no crash",
+      "output": "10\n20\n30\nno more",
+      "caption": "Using iter() and next() manually on a list"
+    },
+    {
+      "type": "heading",
+      "text": "What a for Loop Really Does"
+    },
+    {
+      "type": "code",
+      "code": "# Every for loop secretly does this:\nmy_list = [1, 2, 3]\nit = iter(my_list)   # step 1: get an iterator\n\nwhile True:\n    try:\n        x = next(it)  # step 2: fetch next item\n        print(x)\n    except StopIteration:\n        break         # step 3: stop silently when done",
+      "output": "1\n2\n3",
+      "caption": "A for loop is iter() + repeated next() + catching StopIteration"
+    },
+    {
+      "type": "heading",
+      "text": "Building Your Own Iterator Class"
+    },
+    {
+      "type": "text",
+      "md": "You can make any class work with `for` loops by implementing two special methods:\n\n- `__iter__(self)` — returns the iterator object (usually `self`).\n- `__next__(self)` — returns the next value, or raises `StopIteration` when done.\n\nPython calls these automatically. You never invoke `__iter__` or `__next__` by name — Python's `iter()` and `next()` do it for you."
+    },
+    {
+      "type": "code",
+      "code": "class Countdown:\n    def __init__(self, start):\n        self.current = start\n\n    def __iter__(self):\n        return self  # this object is its own iterator\n\n    def __next__(self):\n        if self.current <= 0:\n            raise StopIteration\n        value = self.current\n        self.current -= 1\n        return value\n\nfor number in Countdown(5):\n    print(number)",
+      "output": "5\n4\n3\n2\n1",
+      "caption": "A custom iterator that counts down — works with for, list(), sum(), and more"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Iterators are one-shot by default",
+      "md": "An iterator tracks its own position and is **exhausted** after one full loop. Looping over it again produces nothing:\n\n```python\nc = Countdown(3)\nfor n in c:\n    print(n)  # prints 3, 2, 1\n\nfor n in c:\n    print(n)  # prints NOTHING — already exhausted!\n```\n\nTo iterate again, create a **new** instance. Lists sidestep this because `iter(my_list)` always produces a brand-new iterator."
+    },
+    {
+      "type": "text",
+      "md": "**Generators — Iterators the Easy Way**\n\nWriting `__iter__` and `__next__` by hand is powerful but verbose. Python's shortcut is a **generator function** — any function that uses the `yield` keyword. Python automatically turns it into a full iterator.\n\nWhen Python hits `yield`, the function **freezes** in place, saving all local variables. The next time `next()` is called, the function resumes right after the `yield`. Generators also compute values **one at a time**, so a generator over a million items uses almost no memory — unlike a list that stores them all at once."
+    },
+    {
+      "type": "code",
+      "code": "def countdown(start):\n    while start > 0:\n        yield start   # pause, hand back the value\n        start -= 1\n\nfor number in countdown(5):\n    print(number)",
+      "output": "5\n4\n3\n2\n1",
+      "caption": "The same Countdown logic as a generator — much shorter, memory-friendly"
+    },
+    {
+      "type": "quiz",
+      "question": "What does Python do when a for loop's iterator raises StopIteration?",
+      "options": [
+        "It prints an error message and crashes the program.",
+        "It silently stops the loop and continues with the next line of code.",
+        "It resets the iterator back to the beginning.",
+        "It calls iter() again to create a fresh iterator."
+      ],
+      "answerIndex": 1,
+      "explanation": "StopIteration is Python's internal signal that there are no more items. The for loop catches it quietly and exits — no crash, no error message. Execution then continues with whatever code comes after the loop."
+    }
+  ],
+  "keyTakeaways": [
+    "An **iterable** is anything you can loop over; an **iterator** is the object that tracks position and delivers items one at a time.",
+    "`iter(obj)` gets an iterator from an iterable; `next(it)` advances it; `StopIteration` signals the end.",
+    "Every `for` loop secretly calls `iter()` once, then `next()` repeatedly until `StopIteration` is raised.",
+    "Implement `__iter__` and `__next__` on a class to make it work with `for` loops and every other Python iteration tool.",
+    "Generator functions using `yield` are the easiest way to create iterators — and they compute values lazily, saving memory."
+  ],
+  "exercise": {
+    "prompt": "Write a generator function called `squares(n)` that yields the square of every integer from 1 up to and including `n`. Then use a `for` loop to print each result. For example, `squares(5)` should produce 1, 4, 9, 16, 25.",
+    "starterCode": "def squares(n):\n    # your code here\n    pass\n\nfor s in squares(5):\n    print(s)",
+    "hint": "Loop from 1 to n inside the generator. For each number `i`, yield `i * i`.",
+    "solution": "def squares(n):\n    for i in range(1, n + 1):\n        yield i * i\n\nfor s in squares(5):\n    print(s)"
+  }
+}

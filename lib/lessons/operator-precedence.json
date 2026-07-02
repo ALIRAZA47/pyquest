@@ -1,0 +1,155 @@
+{
+  "slug": "operator-precedence",
+  "title": "Operator Precedence",
+  "emoji": "🥇",
+  "category": "Operators",
+  "difficulty": "Beginner",
+  "summary": "Learn the order Python uses to evaluate math and logic expressions, and how parentheses keep your code clear and correct.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you write `2 + 3 * 4` in Python. What do you get — `20` or `14`?\n\nIf you guessed `20` (adding first, then multiplying), you're not alone — but Python says `14`. That's because Python has a strict set of rules called **operator precedence** that decides which operation runs first. Understanding these rules means your code will always do what you *intend* it to do."
+    },
+    {
+      "type": "heading",
+      "text": "A Surprising Example"
+    },
+    {
+      "type": "code",
+      "code": "result = 2 + 3 * 4\nprint(result)",
+      "output": "14",
+      "caption": "Multiplication happens before addition, just like in school math."
+    },
+    {
+      "type": "text",
+      "md": "Python evaluated `3 * 4` first (getting `12`), then added `2`, giving `14`. This is not a bug — it matches the same rules you learned in school under the name **PEMDAS** (or BODMAS in some countries)."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a queue at a coffee shop",
+      "md": "Some customers get served before others based on their ticket priority — gold ticket first, then silver, then regular. Python's operators have their own \"ticket priority\". The one with the highest priority gets evaluated first."
+    },
+    {
+      "type": "heading",
+      "text": "The Precedence Ladder (Highest to Lowest)"
+    },
+    {
+      "type": "text",
+      "md": "Here is the order Python uses, from **highest priority** (evaluated first) to **lowest priority** (evaluated last):\n\n- `**` — exponentiation (power)\n- Unary `-` and `+` — like the minus in `-5`\n- `*`, `/`, `//`, `%` — multiplication, division, floor division, modulo\n- `+`, `-` — addition and subtraction\n- `==`, `!=`, `<`, `>`, `<=`, `>=` — comparisons\n- `not` — logical NOT\n- `and` — logical AND\n- `or` — logical OR\n\nWhen two operators share the same priority level, Python works **left to right** (except for `**`, which goes right to left)."
+    },
+    {
+      "type": "heading",
+      "text": "Exponentiation Comes First"
+    },
+    {
+      "type": "code",
+      "code": "print(2 + 3 ** 2)\nprint(2 * 3 ** 2)",
+      "output": "11\n18",
+      "caption": "** has the highest priority, so 3**2 (=9) is calculated before anything else."
+    },
+    {
+      "type": "heading",
+      "text": "Multiplication Before Addition"
+    },
+    {
+      "type": "code",
+      "code": "print(10 - 2 * 3)\nprint(10 / 2 + 3)",
+      "output": "4\n8.0",
+      "caption": "* and / always win over + and -."
+    },
+    {
+      "type": "heading",
+      "text": "Same-Level Operators Go Left to Right"
+    },
+    {
+      "type": "code",
+      "code": "print(20 - 5 - 3)\nprint(20 / 4 / 2)",
+      "output": "12\n2.5",
+      "caption": "When priorities are equal, Python evaluates left to right: (20-5)-3 and (20/4)/2."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Exponentiation is right-to-left — watch out!",
+      "md": "`2 ** 3 ** 2` is evaluated as `2 ** (3 ** 2)` = `2 ** 9` = `512`, NOT `(2 ** 3) ** 2` = `64`. This is the one big exception to left-to-right evaluation."
+    },
+    {
+      "type": "code",
+      "code": "print(2 ** 3 ** 2)\nprint((2 ** 3) ** 2)",
+      "output": "512\n64",
+      "caption": "Right-to-left for **: the right-hand ** runs first."
+    },
+    {
+      "type": "heading",
+      "text": "Comparisons Come After Math"
+    },
+    {
+      "type": "code",
+      "code": "print(1 + 2 > 4 - 2)\nprint(3 * 2 == 10 - 4)",
+      "output": "True\nTrue",
+      "caption": "All the arithmetic finishes first, then the comparison is made."
+    },
+    {
+      "type": "heading",
+      "text": "Logical Operators Are Last"
+    },
+    {
+      "type": "code",
+      "code": "x = 5\nprint(x > 3 and x < 10)\nprint(x < 3 or x > 4)",
+      "output": "True\nTrue",
+      "caption": "Comparisons run before 'and'/'or', so Python checks (x > 3) and (x < 10) as two separate True/False values, then combines them."
+    },
+    {
+      "type": "heading",
+      "text": "Parentheses Override Everything"
+    },
+    {
+      "type": "text",
+      "md": "You can always use **parentheses `()`** to control the order yourself. Anything inside parentheses is evaluated first — just like in regular math. This is the clearest, safest tool you have."
+    },
+    {
+      "type": "code",
+      "code": "print(2 + 3 * 4)\nprint((2 + 3) * 4)",
+      "output": "14\n20",
+      "caption": "Parentheses change the result entirely."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When in doubt, add parentheses",
+      "md": "Even when parentheses are not strictly needed, adding them makes your intent obvious. `(2 + 3) * 4` is instantly readable. Relying on hidden precedence rules makes code harder to understand — for you and for anyone reading it later."
+    },
+    {
+      "type": "heading",
+      "text": "A Common Beginner Trap"
+    },
+    {
+      "type": "code",
+      "code": "price = 100\ndiscount = 10\ntax_rate = 0.05\n\n# Wrong: tax is calculated only on discount, not on (price - discount)\ntotal = price - discount * 1 + price - discount * tax_rate\nprint(total)\n\n# Right: use parentheses to group what belongs together\nnet = price - discount\ntotal = net + net * tax_rate\nprint(total)",
+      "output": "189.5\n94.5",
+      "caption": "When mixing operators in real calculations, parentheses prevent expensive mistakes."
+    },
+    {
+      "type": "quiz",
+      "question": "What does `3 + 4 * 2 ** 2` evaluate to in Python?",
+      "options": ["196", "28", "19", "112"],
+      "answerIndex": 2,
+      "explanation": "Exponentiation runs first: 2**2 = 4. Then multiplication: 4 * 4 = 16. Then addition: 3 + 16 = 19. Following the precedence ladder gives you 19."
+    }
+  ],
+  "keyTakeaways": [
+    "Python evaluates operators in a specific order — `**` first, then `* / // %`, then `+ -`, then comparisons, then `not`, `and`, `or`.",
+    "When operators share the same priority, Python works left to right (except `**`, which goes right to left).",
+    "Parentheses always take the highest priority and let you control the order explicitly.",
+    "A common surprise: `2 + 3 * 4` is `14`, not `20` — multiplication wins over addition.",
+    "When in doubt, add parentheses — they make your code clearer and safer."
+  ],
+  "exercise": {
+    "prompt": "Fix the expression below so it correctly calculates the average of three test scores: 80, 90, and 70. Right now it gives the wrong answer — figure out why and use parentheses to fix it.",
+    "starterCode": "score1 = 80\nscore2 = 90\nscore3 = 70\n\n# This is wrong — why?\naverage = score1 + score2 + score3 / 3\nprint(average)",
+    "hint": "Division has higher precedence than addition, so only score3 is being divided by 3 right now. Wrap the addition in parentheses first.",
+    "solution": "score1 = 80\nscore2 = 90\nscore3 = 70\n\n# Parentheses ensure all three scores are added before dividing\naverage = (score1 + score2 + score3) / 3\nprint(average)  # 80.0"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "slug": "decorators",
+  "title": "Decorators",
+  "emoji": "🎁",
+  "category": "Advanced Python",
+  "difficulty": "Advanced",
+  "summary": "Learn how decorators let you wrap any function in extra behavior — like logging or timing — without touching the original code.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you run a small cafe. Every barista has their own way of making coffee, but you want to time every drink and log it to a notebook — without retrain­ing anyone or rewriting their recipes.\n\nThat is exactly what a **decorator** does in Python. It wraps a function — any function — and quietly adds behavior around it. The original function never changes. The decorator just slips a new layer around the outside, like gift wrap."
+    },
+    {
+      "type": "heading",
+      "text": "Functions Are First-Class Objects"
+    },
+    {
+      "type": "text",
+      "md": "Before decorators make sense, you need to know one surprising thing: in Python, **functions are values**, just like numbers or strings. You can store a function in a variable, pass it to another function, or return it from a function. This is called being a **first-class object**."
+    },
+    {
+      "type": "code",
+      "code": "def say_hello():\n    print(\"Hello!\")\n\n# Store a function in a variable\ngreeter = say_hello\n\n# Call it through the variable\ngreeter()",
+      "output": "Hello!",
+      "caption": "greeter and say_hello point to the same function. No parentheses = no call."
+    },
+    {
+      "type": "code",
+      "code": "def run_twice(func):\n    func()\n    func()\n\ndef clap():\n    print(\"*clap*\")\n\nrun_twice(clap)",
+      "output": "*clap*\n*clap*",
+      "caption": "Passing a function as an argument to another function."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Functions as gift boxes",
+      "md": "Think of a function as a gift box with instructions inside. You can hand that box to someone (`pass it`), put it on a shelf (`store it in a variable`), or even put it inside another box (`return it from a function`). The instructions do not run until someone opens the box — i.e., calls it with `()`."
+    },
+    {
+      "type": "heading",
+      "text": "Returning a Function From a Function"
+    },
+    {
+      "type": "text",
+      "md": "Here is the other key idea: a function can **create and return another function**. The returned function is called a **closure** — it remembers the environment in which it was created."
+    },
+    {
+      "type": "code",
+      "code": "def make_multiplier(n):\n    def multiply(x):\n        return x * n   # 'n' is remembered from the outer function\n    return multiply\n\ndouble = make_multiplier(2)\ntriple = make_multiplier(3)\n\nprint(double(5))\nprint(triple(5))",
+      "output": "10\n15",
+      "caption": "make_multiplier returns a new function. Each returned function remembers its own 'n'."
+    },
+    {
+      "type": "heading",
+      "text": "Building Your First Decorator"
+    },
+    {
+      "type": "text",
+      "md": "A decorator is a function that:\n\n1. **Takes a function** as its argument\n2. **Defines a wrapper** function inside itself that adds behavior\n3. **Returns the wrapper**\n\nThe wrapper calls the original function, but can do things before and after."
+    },
+    {
+      "type": "code",
+      "code": "def shout_decorator(func):\n    def wrapper():\n        print(\">>> Getting ready...\")\n        func()               # call the original\n        print(\"<<< Done!\")\n    return wrapper\n\ndef greet():\n    print(\"Hi there!\")\n\n# Wrap greet manually\ngreet = shout_decorator(greet)\n\ngreet()",
+      "output": ">>> Getting ready...\nHi there!\n<<< Done!",
+      "caption": "shout_decorator wraps greet and adds lines before and after."
+    },
+    {
+      "type": "heading",
+      "text": "The @ Syntax — Decorator Sugar"
+    },
+    {
+      "type": "text",
+      "md": "Writing `func = decorator(func)` every time is repetitive. Python gives you the `@` shorthand — place it right above the function definition and Python does the wrapping automatically. These two snippets do **exactly the same thing**."
+    },
+    {
+      "type": "code",
+      "code": "def shout_decorator(func):\n    def wrapper():\n        print(\">>> Getting ready...\")\n        func()\n        print(\"<<< Done!\")\n    return wrapper\n\n@shout_decorator          # same as: greet = shout_decorator(greet)\ndef greet():\n    print(\"Hi there!\")\n\ngreet()",
+      "output": ">>> Getting ready...\nHi there!\n<<< Done!",
+      "caption": "@shout_decorator is syntactic sugar — just cleaner to read and write."
+    },
+    {
+      "type": "heading",
+      "text": "Handling Any Function with *args and **kwargs"
+    },
+    {
+      "type": "text",
+      "md": "The `shout_decorator` above only works on functions with **no arguments**. What about functions that take parameters?\n\nThe trick is to make your wrapper accept `*args` and `**kwargs` and forward them straight through. This way the decorator works on **any function**, no matter its signature."
+    },
+    {
+      "type": "code",
+      "code": "import time\n\ndef timer(func):\n    def wrapper(*args, **kwargs):       # accept anything\n        start = time.time()\n        result = func(*args, **kwargs)  # forward everything\n        end = time.time()\n        elapsed = end - start\n        print(f\"{func.__name__} took {elapsed:.4f} seconds\")\n        return result                   # don't swallow the return value!\n    return wrapper\n\n@timer\ndef add(a, b):\n    return a + b\n\ntotal = add(10, 20)\nprint(\"Result:\", total)",
+      "output": "add took 0.0000 seconds\nResult: 30",
+      "caption": "A universal timing decorator. *args and **kwargs let it wrap any function."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always return the result!",
+      "md": "If your wrapper calls `func(*args, **kwargs)` but forgets to `return` the result, the decorated function will silently return `None`. Always capture the return value in a variable and `return` it from the wrapper."
+    },
+    {
+      "type": "heading",
+      "text": "Preserving Metadata with functools.wraps"
+    },
+    {
+      "type": "text",
+      "md": "When you wrap a function, Python can get confused about the function's name and documentation. The wrapper replaces the original, so `func.__name__` and `func.__doc__` point to the wrapper instead of the real function. The fix is one line: `@functools.wraps(func)` applied to your wrapper."
+    },
+    {
+      "type": "code",
+      "code": "import functools\n\ndef timer(func):\n    @functools.wraps(func)          # copies name, docstring, and more\n    def wrapper(*args, **kwargs):\n        import time\n        start = time.time()\n        result = func(*args, **kwargs)\n        elapsed = time.time() - start\n        print(f\"{func.__name__} took {elapsed:.4f}s\")\n        return result\n    return wrapper\n\n@timer\ndef multiply(a, b):\n    \"\"\"Multiply two numbers.\"\"\"\n    return a * b\n\nprint(multiply.__name__)  # would be 'wrapper' without functools.wraps\nprint(multiply.__doc__)",
+      "output": "multiply\nMultiply two numbers.",
+      "caption": "@functools.wraps keeps the original function's identity intact."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always add @functools.wraps",
+      "md": "Make it a habit: every time you write a decorator, add `@functools.wraps(func)` to the inner wrapper. It costs nothing and saves you from mysterious debugging sessions where a function claims to be named `wrapper`."
+    },
+    {
+      "type": "heading",
+      "text": "A Practical Logging Decorator"
+    },
+    {
+      "type": "text",
+      "md": "Let's put everything together in a decorator you might actually use — one that logs what function was called, with what arguments, and what it returned."
+    },
+    {
+      "type": "code",
+      "code": "import functools\n\ndef log_calls(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        args_repr = [repr(a) for a in args]\n        kwargs_repr = [f\"{k}={v!r}\" for k, v in kwargs.items()]\n        signature = \", \".join(args_repr + kwargs_repr)\n        print(f\"Calling {func.__name__}({signature})\")\n        result = func(*args, **kwargs)\n        print(f\"{func.__name__} returned {result!r}\")\n        return result\n    return wrapper\n\n@log_calls\ndef power(base, exponent=2):\n    return base ** exponent\n\npower(3)\npower(2, exponent=10)",
+      "output": "Calling power(3)\npower returned 9\nCalling power(2, exponent=10)\npower returned 1024",
+      "caption": "A decorator that automatically logs every call without touching the original function."
+    },
+    {
+      "type": "heading",
+      "text": "Where Decorators Appear in the Wild"
+    },
+    {
+      "type": "text",
+      "md": "You will meet decorators everywhere once you start reading Python code:\n\n- **`@staticmethod` / `@classmethod`** — Python built-ins that change how a method works in a class.\n- **`@property`** — turns a method into an attribute-style access.\n- **Flask / Django routes** — `@app.route(\"/home\")` registers a URL handler with zero boilerplate.\n- **`@pytest.fixture`** — marks a function as test setup in the pytest framework.\n- **Caching** — `@functools.lru_cache` caches expensive results automatically.\n\nEach of these is just a decorator following the same pattern you just learned."
+    },
+    {
+      "type": "code",
+      "code": "import functools\n\n@functools.lru_cache(maxsize=128)\ndef fibonacci(n):\n    if n < 2:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(fibonacci(35))",
+      "output": "9227465",
+      "caption": "@functools.lru_cache is a decorator from the standard library that caches return values."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the line `@my_decorator` above a function definition actually do?",
+      "options": [
+        "It imports the decorator from another module.",
+        "It is equivalent to writing `func = my_decorator(func)` right after the function definition.",
+        "It makes the function run automatically when the file loads.",
+        "It prevents the function from being called more than once."
+      ],
+      "answerIndex": 1,
+      "explanation": "The @ syntax is pure syntactic sugar. Python sees `@my_decorator` followed by `def func():` and automatically rewrites it as `func = my_decorator(func)`. The decorator receives the original function, does its wrapping, and the name `func` is rebound to whatever the decorator returns."
+    }
+  ],
+  "keyTakeaways": [
+    "In Python, functions are **first-class objects** — they can be stored in variables, passed to functions, and returned from functions.",
+    "A decorator is a function that takes a function and returns a **new function** with added behavior wrapped around the original.",
+    "The `@decorator` syntax is just shorthand for `func = decorator(func)` — they are identical.",
+    "Use `*args` and `**kwargs` in your wrapper so your decorator works on **any function**, regardless of its parameters.",
+    "Always add `@functools.wraps(func)` to your inner wrapper to preserve the original function's name, docstring, and other metadata."
+  ],
+  "exercise": {
+    "prompt": "Write a decorator called `require_positive` that checks every argument passed to a function. If any argument is zero or negative, it should print an error message and return `None` instead of calling the function. If all arguments are positive, call the function normally and return its result. Test it on a `divide(a, b)` function.",
+    "starterCode": "import functools\n\ndef require_positive(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        # Check each positional arg\n        # If any is <= 0, print an error and return None\n        # Otherwise, call func and return its result\n        pass\n    return wrapper\n\n@require_positive\ndef divide(a, b):\n    return a / b\n\n# Should work:\nprint(divide(10, 2))\n\n# Should print an error and return None:\nprint(divide(10, -1))\nprint(divide(0, 5))",
+    "hint": "Loop over `args` with a `for` loop. If you find a value `<= 0`, print your message and `return None` immediately. If the loop finishes without problems, call `func(*args, **kwargs)` and return its result.",
+    "solution": "import functools\n\ndef require_positive(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        for arg in args:\n            if arg <= 0:\n                print(f\"Error: all arguments must be positive, got {arg}\")\n                return None\n        return func(*args, **kwargs)\n    return wrapper\n\n@require_positive\ndef divide(a, b):\n    return a / b\n\nprint(divide(10, 2))   # 5.0\nprint(divide(10, -1))  # Error: all arguments must be positive, got -1 / None\nprint(divide(0, 5))    # Error: all arguments must be positive, got 0 / None"
+  }
+}

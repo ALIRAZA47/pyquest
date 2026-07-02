@@ -1,0 +1,162 @@
+{
+  "slug": "string-slicing",
+  "title": "Indexing & Slicing",
+  "emoji": "✂️",
+  "category": "Working with Strings",
+  "difficulty": "Beginner",
+  "summary": "Learn how to grab any character or chunk from a string using Python's powerful indexing and slicing syntax.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine a string as a row of numbered seats in a cinema. Every character has its own seat number — a **position** — and you can reach into any seat to grab what's sitting there. This is called **indexing**. You can also say \"give me seats 2 through 5\" to grab a whole section at once. That's called **slicing**. Both skills are incredibly useful any time you work with text."
+    },
+    {
+      "type": "heading",
+      "text": "Positions Start at Zero"
+    },
+    {
+      "type": "text",
+      "md": "Python numbers positions starting from **0**, not 1. So the very first character is at position 0, the second at position 1, and so on. This surprises almost every beginner — but you'll get used to it quickly."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[0])  # first character\nprint(word[1])  # second character\nprint(word[5])  # sixth (last) character",
+      "output": "P\ny\nn",
+      "caption": "Square brackets with a number pull out one character."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Elevator Analogy",
+      "md": "In many countries, the ground floor of a building is called **floor 0**, not floor 1. Python counts characters the same way — the ground floor is 0. Once that clicks, everything else follows naturally."
+    },
+    {
+      "type": "heading",
+      "text": "Negative Indexes Count from the End"
+    },
+    {
+      "type": "text",
+      "md": "Python also lets you count **backwards** from the end using negative numbers. `-1` is always the last character, `-2` is second-to-last, and so on. This is handy when you don't know how long a string is."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[-1])  # last character\nprint(word[-2])  # second-to-last\nprint(word[-6])  # same as word[0]",
+      "output": "n\no\nP",
+      "caption": "Negative indexes let you count from the right."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Index Out of Range",
+      "md": "If you use an index that doesn't exist — like `word[99]` on a 6-letter string — Python raises an **IndexError** and your program crashes. Always make sure your index is within bounds!\n\n```python\nword = \"Python\"\nprint(word[99])  # IndexError: string index out of range\n```"
+    },
+    {
+      "type": "heading",
+      "text": "Slicing: Grabbing a Range"
+    },
+    {
+      "type": "text",
+      "md": "Instead of one seat, a **slice** grabs a whole range of characters. The syntax is `s[start:stop]`. Python returns the characters from position `start` up to — but **not including** — position `stop`. The `stop` being exclusive is the trickiest part, so read that again slowly."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[0:3])  # positions 0, 1, 2 (not 3)\nprint(word[2:5])  # positions 2, 3, 4",
+      "output": "Pyt\ntho",
+      "caption": "s[start:stop] — stop is exclusive (not included)."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "A Quick Way to Remember",
+      "md": "Think of the numbers as **gaps between characters**, not the characters themselves. Position 0 is the gap before `P`, position 1 is the gap before `y`, etc. `word[0:3]` means \"cut at gap 0 and gap 3\" — everything between those cuts is returned."
+    },
+    {
+      "type": "heading",
+      "text": "Omitting Start or Stop"
+    },
+    {
+      "type": "text",
+      "md": "You can leave out `start` or `stop` and Python will fill in a sensible default. Omitting `start` means \"begin at the very beginning\". Omitting `stop` means \"go all the way to the end\"."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[:3])   # from start up to (not including) position 3\nprint(word[2:])   # from position 2 to the end\nprint(word[:])    # the whole string — a full copy",
+      "output": "Pyt\nthon\nPython",
+      "caption": "Omit start or stop to slice from/to the ends of the string."
+    },
+    {
+      "type": "heading",
+      "text": "The Step Value"
+    },
+    {
+      "type": "text",
+      "md": "Slices have a third optional value: `s[start:stop:step]`. The **step** controls how many positions to jump between each character you pick. The default step is 1 (take every character). A step of 2 takes every other character."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[0:6:2])  # every 2nd character\nprint(word[::3])    # every 3rd character from start to end",
+      "output": "Pto\nPh",
+      "caption": "The third number in a slice is the step size."
+    },
+    {
+      "type": "heading",
+      "text": "Reversing a String with [::-1]"
+    },
+    {
+      "type": "text",
+      "md": "A step of **-1** walks backwards through the string. Combined with omitted start and stop, `s[::-1]` is the classic Python one-liner for reversing a string."
+    },
+    {
+      "type": "code",
+      "code": "word = \"Python\"\n\nprint(word[::-1])   # reversed\n\ngreeting = \"Hello!\"\nprint(greeting[::-1])",
+      "output": "nohtyP\n!olleH",
+      "caption": "[::-1] is the Pythonic way to reverse any string."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Slices Never Crash",
+      "md": "Unlike single-index access, **slices never raise an IndexError**. If your start or stop is out of bounds, Python just returns whatever it can.\n\n```python\nword = \"Hi\"\nprint(word[0:100])  # no crash — returns 'Hi'\nprint(word[50:])    # no crash — returns ''\n```\n\nThis makes slicing much safer for situations where you're not sure of the length."
+    },
+    {
+      "type": "heading",
+      "text": "This Works on Lists Too"
+    },
+    {
+      "type": "text",
+      "md": "Everything you just learned transfers directly to **lists**. Lists use the exact same `[index]` and `[start:stop:step]` syntax. So once you're comfortable slicing strings, you already know how to slice lists — which you'll see in a later lesson."
+    },
+    {
+      "type": "code",
+      "code": "colors = [\"red\", \"green\", \"blue\", \"yellow\", \"purple\"]\n\nprint(colors[0])     # first item\nprint(colors[-1])    # last item\nprint(colors[1:3])   # a slice of the list\nprint(colors[::-1])  # reversed list",
+      "output": "red\npurple\n['green', 'blue']\n['purple', 'yellow', 'blue', 'green', 'red']",
+      "caption": "Slicing syntax is identical for lists — a big time-saver!"
+    },
+    {
+      "type": "quiz",
+      "question": "What does `\"abcde\"[1:4]` return?",
+      "options": [
+        "\"abcd\"",
+        "\"bcd\"",
+        "\"bcde\"",
+        "\"abc\""
+      ],
+      "answerIndex": 1,
+      "explanation": "Slicing starts at index 1 (the character 'b') and goes up to — but not including — index 4 (the character 'e'). So you get positions 1, 2, and 3, which are 'b', 'c', 'd' — giving the string \"bcd\"."
+    }
+  ],
+  "keyTakeaways": [
+    "Python indexes start at 0 — the first character is always at position 0.",
+    "Negative indexes count from the end: -1 is the last character.",
+    "Slicing with s[start:stop] returns characters from start up to (not including) stop.",
+    "Omit start or stop to slice from the beginning or to the end; add a step with s[start:stop:step].",
+    "s[::-1] reverses any string, and slices never raise IndexError unlike single-index access."
+  ],
+  "exercise": {
+    "prompt": "You're given the string `sentence = \"The quick brown fox\"`. Using only indexing and slicing (no other string methods), do the following:\n1. Print the first character.\n2. Print the last character.\n3. Print the first three characters.\n4. Print the word `\"fox\"` (the last 3 characters).\n5. Print the whole sentence reversed.",
+    "starterCode": "sentence = \"The quick brown fox\"\n\n# 1. First character\n\n# 2. Last character\n\n# 3. First three characters\n\n# 4. Last three characters (\"fox\")\n\n# 5. Reversed sentence\n",
+    "hint": "Remember: negative indexes count from the end, and s[::-1] reverses. The last 3 characters can be grabbed with s[-3:].",
+    "solution": "sentence = \"The quick brown fox\"\n\n# 1. First character\nprint(sentence[0])\n\n# 2. Last character\nprint(sentence[-1])\n\n# 3. First three characters\nprint(sentence[:3])\n\n# 4. Last three characters (\"fox\")\nprint(sentence[-3:])\n\n# 5. Reversed sentence\nprint(sentence[::-1])"
+  }
+}

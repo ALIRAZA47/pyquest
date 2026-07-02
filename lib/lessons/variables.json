@@ -1,0 +1,147 @@
+{
+  "slug": "variables",
+  "title": "Variables & Assignment",
+  "emoji": "📥",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how variables let you store, name, and reuse values in your programs — like labeled boxes that hold information.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every useful program needs to **remember things**. The price of an item, someone's name, a score in a game — all of that has to live somewhere while your code is running.\n\nIn Python, we use **variables** to store values. Once you give a value a name, you can use that name anywhere in your program instead of typing the value over and over."
+    },
+    {
+      "type": "heading",
+      "text": "What Is a Variable?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a labeled box",
+      "md": "Imagine a cardboard box with a sticky note on it. The sticky note is the **variable name**, and whatever is inside the box is the **value**. You can look inside the box anytime, and you can swap out what's inside whenever you want."
+    },
+    {
+      "type": "text",
+      "md": "Creating a variable is called **assignment**. You do it with the `=` sign. The name goes on the left, the value goes on the right."
+    },
+    {
+      "type": "code",
+      "code": "age = 25\nname = \"Alex\"\nis_student = True\n\nprint(name)\nprint(age)",
+      "output": "Alex\n25",
+      "caption": "Three variables storing different kinds of values"
+    },
+    {
+      "type": "heading",
+      "text": "Naming Your Variables"
+    },
+    {
+      "type": "text",
+      "md": "Python has a few rules for variable names:\n\n- Can contain **letters**, **digits**, and **underscores** (`_`)\n- Cannot **start with a digit**\n- Are **case-sensitive** (`score` and `Score` are two different variables)\n- Cannot be a Python keyword like `if`, `for`, or `True`"
+    },
+    {
+      "type": "code",
+      "code": "# Valid names\nuser_name = \"Jordan\"\nscore1 = 100\n_hidden = \"secret\"\n\n# This would be a SyntaxError — starts with a digit\n# 1st_place = \"gold\"",
+      "caption": "Valid variable names vs. one that breaks the rules"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use snake_case by convention",
+      "md": "Python programmers write multi-word names with underscores between words: `first_name`, `high_score`, `total_items`. This style is called **snake_case** and it makes names easy to read at a glance."
+    },
+    {
+      "type": "heading",
+      "text": "Reassigning a Variable"
+    },
+    {
+      "type": "text",
+      "md": "You can change what a variable holds at any time. Just assign it a new value. The old value is simply forgotten."
+    },
+    {
+      "type": "code",
+      "code": "score = 0\nprint(score)\n\nscore = 50\nprint(score)\n\nscore = score + 10\nprint(score)",
+      "output": "0\n50\n60",
+      "caption": "The variable score is updated step by step"
+    },
+    {
+      "type": "heading",
+      "text": "Dynamic Typing"
+    },
+    {
+      "type": "text",
+      "md": "In Python, a variable is not locked to one type of value. You can store a number in it now and a piece of text later. Python figures out the type from whatever value you assign — this is called **dynamic typing**."
+    },
+    {
+      "type": "code",
+      "code": "thing = 42\nprint(thing, type(thing))\n\nthing = \"hello\"\nprint(thing, type(thing))\n\nthing = 3.14\nprint(thing, type(thing))",
+      "output": "42 <class 'int'>\nhello <class 'str'>\n3.14 <class 'float'>",
+      "caption": "The same variable holds an int, then a str, then a float"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Switching types can cause surprises",
+      "md": "While Python allows it, **reassigning a variable to a completely different type** is usually a sign of confusing code. Pick a clear name and stick to one kind of value. Future-you will be grateful."
+    },
+    {
+      "type": "heading",
+      "text": "Multiple Assignment"
+    },
+    {
+      "type": "text",
+      "md": "Python has a handy shortcut: you can assign values to several variables on a single line. This is great for setting related values together."
+    },
+    {
+      "type": "code",
+      "code": "x, y = 10, 20\nprint(x)\nprint(y)\n\n# Assign the same value to multiple variables at once\na = b = 0\nprint(a, b)",
+      "output": "10\n20\n0 0",
+      "caption": "Two ways to assign multiple variables in one line"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "= is not the same as ==",
+      "md": "A single `=` **assigns** a value to a variable. Two equals signs `==` **checks** whether two values are equal. Mixing them up is one of the most common beginner mistakes.\n\n```python\nage = 18      # stores 18 in age\nage == 18     # asks: is age equal to 18? (True/False)\n```"
+    },
+    {
+      "type": "heading",
+      "text": "Constants: Values That Should Not Change"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a value is meant to stay fixed throughout your program — like the speed of light or a tax rate. Python does not enforce constants, but the **convention** is to write their names in `UPPER_CASE`. This signals to anyone reading your code: \"don't change this.\""
+    },
+    {
+      "type": "code",
+      "code": "MAX_RETRIES = 3\nPI = 3.14159\nAPP_NAME = \"PyQuest\"\n\nprint(APP_NAME, \"allows up to\", MAX_RETRIES, \"retries\")",
+      "output": "PyQuest allows up to 3 retries",
+      "caption": "UPPER_CASE names are a signal that the value is a constant"
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following is a valid Python variable name?",
+      "options": [
+        "2fast",
+        "first-name",
+        "user_score",
+        "class"
+      ],
+      "answerIndex": 2,
+      "explanation": "`user_score` is valid — it uses only letters and underscores. `2fast` starts with a digit, `first-name` uses a hyphen (not allowed), and `class` is a reserved Python keyword."
+    }
+  ],
+  "keyTakeaways": [
+    "A variable is a named container that stores a value; create one with `name = value`.",
+    "Names must start with a letter or underscore, are case-sensitive, and use `snake_case` by convention.",
+    "You can reassign a variable at any time — Python will hold whatever value you give it last.",
+    "Python is dynamically typed, so a variable can hold any type of value.",
+    "Use `UPPER_CASE` names for values that are meant to stay constant throughout your program."
+  ],
+  "exercise": {
+    "prompt": "Create three variables: your name (a string), your age (a number), and whether you like pizza (True or False). Then print a sentence using all three, like: \"Hi, I'm Alex, I'm 25 years old, and it's True that I like pizza.\"",
+    "starterCode": "# Create your variables here\nmy_name = \nmy_age = \nlikes_pizza = \n\n# Print the sentence\nprint(\"Hi, I'm\", my_name, \"...\") ",
+    "hint": "Set each variable to an appropriate value on its own line, then build your print statement using commas to join the pieces together.",
+    "solution": "my_name = \"Alex\"\nmy_age = 25\nlikes_pizza = True\n\nprint(\"Hi, I'm\", my_name + \", I'm\", my_age, \"years old, and it's\", likes_pizza, \"that I like pizza.\")"
+  }
+}

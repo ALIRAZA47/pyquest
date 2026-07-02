@@ -1,0 +1,142 @@
+{
+  "slug": "while-loops",
+  "title": "while Loops",
+  "emoji": "♻️",
+  "category": "Control Flow",
+  "difficulty": "Beginner",
+  "summary": "Learn how to repeat code for as long as a condition is true, avoid infinite loops, and use break to exit early.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are filling a glass of water. You keep pouring **while** the glass is not full. The moment it fills up, you stop. That is exactly how a `while` loop works in Python.\n\nA `while` loop runs a block of code **over and over again** as long as a condition stays `True`. The moment the condition becomes `False`, Python stops and moves on."
+    },
+    {
+      "type": "heading",
+      "text": "The Basic Shape"
+    },
+    {
+      "type": "code",
+      "code": "count = 1\n\nwhile count <= 3:\n    print(\"Hello!\", count)\n    count = count + 1\n\nprint(\"Done!\")",
+      "output": "Hello! 1\nHello! 2\nHello! 3\nDone!",
+      "caption": "This loop prints 'Hello!' three times, then stops."
+    },
+    {
+      "type": "text",
+      "md": "Let's break down what is happening step by step:\n- `count = 1` — we start a **counter** at 1.\n- `while count <= 3` — Python checks: is `count` less than or equal to 3? If yes, run the indented block.\n- `print(...)` — prints the message.\n- `count = count + 1` — we increase the counter by 1. This is the crucial step that moves us closer to stopping.\n- After each pass, Python goes back to the `while` line and checks again. When `count` reaches 4, the condition is `False` and the loop ends."
+    },
+    {
+      "type": "heading",
+      "text": "The Counter Pattern"
+    },
+    {
+      "type": "text",
+      "md": "Using a variable to count loop iterations is called the **counter pattern**. It is one of the most common patterns in programming. You need three things:\n- **Initialize** the counter before the loop (`count = 1`)\n- **Check** the counter in the condition (`while count <= 5`)\n- **Update** the counter inside the loop (`count = count + 1`)\n\nA shortcut for `count = count + 1` is `count += 1`. They do the same thing."
+    },
+    {
+      "type": "code",
+      "code": "count = 1\n\nwhile count <= 5:\n    print(count)\n    count += 1",
+      "output": "1\n2\n3\n4\n5",
+      "caption": "Using += 1 as a shorter way to increase the counter."
+    },
+    {
+      "type": "heading",
+      "text": "The Danger: Infinite Loops"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Infinite Loop Ahead!",
+      "md": "If your condition **never becomes False**, the loop runs forever. Your program will freeze. This is called an **infinite loop** and it is the most common mistake with `while` loops.\n\nExample of an infinite loop — **do not run this**:\n```python\ncount = 1\nwhile count <= 5:\n    print(count)\n    # Oops! We forgot count += 1\n```\nBecause `count` never changes, `count <= 5` is always `True`. Python prints `1` forever.\n\n**The fix:** always make sure something inside the loop moves you closer to the condition being `False`."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "How to Stop an Infinite Loop",
+      "md": "If your program ever gets stuck in an infinite loop, press **Ctrl + C** in your terminal. This sends a \"stop\" signal to Python and breaks out of the loop."
+    },
+    {
+      "type": "heading",
+      "text": "Exiting Early with break"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want to stop a loop in the middle based on something that happens inside it. The `break` statement does exactly that — it immediately exits the loop, no matter what the condition says."
+    },
+    {
+      "type": "code",
+      "code": "count = 1\n\nwhile count <= 10:\n    if count == 4:\n        print(\"Found 4, stopping!\")\n        break\n    print(count)\n    count += 1",
+      "output": "1\n2\n3\nFound 4, stopping!",
+      "caption": "break jumps out of the loop the moment count hits 4."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "break is Like an Emergency Exit",
+      "md": "Think of a `while` loop as a hallway you keep walking through in circles. The condition at the start is the normal door — you stop when it closes. `break` is the **emergency exit** in the middle of the hallway. You can use it to leave immediately without waiting for the normal exit."
+    },
+    {
+      "type": "heading",
+      "text": "Classic Use: Asking Until the Answer is Valid"
+    },
+    {
+      "type": "text",
+      "md": "One of the most practical uses of `while` is **input validation** — keep asking the user for input until they give you something acceptable. This pattern is everywhere: login forms, menus, prompts that need a number."
+    },
+    {
+      "type": "code",
+      "code": "answer = \"\"\n\nwhile answer != \"yes\" and answer != \"no\":\n    answer = input(\"Please type yes or no: \")\n\nprint(\"You said:\", answer)",
+      "caption": "The loop keeps asking until the user types 'yes' or 'no'."
+    },
+    {
+      "type": "code",
+      "code": "while True:\n    name = input(\"Enter your name (cannot be empty): \")\n    if name != \"\":\n        break\n    print(\"Name cannot be empty. Try again.\")\n\nprint(\"Hello,\", name + \"!\")",
+      "caption": "Using 'while True' with break is a clean pattern for input loops."
+    },
+    {
+      "type": "text",
+      "md": "`while True` creates a loop that would run forever on its own — but we control exactly when it stops by using `break`. This is a very common and readable pattern for \"keep going until I say stop.\""
+    },
+    {
+      "type": "heading",
+      "text": "for vs while: Which One to Use?"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Choosing Between for and while",
+      "md": "Both loops repeat code, but they suit different situations:\n\n- Use **`for`** when you know **exactly how many times** to loop, or when you are going through a list or sequence.\n- Use **`while`** when you want to repeat **until something changes** — especially when you do not know in advance how many times that will be.\n\nExamples:\n- Printing numbers 1 to 10 → `for` (you know it is 10 times)\n- Asking for input until it is valid → `while` (you don't know how many tries it will take)"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Off-by-One Errors",
+      "md": "A sneaky beginner mistake is getting the condition slightly wrong and looping one too many (or one too few) times.\n\n```python\ncount = 1\nwhile count < 3:   # stops at 2, not 3!\n    print(count)\n    count += 1\n```\n\nOutput: `1` then `2` — not `1 2 3`. When you want to include the last number, use `<=` instead of `<`."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code print?\n\n```python\nx = 5\nwhile x > 0:\n    print(x)\n    x -= 2\n```",
+      "options": [
+        "5\n3\n1",
+        "5\n4\n3\n2\n1",
+        "5\n3\n1\n-1",
+        "Nothing — it is an infinite loop"
+      ],
+      "answerIndex": 0,
+      "explanation": "x starts at 5. Each pass subtracts 2: 5 → 3 → 1 → -1. After printing 1, x becomes -1, which is not greater than 0, so the loop stops. The output is 5, 3, 1."
+    }
+  ],
+  "keyTakeaways": [
+    "A `while` loop repeats as long as its condition is `True` — it stops the moment the condition becomes `False`.",
+    "Always update something inside the loop so the condition can eventually become `False`, or you risk an infinite loop.",
+    "Use `break` to exit a loop immediately from the inside — great for input validation with `while True`.",
+    "Choose `for` when you know the number of iterations; choose `while` when you repeat until something changes.",
+    "Press Ctrl + C to escape an infinite loop that freezes your program."
+  ],
+  "exercise": {
+    "prompt": "Write a program that counts down from 10 to 1 using a `while` loop, printing each number on its own line. After the countdown, print 'Blastoff!'",
+    "starterCode": "count = 10\n\n# Write your while loop here\n",
+    "hint": "Start count at 10. Keep looping while count is greater than 0. Inside the loop, print count, then subtract 1 from it. After the loop, print 'Blastoff!'",
+    "solution": "count = 10\n\nwhile count > 0:\n    print(count)\n    count -= 1\n\nprint(\"Blastoff!\")"
+  }
+}

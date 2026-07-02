@@ -1,0 +1,152 @@
+{
+  "slug": "recursion",
+  "title": "Recursion",
+  "emoji": "🌀",
+  "category": "Functions",
+  "difficulty": "Intermediate",
+  "summary": "Learn how a function can call itself to solve problems elegantly, and discover the two essential rules that keep it from running forever.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are looking for your keys. You check your coat pocket. Inside your coat pocket, you find another coat. So you check *that* pocket. Inside *that* pocket, you find yet another coat... and so on. That is recursion in a nutshell: a problem that contains a **smaller version of itself**.\n\nIn Python, **recursion** means writing a function that calls *itself*. It sounds strange at first, but it is a powerful way to solve problems that naturally repeat in smaller and smaller steps."
+    },
+    {
+      "type": "heading",
+      "text": "The Two Rules of Recursion"
+    },
+    {
+      "type": "text",
+      "md": "Every recursive function needs exactly **two parts** to work safely:\n\n- **Base case** — the stopping condition. When this is true, the function stops calling itself and returns a direct answer.\n- **Recursive case** — the function calls itself with a *simpler* or *smaller* input, moving toward the base case.\n\nWithout a base case, a recursive function will call itself forever — just like those coats-inside-coats with no end."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Russian Nesting Dolls",
+      "md": "Think of recursion like Matryoshka dolls. Each doll contains a smaller doll inside. You keep opening them until you reach the tiniest doll — that is the **base case**. Then you are done."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Recursive Function: Countdown"
+    },
+    {
+      "type": "text",
+      "md": "Let's start with something simple. We want to count down from a number to zero, printing each number. We could do this with a loop, but let's do it recursively to see the pattern."
+    },
+    {
+      "type": "code",
+      "code": "def countdown(n):\n    if n <= 0:          # base case: stop here\n        print(\"Blast off!\")\n    else:               # recursive case: print and go smaller\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+      "output": "5\n4\n3\n2\n1\nBlast off!",
+      "caption": "Each call to countdown() passes a smaller number until we hit zero."
+    },
+    {
+      "type": "text",
+      "md": "Notice the pattern:\n\n- `if n <= 0` is the **base case** — it stops the chain.\n- `countdown(n - 1)` is the **recursive case** — it calls itself with `n` one step smaller.\n\nEach call is a little closer to the stopping point."
+    },
+    {
+      "type": "heading",
+      "text": "Classic Example: Factorial"
+    },
+    {
+      "type": "text",
+      "md": "The **factorial** of a number is that number multiplied by every positive integer below it. For example:\n\n`5! = 5 × 4 × 3 × 2 × 1 = 120`\n\nThis is a perfect fit for recursion because `5! = 5 × 4!`, and `4! = 4 × 3!`, and so on — each step is a smaller version of the same problem."
+    },
+    {
+      "type": "code",
+      "code": "def factorial(n):\n    if n == 0 or n == 1:   # base case\n        return 1\n    else:                  # recursive case\n        return n * factorial(n - 1)\n\nprint(factorial(5))\nprint(factorial(1))\nprint(factorial(0))",
+      "output": "120\n1\n1",
+      "caption": "factorial(5) breaks down into 5 * factorial(4), and so on, until it reaches 1."
+    },
+    {
+      "type": "heading",
+      "text": "How the Call Stack Works"
+    },
+    {
+      "type": "text",
+      "md": "When Python runs a function, it keeps track of it on something called the **call stack** — imagine a stack of plates. Each function call adds a plate on top. When a function returns, its plate is removed.\n\nWith `factorial(3)`, here is what happens step by step:"
+    },
+    {
+      "type": "code",
+      "code": "# Tracing factorial(3) mentally:\n#\n# factorial(3) --> 3 * factorial(2)\n#                       factorial(2) --> 2 * factorial(1)\n#                                             factorial(1) --> 1  (base case!)\n#                                        returns 2 * 1 = 2\n#                  returns 3 * 2 = 6\n\nprint(factorial(3))  # prints 6",
+      "output": "6",
+      "caption": "The calls build up (wind), then each returns its result back up the chain (unwind)."
+    },
+    {
+      "type": "text",
+      "md": "First the calls **build up** (each one waits for the next). Then, once the base case is reached, the answers **bubble back up** through each waiting call. This build-and-unwind behavior is what makes recursion feel like magic."
+    },
+    {
+      "type": "heading",
+      "text": "Infinite Recursion: The Danger Zone"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting the Base Case = Infinite Loop",
+      "md": "If your function never reaches a base case, it will keep calling itself forever — until Python gives up and raises a `RecursionError`. This is called **infinite recursion**.\n\n```python\n# BROKEN: no base case!\ndef oops(n):\n    return n * oops(n - 1)  # never stops\n```\n\nAlways make sure your recursive case moves *toward* the base case."
+    },
+    {
+      "type": "heading",
+      "text": "Python's Recursion Limit"
+    },
+    {
+      "type": "text",
+      "md": "Python sets a built-in safety limit: by default, functions can only call themselves about **1000 times** before Python raises a `RecursionError`. This protects your computer's memory from runaway recursion."
+    },
+    {
+      "type": "code",
+      "code": "import sys\n\nprint(sys.getrecursionlimit())",
+      "output": "1000",
+      "caption": "You can check the limit with sys.getrecursionlimit(). You can raise it, but rarely need to."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "If you hit the limit, rethink your approach",
+      "md": "Hitting Python's recursion limit usually means either your base case is wrong, or the problem is better solved with a loop. Most real-world Python code uses **iteration** (loops) for deep repetition, and recursion for elegant solutions on smaller inputs like trees and nested structures."
+    },
+    {
+      "type": "heading",
+      "text": "Recursion vs. Iteration"
+    },
+    {
+      "type": "text",
+      "md": "Recursion and loops can often solve the same problem. Here is the same factorial in both styles:"
+    },
+    {
+      "type": "code",
+      "code": "# Iterative version (using a loop)\ndef factorial_loop(n):\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n\n# Recursive version\ndef factorial_recursive(n):\n    if n <= 1:\n        return 1\n    return n * factorial_recursive(n - 1)\n\nprint(factorial_loop(5))      # 120\nprint(factorial_recursive(5)) # 120",
+      "output": "120\n120",
+      "caption": "Both give the same answer. The recursive version is often shorter and closer to the math definition."
+    },
+    {
+      "type": "text",
+      "md": "**When to use recursion:**\n- The problem naturally breaks into smaller versions of itself (trees, nested folders, fractals).\n- The recursive solution is much cleaner and easier to read.\n\n**When to use a loop instead:**\n- The recursion depth could be very large (thousands of steps).\n- Performance is critical — function calls have a small overhead."
+    },
+    {
+      "type": "quiz",
+      "question": "What happens if a recursive function has no base case?",
+      "options": [
+        "It returns None automatically.",
+        "It raises a RecursionError after too many calls.",
+        "Python converts it to a loop behind the scenes.",
+        "It runs once and stops."
+      ],
+      "answerIndex": 1,
+      "explanation": "Without a base case, the function keeps calling itself indefinitely. Python's call stack has a limit (around 1000 calls), so it raises a RecursionError when that limit is exceeded. Always include a base case!"
+    }
+  ],
+  "keyTakeaways": [
+    "A recursive function calls itself to solve a smaller version of the same problem.",
+    "Every recursive function needs a **base case** (when to stop) and a **recursive case** (how to get smaller).",
+    "The call stack builds up as calls are made, then unwinds as each one returns its result.",
+    "Python enforces a recursion limit (~1000 calls) to prevent infinite recursion from crashing your program.",
+    "Use recursion when the problem is naturally self-similar; prefer loops when depth might be large."
+  ],
+  "exercise": {
+    "prompt": "Write a recursive function called `sum_down(n)` that takes a positive integer `n` and returns the sum of all integers from `n` down to 1. For example, `sum_down(4)` should return `10` (because 4 + 3 + 2 + 1 = 10). Do NOT use a loop — use recursion!",
+    "starterCode": "def sum_down(n):\n    # your code here\n    pass\n\nprint(sum_down(4))  # should print 10\nprint(sum_down(1))  # should print 1\nprint(sum_down(5))  # should print 15",
+    "hint": "Think about the base case first: what is sum_down(1)? Then, for any other n, how does sum_down(n) relate to sum_down(n - 1)?",
+    "solution": "def sum_down(n):\n    if n == 1:             # base case: sum of just 1 is 1\n        return 1\n    return n + sum_down(n - 1)  # recursive case\n\nprint(sum_down(4))  # 10\nprint(sum_down(1))  # 1\nprint(sum_down(5))  # 15"
+  }
+}

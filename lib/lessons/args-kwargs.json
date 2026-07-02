@@ -1,0 +1,102 @@
+{
+  "slug": "args-kwargs",
+  "title": "*args and **kwargs",
+  "emoji": "🌟",
+  "category": "Functions",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to write flexible Python functions that accept any number of arguments using *args and **kwargs.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are building a function to greet your friends. You have three friends today, but tomorrow you might have ten. Do you write a different function for each count? No — that would be exhausting!\n\nPython gives you two special tools — `*args` and `**kwargs` — that let your functions accept **as many arguments as needed**, without knowing the count in advance. Once you understand them, your functions will feel like superpowers."
+    },
+    {
+      "type": "heading",
+      "text": "Collecting Positional Arguments with *args"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of *args as a shopping bag",
+      "md": "You do not know exactly how many items you will pick up at the store. A bag collects everything you toss in. `*args` is that bag for positional arguments — however many you pass, they land together in a **tuple** inside your function."
+    },
+    {
+      "type": "code",
+      "code": "def add_all(*args):\n    print(type(args))  # it is always a tuple\n    total = 0\n    for number in args:\n        total += number\n    return total\n\nprint(add_all(1, 2))           # two numbers\nprint(add_all(10, 20, 30))     # three numbers\nprint(add_all(5, 5, 5, 5, 5)) # five numbers",
+      "output": "<class 'tuple'>\n3\n<class 'tuple'>\n60\n<class 'tuple'>\n25",
+      "caption": "*args collects every extra positional argument into a tuple."
+    },
+    {
+      "type": "heading",
+      "text": "Collecting Keyword Arguments with **kwargs"
+    },
+    {
+      "type": "code",
+      "code": "def show_profile(**kwargs):\n    print(\"User profile:\")\n    for key, value in kwargs.items():\n        print(f\"  {key}: {value}\")\n\nshow_profile(name=\"Alice\", age=30, city=\"London\")",
+      "output": "User profile:\n  name: Alice\n  age: 30\n  city: London",
+      "caption": "**kwargs gathers all keyword arguments into a plain dict."
+    },
+    {
+      "type": "heading",
+      "text": "Combining Everything — and the Required Order"
+    },
+    {
+      "type": "text",
+      "md": "You can mix all four kinds of parameters in one function. Python enforces a strict order:\n\n1. Regular positional parameters\n2. `*args`\n3. Keyword-only parameters (with defaults)\n4. `**kwargs`"
+    },
+    {
+      "type": "code",
+      "code": "def make_order(restaurant, *dishes, tip=0, **extras):\n    print(f\"Restaurant: {restaurant}\")\n    print(f\"Dishes: {dishes}\")\n    print(f\"Tip: {tip}%\")\n    print(f\"Special requests: {extras}\")\n\nmake_order(\n    \"Pasta House\",\n    \"Carbonara\", \"Tiramisu\",\n    tip=15,\n    allergy=\"nuts\", seat=\"window\"\n)",
+      "output": "Restaurant: Pasta House\nDishes: ('Carbonara', 'Tiramisu')\nTip: 15%\nSpecial requests: {'allergy': 'nuts', 'seat': 'window'}",
+      "caption": "All four parameter kinds working together in the correct order."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Order matters — always!",
+      "md": "Putting `**kwargs` before `*args` causes a `SyntaxError`. Python enforces the order: regular params → `*args` → keyword-only → `**kwargs`. Mix them up and your code will not even start."
+    },
+    {
+      "type": "heading",
+      "text": "Unpacking at the Call Site"
+    },
+    {
+      "type": "code",
+      "code": "def greet(first, last, greeting=\"Hello\"):\n    print(f\"{greeting}, {first} {last}!\")\n\n# Unpack a list into positional args with *\nname_parts = [\"Jane\", \"Doe\"]\ngreet(*name_parts)\n\n# Unpack a dict into keyword args with **\noptions = {\"first\": \"John\", \"last\": \"Smith\", \"greeting\": \"Hi\"}\ngreet(**options)",
+      "output": "Hello, Jane Doe!\nHi, John Smith!",
+      "caption": "* and ** unpack existing collections into arguments when calling a function."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Unpacking is great for forwarding settings",
+      "md": "Store your config in a dictionary, then pass it anywhere with `function(**config)`. No need to type every key out individually — just unpack and go."
+    },
+    {
+      "type": "quiz",
+      "question": "What type does Python use to store values collected by *args inside a function?",
+      "options": [
+        "list",
+        "dict",
+        "tuple",
+        "set"
+      ],
+      "answerIndex": 2,
+      "explanation": "*args always produces a **tuple**, not a list. It looks similar but is immutable. **kwargs, by contrast, produces a regular dictionary for all the named arguments."
+    }
+  ],
+  "keyTakeaways": [
+    "`*args` collects any number of extra positional arguments into a **tuple** inside your function.",
+    "`**kwargs` collects any number of extra keyword arguments into a **dict** inside your function.",
+    "Parameter order is strict: regular params → `*args` → keyword-only → `**kwargs`.",
+    "At the call site, `*iterable` unpacks into positional arguments and `**mapping` unpacks into keyword arguments.",
+    "These tools let you write flexible, reusable functions that handle varying inputs gracefully."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `summarize` that accepts a `title` (regular parameter), any number of bullet points (via *args), and any number of metadata fields (via **kwargs). It should print the title on the first line, each bullet point prefixed with '- ', and then each metadata key-value pair. Test it with at least two bullet points and two keyword arguments.",
+    "starterCode": "def summarize(title, *args, **kwargs):\n    # your code here\n    pass\n\n# Test it:\n# summarize(\n#     \"My Report\",\n#     \"Sales up 10%\",\n#     \"New markets opened\",\n#     author=\"Alice\",\n#     date=\"2026-07-02\"\n# )",
+    "hint": "Loop over `args` with a `for` loop to print the bullet points, then loop over `kwargs.items()` to print each key and value.",
+    "solution": "def summarize(title, *args, **kwargs):\n    print(title)\n    for point in args:\n        print(f\"- {point}\")\n    for key, value in kwargs.items():\n        print(f\"{key}: {value}\")\n\nsummarize(\n    \"My Report\",\n    \"Sales up 10%\",\n    \"New markets opened\",\n    author=\"Alice\",\n    date=\"2026-07-02\"\n)"
+  }
+}

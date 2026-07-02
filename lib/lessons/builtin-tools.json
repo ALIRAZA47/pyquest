@@ -1,0 +1,212 @@
+{
+  "slug": "builtin-tools",
+  "title": "enumerate, zip, map, filter",
+  "emoji": "🧮",
+  "category": "Writing Pythonic Code",
+  "difficulty": "Intermediate",
+  "summary": "Learn Python's powerful built-in tools that let you process lists and sequences in clean, expressive ways without manual index juggling.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Python ships with a toolbox of built-in functions that make working with lists and sequences much cleaner. Instead of tracking index numbers yourself or writing long loops, these tools let you express *what* you want, not *how* to count. The result is shorter, more readable code that experienced Python developers will recognize immediately as \"Pythonic\"."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem With Manual Indexing"
+    },
+    {
+      "type": "text",
+      "md": "Have you ever needed to loop over a list but also needed to know the position of each item? The common beginner approach reaches for a counter variable — but Python has a much cleaner way."
+    },
+    {
+      "type": "code",
+      "code": "# The manual way — works, but clunky\nfruits = [\"apple\", \"banana\", \"cherry\"]\n\ni = 0\nfor fruit in fruits:\n    print(i, fruit)\n    i += 1",
+      "output": "0 apple\n1 banana\n2 cherry",
+      "caption": "Manually tracking an index is error-prone and noisy."
+    },
+    {
+      "type": "heading",
+      "text": "enumerate() — Index and Value Together"
+    },
+    {
+      "type": "text",
+      "md": "`enumerate(sequence)` hands you *both* the index and the value at the same time, wrapped together in a pair. You unpack that pair directly in the `for` line."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor index, fruit in enumerate(fruits):\n    print(index, fruit)",
+      "output": "0 apple\n1 banana\n2 cherry",
+      "caption": "enumerate() does the counting for you — cleaner and safer."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Start counting from 1",
+      "md": "You can tell `enumerate` to start at a different number: `enumerate(fruits, start=1)`. Great for user-facing numbered lists where humans expect to start at 1, not 0."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor number, fruit in enumerate(fruits, start=1):\n    print(f\"{number}. {fruit}\")",
+      "output": "1. apple\n2. banana\n3. cherry",
+      "caption": "Numbered lists that feel natural to a human reader."
+    },
+    {
+      "type": "heading",
+      "text": "zip() — Walking Two Lists Together"
+    },
+    {
+      "type": "text",
+      "md": "Imagine you have two separate lists — one of names and one of scores — and you want to pair them up. `zip(list_a, list_b)` acts like a zipper on a jacket: it brings two separate sides together, tooth by tooth, pair by pair."
+    },
+    {
+      "type": "code",
+      "code": "names = [\"Alice\", \"Bob\", \"Carol\"]\nscores = [95, 82, 78]\n\nfor name, score in zip(names, scores):\n    print(f\"{name}: {score}\")",
+      "output": "Alice: 95\nBob: 82\nCarol: 78",
+      "caption": "zip() pairs items by position — no index arithmetic needed."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "zip() stops at the shortest list",
+      "md": "If your two lists have different lengths, `zip()` quietly stops when the shorter one runs out. The extra items in the longer list are **silently ignored**. Always make sure your lists are the same length, or use `itertools.zip_longest` if you need to handle all items."
+    },
+    {
+      "type": "heading",
+      "text": "map() — Apply a Function to Every Item"
+    },
+    {
+      "type": "text",
+      "md": "`map(function, sequence)` applies a function to every item in a list and gives you back the transformed results. Think of it like an assembly line: each item passes through a machine (your function) and comes out changed."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"hello\", \"world\", \"python\"]\n\nupper_words = list(map(str.upper, words))\nprint(upper_words)",
+      "output": "['HELLO', 'WORLD', 'PYTHON']",
+      "caption": "map() applies str.upper to every item. Wrap in list() to see the results."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "map() is lazy — wrap it in list()",
+      "md": "`map()` does not immediately compute all the results. It waits until you ask for them. Wrapping it in `list()` forces it to run right now and gives you a plain list you can print and inspect."
+    },
+    {
+      "type": "text",
+      "md": "For simple transformations, a **list comprehension** often reads more naturally than `map()`. Both are correct — choose whichever feels clearer to you and your teammates."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"hello\", \"world\", \"python\"]\n\n# With map\nupper_map = list(map(str.upper, words))\n\n# With a list comprehension — often easier to read\nupper_comp = [w.upper() for w in words]\n\nprint(upper_map)\nprint(upper_comp)",
+      "output": "['HELLO', 'WORLD', 'PYTHON']\n['HELLO', 'WORLD', 'PYTHON']",
+      "caption": "Same result, two styles. The comprehension shows the transformation inline."
+    },
+    {
+      "type": "heading",
+      "text": "filter() — Keep Only What Passes a Test"
+    },
+    {
+      "type": "text",
+      "md": "`filter(function, sequence)` goes through a list and keeps only the items for which the function returns `True`. It's like a bouncer at a door — each item must pass the check to get through."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n\ndef is_even(n):\n    return n % 2 == 0\n\nevens = list(filter(is_even, numbers))\nprint(evens)",
+      "output": "[2, 4, 6, 8, 10]",
+      "caption": "filter() passes only the items where is_even returns True."
+    },
+    {
+      "type": "text",
+      "md": "Again, a list comprehension with a condition is often more readable for straightforward cases:"
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n\nevens = [n for n in numbers if n % 2 == 0]\nprint(evens)",
+      "output": "[2, 4, 6, 8, 10]",
+      "caption": "The comprehension puts the condition right next to the item — very readable."
+    },
+    {
+      "type": "heading",
+      "text": "sorted() With a Key"
+    },
+    {
+      "type": "text",
+      "md": "`sorted(sequence)` returns a new sorted list. The real power comes from the `key=` argument, which tells Python *what to sort by*. You pass a function, and Python calls it on each item to get a comparison value."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"banana\", \"fig\", \"apple\", \"kiwi\", \"elderberry\"]\n\n# Sort alphabetically (default)\nprint(sorted(words))\n\n# Sort by word length\nprint(sorted(words, key=len))",
+      "output": "['apple', 'banana', 'elderberry', 'fig', 'kiwi']\n['fig', 'kiwi', 'apple', 'banana', 'elderberry']",
+      "caption": "key=len tells sorted() to measure each word's length and sort by that."
+    },
+    {
+      "type": "heading",
+      "text": "any(), all(), sum(), min(), max()"
+    },
+    {
+      "type": "text",
+      "md": "These five built-ins summarize an entire sequence in one call. They save you from writing loops just to compute a single yes/no or number."
+    },
+    {
+      "type": "code",
+      "code": "scores = [72, 85, 91, 60, 88]\n\nprint(sum(scores))          # total\nprint(min(scores))          # lowest\nprint(max(scores))          # highest\nprint(any(s >= 90 for s in scores))   # is at least one score >= 90?\nprint(all(s >= 60 for s in scores))   # are ALL scores >= 60?",
+      "output": "396\n60\n91\nTrue\nTrue",
+      "caption": "any() and all() accept generator expressions — no need for an explicit list."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "any() and all() are like voting",
+      "md": "Think of `any()` as \"does at least one person raise their hand?\" and `all()` as \"does every single person raise their hand?\" — `any()` needs just one `True`, `all()` needs every item to be `True`."
+    },
+    {
+      "type": "heading",
+      "text": "reversed() — Iterate Backwards"
+    },
+    {
+      "type": "text",
+      "md": "`reversed(sequence)` lets you loop through a list from last to first without modifying the original. Like `map()`, it is lazy — wrap it in `list()` if you want a reversed copy, or just loop over it directly."
+    },
+    {
+      "type": "code",
+      "code": "countdown = [5, 4, 3, 2, 1]\n\nfor n in reversed(countdown):\n    print(n)",
+      "output": "1\n2\n3\n4\n5",
+      "caption": "reversed() does not change the original list — it just changes the order you visit items."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "code": "students = [\"Diana\", \"Eli\", \"Fiona\", \"George\"]\ngrades = [88, 95, 72, 91]\n\n# Pair students with grades, then sort by grade descending\npaired = list(zip(students, grades))\nranked = sorted(paired, key=lambda item: item[1], reverse=True)\n\nfor rank, (name, grade) in enumerate(ranked, start=1):\n    print(f\"#{rank} {name}: {grade}\")\n\nprint(f\"\\nClass average: {sum(grades) / len(grades):.1f}\")\nprint(f\"Anyone got 100? {any(g == 100 for g in grades)}\")",
+      "output": "#1 Eli: 95\n#2 George: 91\n#3 Diana: 88\n#4 Fiona: 72\n\nClass average: 86.5\nAnyone got 100? False",
+      "caption": "zip, sorted with a key, enumerate, sum, and any — all working together naturally."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code print?\n\nnames = [\"Ana\", \"Ben\"]\nscores = [90, 85, 70]\n\nfor name, score in zip(names, scores):\n    print(name, score)",
+      "options": [
+        "Ana 90\nBen 85\n70",
+        "Ana 90\nBen 85",
+        "An error is raised because the lists are different lengths",
+        "Ana 90\nBen 85\nNone 70"
+      ],
+      "answerIndex": 1,
+      "explanation": "zip() stops when the shortest list runs out. There are only 2 names, so only 2 pairs are produced. The score 70 is silently ignored — no error, no None placeholder."
+    }
+  ],
+  "keyTakeaways": [
+    "enumerate(seq) gives you index + value pairs so you never need a manual counter variable.",
+    "zip(a, b) pairs two sequences by position — it stops at the shorter one, so keep lengths equal.",
+    "map() and filter() transform or select items; list comprehensions often express the same idea more readably.",
+    "sorted(key=...) lets you sort by any property — just pass a function that extracts the comparison value.",
+    "any(), all(), sum(), min(), and max() collapse a whole sequence into a single answer without an explicit loop."
+  ],
+  "exercise": {
+    "prompt": "You have two lists: `products = [\"Widget\", \"Gadget\", \"Doohickey\", \"Thingamajig\"]` and `prices = [9.99, 24.50, 4.75, 15.00]`. Do the following in order:\n1. Print a numbered menu (starting at 1) showing each product and its price.\n2. Print only the products that cost more than $10, sorted alphabetically.\n3. Print the total cost if someone bought one of everything.",
+    "starterCode": "products = [\"Widget\", \"Gadget\", \"Doohickey\", \"Thingamajig\"]\nprices = [9.99, 24.50, 4.75, 15.00]\n\n# Step 1: numbered menu\n\n# Step 2: products over $10, sorted\n\n# Step 3: total cost\n",
+    "hint": "Use enumerate() for the numbered menu, zip() to pair products with prices for the filtering step, and sum() for the total.",
+    "solution": "products = [\"Widget\", \"Gadget\", \"Doohickey\", \"Thingamajig\"]\nprices = [9.99, 24.50, 4.75, 15.00]\n\n# Step 1: numbered menu\nfor number, (product, price) in enumerate(zip(products, prices), start=1):\n    print(f\"{number}. {product} - ${price:.2f}\")\n\nprint()\n\n# Step 2: products over $10, sorted alphabetically\nexpensive = sorted(\n    [product for product, price in zip(products, prices) if price > 10]\n)\nprint(\"Products over $10:\", expensive)\n\n# Step 3: total cost\ntotal = sum(prices)\nprint(f\"Total: ${total:.2f}\")"
+  }
+}

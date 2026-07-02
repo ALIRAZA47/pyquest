@@ -1,0 +1,157 @@
+{
+  "slug": "virtual-environments",
+  "title": "Virtual Environments",
+  "emoji": "🧪",
+  "category": "Modules & Packages",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to give each Python project its own private sandbox so package versions never clash.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are a chef working in two different restaurants at the same time. One restaurant needs you to use salt from Brand A, and the other insists on Brand B. You cannot mix them up — each kitchen needs its own supplies.\n\nPython projects work the same way. Project A might need version 1.0 of a library, while Project B needs version 3.0. If you install everything in one global pile, they will eventually conflict. **Virtual environments** give every project its own private kitchen — its own isolated set of packages."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem: Global Package Chaos"
+    },
+    {
+      "type": "text",
+      "md": "When you first install Python, it comes with one global location where packages are stored. Every time you run `pip install something`, it lands there.\n\nThis seems fine at first — until you have two projects that need **different versions of the same package**. You cannot have both version 1 and version 3 installed globally at the same time. One of your projects will always break."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like apps on your phone",
+      "md": "Each app on your phone runs in its own sandbox. Instagram cannot accidentally break WhatsApp because they share a file. Virtual environments do the same thing for Python projects — each one gets its own space."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a Virtual Environment"
+    },
+    {
+      "type": "text",
+      "md": "Python ships with a built-in tool called `venv` (short for **v**irtual **env**ironment). You run it once inside your project folder and it creates a hidden folder — usually called `.venv` — that will hold all the packages for that project only."
+    },
+    {
+      "type": "code",
+      "code": "# Run this in your terminal, inside your project folder\npython -m venv .venv",
+      "caption": "This creates a .venv folder next to your project files. It only needs to be run once per project."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Why the dot in .venv?",
+      "md": "The leading dot (`.venv`) is a naming convention that marks the folder as hidden on macOS and Linux. It keeps your project folder tidy. You could name it anything, but `.venv` is the most common convention and many tools recognize it automatically."
+    },
+    {
+      "type": "heading",
+      "text": "Activating the Environment"
+    },
+    {
+      "type": "text",
+      "md": "Creating the environment is not enough — you also need to **activate** it. Activation tells your terminal: \"from now on, use the Python and pip inside `.venv`, not the global ones.\"\n\nThe command is slightly different depending on your operating system."
+    },
+    {
+      "type": "code",
+      "code": "# macOS or Linux — run this in your terminal\nsource .venv/bin/activate\n\n# Windows (Command Prompt)\n.venv\\Scripts\\activate.bat\n\n# Windows (PowerShell)\n.venv\\Scripts\\Activate.ps1",
+      "caption": "Pick the one that matches your OS. After running it, your terminal prompt will change to show (.venv) at the start."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "How do I know it worked?",
+      "md": "After activating, your terminal prompt changes — it will show `(.venv)` at the beginning of the line, like this:\n\n```\n(.venv) your-computer:myproject you$\n```\n\nThat little label is your confirmation. You are now inside the sandbox."
+    },
+    {
+      "type": "heading",
+      "text": "Installing Packages Inside the Environment"
+    },
+    {
+      "type": "text",
+      "md": "Once activated, `pip install` works exactly as you are used to — but now packages land **inside `.venv`** instead of the global location. They are completely isolated to this project."
+    },
+    {
+      "type": "code",
+      "code": "# With the environment activated, install a package normally\npip install requests\n\n# Verify it installed\npip list",
+      "output": "Package    Version\n---------- -------\ncertifi    2024.2.2\nchardet    5.2.0\nidna       3.7\nrequests   2.32.3\nurllib3    2.2.1",
+      "caption": "pip list shows only the packages in THIS environment — a clean, short list instead of everything ever installed globally."
+    },
+    {
+      "type": "text",
+      "md": "You can also save the list of your project's packages to a file so teammates (or your future self) can recreate the exact same environment:\n\n```\npip freeze > requirements.txt\n```\n\nThen someone else can install everything in one command:\n\n```\npip install -r requirements.txt\n```"
+    },
+    {
+      "type": "heading",
+      "text": "Leaving the Environment"
+    },
+    {
+      "type": "text",
+      "md": "When you are done working on a project, you can step out of the environment with a single word. This returns your terminal to using the global Python."
+    },
+    {
+      "type": "code",
+      "code": "# Exit the virtual environment\ndeactivate",
+      "caption": "The (.venv) label disappears from your prompt. You are back to the global Python."
+    },
+    {
+      "type": "heading",
+      "text": "Keep .venv Out of Git"
+    },
+    {
+      "type": "text",
+      "md": "The `.venv` folder can contain thousands of files and take up megabytes of space. You should **never commit it to Git**. Instead, commit your `requirements.txt` — that tiny file tells anyone who clones your project exactly what to install.\n\nAdd `.venv` to your `.gitignore` file:"
+    },
+    {
+      "type": "code",
+      "code": "# Contents of your .gitignore file\n.venv/\n__pycache__/\n*.pyc",
+      "caption": "Add this to .gitignore at the root of your project. Git will ignore the entire .venv folder."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting to activate before installing",
+      "md": "A very common mistake: you create the environment, then run `pip install` **without activating first**. The package ends up in the global location, not inside `.venv`.\n\nAlways check for the `(.venv)` label in your terminal prompt before running `pip install`. If you do not see it, run the `source .venv/bin/activate` command first."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Do not move the .venv folder",
+      "md": "The paths inside `.venv` are hardcoded to your project's location. If you rename or move your project folder, the environment will break. Just delete `.venv` and run `python -m venv .venv` again — it only takes a few seconds."
+    },
+    {
+      "type": "heading",
+      "text": "The Full Workflow at a Glance"
+    },
+    {
+      "type": "code",
+      "code": "# 1. Create the environment (once per project)\npython -m venv .venv\n\n# 2. Activate it (every time you start working)\nsource .venv/bin/activate   # macOS/Linux\n# .venv\\Scripts\\activate.bat  # Windows\n\n# 3. Install what you need\npip install requests pandas\n\n# 4. Save your dependencies\npip freeze > requirements.txt\n\n# 5. When done for the day\ndeactivate",
+      "caption": "This is the complete daily workflow. Steps 1 and 4 are one-time actions; steps 2, 3, and 5 happen every session."
+    },
+    {
+      "type": "quiz",
+      "question": "You just created a virtual environment with `python -m venv .venv`. You then run `pip install flask`. Where does Flask get installed?",
+      "options": [
+        "Inside .venv, because you created it",
+        "In the global Python location, because you did not activate the environment first",
+        "Nowhere — pip does not work until you activate",
+        "In a random temp folder"
+      ],
+      "answerIndex": 1,
+      "explanation": "Creating the environment is not enough — you must also activate it before running pip. Without activation, pip still points at the global Python location. Always look for the (.venv) label in your prompt before installing anything."
+    }
+  ],
+  "keyTakeaways": [
+    "Virtual environments isolate each project's packages so version conflicts never happen.",
+    "Create one with `python -m venv .venv` — just once per project.",
+    "Always activate (`source .venv/bin/activate`) before installing or running code.",
+    "Use `pip freeze > requirements.txt` to share your dependencies without committing `.venv`.",
+    "Add `.venv/` to `.gitignore` — never commit the environment folder itself."
+  ],
+  "exercise": {
+    "prompt": "Create a new folder called `sandbox-project`. Inside it, create a virtual environment, activate it, install the `httpx` package, then save your dependencies to `requirements.txt`. Finally, open `requirements.txt` and paste its contents as a comment in a Python file called `notes.py`.",
+    "starterCode": "# notes.py\n# Paste the contents of requirements.txt below as comments\n",
+    "hint": "Run `pip freeze > requirements.txt` after installing httpx. Then open requirements.txt, copy each line, and paste it into notes.py with a `#` at the start of each line.",
+    "solution": "# Terminal commands (not Python):\n# mkdir sandbox-project\n# cd sandbox-project\n# python -m venv .venv\n# source .venv/bin/activate        # macOS/Linux\n# .venv\\Scripts\\activate.bat       # Windows\n# pip install httpx\n# pip freeze > requirements.txt\n\n# notes.py -- after running the above, requirements.txt might look like:\n# anyio==4.4.0\n# certifi==2024.2.2\n# h11==0.14.0\n# httpcore==1.0.5\n# httpx==0.27.0\n# idna==3.7\n# sniffio==1.3.1\n\n# Your exact versions may differ — that is completely normal!"
+  }
+}

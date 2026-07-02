@@ -1,0 +1,133 @@
+{
+  "slug": "break-continue-pass",
+  "title": "break, continue & pass",
+  "emoji": "⛔",
+  "category": "Control Flow",
+  "difficulty": "Beginner",
+  "summary": "Learn how to take control of your loops by stopping them early, skipping steps, or leaving a placeholder for code you'll write later.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Loops are great — they let you repeat work automatically. But sometimes you need to **jump out early**, **skip a bad item**, or just **hold a spot** for code you haven't written yet.\n\nPython gives you three small keywords for exactly this: `break`, `continue`, and `pass`. Each one is short, but each one changes how your loop behaves in a different way."
+    },
+    {
+      "type": "heading",
+      "text": "break — Exit the Loop Immediately"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a fire alarm",
+      "md": "You're searching every drawer in your desk for your keys. The moment you **find them**, you stop looking — you don't open the rest of the drawers. That's exactly what `break` does: it says \"I'm done here, stop the loop right now.\""
+    },
+    {
+      "type": "text",
+      "md": "Use `break` when you've found what you were looking for and there's no point continuing. The loop ends immediately, and Python moves on to the code that comes after the loop."
+    },
+    {
+      "type": "code",
+      "code": "names = [\"Alice\", \"Bob\", \"Charlie\", \"Diana\"]\n\nfor name in names:\n    if name == \"Charlie\":\n        print(\"Found Charlie! Stopping.\")\n        break\n    print(f\"Checking {name}...\")",
+      "output": "Checking Alice...\nChecking Bob...\nFound Charlie! Stopping.",
+      "caption": "The loop never reaches Diana because break exits as soon as Charlie is found."
+    },
+    {
+      "type": "heading",
+      "text": "continue — Skip to the Next Iteration"
+    },
+    {
+      "type": "text",
+      "md": "`continue` does **not** stop the loop. Instead, it says: \"Skip the rest of this step and move on to the next one.\" The loop keeps going — you just skip whatever comes after `continue` for this particular item."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a quality inspector",
+      "md": "You're checking apples on a conveyor belt. When you spot a bruised one, you toss it aside and move on — you don't shut down the whole belt. `continue` is that \"toss it aside\" moment."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, -3, 7, -2, 5]\n\nfor n in numbers:\n    if n < 0:\n        continue  # skip negative numbers\n    print(f\"Processing {n}\")",
+      "output": "Processing 1\nProcessing 7\nProcessing 5",
+      "caption": "Negative numbers are skipped; the loop keeps running for the rest."
+    },
+    {
+      "type": "heading",
+      "text": "pass — Do Nothing (a Placeholder)"
+    },
+    {
+      "type": "text",
+      "md": "`pass` is the quiet one. It does absolutely nothing — it's a placeholder you use when Python **requires** a code block, but you're not ready to write the code yet.\n\nPython doesn't allow empty blocks. If you write an `if` or a `for` with nothing inside, you'll get an error. `pass` is how you tell Python: \"There's nothing here on purpose.\""
+    },
+    {
+      "type": "code",
+      "code": "for i in range(5):\n    pass  # TODO: fill this in later\n\nprint(\"Loop finished without doing anything.\")",
+      "output": "Loop finished without doing anything.",
+      "caption": "pass lets the loop run without error, even though the body is empty."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "pass is common while sketching code",
+      "md": "When you're planning the structure of a program, you might write several `if` branches or functions and fill them with `pass` as a reminder to come back. It's a perfectly normal thing to do."
+    },
+    {
+      "type": "heading",
+      "text": "The Loop-else Clause"
+    },
+    {
+      "type": "text",
+      "md": "Here's a feature many beginners don't know about: a `for` or `while` loop can have an `else` block. The `else` runs **only if the loop completed without hitting a `break`**.\n\nThis is useful for \"search\" patterns — if you searched through everything and never broke out, you know you didn't find it."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"mango\"]\ntarget = \"grape\"\n\nfor fruit in fruits:\n    if fruit == target:\n        print(f\"Found {target}!\")\n        break\nelse:\n    print(f\"{target} was not in the list.\")",
+      "output": "grape was not in the list.",
+      "caption": "The else block runs because we never hit break — the target wasn't found."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Loop-else is NOT like if-else",
+      "md": "The `else` on a loop runs when the loop **finishes normally** (no `break`). It does **not** run when the loop body is skipped or when a `continue` is used. If a `break` fires, the `else` is skipped entirely. This surprises many beginners — remember the rule: `else` = \"no break happened\"."
+    },
+    {
+      "type": "heading",
+      "text": "Real Example: Validating User Input"
+    },
+    {
+      "type": "text",
+      "md": "Here's a practical example that combines `continue` and `break` together. We process a list of scores, skip anything invalid, and stop early if we find a perfect score."
+    },
+    {
+      "type": "code",
+      "code": "scores = [72, -5, 88, 101, 95, 100, 60]\n\nfor score in scores:\n    if score < 0 or score > 100:\n        print(f\"Skipping invalid score: {score}\")\n        continue\n    if score == 100:\n        print(\"Perfect score found! Stopping early.\")\n        break\n    print(f\"Valid score: {score}\")",
+      "output": "Valid score: 72\nSkipping invalid score: -5\nValid score: 88\nSkipping invalid score: 101\nValid score: 95\nPerfect score found! Stopping early.",
+      "caption": "continue skips bad data; break stops when the goal is reached."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the else block in a for-else construct do?",
+      "options": [
+        "It runs if the loop body was never entered",
+        "It runs every time the loop iterates",
+        "It runs only if the loop finished without hitting a break",
+        "It runs only if a continue statement was used"
+      ],
+      "answerIndex": 2,
+      "explanation": "The else block on a loop runs when the loop completes normally — meaning it went through all items without a break statement stopping it early. If break fires, the else is skipped."
+    }
+  ],
+  "keyTakeaways": [
+    "`break` exits the entire loop immediately — use it when you've found what you need.",
+    "`continue` skips the rest of the current iteration and moves to the next one — use it to filter out unwanted items.",
+    "`pass` is a silent placeholder that does nothing — use it when Python requires a block but you have nothing to put there yet.",
+    "A loop's `else` block runs only if the loop finished without a `break` — perfect for search patterns."
+  ],
+  "exercise": {
+    "prompt": "Write a program that searches a list of passwords for the first one that is at least 8 characters long AND contains a digit. Use a for loop with break and continue. If a password is too short, print a message and skip it with continue. When you find a valid password, print it and break. Use loop-else to print a message if no valid password was found.\n\nTest list: [\"hi\", \"hello\", \"pass1234\", \"abc123\"]",
+    "starterCode": "passwords = [\"hi\", \"hello\", \"pass1234\", \"abc123\"]\n\nfor pwd in passwords:\n    # Check if the password is too short (less than 8 chars)\n    # If so, print a skip message and continue\n    \n    # Check if the password contains at least one digit\n    # Hint: any(char.isdigit() for char in pwd)\n    # If valid, print it and break\n    pass\nelse:\n    # Only runs if no break happened\n    pass",
+    "hint": "Use `len(pwd) < 8` to check length. Use `any(char.isdigit() for char in pwd)` to check for a digit. Put `break` inside the block where both conditions are satisfied.",
+    "solution": "passwords = [\"hi\", \"hello\", \"pass1234\", \"abc123\"]\n\nfor pwd in passwords:\n    if len(pwd) < 8:\n        print(f\"Skipping '{pwd}' — too short.\")\n        continue\n    if any(char.isdigit() for char in pwd):\n        print(f\"Valid password found: {pwd}\")\n        break\nelse:\n    print(\"No valid password found in the list.\")"
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "slug": "list-comprehensions",
+  "title": "List Comprehensions",
+  "emoji": "⚡",
+  "category": "Data Structures",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to build lists in one elegant line using Python's powerful comprehension syntax.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you have a list of numbers and you want to double every one of them. The long way is to write a `for` loop, create an empty list, and append each result. Python gives you a shortcut that does all of this in **one line**: the **list comprehension**.\n\nList comprehensions are one of Python's most loved features. They make your code shorter, more readable, and often faster. Let's build them up from scratch."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem: Building Lists with a Loop"
+    },
+    {
+      "type": "text",
+      "md": "Here is the classic pattern you already know — a `for` loop that builds a new list:"
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = []\n\nfor n in numbers:\n    doubled.append(n * 2)\n\nprint(doubled)",
+      "output": "[2, 4, 6, 8, 10]",
+      "caption": "The traditional for-loop approach to building a list"
+    },
+    {
+      "type": "text",
+      "md": "This works perfectly well. But Python lets you say the exact same thing much more concisely."
+    },
+    {
+      "type": "heading",
+      "text": "Your First List Comprehension"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like an English sentence",
+      "md": "A list comprehension reads almost like plain English: **\"give me `n * 2` for each `n` in `numbers`\"**.\n\nIn Python that becomes: `[n * 2 for n in numbers]`"
+    },
+    {
+      "type": "code",
+      "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = [n * 2 for n in numbers]\n\nprint(doubled)",
+      "output": "[2, 4, 6, 8, 10]",
+      "caption": "The same result as the loop above, but in one line"
+    },
+    {
+      "type": "text",
+      "md": "The structure is: `[expression for item in iterable]`\n\n- **expression** — what you want each element to look like\n- **item** — the variable name for each element as you loop\n- **iterable** — the source list (or any sequence)\n\nThe square brackets `[ ]` tell Python the result should be a list."
+    },
+    {
+      "type": "heading",
+      "text": "Transforming Values"
+    },
+    {
+      "type": "text",
+      "md": "You can put any expression before the `for`. Here are a few quick examples:"
+    },
+    {
+      "type": "code",
+      "code": "words = [\"hello\", \"world\", \"python\"]\n\n# Uppercase every word\nupper = [w.upper() for w in words]\nprint(upper)\n\n# Get the length of each word\nlengths = [len(w) for w in words]\nprint(lengths)",
+      "output": "['HELLO', 'WORLD', 'PYTHON']\n[5, 5, 6]",
+      "caption": "Comprehensions work with strings and any expression"
+    },
+    {
+      "type": "heading",
+      "text": "Filtering with if"
+    },
+    {
+      "type": "text",
+      "md": "You can add an `if` condition at the end to **filter** which items get included. Only items where the condition is `True` make it into the new list."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [-3, -1, 0, 2, 4, 7]\n\n# Keep only the positive numbers\npositives = [x for x in numbers if x > 0]\nprint(positives)",
+      "output": "[2, 4, 7]",
+      "caption": "The if clause acts as a filter — failing items are skipped"
+    },
+    {
+      "type": "text",
+      "md": "You can combine a **transform** and a **filter** at the same time:"
+    },
+    {
+      "type": "code",
+      "code": "numbers = [-3, -1, 0, 2, 4, 7]\n\n# Double only the positive numbers\ndoubled_positives = [x * 2 for x in numbers if x > 0]\nprint(doubled_positives)",
+      "output": "[4, 8, 14]",
+      "caption": "Filter first, then transform — all in one expression"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "if at the end vs. if...else in the middle",
+      "md": "There are two different placements of `if`, and they mean different things:\n\n- **Filter** (end): `[x for x in nums if x > 0]` — skips items that fail\n- **Conditional value** (middle): `[x if x > 0 else 0 for x in nums]` — keeps all items but changes their value\n\nThe second form uses a **ternary expression** before the `for`. Mixing them up is a very common beginner mistake!"
+    },
+    {
+      "type": "code",
+      "code": "numbers = [-3, -1, 0, 2, 4]\n\n# Replace negatives with 0, keep positives as-is\nclamped = [x if x > 0 else 0 for x in numbers]\nprint(clamped)",
+      "output": "[0, 0, 0, 2, 4]",
+      "caption": "ternary expression BEFORE the for — every item is included"
+    },
+    {
+      "type": "heading",
+      "text": "Dict and Set Comprehensions"
+    },
+    {
+      "type": "text",
+      "md": "The same idea works for **dictionaries** (use curly braces `{}` with a colon) and **sets** (use curly braces without a colon)."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"apple\", \"banana\", \"cherry\"]\n\n# Dict comprehension: word -> its length\nlength_map = {w: len(w) for w in words}\nprint(length_map)\n\n# Set comprehension: unique first letters\nfirst_letters = {w[0] for w in words}\nprint(first_letters)",
+      "output": "{'apple': 5, 'banana': 6, 'cherry': 6}\n{'a', 'b', 'c'}",
+      "caption": "Dict uses {key: value for ...}, set uses {value for ...}"
+    },
+    {
+      "type": "heading",
+      "text": "Nested Comprehensions (a Quick Look)"
+    },
+    {
+      "type": "text",
+      "md": "You can nest a comprehension inside another to flatten or process 2D data. Use this sparingly — if it gets hard to read, a regular loop is better."
+    },
+    {
+      "type": "code",
+      "code": "matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n\n# Flatten all rows into one list\nflat = [num for row in matrix for num in row]\nprint(flat)",
+      "output": "[1, 2, 3, 4, 5, 6, 7, 8, 9]",
+      "caption": "Read left-to-right: 'for each row, for each num in that row'"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Readability is king",
+      "md": "List comprehensions are great for simple transforms and filters. If your comprehension spans more than one line in your head, or needs two nested loops, **just use a regular for loop**. Clear code always beats clever code."
+    },
+    {
+      "type": "heading",
+      "text": "Side-by-Side: Loop vs. Comprehension"
+    },
+    {
+      "type": "code",
+      "code": "# These two produce the exact same result:\nsentences = [\"hello world\", \"python is fun\", \"keep it simple\"]\n\n# For-loop version\nresult_loop = []\nfor s in sentences:\n    if len(s) < 15:\n        result_loop.append(s.title())\n\n# Comprehension version\nresult_comp = [s.title() for s in sentences if len(s) < 15]\n\nprint(result_loop)\nprint(result_comp)",
+      "output": "['Hello World', 'Keep It Simple']\n['Hello World', 'Keep It Simple']",
+      "caption": "Both approaches produce identical results"
+    },
+    {
+      "type": "quiz",
+      "question": "What does this comprehension produce?\n\n```python\n[x ** 2 for x in range(5) if x % 2 == 0]\n```",
+      "options": [
+        "[0, 1, 4, 9, 16]",
+        "[0, 4, 16]",
+        "[1, 9]",
+        "[0, 2, 4]"
+      ],
+      "answerIndex": 1,
+      "explanation": "`range(5)` gives [0, 1, 2, 3, 4]. The filter `if x % 2 == 0` keeps only the even numbers: 0, 2, 4. Then `x ** 2` squares each: 0² = 0, 2² = 4, 4² = 16. Result: [0, 4, 16]."
+    }
+  ],
+  "keyTakeaways": [
+    "`[expr for item in iterable]` builds a new list by applying an expression to every element.",
+    "Add `if condition` at the end to filter items — only matching items are included.",
+    "Dict comprehensions use `{k: v for ...}` and set comprehensions use `{v for ...}`.",
+    "Nested comprehensions can flatten 2D data, but keep readability in mind.",
+    "When a comprehension gets complicated, a plain `for` loop is always a valid and clear alternative."
+  ],
+  "exercise": {
+    "prompt": "You have a list of temperatures in Celsius: `[-10, 0, 15, 22, 37, 100]`.\n\n1. Use a list comprehension to convert every temperature to Fahrenheit. Formula: `F = C * 9/5 + 32`.\n2. Use another comprehension to keep only the Fahrenheit values that are above 60°F.\n3. Bonus: build a dict that maps each original Celsius value to its Fahrenheit equivalent.",
+    "starterCode": "celsius = [-10, 0, 15, 22, 37, 100]\n\n# 1. Convert all to Fahrenheit\nfahrenheit = []\n\n# 2. Keep only values above 60F\nwarm = []\n\n# 3. Bonus: dict {C: F}\ntemp_map = {}\n\nprint(fahrenheit)\nprint(warm)\nprint(temp_map)",
+    "hint": "For part 1, the expression is `c * 9/5 + 32`. For part 2, filter the `fahrenheit` list with `if f > 60`. For the dict, use `{c: c * 9/5 + 32 for c in celsius}`.",
+    "solution": "celsius = [-10, 0, 15, 22, 37, 100]\n\n# 1. Convert all to Fahrenheit\nfahrenheit = [c * 9/5 + 32 for c in celsius]\n\n# 2. Keep only values above 60F\nwarm = [f for f in fahrenheit if f > 60]\n\n# 3. Bonus: dict {C: F}\ntemp_map = {c: c * 9/5 + 32 for c in celsius}\n\nprint(fahrenheit)\nprint(warm)\nprint(temp_map)"
+  }
+}

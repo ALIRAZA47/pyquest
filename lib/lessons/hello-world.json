@@ -1,0 +1,134 @@
+{
+  "slug": "hello-world",
+  "title": "Your First Program",
+  "emoji": "👋",
+  "category": "Getting Started",
+  "difficulty": "Beginner",
+  "summary": "Write your very first line of Python and make the computer say hello to the world.",
+  "readingTime": "6 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every programmer in history has started exactly where you are right now. The very first program almost everyone writes is called **Hello, World!** — and it is a tradition going back to the 1970s.\n\nYour goal in this lesson: make the computer display a message on the screen. That is it. One line of code. Let's go."
+    },
+    {
+      "type": "heading",
+      "text": "What is print()?"
+    },
+    {
+      "type": "text",
+      "md": "Python has a built-in command called `print()`. Think of it like a megaphone — whatever you put inside the parentheses, Python will shout it out onto your screen.\n\nThe parentheses `()` are how you hand something *to* a command. Everything inside is the message you want to display."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "print() is like a megaphone",
+      "md": "Imagine handing a note to a friend and saying \"read this out loud.\" `print()` is that friend. You put your message inside the parentheses, and Python reads it out loud — onto your screen."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Line of Code"
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello, World!\")",
+      "output": "Hello, World!",
+      "caption": "The classic first program. One line, and it works!"
+    },
+    {
+      "type": "text",
+      "md": "When Python runs this line, it looks inside the parentheses, finds your message, and displays it. The output appears instantly below your code.\n\nYou just wrote a real, working Python program. Take a second to appreciate that."
+    },
+    {
+      "type": "heading",
+      "text": "Why Do We Need Quotes?"
+    },
+    {
+      "type": "text",
+      "md": "The quotes around `\"Hello, World!\"` tell Python: *this is text, not a command*. In Python, a piece of text wrapped in quotes is called a **string**.\n\nWithout quotes, Python would think `Hello` is the name of something it should look up — and it would get confused and show an error."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting the quotes causes an error",
+      "md": "```python\nprint(Hello, World!)\n```\nThis will **crash** with a `SyntaxError`. Python sees `Hello` and `World` as unknown names, not text. Always wrap your text in quotes."
+    },
+    {
+      "type": "heading",
+      "text": "Single Quotes Work Too"
+    },
+    {
+      "type": "code",
+      "code": "print('Hello, World!')",
+      "output": "Hello, World!",
+      "caption": "Single quotes and double quotes are both fine for strings."
+    },
+    {
+      "type": "text",
+      "md": "Python accepts both `'single quotes'` and `\"double quotes\"` around strings. The output is identical. Most people pick one style and stick with it — but you can use either. Just make sure your opening and closing quote match!"
+    },
+    {
+      "type": "heading",
+      "text": "Printing Multiple Things at Once"
+    },
+    {
+      "type": "text",
+      "md": "You can print more than one item in a single `print()` call by separating them with a **comma**. Python will put a space between each item automatically."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello\", \"World\", \"from Python!\")",
+      "output": "Hello World from Python!",
+      "caption": "Commas separate items; Python adds a space between them."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Print as many items as you like",
+      "md": "There is no limit to how many items you can pass to `print()`. Each comma-separated value gets printed on the same line, separated by a single space. Great for mixing text and values later on!"
+    },
+    {
+      "type": "heading",
+      "text": "Printing Multiple Lines"
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello, World!\")\nprint(\"I am learning Python.\")\nprint(\"This is awesome!\")",
+      "output": "Hello, World!\nI am learning Python.\nThis is awesome!",
+      "caption": "Each print() call starts on a new line."
+    },
+    {
+      "type": "text",
+      "md": "Every `print()` call automatically ends with a newline, so the next `print()` always starts on a fresh line. You can stack as many as you need."
+    },
+    {
+      "type": "heading",
+      "text": "Check Your Understanding"
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code print?\n\nprint(\"Python\", \"is\", \"fun\")",
+      "options": [
+        "Python,is,fun",
+        "Pythonisfun",
+        "Python is fun",
+        "Error — you can't pass multiple items to print()"
+      ],
+      "answerIndex": 2,
+      "explanation": "When you separate items with commas inside print(), Python joins them with a single space. So \"Python\", \"is\", \"fun\" becomes Python is fun."
+    }
+  ],
+  "keyTakeaways": [
+    "`print()` displays text (and other values) on the screen.",
+    "Text in Python must be wrapped in quotes — either single `'...'` or double `\"...\"` — to be treated as a string.",
+    "Separate multiple items with commas inside `print()` and Python adds spaces between them automatically.",
+    "Each `print()` call outputs on its own line.",
+    "You just wrote real Python code — every expert started exactly here."
+  ],
+  "exercise": {
+    "prompt": "Write a small program that introduces yourself. It should print three lines: your name, what you are learning, and one thing you are excited about. Use at least one `print()` call that has two items separated by a comma.",
+    "starterCode": "# Replace the blanks with your own words!\nprint(\"My name is\", \"___\")\nprint(\"___\")\nprint(\"___\")",
+    "hint": "Remember: text goes inside quotes. Use a comma inside print() to join two pieces of text with a space between them.",
+    "solution": "print(\"My name is\", \"Alex\")\nprint(\"I am learning Python.\")\nprint(\"I am excited to build my own programs!\")"
+  }
+}

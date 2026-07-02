@@ -1,0 +1,164 @@
+{
+  "slug": "regular-expressions",
+  "title": "Regular Expressions",
+  "emoji": "🔍",
+  "category": "Writing Pythonic Code",
+  "difficulty": "Advanced",
+  "summary": "Learn to use Python's re module to search, match, and transform text using powerful pattern expressions.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you have thousands of email addresses in a text file and you need to find all of them. Or you want to check if a phone number looks valid before storing it. You *could* write dozens of if-statements to handle every case — or you could use a **regular expression** (regex) to describe the pattern in one concise line.\n\nRegular expressions are a mini-language for describing text patterns. They feel strange at first, but once they click, they become one of the most powerful tools in your toolkit."
+    },
+    {
+      "type": "heading",
+      "text": "Importing the re Module"
+    },
+    {
+      "type": "text",
+      "md": "Python's built-in `re` module gives you everything you need. No installation required — just import it."
+    },
+    {
+      "type": "code",
+      "code": "import re\n\ntext = \"My email is hello@example.com\"\nresult = re.search(r\"hello\", text)\nprint(result)",
+      "output": "<re.Match object; span=(12, 17), match='hello'>",
+      "caption": "re.search returns a Match object if the pattern is found, or None if not."
+    },
+    {
+      "type": "heading",
+      "text": "Always Use Raw Strings"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use r\"...\" for Regex Patterns",
+      "md": "Always write your regex patterns as **raw strings**: `r\"\\d+\"` instead of `\"\\\\d+\"`.\n\nIn a normal Python string, `\\n` means newline and `\\t` means tab. In a raw string, backslashes are treated literally — which is exactly what regex needs. Making this a habit saves you from mysterious bugs."
+    },
+    {
+      "type": "code",
+      "code": "import re\n\n# Without raw string — backslash causes confusion\npattern_bad  = \"\\d+\"   # Python interprets \\d as just 'd'\n\n# With raw string — backslash is passed through to regex\npattern_good = r\"\\d+\"  # regex sees \\d, which means \"a digit\"\n\nprint(re.findall(pattern_good, \"I have 3 cats and 12 dogs\"))",
+      "output": "['3', '12']",
+      "caption": "Always prefix regex patterns with r to avoid backslash headaches."
+    },
+    {
+      "type": "heading",
+      "text": "The Four Core Functions"
+    },
+    {
+      "type": "text",
+      "md": "The `re` module has many functions, but four cover almost every situation you will encounter:\n\n- `re.search(pattern, text)` — finds the **first** match anywhere in the text\n- `re.match(pattern, text)` — checks if the text **starts with** the pattern\n- `re.findall(pattern, text)` — returns a **list of all** matches\n- `re.sub(pattern, replacement, text)` — **replaces** all matches with something new"
+    },
+    {
+      "type": "code",
+      "code": "import re\n\ntext = \"Prices: $10, $250, $3\"\n\n# findall — grab every number\nall_numbers = re.findall(r\"\\d+\", text)\nprint(all_numbers)\n\n# search — find the first number\nfirst = re.search(r\"\\d+\", text)\nprint(first.group())\n\n# sub — replace all prices with ???\ncensored = re.sub(r\"\\$\\d+\", \"???\", text)\nprint(censored)",
+      "output": "['10', '250', '3']\n10\nPrices: ???, ???, ???",
+      "caption": "The three most-used regex functions in one example."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "re.search vs re.match",
+      "md": "`re.match` only checks at the **very beginning** of the string. If the pattern could appear anywhere in the text, use `re.search` instead. Most of the time, `re.search` is what you want."
+    },
+    {
+      "type": "heading",
+      "text": "Common Metacharacters and Character Classes"
+    },
+    {
+      "type": "text",
+      "md": "Regular expressions get their power from **metacharacters** — special symbols that represent patterns rather than literal characters. Here are the most important ones:\n\n- `.` — any single character (except newline)\n- `\\d` — any digit (0–9)\n- `\\w` — any word character (letters, digits, underscore)\n- `\\s` — any whitespace (space, tab, newline)\n- `\\D`, `\\W`, `\\S` — the **opposite** of the lowercase versions\n- `[abc]` — any one of: a, b, or c\n- `[a-z]` — any lowercase letter\n- `^` — start of string; `$` — end of string\n- `+` — one or more of the previous; `*` — zero or more; `?` — zero or one\n- `{3}` — exactly 3 of the previous; `{2,5}` — between 2 and 5"
+    },
+    {
+      "type": "code",
+      "code": "import re\n\nexamples = [\n    (r\"\\d{3}-\\d{4}\",  \"Call us at 555-1234 anytime\"),\n    (r\"[aeiou]+\",     \"beautiful\"),\n    (r\"\\w+@\\w+\\.\\w+\", \"contact: info@pyquest.dev\"),\n    (r\"^Hello\",       \"Hello, world!\"),\n]\n\nfor pattern, text in examples:\n    match = re.search(pattern, text)\n    if match:\n        print(f\"Pattern {pattern!r} found: {match.group()!r}\")",
+      "output": "Pattern '\\\\d{3}-\\\\d{4}' found: '555-1234'\nPattern '[aeiou]+' found: 'eau'\nPattern '\\\\w+@\\\\w+\\.\\\\w+' found: 'info@pyquest.dev'\nPattern '^Hello' found: 'Hello'",
+      "caption": "Mixing metacharacters lets you describe complex patterns compactly."
+    },
+    {
+      "type": "heading",
+      "text": "Capturing Groups with ()"
+    },
+    {
+      "type": "text",
+      "md": "Wrapping part of a pattern in parentheses `()` creates a **group**. Groups let you extract specific pieces of a match — not just the whole thing. Think of groups like named buckets inside your pattern."
+    },
+    {
+      "type": "code",
+      "code": "import re\n\nemail = \"Send receipts to billing@company.org\"\n\n# Groups capture the username and domain separately\nmatch = re.search(r\"(\\w+)@([\\w.]+)\", email)\n\nif match:\n    print(\"Full match:\", match.group(0))   # entire match\n    print(\"Username: \", match.group(1))   # first group\n    print(\"Domain:   \", match.group(2))   # second group",
+      "output": "Full match: billing@company.org\nUsername:  billing\nDomain:    company.org",
+      "caption": "group(0) is the whole match; group(1), group(2), ... are the captured pieces."
+    },
+    {
+      "type": "heading",
+      "text": "Practical Example: Validating and Extracting Emails"
+    },
+    {
+      "type": "text",
+      "md": "Let's put it all together with a real task: find every valid-looking email address in a block of text."
+    },
+    {
+      "type": "code",
+      "code": "import re\n\ntext = \"\"\"\nTeam contacts:\n  alice@example.com\n  bob.smith@work.co.uk\n  not-an-email\n  charlie@dev.io\n\"\"\"\n\n# A reasonable (not perfect) email pattern\nemail_pattern = r\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}\"\n\nemails = re.findall(email_pattern, text)\nprint(\"Found emails:\")\nfor email in emails:\n    print(\" \", email)",
+      "output": "Found emails:\n  alice@example.com\n  bob.smith@work.co.uk\n  charlie@dev.io",
+      "caption": "findall collects every email-shaped string. 'not-an-email' is correctly skipped."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always Check for None Before Calling .group()",
+      "md": "When `re.search` finds nothing, it returns `None`. Calling `.group()` on `None` raises an `AttributeError` and crashes your program.\n\nAlways guard with an `if` check:\n```python\nmatch = re.search(r\"\\d+\", text)\nif match:\n    print(match.group())\n```\nThis is one of the most common regex mistakes beginners make."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Regex is Like a Metal Detector",
+      "md": "A regex pattern is like a metal detector set to a specific frequency. You sweep it over text (the beach), and it beeps only when it finds something matching your signal. The tighter you tune the frequency (your pattern), the more precisely it picks out what you want — and ignores everything else."
+    },
+    {
+      "type": "heading",
+      "text": "When Regex is Overkill"
+    },
+    {
+      "type": "text",
+      "md": "Regex is powerful, but it is not always the right tool. For simple tasks, plain string methods are cleaner, faster, and easier to read:\n\n- Checking if a string starts with something? Use `str.startswith()`.\n- Finding a word? Use `in` or `str.find()`.\n- Splitting on a comma? Use `str.split(\",\")`.\n- Replacing a fixed word? Use `str.replace()`.\n\nReach for regex when patterns are **variable or complex** — like phone numbers in many formats, or extracting data from messy text."
+    },
+    {
+      "type": "code",
+      "code": "# Overkill with regex:\nimport re\nif re.search(r\"hello\", \"hello world\"):\n    print(\"found\")\n\n# Better — simpler and clearer:\nif \"hello\" in \"hello world\":\n    print(\"found\")",
+      "output": "found\nfound",
+      "caption": "Use plain string methods for simple lookups. Save regex for genuinely complex patterns."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Regex Can't Parse HTML or JSON",
+      "md": "A classic mistake is using regex to parse structured formats like HTML or JSON. These formats have nesting and special rules that regex cannot handle reliably. Use `html.parser` or `BeautifulSoup` for HTML, and `json.loads()` for JSON. Regex is for **flat text patterns**, not document structures."
+    },
+    {
+      "type": "quiz",
+      "question": "What does re.findall(r\"\\d+\", \"abc 42 def 7\") return?",
+      "options": [
+        "The first number found: '42'",
+        "A Match object for '42'",
+        "A list of all numbers: ['42', '7']",
+        "True, because digits were found"
+      ],
+      "answerIndex": 2,
+      "explanation": "re.findall always returns a list of all non-overlapping matches as strings. Here it finds '42' and '7', so it returns ['42', '7']. re.search would return just the first match as a Match object, not a list."
+    }
+  ],
+  "keyTakeaways": [
+    "Always write regex patterns as raw strings (r\"...\") to avoid backslash confusion.",
+    "Use re.search to find a pattern anywhere, re.findall to collect all matches, and re.sub to replace matches.",
+    "Parentheses () create capturing groups so you can extract specific parts of a match.",
+    "Always check that re.search returned a match (not None) before calling .group() on it.",
+    "Regex is powerful but not always the right tool — prefer simple string methods for simple tasks."
+  ],
+  "exercise": {
+    "prompt": "Write a function called extract_phone_numbers(text) that takes a string and returns a list of all phone numbers in the format NNN-NNN-NNNN (three digits, hyphen, three digits, hyphen, four digits). Test it on a sample paragraph.",
+    "starterCode": "import re\n\ndef extract_phone_numbers(text):\n    # Write your pattern here\n    pattern = r\"\"  # fill this in\n    return re.findall(pattern, text)\n\nsample = \"Call Alice at 415-555-1234 or Bob at 800-123-4567. Not a number: 12-34.\"\nprint(extract_phone_numbers(sample))",
+    "hint": "A 3-digit group looks like \\d{3}. A hyphen is just a literal -. Chain three groups together: \\d{3}-\\d{3}-\\d{4}.",
+    "solution": "import re\n\ndef extract_phone_numbers(text):\n    pattern = r\"\\d{3}-\\d{3}-\\d{4}\"\n    return re.findall(pattern, text)\n\nsample = \"Call Alice at 415-555-1234 or Bob at 800-123-4567. Not a number: 12-34.\"\nprint(extract_phone_numbers(sample))\n# Output: ['415-555-1234', '800-123-4567']"
+  }
+}

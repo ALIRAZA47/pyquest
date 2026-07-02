@@ -1,0 +1,137 @@
+{
+  "slug": "how-python-works",
+  "title": "How Python Runs Your Code",
+  "emoji": "🔧",
+  "category": "Getting Started",
+  "difficulty": "Beginner",
+  "summary": "Discover how Python reads and runs your code line by line — and why that makes it one of the friendliest languages to learn.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Before you write your first real program, it helps to understand what actually *happens* when you run Python code. You don't need to memorize any of this — but having a simple mental model will make error messages less scary and debugging much easier."
+    },
+    {
+      "type": "heading",
+      "text": "Python Is a Line-by-Line Reader"
+    },
+    {
+      "type": "text",
+      "md": "Python reads your code **from top to bottom**, one line at a time. It does exactly what each line says, then moves on to the next. Think of it like a recipe: a chef follows step 1, then step 2, then step 3 — never skipping ahead, never going back (unless you tell it to)."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Step 1: Mix the ingredients\")\nprint(\"Step 2: Bake for 30 minutes\")\nprint(\"Step 3: Let it cool\")",
+      "output": "Step 1: Mix the ingredients\nStep 2: Bake for 30 minutes\nStep 3: Let it cool",
+      "caption": "Python runs these three lines in order, top to bottom."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Python as a careful reader",
+      "md": "Imagine handing someone a list of instructions written on a piece of paper. They read line 1, do it, then read line 2, do it — all the way to the end. Python works exactly the same way."
+    },
+    {
+      "type": "heading",
+      "text": "What Happens Behind the Scenes"
+    },
+    {
+      "type": "text",
+      "md": "When you run a Python file, a few quick things happen automatically:\n\n- Python reads your **source code** (the `.py` file you wrote)\n- It converts it into a simpler form called **bytecode** (think of it as shorthand Python can work with faster)\n- The **Python interpreter** — also called the Python Virtual Machine, or PVM — executes that bytecode\n\nThe important part: **you never have to do any of this manually.** You just write your code and hit run. Python handles the rest."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "No manual compiling needed",
+      "md": "Some languages (like C or Java) require a separate \"compile\" step before you can run your code. Python handles this automatically — you just run your file and Python figures everything out instantly."
+    },
+    {
+      "type": "heading",
+      "text": "Two Ways to Run Python"
+    },
+    {
+      "type": "text",
+      "md": "There are two common ways to use Python, and you will encounter both."
+    },
+    {
+      "type": "text",
+      "md": "**1. Running a script file**\n\nYou write your code in a file (e.g. `hello.py`) and run the whole file at once. Python reads it from top to bottom and executes every line. This is how real programs work.\n\n**2. The interactive shell (REPL)**\n\nYou open a Python prompt and type one line at a time. Python runs each line immediately and shows you the result. It is perfect for experimenting and learning. REPL stands for **Read, Evaluate, Print, Loop** — it reads what you type, evaluates it, prints the result, then waits for more."
+    },
+    {
+      "type": "code",
+      "code": "# This is what the interactive shell looks like.\n# The >>> is Python's prompt, waiting for your input.\n\n>>> 2 + 2\n4\n>>> print(\"Hello!\")\nHello!",
+      "caption": "In the interactive shell, you type one line and Python responds right away."
+    },
+    {
+      "type": "heading",
+      "text": "When Errors Happen"
+    },
+    {
+      "type": "text",
+      "md": "Because Python runs your code line by line, **errors are reported exactly when the problematic line runs**. Any lines before it will have already executed successfully. Any lines after it will not run at all."
+    },
+    {
+      "type": "code",
+      "code": "print(\"This runs fine\")\nprint(\"This also runs fine\")\nprint(oops_not_a_variable)\nprint(\"This never runs\")",
+      "output": "This runs fine\nThis also runs fine\nNameError: name 'oops_not_a_variable' is not defined",
+      "caption": "Python got through lines 1 and 2, then hit an error on line 3 and stopped."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Code after an error does not run",
+      "md": "When Python hits an error, it **stops immediately**. The lines below the error are never executed. This is why fixing errors from top to bottom — one at a time — is the most effective approach."
+    },
+    {
+      "type": "heading",
+      "text": "Order Really Matters"
+    },
+    {
+      "type": "text",
+      "md": "Because Python reads top to bottom, the **order of your lines matters**. If you try to use something before you have defined it, Python will not know what you are talking about."
+    },
+    {
+      "type": "code",
+      "code": "# This works — we define the variable first, then use it.\ngreeting = \"Hello, world!\"\nprint(greeting)",
+      "output": "Hello, world!",
+      "caption": "Define first, use second. Python is happy."
+    },
+    {
+      "type": "code",
+      "code": "# This fails — we try to use the variable before defining it.\nprint(greeting)\ngreeting = \"Hello, world!\"",
+      "output": "NameError: name 'greeting' is not defined",
+      "caption": "Python reaches the print line first and has no idea what 'greeting' is yet."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Always define before you use",
+      "md": "If you get a `NameError`, the most common cause is using a variable or value **before** the line that creates it. Scroll up and check the order of your code."
+    },
+    {
+      "type": "quiz",
+      "question": "You have a Python script with 5 lines. Line 3 has an error. What happens when you run the script?",
+      "options": [
+        "Python skips line 3 and runs lines 4 and 5",
+        "Python runs lines 1 and 2, then stops at line 3 with an error",
+        "Python finds the error before running anything and refuses to start",
+        "Python runs all 5 lines and shows the error at the end"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python runs line by line from the top. It successfully executes lines 1 and 2, then hits the error on line 3 and stops. Lines 4 and 5 never run."
+    }
+  ],
+  "keyTakeaways": [
+    "Python reads and runs your code **top to bottom**, one line at a time.",
+    "Python automatically converts your code to bytecode and runs it — no manual compile step needed.",
+    "You can run Python as a **script file** (all at once) or in the **interactive shell** (line by line).",
+    "When an error occurs, Python stops at that exact line — lines above it already ran, lines below it did not.",
+    "**Order matters**: always define a variable before you use it."
+  ],
+  "exercise": {
+    "prompt": "Write a short Python script (4-5 lines) that does the following in order: (1) prints your name, (2) stores your favorite number in a variable, (3) prints a sentence that includes that number. Make sure the order is correct so everything runs without errors.",
+    "starterCode": "# Step 1: print your name\n\n# Step 2: store your favorite number\n\n# Step 3: print a sentence with that number\n",
+    "hint": "Remember to define the variable before you try to print it. Use print() for each output line.",
+    "solution": "# Step 1: print your name\nprint(\"My name is Alex\")\n\n# Step 2: store your favorite number\nfavorite_number = 7\n\n# Step 3: print a sentence with that number\nprint(\"My favorite number is\", favorite_number)"
+  }
+}

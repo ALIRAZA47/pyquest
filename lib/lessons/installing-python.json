@@ -1,0 +1,136 @@
+{
+  "slug": "installing-python",
+  "title": "Installing Python",
+  "emoji": "⚙️",
+  "category": "Getting Started",
+  "difficulty": "Beginner",
+  "summary": "Get Python running on your computer and write your very first .py file — no experience needed.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Before you can write Python programs, you need Python itself installed on your computer. Think of it like installing a music player before you can listen to songs — the code is the song, and Python is the player that makes it run.\n\nThis lesson walks you through the whole setup: downloading Python, picking a code editor, and running your first file. By the end, you'll have a working Python environment ready to go."
+    },
+    {
+      "type": "heading",
+      "text": "Downloading Python"
+    },
+    {
+      "type": "text",
+      "md": "Python is **free** and available for Windows, macOS, and Linux. The official home is [python.org](https://python.org). Head to **python.org/downloads** and click the big download button — it will detect your operating system automatically.\n\nAlways grab the **latest stable version** (the one that doesn't say \"pre-release\" or \"alpha\"). At the time of writing that's Python 3.12 or newer."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Windows users: check \"Add Python to PATH\"",
+      "md": "During installation on Windows you will see a checkbox at the very bottom of the first screen that says **\"Add Python to PATH\"**. Make sure you **tick it before clicking Install**.\n\nIf you skip this, your terminal won't know where to find Python and commands like `python --version` will fail with a confusing error. If you already installed without it, just uninstall and reinstall — it only takes a minute."
+    },
+    {
+      "type": "heading",
+      "text": "Mac and Linux"
+    },
+    {
+      "type": "text",
+      "md": "On **macOS**, an old Python 2 is sometimes pre-installed, but you want Python 3. After installing from python.org (or using a tool like Homebrew), always use the command `python3` instead of `python` in your terminal. This avoids accidentally calling the old version.\n\nOn **Linux**, Python 3 is often already installed. Open a terminal and try `python3 --version` to check."
+    },
+    {
+      "type": "heading",
+      "text": "Verifying Your Installation"
+    },
+    {
+      "type": "text",
+      "md": "Once installed, open a **terminal** (called \"Command Prompt\" or \"PowerShell\" on Windows, \"Terminal\" on macOS/Linux) and type one of the commands below. If Python is installed correctly, it prints its version number."
+    },
+    {
+      "type": "code",
+      "code": "# On Windows — type this in Command Prompt or PowerShell:\npython --version\n\n# On macOS / Linux — type this in Terminal:\npython3 --version",
+      "output": "Python 3.12.3",
+      "caption": "A version number means it worked. Any number starting with 3 is great."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "No version number? Try the other command",
+      "md": "Some systems register Python as `python`, others as `python3`. If one doesn't work, try the other. Throughout this course we'll use `python3` in examples, but substitute `python` if that's what works on your machine."
+    },
+    {
+      "type": "heading",
+      "text": "Choosing a Code Editor"
+    },
+    {
+      "type": "text",
+      "md": "A **code editor** is a program designed for writing code. You *could* use Notepad, but a proper editor gives you superpowers: colored syntax, error hints, auto-complete, and a built-in terminal.\n\nHere are two great options to start with:\n\n- **VS Code** (Visual Studio Code) — free, beginner-friendly, and wildly popular. Download at [code.visualstudio.com](https://code.visualstudio.com). Install the \"Python\" extension (by Microsoft) once it's open.\n- **IDLE** — ships with Python automatically. It's simpler and great for tiny experiments, though VS Code is better for real projects."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Editor vs. Python — what's the difference?",
+      "md": "Think of Python as a **car engine** and your code editor as the **dashboard and steering wheel**. The engine does the actual work; the dashboard just gives you a nice way to control it. You could theoretically hot-wire the car (write code in Notepad), but the dashboard makes everything much nicer."
+    },
+    {
+      "type": "heading",
+      "text": "Creating and Running Your First File"
+    },
+    {
+      "type": "text",
+      "md": "Python programs are saved in plain text files with the `.py` extension. Here's how to create and run one:\n\n1. Open your editor and create a new file called `hello.py`.\n2. Type a line of Python code inside it.\n3. Save the file.\n4. Open your terminal, navigate to the folder where you saved the file, and run it."
+    },
+    {
+      "type": "code",
+      "code": "# hello.py\nprint(\"Hello, world!\")",
+      "output": "Hello, world!",
+      "caption": "This is the classic first program. Save it as hello.py, then run it from your terminal."
+    },
+    {
+      "type": "code",
+      "code": "# In your terminal, navigate to the file's folder, then run:\npython3 hello.py",
+      "output": "Hello, world!",
+      "caption": "Use 'python hello.py' on Windows if python3 doesn't work."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"No such file or directory\" error",
+      "md": "This means your terminal is looking in the wrong folder. Use `cd` (\"change directory\") to navigate to where your file is saved.\n\nFor example: `cd Desktop` or `cd Documents/my-python-projects`.\n\nTip: In VS Code you can open a terminal directly inside the editor — it automatically starts in the right folder."
+    },
+    {
+      "type": "heading",
+      "text": "pip Comes Free"
+    },
+    {
+      "type": "text",
+      "md": "Python comes bundled with a tool called **pip** — the Python package installer. It lets you download free libraries written by other developers so you don't have to build everything from scratch. You don't need to install pip separately; it's already there. You'll use it in later lessons when your programs need extra features."
+    },
+    {
+      "type": "code",
+      "code": "# Check that pip is available:\npip --version\n# or on Mac/Linux:\npip3 --version",
+      "output": "pip 24.0 from /usr/local/lib/python3.12/site-packages/pip (python 3.12)",
+      "caption": "pip is already bundled — no separate install needed."
+    },
+    {
+      "type": "quiz",
+      "question": "You installed Python on Windows and now `python --version` gives an error like \"'python' is not recognized\". What is the most likely cause?",
+      "options": [
+        "Python was downloaded from the wrong website",
+        "You forgot to check \"Add Python to PATH\" during installation",
+        "Windows does not support Python",
+        "You need to restart your code editor first"
+      ],
+      "answerIndex": 1,
+      "explanation": "The PATH is how your terminal finds programs. Without it, Windows doesn't know where Python was installed. Reinstall Python and tick the \"Add Python to PATH\" checkbox on the first screen."
+    }
+  ],
+  "keyTakeaways": [
+    "Download Python for free from python.org — always choose a Python 3 version.",
+    "On Windows, tick \"Add Python to PATH\" during installation or commands won't work.",
+    "Verify your install by running `python --version` or `python3 --version` in a terminal.",
+    "VS Code is the recommended editor — free, powerful, and beginner-friendly.",
+    "Run any Python file with `python3 filename.py` in your terminal; pip comes bundled automatically."
+  ],
+  "exercise": {
+    "prompt": "Create a file called `about_me.py`. Inside it, use `print()` to display three lines: your name, your favorite color, and why you want to learn Python. Then run the file from your terminal and confirm all three lines appear.",
+    "starterCode": "# about_me.py\n# Replace the placeholders below with your own answers\n\nprint(\"My name is ...\")\nprint(\"My favorite color is ...\")\nprint(\"I want to learn Python because ...\")",
+    "hint": "Each `print()` call produces one line of output. Make sure your file is saved before running it, and that your terminal is pointed at the same folder as the file.",
+    "solution": "# about_me.py\nprint(\"My name is Alex\")\nprint(\"My favorite color is blue\")\nprint(\"I want to learn Python because I want to build cool things!\")"
+  }
+}

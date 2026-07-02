@@ -1,0 +1,186 @@
+{
+  "slug": "type-conversion",
+  "title": "Type Conversion (Casting)",
+  "emoji": "🔄",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how to convert values between types like int, float, str, and bool so Python can understand what you really mean.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you ask someone their age and they say **\"twenty-five\"** — but you need the number 25 to do math with it. That mismatch happens in Python all the time. Every value in Python has a **type** (like a number, text, or true/false), and sometimes you need to change a value from one type to another. That process is called **type conversion** (or *casting*). It is one of the most practical skills in Python — you will use it constantly."
+    },
+    {
+      "type": "heading",
+      "text": "Why Does This Even Come Up?"
+    },
+    {
+      "type": "text",
+      "md": "The most common situation: when you ask a user to type something with `input()`, Python **always** gives you back a `str` (text) — even if they typed a number. So `\"5\"` and `5` look the same to you, but Python treats them very differently. You cannot do math on the text `\"5\"`."
+    },
+    {
+      "type": "code",
+      "code": "age = input(\"How old are you? \")  # user types: 25\nprint(type(age))\nprint(age + 1)",
+      "output": "<class 'str'>\nTypeError: can only concatenate str (not \"int\") to str",
+      "caption": "input() always returns a string — even when the user types a number"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Vending Machine Analogy",
+      "md": "Think of type conversion like feeding a vending machine. The machine only accepts coins, not paper bills. If you have a $1 bill (a string `\"1\"`), you need to **convert** it to coins (the integer `1`) before the machine will accept it. Python's conversion functions are your coin-change machine."
+    },
+    {
+      "type": "heading",
+      "text": "Converting to an Integer with int()"
+    },
+    {
+      "type": "text",
+      "md": "Use `int()` to turn a value into a whole number. This is the fix for the `input()` problem above. Wrap the whole `input()` call in `int()` and Python converts the result right away."
+    },
+    {
+      "type": "code",
+      "code": "age = int(input(\"How old are you? \"))  # user types: 25\nprint(type(age))\nprint(age + 1)",
+      "output": "<class 'int'>\n26",
+      "caption": "Wrapping input() with int() converts the text to a number immediately"
+    },
+    {
+      "type": "text",
+      "md": "`int()` also works on floats — it simply chops off the decimal part (it does **not** round):\n\n- `int(3.9)` gives `3`\n- `int(-2.7)` gives `-2`"
+    },
+    {
+      "type": "code",
+      "code": "print(int(3.9))\nprint(int(-2.7))\nprint(int(\"42\"))",
+      "output": "3\n-2\n42",
+      "caption": "int() truncates floats and converts numeric strings"
+    },
+    {
+      "type": "heading",
+      "text": "Converting to a Float with float()"
+    },
+    {
+      "type": "text",
+      "md": "Use `float()` when you need a number with a decimal point — for example, prices or measurements."
+    },
+    {
+      "type": "code",
+      "code": "price = float(input(\"Enter price: \"))  # user types: 9.99\ntax = price * 0.1\nprint(\"Tax:\", tax)",
+      "output": "Tax: 0.999",
+      "caption": "float() lets you do decimal math on user input"
+    },
+    {
+      "type": "heading",
+      "text": "Converting to a String with str()"
+    },
+    {
+      "type": "text",
+      "md": "Use `str()` to turn a number (or anything else) into text. This is super handy when you want to **build a message** by joining numbers and words together."
+    },
+    {
+      "type": "code",
+      "code": "score = 98\nmessage = \"Your score is \" + str(score) + \" out of 100!\"\nprint(message)",
+      "output": "Your score is 98 out of 100!",
+      "caption": "str() lets you glue numbers into text with the + operator"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "f-strings handle this automatically",
+      "md": "Using an **f-string** (covered in another lesson) lets you skip `str()` entirely: `f\"Your score is {score} out of 100!\"` works great. But understanding `str()` helps you know what is happening under the hood."
+    },
+    {
+      "type": "heading",
+      "text": "Converting to a Boolean with bool()"
+    },
+    {
+      "type": "text",
+      "md": "Use `bool()` to convert a value to `True` or `False`. Python has a simple rule: **most things are truthy**, but a handful of values are falsy:\n\n- Falsy: `0`, `0.0`, `\"\"` (empty string), `[]` (empty list), `None`\n- Everything else is truthy"
+    },
+    {
+      "type": "code",
+      "code": "print(bool(0))\nprint(bool(42))\nprint(bool(\"\"))\nprint(bool(\"hello\"))\nprint(bool([]))",
+      "output": "False\nTrue\nFalse\nTrue\nFalse",
+      "caption": "bool() shows you what Python considers True or False"
+    },
+    {
+      "type": "heading",
+      "text": "Converting to a List with list()"
+    },
+    {
+      "type": "text",
+      "md": "Use `list()` to convert other sequence types into a list. A common use is splitting a string into individual characters."
+    },
+    {
+      "type": "code",
+      "code": "letters = list(\"hello\")\nprint(letters)",
+      "output": "['h', 'e', 'l', 'l', 'o']",
+      "caption": "list() breaks a string into a list of characters"
+    },
+    {
+      "type": "heading",
+      "text": "Implicit Conversion: When Python Helps Automatically"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes Python converts types **automatically** without you asking. This is called **implicit conversion**. The most common example: when you add an `int` and a `float`, Python quietly upgrades the result to a `float` so no information is lost."
+    },
+    {
+      "type": "code",
+      "code": "result = 3 + 1.5\nprint(result)\nprint(type(result))",
+      "output": "4.5\n<class 'float'>",
+      "caption": "Python automatically makes the result a float when mixing int and float"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Implicit vs. Explicit",
+      "md": "**Implicit** conversion happens automatically (Python decides). **Explicit** conversion is when *you* call `int()`, `float()`, `str()`, etc. As a beginner, focus on explicit conversion — it is what you will use most often."
+    },
+    {
+      "type": "heading",
+      "text": "When Conversion Goes Wrong: ValueError"
+    },
+    {
+      "type": "text",
+      "md": "Python can only convert values that **make sense**. If you try to turn the word `\"hello\"` into an integer, Python has no idea what number that should be — so it raises a `ValueError`."
+    },
+    {
+      "type": "code",
+      "code": "number = int(\"hello\")",
+      "output": "ValueError: invalid literal for int() with base 10: 'hello'",
+      "caption": "int() raises a ValueError if the string cannot be converted"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Watch out for spaces and letters in user input",
+      "md": "If a user types `\" 5 \"` (with spaces) instead of `\"5\"`, `int()` actually handles it fine — it trims whitespace. But if they type `\"five\"` or `\"5.0\"` when you use `int()`, you will get a `ValueError`. Use `float()` if the user might type a decimal, and consider checking their input before converting."
+    },
+    {
+      "type": "quiz",
+      "question": "What does this code print?\n\n```python\nx = input(\"Enter a number: \")  # user types: 7\nprint(x + x)\n```",
+      "options": [
+        "14",
+        "77",
+        "TypeError: cannot add strings",
+        "7 7"
+      ],
+      "answerIndex": 1,
+      "explanation": "input() always returns a string, so x is \"7\" (text), not 7 (number). Adding two strings in Python concatenates them, so \"7\" + \"7\" gives \"77\". To get 14, you would need int(x) + int(x)."
+    }
+  ],
+  "keyTakeaways": [
+    "input() always returns a string — use int() or float() to do math with user input.",
+    "Use str() to turn numbers into text when building messages.",
+    "int() truncates decimals; it does not round — int(3.9) is 3, not 4.",
+    "Trying to convert an invalid string like int(\"hello\") raises a ValueError.",
+    "Python implicitly converts int to float when you mix them in math — the result is always a float."
+  ],
+  "exercise": {
+    "prompt": "Write a program that asks the user for two numbers (on separate lines), adds them together as real numbers, and prints a message like: \"The sum of 3 and 4.5 is 7.5\". Make sure it works even when one number has a decimal point.",
+    "starterCode": "# Ask the user for two numbers\nfirst = input(\"Enter the first number: \")\nsecond = input(\"Enter the second number: \")\n\n# Convert and add them\n\n# Print the result message\n",
+    "hint": "Use float() on both inputs so decimal numbers work. Then build the message using str() or an f-string.",
+    "solution": "first = float(input(\"Enter the first number: \"))\nsecond = float(input(\"Enter the second number: \"))\ntotal = first + second\nprint(\"The sum of \" + str(first) + \" and \" + str(second) + \" is \" + str(total))"
+  }
+}

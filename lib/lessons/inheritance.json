@@ -1,0 +1,141 @@
+{
+  "slug": "inheritance",
+  "title": "Inheritance",
+  "emoji": "🧬",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Learn how classes can share and reuse code by inheriting from a parent class, so you write less and do more.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are designing a zoo app. You have dogs, cats, and parrots. All of them have a name, make sounds, and need to eat. If you wrote a completely separate class for each animal, you would repeat the same code over and over.\n\n**Inheritance** solves this. You write the shared stuff once in a **parent class**, then each animal gets its own class that automatically *inherits* everything from the parent. Less typing, fewer bugs, and cleaner code."
+    },
+    {
+      "type": "heading",
+      "text": "The Parent Class (Superclass)"
+    },
+    {
+      "type": "text",
+      "md": "Start with a general `Animal` class. Every animal has a `name` and can `eat`. This class becomes the *blueprint that other classes build on top of*."
+    },
+    {
+      "type": "code",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f\"{self.name} is eating.\")\n\n    def speak(self):\n        print(f\"{self.name} makes a sound.\")",
+      "caption": "The parent class — Animal — holds everything all animals share."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a Child Class (Subclass)"
+    },
+    {
+      "type": "text",
+      "md": "To inherit from `Animal`, put the parent class name inside the parentheses when defining the child class: `class Dog(Animal)`. This one line gives `Dog` *all* of `Animal`'s attributes and methods for free."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The \"is-a\" relationship",
+      "md": "Ask yourself: **is a Dog an Animal?** Yes! That's exactly when inheritance makes sense. A `Dog` *is-a* `Animal`, so it should inherit from `Animal`. You would not make `Leash` inherit from `Animal` because a leash is not an animal."
+    },
+    {
+      "type": "code",
+      "code": "class Dog(Animal):\n    pass  # Nothing extra yet — Dog inherits everything from Animal\n\nfido = Dog(\"Fido\")\nfido.eat()\nfido.speak()",
+      "output": "Fido is eating.\nFido makes a sound.",
+      "caption": "Dog inherits eat() and speak() without us writing them again."
+    },
+    {
+      "type": "heading",
+      "text": "Calling super().__init__() to Set Up the Parent"
+    },
+    {
+      "type": "text",
+      "md": "When a child class needs its own `__init__` (for example, to store extra data), you must also run the parent's `__init__`. You do that with `super().__init__(...)`. Think of `super()` as a polite way of saying: \"Hey parent, please do your setup first.\""
+    },
+    {
+      "type": "code",
+      "code": "class Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)   # runs Animal.__init__ to set self.name\n        self.breed = breed       # then we add the Dog-specific attribute\n\nfido = Dog(\"Fido\", \"Labrador\")\nprint(fido.name)\nprint(fido.breed)\nfido.eat()",
+      "output": "Fido\nLabrador\nFido is eating.",
+      "caption": "super().__init__ handles the parent's setup; we only add what's new."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting super().__init__() breaks self.name",
+      "md": "If you define `__init__` in the child class but forget to call `super().__init__()`, the parent's setup code never runs. Attributes like `self.name` that the parent sets will be missing, and you will get an `AttributeError`.\n\nAlways call `super().__init__(...)` as the **first line** of the child's `__init__`."
+    },
+    {
+      "type": "heading",
+      "text": "Overriding Methods"
+    },
+    {
+      "type": "text",
+      "md": "A `Dog` doesn't just \"make a sound\" — it barks. A `Cat` meows. You can **override** a parent method by defining a method with the *same name* in the child class. Python will use the child's version instead of the parent's."
+    },
+    {
+      "type": "code",
+      "code": "class Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\n    def speak(self):  # overrides Animal.speak\n        print(f\"{self.name} says: Woof!\")\n\n\nclass Cat(Animal):\n    def speak(self):  # overrides Animal.speak\n        print(f\"{self.name} says: Meow!\")\n\n\nfido = Dog(\"Fido\", \"Labrador\")\nwhiskers = Cat(\"Whiskers\")\n\nfido.speak()\nwhiskers.speak()\nwhiskers.eat()  # inherited from Animal — not overridden",
+      "output": "Fido says: Woof!\nWhiskers says: Meow!\nWhiskers is eating.",
+      "caption": "Each subclass overrides speak() while still sharing eat() from Animal."
+    },
+    {
+      "type": "heading",
+      "text": "Using super() to Extend a Method"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you want to *add* to what the parent does, not completely replace it. Call `super().method_name()` inside the child's override, then add your own code on top."
+    },
+    {
+      "type": "code",
+      "code": "class Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\n    def eat(self):\n        super().eat()            # runs Animal.eat first\n        print(\"*wags tail enthusiastically*\")\n\nfido = Dog(\"Fido\", \"Labrador\")\nfido.eat()",
+      "output": "Fido is eating.\n*wags tail enthusiastically*",
+      "caption": "super().eat() runs the parent's logic; then we tack on dog-specific behaviour."
+    },
+    {
+      "type": "heading",
+      "text": "Seeing the Full Picture"
+    },
+    {
+      "type": "text",
+      "md": "Here is the complete example bringing everything together: one `Animal` parent and two child classes, each sharing common code while being unique in their own way."
+    },
+    {
+      "type": "code",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f\"{self.name} is eating.\")\n\n    def speak(self):\n        print(f\"{self.name} makes a sound.\")\n\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\n    def speak(self):\n        print(f\"{self.name} says: Woof!\")\n\n\nclass Cat(Animal):\n    def __init__(self, name, indoor):\n        super().__init__(name)\n        self.indoor = indoor\n\n    def speak(self):\n        print(f\"{self.name} says: Meow!\")\n\n\nanimals = [Dog(\"Fido\", \"Labrador\"), Cat(\"Whiskers\", True)]\nfor animal in animals:\n    animal.speak()\n    animal.eat()",
+      "output": "Fido says: Woof!\nFido is eating.\nWhiskers says: Meow!\nWhiskers is eating.",
+      "caption": "Looping over different types that share a common interface — this is the power of inheritance."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Check relationships with isinstance()",
+      "md": "Python lets you verify the \"is-a\" relationship at runtime:\n\n```python\nprint(isinstance(fido, Dog))    # True\nprint(isinstance(fido, Animal)) # True — Dog is-a Animal\nprint(isinstance(fido, Cat))    # False\n```\n\nThis is handy when you need to know what kind of object you are working with."
+    },
+    {
+      "type": "quiz",
+      "question": "You define `class Bird(Animal)` and give it its own `__init__(self, name, can_fly)`. What should the first line inside that `__init__` be?",
+      "options": [
+        "self.name = name",
+        "Animal.name = name",
+        "super().__init__(name)",
+        "Bird.__init__(name)"
+      ],
+      "answerIndex": 2,
+      "explanation": "Calling `super().__init__(name)` runs `Animal.__init__` so that `self.name` is properly set by the parent. If you skip it and just write `self.name = name` yourself it might work in this simple case, but you lose the parent's full setup logic and the code becomes fragile and harder to maintain."
+    }
+  ],
+  "keyTakeaways": [
+    "A child class inherits all attributes and methods from its parent class — write shared code once.",
+    "Use `class Child(Parent):` to create a subclass; this expresses the \"is-a\" relationship.",
+    "Always call `super().__init__(...)` inside the child's `__init__` so the parent can do its own setup.",
+    "Override a parent method by defining one with the same name in the child — Python uses the child's version.",
+    "Use `super().method()` inside an override when you want to extend, not completely replace, the parent's behaviour."
+  ],
+  "exercise": {
+    "prompt": "Create a `Vehicle` parent class with an `__init__` that stores `make` and `model`, and a method `describe()` that prints something like `\"Toyota Camry\"`. Then create two subclasses:\n- `Car(Vehicle)` — add a `doors` attribute and override `describe()` to also print the number of doors.\n- `Motorcycle(Vehicle)` — add a `has_sidecar` boolean and override `describe()` to mention whether it has a sidecar.\nCreate one instance of each and call `describe()` on both.",
+    "starterCode": "class Vehicle:\n    def __init__(self, make, model):\n        # store make and model\n        pass\n\n    def describe(self):\n        # print make and model\n        pass\n\n\nclass Car(Vehicle):\n    def __init__(self, make, model, doors):\n        # call super, then store doors\n        pass\n\n    def describe(self):\n        # print make, model, and doors\n        pass\n\n\nclass Motorcycle(Vehicle):\n    def __init__(self, make, model, has_sidecar):\n        # call super, then store has_sidecar\n        pass\n\n    def describe(self):\n        # print make, model, and sidecar info\n        pass\n\n\n# Create one Car and one Motorcycle and call describe() on each\n",
+    "hint": "In each child's `__init__`, call `super().__init__(make, model)` first, then store the extra attribute. In each `describe()`, you can call `super().describe()` to print the make/model, then add the extra detail.",
+    "solution": "class Vehicle:\n    def __init__(self, make, model):\n        self.make = make\n        self.model = model\n\n    def describe(self):\n        print(f\"{self.make} {self.model}\")\n\n\nclass Car(Vehicle):\n    def __init__(self, make, model, doors):\n        super().__init__(make, model)\n        self.doors = doors\n\n    def describe(self):\n        super().describe()\n        print(f\"  Doors: {self.doors}\")\n\n\nclass Motorcycle(Vehicle):\n    def __init__(self, make, model, has_sidecar):\n        super().__init__(make, model)\n        self.has_sidecar = has_sidecar\n\n    def describe(self):\n        super().describe()\n        sidecar_info = \"has a sidecar\" if self.has_sidecar else \"no sidecar\"\n        print(f\"  Sidecar: {sidecar_info}\")\n\n\nmy_car = Car(\"Toyota\", \"Camry\", 4)\nmy_bike = Motorcycle(\"Harley-Davidson\", \"Sportster\", False)\n\nmy_car.describe()\nmy_bike.describe()\n"
+  }
+}

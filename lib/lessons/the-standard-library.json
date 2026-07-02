@@ -1,0 +1,182 @@
+{
+  "slug": "the-standard-library",
+  "title": "The Standard Library",
+  "emoji": "🏬",
+  "category": "Modules & Packages",
+  "difficulty": "Beginner",
+  "summary": "Discover Python's built-in treasure chest of ready-to-use modules — math, random, datetime, and more — so you can do powerful things without installing anything.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "When you install Python, you don't just get the language itself — you get a huge collection of pre-built tools called the **standard library**. Think of it like a well-stocked kitchen: pots, pans, knives, and spices are already there. You don't need to go shopping before you can cook.\n\nThis philosophy even has a name: **\"batteries included\"**. Python comes with modules for math, random numbers, dates and times, file paths, working with JSON data, and much more. Before you search for a third-party package, always check whether Python already ships what you need."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Library Analogy",
+      "md": "Imagine a huge public library. The standard library is like the reference section — free, always available, and organised by topic. You just walk up to the shelf (write `import math`) and take what you need."
+    },
+    {
+      "type": "heading",
+      "text": "Importing a Module"
+    },
+    {
+      "type": "text",
+      "md": "Every standard library module must be **imported** before you can use it. The `import` statement is the key that opens the shelf. Once imported, you access its contents with a dot: `module.thing`."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\nprint(math.pi)          # the constant π\nprint(math.sqrt(16))    # square root\nprint(math.ceil(4.2))   # round up",
+      "output": "3.141592653589793\n4.0\n5",
+      "caption": "The math module gives you constants and mathematical functions."
+    },
+    {
+      "type": "heading",
+      "text": "random — Roll the Dice"
+    },
+    {
+      "type": "text",
+      "md": "The `random` module lets you generate random numbers and make random choices. Two functions you will reach for constantly:\n- `random.randint(a, b)` — a random whole number between `a` and `b` (inclusive)\n- `random.choice(sequence)` — pick one random item from a list"
+    },
+    {
+      "type": "code",
+      "code": "import random\n\n# Random integer between 1 and 6 (like rolling a die)\ndie = random.randint(1, 6)\nprint(\"You rolled:\", die)\n\n# Pick a random item from a list\ncolors = [\"red\", \"green\", \"blue\"]\nprint(\"Chosen color:\", random.choice(colors))",
+      "output": "You rolled: 4\nChosen color: green",
+      "caption": "Your output will differ — that's the point of random!"
+    },
+    {
+      "type": "heading",
+      "text": "datetime — Working with Dates and Times"
+    },
+    {
+      "type": "text",
+      "md": "Handling dates manually is surprisingly tricky. The `datetime` module does the heavy lifting: it knows about leap years, time zones, and how to format dates nicely."
+    },
+    {
+      "type": "code",
+      "code": "from datetime import date, datetime\n\ntoday = date.today()\nprint(\"Today is:\", today)\n\nnow = datetime.now()\nprint(\"Right now:\", now.strftime(\"%H:%M on %d %B %Y\"))",
+      "output": "Today is: 2026-07-02\nRight now: 09:15 on 02 July 2026",
+      "caption": "strftime lets you format dates any way you like using format codes."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "from module import name",
+      "md": "Instead of `import datetime` and then typing `datetime.datetime.now()`, you can write `from datetime import datetime` and then just `datetime.now()`. Use whichever style reads more clearly to you."
+    },
+    {
+      "type": "heading",
+      "text": "os and pathlib — Navigating Files"
+    },
+    {
+      "type": "text",
+      "md": "The `os` module lets you interact with the operating system — list files, check if a path exists, get the current directory, and more. The newer `pathlib` module does similar things with an even cleaner style. Both ship with Python."
+    },
+    {
+      "type": "code",
+      "code": "import os\n\n# Current working directory\nprint(os.getcwd())\n\n# Check if a file exists\nprint(os.path.exists(\"notes.txt\"))  # True or False\n\n# List files in the current directory\nfiles = os.listdir(\".\")\nprint(files[:3])  # show first three",
+      "output": "/Users/you/projects\nFalse\n['hello.py', 'notes.txt', 'data.json']",
+      "caption": "os lets Python talk to the file system."
+    },
+    {
+      "type": "code",
+      "code": "from pathlib import Path\n\np = Path(\".\")\nfor f in p.iterdir():\n    if f.suffix == \".py\":\n        print(f.name)",
+      "output": "hello.py\nutils.py",
+      "caption": "pathlib treats file paths as objects — often cleaner than os.path."
+    },
+    {
+      "type": "heading",
+      "text": "json — Reading and Writing JSON"
+    },
+    {
+      "type": "text",
+      "md": "JSON is the most common format for sharing data on the internet. Python's `json` module converts between JSON text and Python dictionaries/lists with just two functions:\n- `json.dumps(obj)` — Python object **to** a JSON string\n- `json.loads(text)` — JSON string **to** a Python object"
+    },
+    {
+      "type": "code",
+      "code": "import json\n\ndata = {\"name\": \"Alice\", \"score\": 42, \"tags\": [\"python\", \"beginner\"]}\n\n# Convert Python dict to JSON string\njson_text = json.dumps(data, indent=2)\nprint(json_text)\n\n# Convert JSON string back to Python\nparsed = json.loads(json_text)\nprint(parsed[\"name\"])",
+      "output": "{\n  \"name\": \"Alice\",\n  \"score\": 42,\n  \"tags\": [\n    \"python\",\n    \"beginner\"\n  ]\n}\nAlice",
+      "caption": "indent=2 makes the output human-readable."
+    },
+    {
+      "type": "heading",
+      "text": "sys — Talking to the Python Interpreter"
+    },
+    {
+      "type": "text",
+      "md": "The `sys` module gives you access to Python itself: the version it is running, command-line arguments passed to your script, and the ability to exit cleanly."
+    },
+    {
+      "type": "code",
+      "code": "import sys\n\nprint(\"Python version:\", sys.version)\nprint(\"Platform:\", sys.platform)\nprint(\"Script arguments:\", sys.argv)",
+      "output": "Python version: 3.12.2 (main, ...)\nPlatform: darwin\nScript arguments: ['my_script.py']",
+      "caption": "sys.argv[0] is always the script name; extra items are arguments you passed."
+    },
+    {
+      "type": "heading",
+      "text": "collections — Smarter Containers"
+    },
+    {
+      "type": "text",
+      "md": "The `collections` module gives you upgraded versions of Python's built-in containers. Two crowd favourites:\n- **Counter** — counts how often each item appears\n- **defaultdict** — a dictionary that never raises a `KeyError` because it creates a default value automatically"
+    },
+    {
+      "type": "code",
+      "code": "from collections import Counter\n\nwords = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]\ncounts = Counter(words)\nprint(counts)\nprint(\"Most common:\", counts.most_common(2))",
+      "output": "Counter({'apple': 3, 'banana': 2, 'cherry': 1})\nMost common: [('apple', 3), ('banana', 2)]",
+      "caption": "Counter instantly tallies items — no manual loop needed."
+    },
+    {
+      "type": "code",
+      "code": "from collections import defaultdict\n\nscores = defaultdict(list)  # missing keys get an empty list\nscores[\"Alice\"].append(90)\nscores[\"Alice\"].append(88)\nscores[\"Bob\"].append(76)\nprint(dict(scores))",
+      "output": "{'Alice': [90, 88], 'Bob': [76]}",
+      "caption": "defaultdict(list) lets you append without checking if the key exists first."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't Re-invent the Wheel",
+      "md": "A very common beginner mistake: writing loops to count items, shuffle lists, or manipulate file paths — all of which the standard library already does for you. Always ask \"does Python already have this?\" before writing it yourself. The answer is yes more often than you'd expect."
+    },
+    {
+      "type": "heading",
+      "text": "How to Discover More Modules"
+    },
+    {
+      "type": "text",
+      "md": "The official Python documentation at **docs.python.org** has a full index of every standard library module. A quick way to explore is:\n- Search online for `python stdlib <what you need>` (e.g. \"python stdlib compress files\")\n- Run `help('modules')` in a Python REPL to list everything installed\n- Use `dir(module)` to see what a module contains after importing it"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Check the stdlib Before Installing",
+      "md": "Before reaching for `pip install`, spend 30 seconds checking whether the standard library already covers your need. It saves you a dependency, keeps your project lighter, and works on any machine with Python installed — no setup required."
+    },
+    {
+      "type": "quiz",
+      "question": "Which standard library module would you use to pick a random item from a list?",
+      "options": [
+        "math",
+        "random",
+        "sys",
+        "collections"
+      ],
+      "answerIndex": 1,
+      "explanation": "The `random` module provides `random.choice(sequence)` which picks one random item from any sequence. `math` is for mathematical operations, `sys` for interpreter info, and `collections` for specialised container types."
+    }
+  ],
+  "keyTakeaways": [
+    "Python ships with a huge standard library — \"batteries included\" means you can do a lot before installing anything extra.",
+    "Use `import module` or `from module import name` to access any standard library module.",
+    "Key modules to know: `math`, `random`, `datetime`, `os`/`pathlib`, `json`, `sys`, and `collections`.",
+    "Always check the standard library before reaching for a third-party package.",
+    "The official docs at docs.python.org are the definitive guide to everything available."
+  ],
+  "exercise": {
+    "prompt": "Write a short program that: (1) picks 5 random numbers between 1 and 100 and stores them in a list, (2) prints the list, (3) prints the minimum and maximum using the `math` module (or Python built-ins), and (4) prints today's date using `datetime`. Bonus: use `Counter` to check if any number was picked twice (hint: try running it several times — with only 5 picks from 1-100 duplicates are rare, but possible).",
+    "starterCode": "import random\nfrom datetime import date\nfrom collections import Counter\n\n# Your code here\n",
+    "hint": "Use a list comprehension like [random.randint(1, 100) for _ in range(5)] to generate the 5 numbers in one line.",
+    "solution": "import random\nfrom datetime import date\nfrom collections import Counter\n\nnumbers = [random.randint(1, 100) for _ in range(5)]\nprint(\"Numbers:\", numbers)\nprint(\"Min:\", min(numbers))\nprint(\"Max:\", max(numbers))\n\ntoday = date.today()\nprint(\"Today's date:\", today)\n\ncounts = Counter(numbers)\nduplicates = {num: count for num, count in counts.items() if count > 1}\nif duplicates:\n    print(\"Duplicates found:\", duplicates)\nelse:\n    print(\"No duplicates this time!\")"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "pyquest",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PyQuest — the beautiful, beginner-friendly way to learn Python completely.",
+  "scripts": {
+    "gen": "node scripts/build-lessons.mjs",
+    "predev": "node scripts/build-lessons.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/build-lessons.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.19",
+    "next": "14.2.5",
+    "next-themes": "^0.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4"
+  }
+}

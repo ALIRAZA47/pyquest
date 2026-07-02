@@ -1,0 +1,168 @@
+{
+  "slug": "comparison-operators",
+  "title": "Comparison Operators",
+  "emoji": "⚖️",
+  "category": "Operators",
+  "difficulty": "Beginner",
+  "summary": "Learn how Python compares values using ==, !=, <, >, <=, and >= — and why the result is always True or False.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're sorting a pile of cards. You pick two up and ask: *Is this one bigger? Are they the same?* Python does this all the time, and it uses **comparison operators** to answer those questions.\n\nEvery comparison gives back one of two answers: **`True`** or **`False`**. That's it. No maybes. These two values are called **booleans**, and they're the foundation of every decision your program will ever make."
+    },
+    {
+      "type": "heading",
+      "text": "The Six Comparison Operators"
+    },
+    {
+      "type": "text",
+      "md": "Here are all six comparison operators at a glance:\n\n- `==` — equal to\n- `!=` — not equal to\n- `<` — less than\n- `>` — greater than\n- `<=` — less than or equal to\n- `>=` — greater than or equal to\n\nEach one sits between two values and evaluates to `True` or `False`."
+    },
+    {
+      "type": "code",
+      "code": "print(5 == 5)   # Are they the same?\nprint(5 != 3)   # Are they different?\nprint(4 < 10)   # Is 4 less than 10?\nprint(7 > 9)    # Is 7 greater than 9?\nprint(6 <= 6)   # Is 6 less than or equal to 6?\nprint(8 >= 5)   # Is 8 greater than or equal to 5?",
+      "output": "True\nTrue\nTrue\nFalse\nTrue\nTrue",
+      "caption": "Each comparison returns either True or False."
+    },
+    {
+      "type": "heading",
+      "text": "Comparing Numbers"
+    },
+    {
+      "type": "text",
+      "md": "Number comparisons work exactly as you'd expect from math class. You can compare integers, floats, or a mix of both."
+    },
+    {
+      "type": "code",
+      "code": "temperature = 37.5\n\nprint(temperature > 36.6)   # Above normal body temp?\nprint(temperature == 37.0)  # Exactly 37.0?\nprint(temperature < 40.0)   # Below dangerous level?",
+      "output": "True\nFalse\nTrue",
+      "caption": "Comparing a float variable against different thresholds."
+    },
+    {
+      "type": "heading",
+      "text": "Comparing Strings"
+    },
+    {
+      "type": "text",
+      "md": "You can compare strings too. Equality checks are straightforward — two strings are equal only if every character matches exactly, including capitalisation."
+    },
+    {
+      "type": "code",
+      "code": "print(\"apple\" == \"apple\")   # Exact match\nprint(\"Apple\" == \"apple\")   # Capital A matters!\nprint(\"cat\" != \"dog\")       # Different words",
+      "output": "True\nFalse\nTrue",
+      "caption": "String equality is case-sensitive."
+    },
+    {
+      "type": "text",
+      "md": "You can also use `<` and `>` on strings. Python compares them **alphabetically** (technically, by their character codes). Think of it like a dictionary: words that come earlier are \"less than\" words that come later."
+    },
+    {
+      "type": "code",
+      "code": "print(\"apple\" < \"banana\")   # 'a' comes before 'b'\nprint(\"zebra\" > \"ant\")      # 'z' comes after 'a'\nprint(\"cat\" < \"cats\")       # shorter word comes first",
+      "output": "True\nTrue\nTrue",
+      "caption": "Python compares strings letter by letter, like a dictionary."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Dictionary Shelf",
+      "md": "Think of a bookshelf sorted alphabetically. `\"apple\"` sits before `\"banana\"`, so `\"apple\" < \"banana\"` is `True`. Python walks through each letter one by one until it finds a difference — just like you would when filing cards."
+    },
+    {
+      "type": "heading",
+      "text": "Chained Comparisons"
+    },
+    {
+      "type": "text",
+      "md": "In Python, you can chain multiple comparisons in one line. This reads almost like plain English and is great for checking whether a value falls within a range."
+    },
+    {
+      "type": "code",
+      "code": "x = 7\n\nprint(1 < x < 10)    # Is x between 1 and 10?\nprint(0 <= x <= 5)   # Is x between 0 and 5 (inclusive)?",
+      "output": "True\nFalse",
+      "caption": "Chained comparisons check a range in one readable expression."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Chaining saves you work",
+      "md": "Instead of writing `x > 1 and x < 10`, you can write `1 < x < 10`. Both mean the same thing, but the chained version looks more like the math you already know."
+    },
+    {
+      "type": "heading",
+      "text": "== vs is: A Critical Difference"
+    },
+    {
+      "type": "text",
+      "md": "`==` checks whether two values are **equal** (same content). `is` checks whether two variables point to the **exact same object in memory**. For beginners, always use `==` when comparing values. `is` is for advanced identity checks — mostly used with `None`."
+    },
+    {
+      "type": "code",
+      "code": "a = [1, 2, 3]\nb = [1, 2, 3]\n\nprint(a == b)   # Same content?\nprint(a is b)   # Same object in memory?",
+      "output": "True\nFalse",
+      "caption": "Two lists with equal content are not the same object."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "When to use is",
+      "md": "The most common correct use of `is` is `if x is None:`. For everything else — numbers, strings, lists — stick with `==`."
+    },
+    {
+      "type": "heading",
+      "text": "The = vs == Gotcha"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't mix up = and ==",
+      "md": "This is the most common beginner mistake:\n\n- `=` is **assignment** — it stores a value in a variable: `x = 5`\n- `==` is **comparison** — it asks a question: `x == 5`\n\nWriting `if x = 5:` is a syntax error in Python. If you see an unexpected error in a condition, check that you used `==` and not `=`."
+    },
+    {
+      "type": "code",
+      "code": "score = 100          # assignment: store 100 in score\nprint(score == 100)  # comparison: is score equal to 100?",
+      "output": "True",
+      "caption": "= assigns, == compares. One equals sign vs two."
+    },
+    {
+      "type": "heading",
+      "text": "Storing a Comparison Result"
+    },
+    {
+      "type": "text",
+      "md": "Because a comparison returns `True` or `False`, you can store that result in a variable just like any other value."
+    },
+    {
+      "type": "code",
+      "code": "age = 20\nis_adult = age >= 18\n\nprint(is_adult)        # True\nprint(type(is_adult))  # The type is bool",
+      "output": "True\n<class 'bool'>",
+      "caption": "Comparison results are bool values you can store and reuse."
+    },
+    {
+      "type": "quiz",
+      "question": "What does this code print?\n\n```python\nx = 5\nprint(x == 5.0)\n```",
+      "options": [
+        "False, because 5 is an integer and 5.0 is a float",
+        "True, because their values are equal",
+        "An error, because you can't compare int and float",
+        "None"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python's == compares values, not types. The integer 5 and the float 5.0 have the same numeric value, so the result is True. Python handles the type difference automatically."
+    }
+  ],
+  "keyTakeaways": [
+    "The six comparison operators (==, !=, <, >, <=, >=) always return True or False.",
+    "String comparisons are case-sensitive and follow alphabetical (dictionary) order.",
+    "You can chain comparisons like 1 < x < 10 to check ranges cleanly.",
+    "== compares values; is compares identity — use == for almost everything.",
+    "Never use a single = inside a condition; that's assignment, not comparison."
+  ],
+  "exercise": {
+    "prompt": "Write a small program that stores your age in a variable called `age`. Then print three things: whether your age is exactly 18, whether your age is greater than 12, and whether your age is between 13 and 17 (inclusive) using a chained comparison.",
+    "starterCode": "age = 0  # Change this to your age\n\n# 1. Is age exactly 18?\n\n# 2. Is age greater than 12?\n\n# 3. Is age between 13 and 17 (inclusive)?\n",
+    "hint": "For the chained comparison, try writing it the same way you'd write it in math: 13 <= age <= 17.",
+    "solution": "age = 15\n\nprint(age == 18)       # Is age exactly 18?\nprint(age > 12)        # Is age greater than 12?\nprint(13 <= age <= 17) # Is age between 13 and 17?"
+  }
+}

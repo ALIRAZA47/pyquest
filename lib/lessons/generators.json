@@ -1,0 +1,166 @@
+{
+  "slug": "generators",
+  "title": "Generators & yield",
+  "emoji": "🔋",
+  "category": "Advanced Python",
+  "difficulty": "Advanced",
+  "summary": "Learn how generator functions use yield to produce values one at a time, saving memory and unlocking powerful lazy computation patterns.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you ask a librarian for every book ever written. She could spend years collecting them all into a giant pile — or she could hand you one book at a time as you ask for the next one. That second approach is exactly what a **generator** does in Python.\n\nA generator is a special kind of function that produces values **lazily** — one at a time, only when you ask. This saves a huge amount of memory and makes your programs faster when working with large or even infinite sequences."
+    },
+    {
+      "type": "heading",
+      "text": "The problem with building big lists"
+    },
+    {
+      "type": "text",
+      "md": "Before generators, if you wanted to work with a million numbers, you'd build a list with all million items sitting in memory at once. For small data that's fine. For large data, it's wasteful — or even impossible."
+    },
+    {
+      "type": "code",
+      "code": "# Building a full list — everything in memory at once\nnumbers = [x * x for x in range(1_000_000)]\nprint(numbers[0])\nprint(numbers[1])",
+      "output": "0\n1",
+      "caption": "This creates 1,000,000 numbers immediately and stores them all in RAM."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The vending machine analogy",
+      "md": "A list is like buying every snack in the vending machine upfront and carrying them all home. A generator is like the machine itself — it gives you one snack **on demand**, and you leave the rest inside until you need them."
+    },
+    {
+      "type": "heading",
+      "text": "Your first generator function"
+    },
+    {
+      "type": "text",
+      "md": "A generator function looks almost identical to a regular function, but instead of `return` it uses the `yield` keyword. Every time Python hits a `yield`, it **pauses** the function, hands back that value, and **remembers exactly where it left off** for next time."
+    },
+    {
+      "type": "code",
+      "code": "def count_up(limit):\n    n = 0\n    while n < limit:\n        yield n   # pause here, hand out n\n        n += 1    # resume here next time\n\ngen = count_up(3)\nprint(next(gen))\nprint(next(gen))\nprint(next(gen))",
+      "output": "0\n1\n2",
+      "caption": "Each call to next() resumes the function from where it paused."
+    },
+    {
+      "type": "text",
+      "md": "Notice that calling `count_up(3)` does **not** run the body immediately. It just creates a generator object. The body only runs when you ask for the next value with `next()` or loop over it."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "What happens when values run out?",
+      "md": "If you call `next()` after all values have been yielded, Python raises a `StopIteration` exception. A `for` loop catches this automatically and stops cleanly — you usually don't need to worry about it."
+    },
+    {
+      "type": "heading",
+      "text": "Looping over a generator with for"
+    },
+    {
+      "type": "text",
+      "md": "You almost never call `next()` manually. A `for` loop handles it for you automatically, asking for the next value until the generator is exhausted."
+    },
+    {
+      "type": "code",
+      "code": "def squares(limit):\n    for n in range(limit):\n        yield n * n\n\nfor value in squares(5):\n    print(value)",
+      "output": "0\n1\n4\n9\n16",
+      "caption": "The for loop pulls one value at a time — only five numbers ever exist in memory."
+    },
+    {
+      "type": "heading",
+      "text": "Generator expressions — the compact shortcut"
+    },
+    {
+      "type": "text",
+      "md": "Just like list comprehensions let you write `[x*x for x in range(n)]`, you can write a **generator expression** by swapping the square brackets for parentheses. The result is lazy — no values are computed until you ask for them."
+    },
+    {
+      "type": "code",
+      "code": "# List comprehension — builds all values right now\nlist_version = [x * x for x in range(5)]\nprint(list_version)\n\n# Generator expression — builds values on demand\ngen_version = (x * x for x in range(5))\nprint(gen_version)          # shows object, not values\nprint(list(gen_version))    # consume it to see all values",
+      "output": "[0, 1, 4, 9, 16]\n<generator object <genexpr> at 0x...>\n[0, 1, 4, 9, 16]",
+      "caption": "Same result, but the generator version never holds all values in memory at once."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Generators work great with sum(), max(), min()",
+      "md": "Many built-in functions accept any iterable, so you can pass a generator expression directly without converting to a list:\n\n```python\ntotal = sum(x * x for x in range(1_000_000))\n```\n\nThis adds a million squares without ever building a million-item list."
+    },
+    {
+      "type": "heading",
+      "text": "Infinite generators"
+    },
+    {
+      "type": "text",
+      "md": "Because generators produce values lazily, they can represent sequences that **never end** — something impossible with a plain list. You just need to stop consuming them at some point."
+    },
+    {
+      "type": "code",
+      "code": "def count_forever(start=0):\n    n = start\n    while True:        # runs forever...\n        yield n\n        n += 1\n\ncounter = count_forever(10)\nprint(next(counter))\nprint(next(counter))\nprint(next(counter))",
+      "output": "10\n11\n12",
+      "caption": "This generator would keep going forever — we just stop asking for values."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Never do list(infinite_generator)",
+      "md": "If you try to convert an infinite generator to a list with `list(count_forever())`, Python will try to collect infinite values and your program will freeze or crash. Always use `next()`, `for` with a `break`, or limit how many values you take."
+    },
+    {
+      "type": "heading",
+      "text": "A generator remembers its state"
+    },
+    {
+      "type": "text",
+      "md": "One of the most powerful things about generators is that local variables inside the function **stay alive** between yields. The function is truly paused, not restarted from scratch each time."
+    },
+    {
+      "type": "code",
+      "code": "def running_total():\n    total = 0\n    while True:\n        amount = yield total  # yield sends out total, receives the next amount\n        if amount is not None:\n            total += amount\n\nbank = running_total()\nnext(bank)          # start the generator\nbank.send(100)\nbank.send(50)\nresult = bank.send(25)\nprint(result)",
+      "output": "175",
+      "caption": "Advanced: generators can also receive values via .send(). The local variable 'total' persists across every pause."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "A generator can only be iterated once",
+      "md": "Once a generator is exhausted, it's done. Looping over it again produces nothing:\n\n```python\ngen = squares(3)\nprint(list(gen))  # [0, 1, 4]\nprint(list(gen))  # [] — already exhausted!\n```\n\nIf you need to iterate multiple times, either store values in a list or create a new generator object each time."
+    },
+    {
+      "type": "heading",
+      "text": "When to use a generator"
+    },
+    {
+      "type": "text",
+      "md": "Choose a generator when:\n- The sequence is **very large** (millions of items) and you don't need them all at once.\n- The sequence is **infinite** (like a live data stream).\n- You only need to **iterate once** and don't need random access by index.\n- You want to **chain processing steps** without building intermediate lists.\n\nStick with a plain list when:\n- The data is small and you need to access items by index.\n- You need to iterate over the same data multiple times.\n- You need to know the length upfront."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the yield keyword do inside a generator function?",
+      "options": [
+        "It ends the function immediately, like return.",
+        "It pauses the function, sends out a value, and remembers where it stopped so it can resume later.",
+        "It creates a new list containing all values.",
+        "It raises a StopIteration exception."
+      ],
+      "answerIndex": 1,
+      "explanation": "yield pauses execution and hands a value to the caller. The function's state — all local variables and the current position — is preserved so the next call to next() can resume exactly where it left off. This is what makes generators memory-efficient and stateful."
+    }
+  ],
+  "keyTakeaways": [
+    "A generator function uses yield instead of return to produce values one at a time without storing them all in memory.",
+    "Generator expressions use parentheses (x*x for x in range(n)) and are the lazy, memory-efficient version of list comprehensions.",
+    "Call next() to pull the next value manually, or use a for loop to consume values automatically.",
+    "Generators can represent infinite sequences because values are computed on demand — just avoid converting them to a list.",
+    "A generator is exhausted after one full iteration; create a fresh generator object if you need to iterate again."
+  ],
+  "exercise": {
+    "prompt": "Write a generator function called fibonacci() that yields Fibonacci numbers indefinitely (0, 1, 1, 2, 3, 5, 8, 13, ...). Then use it to print the first 10 Fibonacci numbers.",
+    "starterCode": "def fibonacci():\n    # your code here — use yield!\n    pass\n\ngen = fibonacci()\nfor _ in range(10):\n    print(next(gen))",
+    "hint": "Keep track of two variables, a and b, representing the current and next number. Yield a, then update both: a, b = b, a + b.",
+    "solution": "def fibonacci():\n    a, b = 0, 1\n    while True:\n        yield a\n        a, b = b, a + b\n\ngen = fibonacci()\nfor _ in range(10):\n    print(next(gen))"
+  }
+}

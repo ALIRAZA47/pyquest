@@ -1,0 +1,176 @@
+{
+  "slug": "dunder-methods",
+  "title": "Magic (Dunder) Methods",
+  "emoji": "✨",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Advanced",
+  "summary": "Learn how double-underscore 'magic' methods let your custom objects behave just like Python built-ins — supporting print(), len(), +, ==, and more.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know that `len([1, 2, 3])` returns `3`, and that `print(42)` shows `42` in the console. But have you ever wondered — how does Python *know* what to do when you call `len()` on a list, or use `+` to add two numbers?\n\nThe answer is **dunder methods** (short for *double-underscore* methods, like `__len__` or `__add__`). Python calls these special methods behind the scenes whenever you use a built-in operation. The exciting part: **you can define them on your own classes** so your objects feel just as natural as the built-ins."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a universal remote",
+      "md": "Python has a set of 'buttons' — `+`, `len()`, `print()`, `==`. Dunder methods are like the wiring that connects those buttons to *your* object. Define `__add__`, and the `+` button now works with your class. You decide what happens when it's pressed."
+    },
+    {
+      "type": "heading",
+      "text": "The Dunder You Already Know: __init__"
+    },
+    {
+      "type": "text",
+      "md": "Every class you write probably already uses one dunder method: `__init__`. This is called automatically when you create a new object. It sets up the object's starting state.\n\n- `__init__` is *not* the constructor itself — Python already created the object. `__init__` just *initialises* it.\n- The first parameter is always `self`, which refers to the new object being set up."
+    },
+    {
+      "type": "code",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\nwallet = Money(50, 'USD')\nprint(wallet.amount)\nprint(wallet.currency)",
+      "output": "50\nUSD",
+      "caption": "__init__ runs automatically when you write Money(50, 'USD')"
+    },
+    {
+      "type": "heading",
+      "text": "Making print() Work: __str__"
+    },
+    {
+      "type": "text",
+      "md": "Try printing a plain object without any dunder methods and you get something ugly like `<__main__.Money object at 0x10a3f2c40>`. That's Python saying 'I have no idea how to show this nicely.'\n\nDefine `__str__` and Python will call it whenever someone does `print(obj)` or `str(obj)`. It must **return a string**."
+    },
+    {
+      "type": "code",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n\nwallet = Money(50, 'USD')\nprint(wallet)",
+      "output": "USD 50.00",
+      "caption": "__str__ controls what print() shows"
+    },
+    {
+      "type": "heading",
+      "text": "The Developer View: __repr__"
+    },
+    {
+      "type": "text",
+      "md": "`__repr__` is the *developer-facing* representation. It should ideally look like the code you'd write to recreate the object. Python uses `__repr__` in the interactive console and as a fallback when `__str__` is not defined.\n\n- `str()` → calls `__str__` (user-friendly)\n- `repr()` → calls `__repr__` (developer-friendly)\n- If only `__repr__` is defined, `str()` uses it too."
+    },
+    {
+      "type": "code",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n\n    def __repr__(self):\n        return f\"Money({self.amount!r}, {self.currency!r})\"\n\nwallet = Money(50, 'USD')\nprint(str(wallet))\nprint(repr(wallet))",
+      "output": "USD 50.00\nMoney(50, 'USD')",
+      "caption": "__repr__ gives a precise, unambiguous description"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always define at least __repr__",
+      "md": "If you only have time for one, write `__repr__`. It doubles as `__str__` when needed, and it makes debugging *much* easier — you can see exactly what's inside your object at a glance."
+    },
+    {
+      "type": "heading",
+      "text": "Supporting len(): __len__"
+    },
+    {
+      "type": "text",
+      "md": "When you call `len(something)`, Python calls `something.__len__()` under the hood. Define it in your class and `len()` works on your objects too. It must return a non-negative integer."
+    },
+    {
+      "type": "code",
+      "code": "class ShoppingCart:\n    def __init__(self):\n        self.items = []\n\n    def add(self, item):\n        self.items.append(item)\n\n    def __len__(self):\n        return len(self.items)\n\ncart = ShoppingCart()\ncart.add('apple')\ncart.add('bread')\nprint(len(cart))",
+      "output": "2",
+      "caption": "__len__ lets built-in len() work on your class"
+    },
+    {
+      "type": "heading",
+      "text": "Equality Checks: __eq__"
+    },
+    {
+      "type": "text",
+      "md": "By default, `==` checks whether two variables point to the *exact same object in memory* — not whether they have the same data. Define `__eq__` to teach Python what 'equal' means for your class."
+    },
+    {
+      "type": "code",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\n    def __eq__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented\n        return self.amount == other.amount and self.currency == other.currency\n\na = Money(10, 'USD')\nb = Money(10, 'USD')\nc = Money(20, 'USD')\n\nprint(a == b)\nprint(a == c)",
+      "output": "True\nFalse",
+      "caption": "__eq__ controls what == means for your objects"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Return NotImplemented, not False",
+      "md": "When the other object is a different type, return `NotImplemented` (not `False`). This tells Python to let the *other* object try the comparison. Returning `False` would silently give wrong answers in some edge cases."
+    },
+    {
+      "type": "heading",
+      "text": "Operator Overloading: __add__"
+    },
+    {
+      "type": "text",
+      "md": "You can make the `+` operator work with your objects by defining `__add__`. This is called **operator overloading** — you're giving an existing operator new meaning for your class.\n\nFor example, adding two `Money` objects should produce a new `Money` object with the combined amount."
+    },
+    {
+      "type": "code",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n\n    def __add__(self, other):\n        if self.currency != other.currency:\n            raise ValueError('Cannot add different currencies')\n        return Money(self.amount + other.amount, self.currency)\n\npaycheck = Money(1000, 'USD')\nbonus   = Money(250,  'USD')\ntotal   = paycheck + bonus\nprint(total)",
+      "output": "USD 1250.00",
+      "caption": "__add__ makes the + operator work between two Money objects"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always return a NEW object from __add__",
+      "md": "Never modify `self` inside `__add__`. The `+` operator should produce a *new* value, just like `1 + 2` doesn't change the number `1`. If you mutate `self`, you'll get very confusing bugs where an object's value changes unexpectedly."
+    },
+    {
+      "type": "heading",
+      "text": "A Full Example: the Vector Class"
+    },
+    {
+      "type": "text",
+      "md": "Here's a small `Vector` class that puts it all together. A vector has an `x` and `y` component. We implement `__repr__`, `__add__`, `__eq__`, and `__len__` (treating len as the number of dimensions)."
+    },
+    {
+      "type": "code",
+      "code": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __repr__(self):\n        return f\"Vector({self.x}, {self.y})\"\n\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n\n    def __eq__(self, other):\n        if not isinstance(other, Vector):\n            return NotImplemented\n        return self.x == other.x and self.y == other.y\n\n    def __len__(self):\n        return 2  # always 2D\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nprint(v1 + v2)\nprint(v1 == Vector(1, 2))\nprint(len(v1))",
+      "output": "Vector(4, 6)\nTrue\n2",
+      "caption": "A complete class with multiple dunder methods working together"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Don't overuse operator overloading",
+      "md": "Just because you *can* define `__add__` doesn't mean you always should. Only overload operators when the meaning is **obvious and natural**. Adding two `Money` objects makes sense. Adding two `Person` objects — what would that even mean? When in doubt, write a regular method with a clear name instead."
+    },
+    {
+      "type": "heading",
+      "text": "Quick Reference: Common Dunder Methods"
+    },
+    {
+      "type": "text",
+      "md": "Here are the most useful dunder methods to know:\n\n- `__init__(self, ...)` — called when the object is created\n- `__str__(self)` — called by `print()` and `str()`\n- `__repr__(self)` — called by `repr()` and the console\n- `__len__(self)` — called by `len()`\n- `__eq__(self, other)` — called by `==`\n- `__add__(self, other)` — called by `+`\n- `__lt__(self, other)` — called by `<` (less than)\n- `__contains__(self, item)` — called by `in` keyword\n- `__getitem__(self, key)` — called by `obj[key]`"
+    },
+    {
+      "type": "quiz",
+      "question": "You define a class `Box` and write a `__str__` method that returns `'A box'`. What happens when you call `print(Box())`?",
+      "options": [
+        "Python raises an AttributeError because print() doesn't use __str__",
+        "It prints something like <__main__.Box object at 0x...>",
+        "It prints: A box",
+        "It prints: Box()"
+      ],
+      "answerIndex": 2,
+      "explanation": "When you call print() on an object, Python looks for __str__ and calls it. Since you defined __str__ to return 'A box', that's exactly what gets printed. Without __str__, you'd see the ugly memory-address representation."
+    }
+  ],
+  "keyTakeaways": [
+    "Dunder methods (like __str__, __add__) are special methods Python calls automatically when you use built-in operations on your objects.",
+    "Define __repr__ on every class — it makes debugging much easier and acts as a fallback for __str__.",
+    "__str__ controls print() output (user-friendly); __repr__ is for developers and should show how to recreate the object.",
+    "Operator overloading (__add__, __eq__, etc.) lets your objects work with +, ==, and other operators naturally.",
+    "Always return a new object from __add__ — never mutate self, and return NotImplemented (not False) when types don't match in __eq__."
+  ],
+  "exercise": {
+    "prompt": "Create a `Temperature` class that stores a value in Celsius. Implement:\n1. `__init__` to accept a numeric `celsius` value\n2. `__str__` to display it nicely, e.g. `'23.0°C'`\n3. `__repr__` to show `Temperature(23.0)`\n4. `__add__` so you can add two Temperatures together (add their Celsius values)\n5. `__eq__` so two Temperatures are equal when their Celsius values match\n\nTest it by creating two Temperature objects, adding them, and comparing them with ==.",
+    "starterCode": "class Temperature:\n    def __init__(self, celsius):\n        pass  # store celsius\n\n    def __str__(self):\n        pass  # return e.g. '23.0°C'\n\n    def __repr__(self):\n        pass  # return e.g. 'Temperature(23.0)'\n\n    def __add__(self, other):\n        pass  # return a new Temperature\n\n    def __eq__(self, other):\n        pass  # compare celsius values\n\n# Test your class:\nt1 = Temperature(20)\nt2 = Temperature(5)\nprint(t1)\nprint(repr(t1))\nprint(t1 + t2)\nprint(t1 == Temperature(20))",
+    "hint": "Each method should return something: a string for __str__ and __repr__, a new Temperature object for __add__, and a boolean for __eq__. Don't forget to check isinstance(other, Temperature) in __eq__ before comparing.",
+    "solution": "class Temperature:\n    def __init__(self, celsius):\n        self.celsius = celsius\n\n    def __str__(self):\n        return f'{self.celsius}\\u00b0C'\n\n    def __repr__(self):\n        return f'Temperature({self.celsius})'\n\n    def __add__(self, other):\n        if not isinstance(other, Temperature):\n            return NotImplemented\n        return Temperature(self.celsius + other.celsius)\n\n    def __eq__(self, other):\n        if not isinstance(other, Temperature):\n            return NotImplemented\n        return self.celsius == other.celsius\n\nt1 = Temperature(20)\nt2 = Temperature(5)\nprint(t1)\nprint(repr(t1))\nprint(t1 + t2)\nprint(t1 == Temperature(20))"
+  }
+}

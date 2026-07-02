@@ -1,0 +1,184 @@
+{
+  "slug": "dictionaries",
+  "title": "Dictionaries",
+  "emoji": "🗂️",
+  "category": "Data Structures",
+  "difficulty": "Beginner",
+  "summary": "Learn how to store and look up information using key-value pairs — Python's most powerful built-in data structure.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine a real dictionary. You look up a **word** (the key) and find its **definition** (the value). Python dictionaries work exactly the same way — you store pairs of information, and you can instantly look up any value by its key.\n\nThis makes dictionaries perfect for things like storing a person's name and age together, mapping country codes to country names, or tracking scores in a game."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a Dictionary"
+    },
+    {
+      "type": "text",
+      "md": "You create a dictionary with curly braces `{}`. Inside, you write `key: value` pairs, separated by commas. Keys and values can be almost any type — strings, numbers, even other dictionaries."
+    },
+    {
+      "type": "code",
+      "code": "# A dictionary storing a person's details\nperson = {\n    \"name\": \"Amara\",\n    \"age\": 28,\n    \"city\": \"Lagos\"\n}\n\nprint(person)",
+      "output": "{'name': 'Amara', 'age': 28, 'city': 'Lagos'}",
+      "caption": "Keys are strings here, and values can be any type."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a contact card",
+      "md": "A contact card has labels like **Name**, **Phone**, and **Email** — those are the keys. The actual name and number written in are the values. A dictionary is just a digital contact card."
+    },
+    {
+      "type": "heading",
+      "text": "Accessing Values"
+    },
+    {
+      "type": "text",
+      "md": "To get a value out of a dictionary, use square brackets with the key inside: `d[key]`. This is called **indexing**. If the key does not exist, Python raises a `KeyError`."
+    },
+    {
+      "type": "code",
+      "code": "person = {\"name\": \"Amara\", \"age\": 28, \"city\": \"Lagos\"}\n\nprint(person[\"name\"])\nprint(person[\"age\"])",
+      "output": "Amara\n28",
+      "caption": "Use the key in brackets to retrieve its value."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "KeyError: the key does not exist",
+      "md": "If you try `person[\"email\"]` and `\"email\"` is not in the dictionary, Python crashes with a `KeyError`. Always make sure the key exists before accessing it — or use `.get()` instead (covered next)."
+    },
+    {
+      "type": "heading",
+      "text": "Safe Lookups with .get()"
+    },
+    {
+      "type": "text",
+      "md": "The `.get(key, default)` method is a safer way to look up a value. If the key does not exist, it returns the default value you provide instead of crashing. If you leave out the default, it returns `None`."
+    },
+    {
+      "type": "code",
+      "code": "person = {\"name\": \"Amara\", \"age\": 28}\n\n# Key exists — returns the value\nprint(person.get(\"name\", \"Unknown\"))\n\n# Key missing — returns the default\nprint(person.get(\"email\", \"No email on file\"))",
+      "output": "Amara\nNo email on file",
+      "caption": ".get() never raises a KeyError — it just returns the default."
+    },
+    {
+      "type": "heading",
+      "text": "Adding and Updating Entries"
+    },
+    {
+      "type": "text",
+      "md": "You can add a new key-value pair or update an existing one by assigning to `d[key]`. If the key already exists, the value is overwritten. If it does not exist, a new entry is created."
+    },
+    {
+      "type": "code",
+      "code": "scores = {\"Alice\": 90, \"Bob\": 75}\n\n# Add a new entry\nscores[\"Charlie\"] = 88\n\n# Update an existing entry\nscores[\"Bob\"] = 82\n\nprint(scores)",
+      "output": "{'Alice': 90, 'Bob': 82, 'Charlie': 88}",
+      "caption": "Same syntax for adding and updating — Python figures out which one to do."
+    },
+    {
+      "type": "heading",
+      "text": "Removing Entries with del"
+    },
+    {
+      "type": "text",
+      "md": "Use `del d[key]` to permanently remove a key-value pair from the dictionary."
+    },
+    {
+      "type": "code",
+      "code": "scores = {\"Alice\": 90, \"Bob\": 82, \"Charlie\": 88}\n\ndel scores[\"Bob\"]\n\nprint(scores)",
+      "output": "{'Alice': 90, 'Charlie': 88}",
+      "caption": "Bob's entry is gone from the dictionary."
+    },
+    {
+      "type": "heading",
+      "text": "Checking if a Key Exists"
+    },
+    {
+      "type": "text",
+      "md": "Use the `in` keyword to check whether a key exists in a dictionary before accessing it. This is a clean and fast way to avoid `KeyError`."
+    },
+    {
+      "type": "code",
+      "code": "inventory = {\"apples\": 10, \"bananas\": 5}\n\nif \"apples\" in inventory:\n    print(\"We have apples!\")\n\nif \"grapes\" not in inventory:\n    print(\"No grapes in stock.\")",
+      "output": "We have apples!\nNo grapes in stock.",
+      "caption": "in checks keys only, not values."
+    },
+    {
+      "type": "heading",
+      "text": "Iterating Over a Dictionary"
+    },
+    {
+      "type": "text",
+      "md": "You can loop over a dictionary in three useful ways:\n- `.keys()` — gives you all the keys\n- `.values()` — gives you all the values\n- `.items()` — gives you both, as (key, value) pairs\n\nThe `.items()` method is the most commonly used because you usually need both pieces."
+    },
+    {
+      "type": "code",
+      "code": "prices = {\"coffee\": 3.50, \"tea\": 2.00, \"juice\": 4.25}\n\nfor item, price in prices.items():\n    print(f\"{item} costs ${price:.2f}\")",
+      "output": "coffee costs $3.50\ntea costs $2.00\njuice costs $4.25",
+      "caption": ".items() unpacks each pair into two variables in the loop."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Keys must be immutable and unique",
+      "md": "Dictionary keys must be **immutable** — meaning they cannot change. Strings, numbers, and tuples make valid keys. Lists do not (they can change, so Python refuses them as keys).\n\nAlso, every key must be **unique**. If you add the same key twice, the second value quietly replaces the first."
+    },
+    {
+      "type": "heading",
+      "text": "Nested Dictionaries"
+    },
+    {
+      "type": "text",
+      "md": "A dictionary value can itself be another dictionary. This lets you represent more complex, structured data — like a database record or a settings file."
+    },
+    {
+      "type": "code",
+      "code": "students = {\n    \"Alice\": {\"grade\": \"A\", \"age\": 20},\n    \"Bob\":   {\"grade\": \"B\", \"age\": 22}\n}\n\n# Access nested data with two sets of brackets\nprint(students[\"Alice\"][\"grade\"])\nprint(students[\"Bob\"][\"age\"])",
+      "output": "A\n22",
+      "caption": "Chain brackets to dig into nested dictionaries."
+    },
+    {
+      "type": "heading",
+      "text": "Dict Comprehension (a quick peek)"
+    },
+    {
+      "type": "text",
+      "md": "Just like list comprehensions, you can build a dictionary in one line using a **dict comprehension**. The pattern is `{key: value for item in iterable}`. Do not worry if this looks complex — it will click with practice."
+    },
+    {
+      "type": "code",
+      "code": "# Square each number and store it in a dict\nsquares = {n: n**2 for n in range(1, 6)}\nprint(squares)",
+      "output": "{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}",
+      "caption": "A compact way to build a dictionary from a pattern."
+    },
+    {
+      "type": "quiz",
+      "question": "What does person.get(\"phone\", \"N/A\") return if \"phone\" is not a key in the person dictionary?",
+      "options": [
+        "It raises a KeyError",
+        "It returns None",
+        "It returns \"N/A\"",
+        "It returns False"
+      ],
+      "answerIndex": 2,
+      "explanation": ".get(key, default) returns the default value when the key is missing — in this case \"N/A\". It never raises a KeyError, which is exactly why .get() is safer than d[key] when you are not sure the key exists."
+    }
+  ],
+  "keyTakeaways": [
+    "Dictionaries store **key-value pairs** — look up any value instantly by its key.",
+    "Use `d[key]` to access a value; use `.get(key, default)` to avoid a `KeyError` when the key might be missing.",
+    "Add or update entries with `d[key] = value`; remove them with `del d[key]`.",
+    "Loop over a dictionary with `.keys()`, `.values()`, or `.items()` — `.items()` gives you both at once.",
+    "Keys must be **immutable** (strings, numbers, tuples) and **unique** within the dictionary."
+  ],
+  "exercise": {
+    "prompt": "Create a dictionary called `phonebook` that stores at least three people's names as keys and their phone numbers as strings. Then:\n1. Print the phone number for one person using their name.\n2. Add a new person to the phonebook.\n3. Use a for loop with .items() to print every name and number in the format: \"Name: <name>, Number: <number>\".",
+    "starterCode": "phonebook = {\n    # add your entries here\n}\n\n# 1. Print one phone number\n\n# 2. Add a new person\n\n# 3. Loop and print all entries",
+    "hint": "Remember: keys are the names (strings), values are the phone numbers (also strings, like \"555-1234\"). Use f-strings inside your for loop to format the output nicely.",
+    "solution": "phonebook = {\n    \"Alice\": \"555-1234\",\n    \"Bob\": \"555-5678\",\n    \"Charlie\": \"555-9012\"\n}\n\n# 1. Print one phone number\nprint(phonebook[\"Alice\"])\n\n# 2. Add a new person\nphonebook[\"Diana\"] = \"555-3456\"\n\n# 3. Loop and print all entries\nfor name, number in phonebook.items():\n    print(f\"Name: {name}, Number: {number}\")"
+  }
+}

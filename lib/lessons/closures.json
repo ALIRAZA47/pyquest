@@ -1,0 +1,150 @@
+{
+  "slug": "closures",
+  "title": "Closures",
+  "emoji": "🧷",
+  "category": "Advanced Python",
+  "difficulty": "Advanced",
+  "summary": "Discover how a nested function can remember variables from its surroundings long after the outer function has finished running.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you order a custom stamp at a print shop. You hand the clerk your initials, they carve the stamp, and then they hand it back to you. From that moment on, the stamp **remembers** your initials — even though the clerk and the print shop are long gone.\n\nA **closure** works the same way. You call a function, it builds and returns a brand-new inner function, and that inner function **remembers** variables from the outer function — even after the outer function has finished running. This sounds magical at first, but it is one of Python's most useful and elegant tools."
+    },
+    {
+      "type": "heading",
+      "text": "Functions Inside Functions"
+    },
+    {
+      "type": "text",
+      "md": "Before we talk about closures, let's get comfortable with the idea that functions can live **inside** other functions. Python allows this, and it is perfectly normal."
+    },
+    {
+      "type": "code",
+      "code": "def outer():\n    message = \"Hello from outer!\"\n\n    def inner():\n        print(message)  # inner can see outer's variable\n\n    inner()  # call inner from inside outer\n\nouter()",
+      "output": "Hello from outer!",
+      "caption": "inner() can read 'message' even though it was defined in outer()."
+    },
+    {
+      "type": "text",
+      "md": "So far, `inner` runs **inside** `outer`. That is neat, but not yet a closure. A closure happens when we **return** the inner function so it can be used *outside* — after `outer` has already finished."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Closure"
+    },
+    {
+      "type": "code",
+      "code": "def make_greeter(name):\n    def greet():\n        print(f\"Hey, {name}!\")\n    return greet  # return the function itself, not greet()\n\nsay_hi = make_greeter(\"Alice\")\nsay_hi()   # make_greeter is long gone — but name is remembered!\n\nsay_bye = make_greeter(\"Bob\")\nsay_bye()",
+      "output": "Hey, Alice!\nHey, Bob!",
+      "caption": "Each call to make_greeter() creates a fresh closure that remembers its own 'name'."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A closure is a backpack",
+      "md": "When `greet` is created, Python quietly packs up the variables it needs — like `name` — into a little backpack. Wherever `greet` travels, the backpack comes with it. This backpack is the **closure** itself.\n\nYou can even peek inside: `say_hi.__closure__[0].cell_contents` returns `'Alice'` — the value Python kept alive."
+    },
+    {
+      "type": "heading",
+      "text": "Factory Functions — Making Configurable Functions"
+    },
+    {
+      "type": "text",
+      "md": "One of the most common uses of closures is building **factory functions** — functions that manufacture other functions, each pre-configured with a specific setting.\n\nHere is a classic example: a multiplier factory."
+    },
+    {
+      "type": "code",
+      "code": "def make_multiplier(n):\n    def multiply(x):\n        return x * n   # n is captured from the enclosing scope\n    return multiply\n\ndouble = make_multiplier(2)\ntriple = make_multiplier(3)\n\nprint(double(5))   # 5 * 2\nprint(triple(5))   # 5 * 3\nprint(double(9))   # 9 * 2",
+      "output": "10\n15\n18",
+      "caption": "double and triple are separate closures, each remembering a different value of n."
+    },
+    {
+      "type": "text",
+      "md": "Notice we only write the multiplication logic **once**. Then we configure it differently by calling `make_multiplier` with different values. This keeps code DRY — Don't Repeat Yourself."
+    },
+    {
+      "type": "heading",
+      "text": "State Without a Class — Using nonlocal"
+    },
+    {
+      "type": "text",
+      "md": "Closures can not only *read* captured variables — they can also *update* them, keeping state between calls. To do this, you need the `nonlocal` keyword, which tells Python: \"I want to modify the variable from the outer scope, not create a brand-new local one.\""
+    },
+    {
+      "type": "code",
+      "code": "def make_counter():\n    count = 0\n\n    def increment():\n        nonlocal count   # without this, count would be a new local variable\n        count += 1\n        return count\n\n    return increment\n\ncounter = make_counter()\nprint(counter())  # 1\nprint(counter())  # 2\nprint(counter())  # 3",
+      "output": "1\n2\n3",
+      "caption": "The closure remembers count across calls, acting like a lightweight object with state."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting nonlocal causes an UnboundLocalError",
+      "md": "If you write `count += 1` without `nonlocal count`, Python sees the assignment and decides `count` is a **local** variable — but you never gave it a local value, so it crashes with `UnboundLocalError: local variable 'count' referenced before assignment`.\n\nRule of thumb: any time you **assign** to a captured variable (not just read it), you need `nonlocal`."
+    },
+    {
+      "type": "heading",
+      "text": "Why Are Closures Useful?"
+    },
+    {
+      "type": "text",
+      "md": "Closures shine in several real-world situations:\n\n- **Configurable behavior** — `make_multiplier`, `make_validator`, `make_logger`. One template, many specializations.\n- **Lightweight state** — A counter, an accumulator, or a cache without writing a full class.\n- **Callbacks and event handlers** — Pass a closure to a button click handler that already \"knows\" which item to act on.\n- **Building decorators** — Decorators (the `@` syntax you may have seen) are implemented using closures under the hood."
+    },
+    {
+      "type": "heading",
+      "text": "The Connection to Decorators"
+    },
+    {
+      "type": "text",
+      "md": "Decorators are one of the most famous uses of closures. When you write `@timer` above a function, Python is really doing this:\n\n```python\nmy_function = timer(my_function)\n```\n\n`timer` is a function that accepts another function, wraps it in an inner function (a closure), and returns the wrapper. The wrapper closes over the original function."
+    },
+    {
+      "type": "code",
+      "code": "def shout(func):\n    def wrapper(*args, **kwargs):\n        result = func(*args, **kwargs)  # func is captured from shout's scope\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet(name):\n    return f\"hello, {name}\"\n\nprint(greet(\"world\"))",
+      "output": "HELLO, WORLD",
+      "caption": "The decorator 'shout' works because wrapper is a closure that captures 'func'."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Closures are the engine inside decorators",
+      "md": "You do not need to master decorators to use closures, but knowing closures makes decorators feel obvious rather than magical. Once you are comfortable with `make_multiplier`, a decorator is just the same idea — a function that takes a function and returns a new, enhanced one."
+    },
+    {
+      "type": "heading",
+      "text": "A Practical Example — Making a Validator"
+    },
+    {
+      "type": "code",
+      "code": "def make_range_checker(min_val, max_val):\n    def check(value):\n        if min_val <= value <= max_val:\n            return f\"{value} is valid\"\n        return f\"{value} is OUT OF RANGE ({min_val}–{max_val})\"\n    return check\n\ncheck_age  = make_range_checker(0, 120)\ncheck_temp = make_range_checker(-50, 60)\n\nprint(check_age(25))\nprint(check_age(200))\nprint(check_temp(22))\nprint(check_temp(-99))",
+      "output": "25 is valid\n200 is OUT OF RANGE (0–120)\n22 is valid\n-99 is OUT OF RANGE (-50–60)",
+      "caption": "Two different closures, each remembering different min/max boundaries."
+    },
+    {
+      "type": "quiz",
+      "question": "What will the following code print?\n\n```python\ndef make_adder(x):\n    def add(y):\n        return x + y\n    return add\n\nadd5 = make_adder(5)\nprint(add5(3))\n```",
+      "options": [
+        "3",
+        "5",
+        "8",
+        "Error — x is not defined inside add"
+      ],
+      "answerIndex": 2,
+      "explanation": "add5 is a closure that captured x = 5 from make_adder. When you call add5(3), Python computes 5 + 3 = 8. The outer function has already returned, but x lives on inside the closure's backpack."
+    }
+  ],
+  "keyTakeaways": [
+    "A closure is an inner function that **remembers variables from its enclosing scope** even after the outer function has finished.",
+    "Factory functions like `make_multiplier(n)` use closures to create configurable, reusable functions without repeating logic.",
+    "Use `nonlocal` when you need to **mutate** (not just read) a captured variable inside an inner function.",
+    "Closures provide lightweight stateful behavior — like a counter — without needing to write a full class.",
+    "Decorators are built on closures: a function that wraps another function and returns the wrapper is a closure pattern."
+  ],
+  "exercise": {
+    "prompt": "Write a factory function called `make_power` that accepts an exponent `n` and returns a function that raises any number to that power. Then create `square` (n=2) and `cube` (n=3) from it, and test them with a few numbers. As a bonus challenge, add a call counter using `nonlocal` so each returned function tracks how many times it has been called, and prints the count alongside the result.",
+    "starterCode": "def make_power(n):\n    # your code here\n    pass\n\nsquare = make_power(2)\ncube   = make_power(3)\n\n# Test:\n# print(square(4))   # should print 16\n# print(cube(3))     # should print 27",
+    "hint": "Inside make_power, define an inner function that uses `**` (the power operator) with the captured `n`. For the bonus, add a `calls = 0` variable in make_power and use `nonlocal calls` inside the inner function to increment it each time.",
+    "solution": "def make_power(n):\n    calls = 0\n\n    def power(x):\n        nonlocal calls\n        calls += 1\n        result = x ** n\n        print(f\"Call #{calls}: {x}^{n} = {result}\")\n        return result\n\n    return power\n\nsquare = make_power(2)\ncube   = make_power(3)\n\nsquare(4)   # Call #1: 4^2 = 16\nsquare(5)   # Call #2: 5^2 = 25\ncube(3)     # Call #1: 3^3 = 27\ncube(2)     # Call #2: 2^3 = 8"
+  }
+}

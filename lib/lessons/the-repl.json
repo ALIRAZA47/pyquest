@@ -1,0 +1,153 @@
+{
+  "slug": "the-repl",
+  "title": "The Interactive Shell (REPL)",
+  "emoji": "💬",
+  "category": "Getting Started",
+  "difficulty": "Beginner",
+  "summary": "Learn how to use Python's interactive shell to experiment with code instantly, one line at a time.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you could ask Python a question and get an answer **immediately** — without writing a whole program first. That's exactly what the **REPL** lets you do.\n\nThe word REPL stands for **Read-Eval-Print Loop**. It reads what you type, evaluates (runs) it, prints the result, then waits for your next input. It loops forever until you decide to leave. Think of it as a live conversation with Python."
+    },
+    {
+      "type": "heading",
+      "text": "Starting the REPL"
+    },
+    {
+      "type": "text",
+      "md": "To open the REPL, open your **terminal** (also called the command line or shell) and type `python` — with **no filename** after it — then press Enter.\n\nYou'll see something like this:"
+    },
+    {
+      "type": "code",
+      "code": "$ python\nPython 3.12.0 (main, ...)\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>>",
+      "caption": "The >>> prompt means Python is ready and waiting for you."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "python vs python3",
+      "md": "On some computers you need to type `python3` instead of `python` to get Python 3. If `python` opens Python 2 (you'll see \"Python 2.x\" in the greeting), use `python3` instead."
+    },
+    {
+      "type": "heading",
+      "text": "Typing Your First Expressions"
+    },
+    {
+      "type": "text",
+      "md": "Once you see `>>>`, Python is listening. Type any expression and press Enter — Python will evaluate it and print the result right away. No `print()` needed!"
+    },
+    {
+      "type": "code",
+      "code": ">>> 2 + 2\n4\n>>> 10 * 3\n30\n>>> 100 / 4\n25.0",
+      "caption": "Python evaluates each expression and shows the answer instantly."
+    },
+    {
+      "type": "code",
+      "code": ">>> \"Hello\" + \" \" + \"world\"\n'Hello world'\n>>> len(\"Python\")\n6",
+      "caption": "It works with text too. len() counts the characters in a string."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a calculator",
+      "md": "A pocket calculator shows you the result the moment you press `=`. The REPL works the same way — type an expression, press Enter, see the answer. The difference is that Python can do **much** more than arithmetic."
+    },
+    {
+      "type": "heading",
+      "text": "Variables Work Too"
+    },
+    {
+      "type": "text",
+      "md": "You can create variables in the REPL just like in a regular Python file. They stick around for as long as the REPL session is open."
+    },
+    {
+      "type": "code",
+      "code": ">>> name = \"Ada\"\n>>> age = 36\n>>> print(f\"Hello, {name}! You are {age} years old.\")\nHello, Ada! You are 36 years old.",
+      "caption": "Variables you define in one line are available in the next."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Variables disappear when you exit",
+      "md": "Everything you type in the REPL is **temporary**. The moment you close the REPL session, all your variables vanish. If you want to keep your work, save it to a `.py` file instead."
+    },
+    {
+      "type": "heading",
+      "text": "Exploring with help() and dir()"
+    },
+    {
+      "type": "text",
+      "md": "The REPL comes with two handy built-in tools for learning on the fly.\n\n- `help(something)` — shows you the official documentation for that thing.\n- `dir(something)` — lists all the methods and attributes available on that thing."
+    },
+    {
+      "type": "code",
+      "code": ">>> dir(\"hello\")\n['capitalize', 'casefold', 'center', 'count', 'encode', 'endswith', ...]",
+      "caption": "dir() reveals all the things you can do with a string. It's like peeking inside a toolbox."
+    },
+    {
+      "type": "code",
+      "code": ">>> help(str.upper)\nHelp on method_descriptor:\n\nupper(...)\n    S.upper() -> str\n\n    Return a copy of S converted to uppercase.",
+      "caption": "help() gives you a plain-English explanation of any function or method."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use dir() when you forget a method name",
+      "md": "Forgot whether it's `.append()` or `.add()` for lists? Just type `dir([])` in the REPL and scan the output. No need to Google it."
+    },
+    {
+      "type": "heading",
+      "text": "REPL vs. a .py File"
+    },
+    {
+      "type": "text",
+      "md": "The REPL is great for **quick experiments**, but for real programs you write code in a file ending with `.py` and run it with `python my_script.py`.\n\nHere's a simple comparison:\n\n- **REPL** — instant feedback, great for trying things out, nothing is saved.\n- **.py file** — your code is saved, you can run it again and again, perfect for real programs."
+    },
+    {
+      "type": "code",
+      "code": "# This is saved in a file called greet.py\nname = \"Ada\"\nprint(f\"Hello, {name}!\")",
+      "output": "Hello, Ada!",
+      "caption": "Running a .py file: $ python greet.py"
+    },
+    {
+      "type": "heading",
+      "text": "Leaving the REPL"
+    },
+    {
+      "type": "text",
+      "md": "When you're done, you can exit the REPL in two ways:\n\n- Type `exit()` and press Enter.\n- Press **Ctrl + D** (on Mac/Linux) or **Ctrl + Z then Enter** (on Windows)."
+    },
+    {
+      "type": "code",
+      "code": ">>> exit()",
+      "caption": "Typing exit() ends the session and returns you to the regular terminal."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following is the correct way to open the Python REPL in your terminal?",
+      "options": [
+        "Type `python my_script.py` and press Enter",
+        "Type `python` with no filename and press Enter",
+        "Type `start python` and press Enter",
+        "Double-click a .py file"
+      ],
+      "answerIndex": 1,
+      "explanation": "Typing `python` (or `python3`) with no filename tells Python to start in interactive mode — that's the REPL. Providing a filename like `python my_script.py` runs that file instead of opening the interactive shell."
+    }
+  ],
+  "keyTakeaways": [
+    "The REPL starts when you type `python` in your terminal with no filename — look for the `>>>` prompt.",
+    "You can type any expression and Python evaluates it instantly — perfect for experimenting.",
+    "Variables created in the REPL are temporary; they disappear when you close the session.",
+    "`dir()` lists what you can do with any object; `help()` explains how to do it.",
+    "Use the REPL for quick experiments, and `.py` files for programs you want to keep."
+  ],
+  "exercise": {
+    "prompt": "Open the Python REPL and do the following:\n1. Calculate `(15 + 7) * 3` and note the result.\n2. Store your first name in a variable called `name`.\n3. Use `print()` to greet yourself: \"Hello, [your name]!\"\n4. Run `dir(\"\")` and find at least one string method you haven't used before.\n5. Exit the REPL using `exit()`.",
+    "starterCode": "",
+    "hint": "Start by opening your terminal and typing `python` (or `python3`). Then try each step one at a time at the `>>>` prompt. For step 3, use an f-string: `print(f\"Hello, {name}!\")`.",
+    "solution": ">>> (15 + 7) * 3\n66\n>>> name = \"Ada\"\n>>> print(f\"Hello, {name}!\")\nHello, Ada!\n>>> dir(\"\")\n['capitalize', 'casefold', 'center', 'count', 'encode', 'endswith', 'expandtabs', 'find', 'format', ...]\n>>> exit()"
+  }
+}

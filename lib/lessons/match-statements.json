@@ -1,0 +1,144 @@
+{
+  "slug": "match-statements",
+  "title": "match Statements",
+  "emoji": "🧬",
+  "category": "Control Flow",
+  "difficulty": "Intermediate",
+  "summary": "Learn how Python's match statement lets you compare a value against multiple patterns cleanly and expressively.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you work at a coffee shop and someone orders a drink. You look at the order slip and route it to the right station: espresso goes here, tea goes there, smoothie goes somewhere else. You're **matching** the order to an action.\n\nPython's `match` statement does exactly that — it looks at a value and finds the pattern that fits, then runs the code for that pattern. It's a cleaner, more readable alternative to writing a long chain of `if/elif/else` checks."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Python 3.10+ required",
+      "md": "`match` was introduced in **Python 3.10**. If you're on an older version, you'll get a `SyntaxError`. Run `python --version` to check. Most modern systems have 3.10 or later."
+    },
+    {
+      "type": "heading",
+      "text": "Your first match statement"
+    },
+    {
+      "type": "text",
+      "md": "The basic structure looks like this: you write `match` followed by the value you want to examine, then a series of `case` branches — one for each pattern you want to handle."
+    },
+    {
+      "type": "code",
+      "code": "day = \"Monday\"\n\nmatch day:\n    case \"Monday\":\n        print(\"Start of the work week!\")\n    case \"Friday\":\n        print(\"Almost the weekend!\")\n    case \"Saturday\" | \"Sunday\":\n        print(\"It's the weekend!\")\n    case _:\n        print(\"Just another weekday.\")",
+      "output": "Start of the work week!",
+      "caption": "match checks day against each case in order and runs the first match."
+    },
+    {
+      "type": "text",
+      "md": "Notice a few things:\n- Each `case` is followed by a **pattern** (like `\"Monday\"`) and a colon.\n- Python checks patterns **top to bottom** and stops at the first match.\n- The `_` at the end is the **wildcard** — it matches anything that didn't match above. Think of it as the `else` of a `match` statement."
+    },
+    {
+      "type": "heading",
+      "text": "The wildcard: _ as a catch-all"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The _ is your safety net",
+      "md": "Think of `case _:` like the last line in a restaurant menu that says \"Chef's Choice\" — it's what you get when nothing else on the menu matched your request. It guarantees the code always has something to do."
+    },
+    {
+      "type": "code",
+      "code": "status_code = 404\n\nmatch status_code:\n    case 200:\n        print(\"OK — everything is fine.\")\n    case 404:\n        print(\"Not Found — the page doesn't exist.\")\n    case 500:\n        print(\"Server Error — something broke.\")\n    case _:\n        print(f\"Unknown status: {status_code}\")",
+      "output": "Not Found — the page doesn't exist.",
+      "caption": "Matching integers works just like matching strings."
+    },
+    {
+      "type": "heading",
+      "text": "Matching multiple values with |"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes several different values should trigger the same action. You can combine them in one `case` using the pipe `|` symbol, which means **\"or\"**."
+    },
+    {
+      "type": "code",
+      "code": "grade = \"B\"\n\nmatch grade:\n    case \"A\":\n        print(\"Excellent!\")\n    case \"B\" | \"C\":\n        print(\"Good work, keep it up!\")\n    case \"D\" | \"F\":\n        print(\"Let's study together and try again.\")\n    case _:\n        print(\"I don't recognise that grade.\")",
+      "output": "Good work, keep it up!",
+      "caption": "Use | to group values that share the same outcome."
+    },
+    {
+      "type": "heading",
+      "text": "Comparing match to if/elif"
+    },
+    {
+      "type": "text",
+      "md": "You can do everything `match` does with `if/elif/else`. So why use `match`? Because when you have many possible values, `match` is **easier to read and harder to get wrong**. Here's the same logic side by side:"
+    },
+    {
+      "type": "code",
+      "code": "# Using if/elif — gets long and repetitive\nday = \"Saturday\"\n\nif day == \"Monday\":\n    print(\"Start of the work week!\")\nelif day == \"Friday\":\n    print(\"Almost the weekend!\")\nelif day == \"Saturday\" or day == \"Sunday\":\n    print(\"It's the weekend!\")\nelse:\n    print(\"Just another weekday.\")",
+      "output": "It's the weekend!",
+      "caption": "The if/elif version works, but notice how repetitive day == is."
+    },
+    {
+      "type": "code",
+      "code": "# Using match — cleaner and more expressive\nday = \"Saturday\"\n\nmatch day:\n    case \"Monday\":\n        print(\"Start of the work week!\")\n    case \"Friday\":\n        print(\"Almost the weekend!\")\n    case \"Saturday\" | \"Sunday\":\n        print(\"It's the weekend!\")\n    case _:\n        print(\"Just another weekday.\")",
+      "output": "It's the weekend!",
+      "caption": "The match version removes repetition and reads almost like plain English."
+    },
+    {
+      "type": "heading",
+      "text": "Matching tuples and simple structures"
+    },
+    {
+      "type": "text",
+      "md": "`match` gets really powerful when your value has **structure** — like a tuple (a pair of values). You can match on the shape and the contents at the same time."
+    },
+    {
+      "type": "code",
+      "code": "point = (0, 5)\n\nmatch point:\n    case (0, 0):\n        print(\"Origin — the center point.\")\n    case (x, 0):\n        print(f\"On the X-axis at {x}.\")\n    case (0, y):\n        print(f\"On the Y-axis at {y}.\")\n    case (x, y):\n        print(f\"Somewhere at ({x}, {y}).\")",
+      "output": "On the Y-axis at 5.",
+      "caption": "match can destructure a tuple — x and y capture the actual values."
+    },
+    {
+      "type": "text",
+      "md": "In that example, `(0, y)` is a pattern that means: \"a tuple whose first item is `0`, and whose second item I'll call `y`\". Python fills in `y` automatically. This is called **destructuring** and it's one of the most elegant parts of `match`."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Variables in patterns capture, they don't compare",
+      "md": "When you write `case x:` (a plain name with no quotes), Python **captures** the value into `x` — it does NOT check if the value equals some existing variable named `x`. Only **literals** (strings in quotes, numbers) and the wildcard `_` are used for comparison.\n\n```python\nx = 10\nmatch 5:\n    case x:   # This always matches! It captures 5 into x, overwriting it.\n        print(x)  # prints 5, not 10\n```\n\nIf you want to compare against an existing variable, use an `if` guard or a different approach."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "No break needed",
+      "md": "Unlike `switch` in some other languages (like JavaScript or C), Python's `match` does **not** fall through from one case to the next. Once a case matches and its code runs, `match` is done. You never need a `break` statement."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the _ pattern in a case branch mean?",
+      "options": [
+        "It matches only the value None.",
+        "It matches anything that wasn't matched by a previous case.",
+        "It raises an error if reached.",
+        "It skips the match statement entirely."
+      ],
+      "answerIndex": 1,
+      "explanation": "The _ wildcard is the catch-all pattern. It matches any value, so placing it last makes it the default branch — exactly like else at the end of an if/elif chain."
+    }
+  ],
+  "keyTakeaways": [
+    "`match` compares a value against a list of `case` patterns and runs the first match — cleaner than long if/elif chains.",
+    "The `_` wildcard acts as the default catch-all case and should come last.",
+    "Use `|` inside a `case` to match multiple values with the same action.",
+    "`match` can destructure tuples and sequences, capturing parts of the value into variables.",
+    "`match` requires Python 3.10 or newer — check your version before using it."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `describe_season(month)` that accepts a month number (1–12) and uses a `match` statement to return a string describing the season. Use these groupings:\n- December, January, February → \"Winter\"\n- March, April, May → \"Spring\"\n- June, July, August → \"Summer\"\n- September, October, November → \"Autumn\"\n- Any other number → \"Unknown month\"\n\nTest it by printing the result for months 3, 7, 11, and 99.",
+    "starterCode": "def describe_season(month):\n    match month:\n        # add your cases here\n        pass\n\nprint(describe_season(3))\nprint(describe_season(7))\nprint(describe_season(11))\nprint(describe_season(99))",
+    "hint": "Each case should list the month numbers separated by |. For example: `case 12 | 1 | 2:` covers winter months. Return a string from each branch.",
+    "solution": "def describe_season(month):\n    match month:\n        case 12 | 1 | 2:\n            return \"Winter\"\n        case 3 | 4 | 5:\n            return \"Spring\"\n        case 6 | 7 | 8:\n            return \"Summer\"\n        case 9 | 10 | 11:\n            return \"Autumn\"\n        case _:\n            return \"Unknown month\"\n\nprint(describe_season(3))   # Spring\nprint(describe_season(7))   # Summer\nprint(describe_season(11))  # Autumn\nprint(describe_season(99))  # Unknown month"
+  }
+}

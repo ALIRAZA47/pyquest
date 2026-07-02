@@ -1,0 +1,178 @@
+{
+  "slug": "working-with-json",
+  "title": "Working with JSON",
+  "emoji": "🧾",
+  "category": "Files & Data",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to read, write, and work with JSON — the universal data format powering APIs and config files everywhere.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you want to send a Python dictionary to a friend over the internet, or save your app's settings to a file so they survive a restart. You can't just send a Python object — the other side might be running JavaScript, Go, or something else entirely. **JSON** (pronounced \"JAY-sun\") solves this. It's a simple text format that almost every programming language on the planet can read and write. Once you understand JSON, you can talk to web APIs, read config files, and share data with ease."
+    },
+    {
+      "type": "heading",
+      "text": "What Does JSON Look Like?"
+    },
+    {
+      "type": "text",
+      "md": "JSON looks a lot like Python dictionaries and lists — because Python's dict syntax was actually inspired by similar ideas. Here is a small JSON snippet:\n\n```\n{\n  \"name\": \"Alice\",\n  \"age\": 30,\n  \"hobbies\": [\"reading\", \"cycling\"],\n  \"active\": true\n}\n```\n\nNotice a few things:\n- Keys are always **double-quoted strings** (not single quotes)\n- `true`/`false` are lowercase (not Python's `True`/`False`)\n- `null` means nothing (Python's `None`)\n- Numbers, strings, lists, and nested objects are all supported"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "JSON is like a universal shipping box",
+      "md": "Think of JSON as a standard cardboard box that every courier in the world knows how to handle. You pack your Python data into the box (encoding), ship it, and the recipient unpacks it into their language's own format (decoding). The box itself is just text."
+    },
+    {
+      "type": "heading",
+      "text": "The JSON Type Map"
+    },
+    {
+      "type": "text",
+      "md": "Python and JSON types correspond to each other almost perfectly:\n\n| JSON | Python |\n|---|---|\n| object `{}` | `dict` |\n| array `[]` | `list` |\n| string `\"hi\"` | `str` |\n| number `42` / `3.14` | `int` / `float` |\n| `true` / `false` | `True` / `False` |\n| `null` | `None` |\n\nWhen you convert Python to JSON, Python automatically uses these mappings — and back again when you load JSON into Python."
+    },
+    {
+      "type": "heading",
+      "text": "Importing the json Module"
+    },
+    {
+      "type": "text",
+      "md": "Python ships with a built-in `json` module — no installation needed. Just import it at the top of your file."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\nprint(\"json module ready!\")",
+      "output": "json module ready!",
+      "caption": "The json module is part of Python's standard library"
+    },
+    {
+      "type": "heading",
+      "text": "From String to Python: json.loads"
+    },
+    {
+      "type": "text",
+      "md": "When you receive JSON data — say, from a web API — it arrives as a plain **string**. `json.loads()` (\"load string\") converts that string into a real Python object you can work with."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\njson_string = '{\"name\": \"Alice\", \"age\": 30, \"active\": true}'\n\ndata = json.loads(json_string)\n\nprint(type(data))       # it's a dict now!\nprint(data[\"name\"])     # access like any dict\nprint(data[\"active\"])   # true became True",
+      "output": "<class 'dict'>\nAlice\nTrue",
+      "caption": "json.loads turns a JSON string into a Python dict"
+    },
+    {
+      "type": "heading",
+      "text": "From Python to String: json.dumps"
+    },
+    {
+      "type": "text",
+      "md": "`json.dumps()` (\"dump string\") does the opposite — it takes a Python object and returns a JSON-formatted string. This is what you use when you want to send data to an API or write it to a file as text."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\nuser = {\n    \"name\": \"Bob\",\n    \"score\": 42,\n    \"verified\": False,\n    \"tags\": [\"python\", \"beginner\"]\n}\n\njson_string = json.dumps(user)\nprint(json_string)\nprint(type(json_string))",
+      "output": "{\"name\": \"Bob\", \"score\": 42, \"verified\": false, \"tags\": [\"python\", \"beginner\"]}\n<class 'str'>",
+      "caption": "json.dumps converts a Python dict to a JSON string"
+    },
+    {
+      "type": "heading",
+      "text": "Pretty-Printing with indent"
+    },
+    {
+      "type": "text",
+      "md": "By default, `json.dumps()` squashes everything onto one line — hard to read! Pass `indent=2` (or any number) to get nicely formatted output. You can also use `sort_keys=True` to alphabetize the keys, which makes output consistent and easy to compare."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\nconfig = {\n    \"theme\": \"dark\",\n    \"fontSize\": 14,\n    \"plugins\": [\"linter\", \"formatter\"]\n}\n\npretty = json.dumps(config, indent=2, sort_keys=True)\nprint(pretty)",
+      "output": "{\n  \"fontSize\": 14,\n  \"plugins\": [\n    \"linter\",\n    \"formatter\"\n  ],\n  \"theme\": \"dark\"\n}",
+      "caption": "indent=2 and sort_keys=True make JSON human-friendly"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use indent=2 when saving files humans will read",
+      "md": "Compact JSON saves a tiny bit of space, but pretty-printed JSON is much easier to review, debug, and edit. Use `indent=2` for config files and logs. Skip it for data you're sending over a network where size matters."
+    },
+    {
+      "type": "heading",
+      "text": "Reading JSON from a File: json.load"
+    },
+    {
+      "type": "text",
+      "md": "`json.load()` (no \"s\") reads directly from a **file object**. You don't have to read the file into a string first — just open the file and hand it to `json.load()`."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\n# Imagine config.json contains:\n# {\"host\": \"localhost\", \"port\": 8080, \"debug\": true}\n\nwith open(\"config.json\", \"r\") as f:\n    config = json.load(f)\n\nprint(config[\"host\"])\nprint(config[\"port\"])\nprint(config[\"debug\"])",
+      "output": "localhost\n8080\nTrue",
+      "caption": "json.load reads JSON directly from an open file"
+    },
+    {
+      "type": "heading",
+      "text": "Writing JSON to a File: json.dump"
+    },
+    {
+      "type": "text",
+      "md": "`json.dump()` (no \"s\") writes Python data directly into a file. It's like `json.dumps()`, but instead of returning a string, it writes straight to the file you pass in."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\nresults = {\n    \"run\": 1,\n    \"passed\": 47,\n    \"failed\": 3,\n    \"errors\": []\n}\n\nwith open(\"results.json\", \"w\") as f:\n    json.dump(results, f, indent=2)\n\nprint(\"Saved results.json\")",
+      "output": "Saved results.json",
+      "caption": "json.dump writes a Python object directly to a file"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "loads/dumps vs load/dump — easy to mix up!",
+      "md": "The names are almost identical, so beginners often confuse them:\n\n- **`json.loads(string)`** — string **in**, Python object **out**\n- **`json.dumps(object)`** — Python object **in**, string **out**\n- **`json.load(file)`** — file **in**, Python object **out**\n- **`json.dump(object, file)`** — Python object **in**, file **out**\n\nMemory trick: the ones **with** an `s` work with **s**trings. The ones **without** an `s` work with **f**iles."
+    },
+    {
+      "type": "heading",
+      "text": "A Real Example: Config File Round-Trip"
+    },
+    {
+      "type": "text",
+      "md": "Here is a practical pattern you will use all the time: load a config, update a value, and save it back."
+    },
+    {
+      "type": "code",
+      "code": "import json\n\n# Step 1: create an initial config and save it\ndefault_config = {\"username\": \"guest\", \"volume\": 80, \"fullscreen\": False}\n\nwith open(\"app_config.json\", \"w\") as f:\n    json.dump(default_config, f, indent=2)\n\n# Step 2: load it back, update, and save again\nwith open(\"app_config.json\", \"r\") as f:\n    config = json.load(f)\n\nconfig[\"username\"] = \"alice\"\nconfig[\"fullscreen\"] = True\n\nwith open(\"app_config.json\", \"w\") as f:\n    json.dump(config, f, indent=2)\n\nprint(\"Config updated!\")\nprint(json.dumps(config, indent=2))",
+      "output": "Config updated!\n{\n  \"username\": \"alice\",\n  \"volume\": 80,\n  \"fullscreen\": true\n}",
+      "caption": "Load, modify, and save — the classic config round-trip"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "JSON only supports certain Python types",
+      "md": "Not everything Python can represent will survive the trip to JSON. Types like `set`, `tuple`, `datetime`, and custom class instances are **not supported** by default.\n\n```python\nimport json\njson.dumps({1, 2, 3})  # TypeError: Object of type set is not JSON serializable\n```\n\nTo save a set, convert it to a list first: `json.dumps(list(my_set))`."
+    },
+    {
+      "type": "quiz",
+      "question": "You have a variable `text = '{\"city\": \"Paris\", \"pop\": 2161000}'`. Which call correctly converts it into a Python dictionary?",
+      "options": [
+        "json.load(text)",
+        "json.loads(text)",
+        "json.dumps(text)",
+        "json.dump(text)"
+      ],
+      "answerIndex": 1,
+      "explanation": "json.loads() (with an 's') converts a JSON **string** into a Python object. json.load() expects a file object, not a string. json.dumps() and json.dump() go the other direction — they convert Python objects *into* JSON."
+    }
+  ],
+  "keyTakeaways": [
+    "JSON is a universal text format — it maps cleanly to Python dicts, lists, strings, numbers, booleans, and None.",
+    "Use json.loads() / json.dumps() to convert between JSON strings and Python objects.",
+    "Use json.load() / json.dump() to read from and write to files directly.",
+    "Pass indent=2 to json.dumps() or json.dump() to produce readable, pretty-printed JSON.",
+    "Remember: functions with an 's' work with strings; functions without work with files."
+  ],
+  "exercise": {
+    "prompt": "Create a Python script that builds a dictionary representing a simple \"contact\" (with keys: name, email, phone, and a list called 'tags'). Save it to a file called contact.json using json.dump with indent=2. Then load it back, add a new key 'verified' set to True, and print the final JSON to the console using json.dumps with indent=2 and sort_keys=True.",
+    "starterCode": "import json\n\n# Step 1: build your contact dict\ncontact = {\n    # fill in name, email, phone, tags\n}\n\n# Step 2: save to contact.json\n\n# Step 3: load it back\n\n# Step 4: add 'verified': True\n\n# Step 5: print pretty JSON with sort_keys=True\n",
+    "hint": "Use 'with open(\"contact.json\", \"w\") as f: json.dump(contact, f, indent=2)' to save, and 'with open(\"contact.json\", \"r\") as f: contact = json.load(f)' to load it back.",
+    "solution": "import json\n\n# Step 1: build the contact dict\ncontact = {\n    \"name\": \"Maria Garcia\",\n    \"email\": \"maria@example.com\",\n    \"phone\": \"+1-555-0199\",\n    \"tags\": [\"friend\", \"colleague\"]\n}\n\n# Step 2: save to file\nwith open(\"contact.json\", \"w\") as f:\n    json.dump(contact, f, indent=2)\n\n# Step 3: load it back\nwith open(\"contact.json\", \"r\") as f:\n    contact = json.load(f)\n\n# Step 4: add verified key\ncontact[\"verified\"] = True\n\n# Step 5: print pretty with sort_keys\nprint(json.dumps(contact, indent=2, sort_keys=True))\n"
+  }
+}

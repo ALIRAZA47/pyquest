@@ -1,0 +1,149 @@
+{
+  "slug": "return-values",
+  "title": "Return Values",
+  "emoji": "↩️",
+  "category": "Functions",
+  "difficulty": "Beginner",
+  "summary": "Learn how functions send data back to you with return, why that is different from print, and how to return multiple values at once.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have probably used a function before — maybe `len()` to count items in a list, or `round()` to tidy up a number. But have you wondered how those functions *give you back* a result you can actually use? The secret is the **`return` statement**. In this lesson you will learn how to make your own functions send data back to whoever called them — and why that is way more powerful than just printing to the screen."
+    },
+    {
+      "type": "heading",
+      "text": "What Does return Do?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a vending machine",
+      "md": "You put in money and press a button. The machine does its work, then **returns** a snack through the slot. You now *have* the snack — you can eat it, share it, or save it for later. `return` works the same way: the function does its work, then hands something back to you that you can actually use."
+    },
+    {
+      "type": "text",
+      "md": "When Python sees `return`, it immediately exits the function and sends the value back to wherever the function was called. You can store that value in a variable, pass it to another function, or use it in a calculation."
+    },
+    {
+      "type": "code",
+      "code": "def add(a, b):\n    result = a + b\n    return result\n\ntotal = add(3, 5)\nprint(total)",
+      "output": "8",
+      "caption": "The function returns a value we store in total."
+    },
+    {
+      "type": "heading",
+      "text": "return vs. print — What is the Difference?"
+    },
+    {
+      "type": "text",
+      "md": "`print` and `return` can look similar at first — both seem to \"show\" a value. But they are very different:\n\n- **`print`** displays text on the screen. That's it. The value disappears after it is shown.\n- **`return`** hands the value *back to the caller*. Your code can then use that value however it likes.\n\nIf you only `print` inside a function, the function actually gives back `None` — Python's way of saying \"nothing\"."
+    },
+    {
+      "type": "code",
+      "code": "def double_print(x):\n    print(x * 2)   # just shows it\n\ndef double_return(x):\n    return x * 2  # hands it back\n\na = double_print(4)   # prints 8, but a is None\nb = double_return(4)  # b is 8, nothing printed yet\n\nprint(a)   # None\nprint(b)   # 8",
+      "output": "8\nNone\n8",
+      "caption": "double_print shows 8 but gives back None. double_return gives back 8 you can use."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Printing is not the same as returning",
+      "md": "A very common beginner mistake: writing `print(...)` inside a function and then trying to use the result.\n\n```python\ndef square(n):\n    print(n * n)  # WRONG if you want to use the result\n\nresult = square(5)  # prints 25, but result is None\nprint(result + 1)   # TypeError: unsupported operand type(s)\n```\n\nIf you want to *use* the value later, always use `return` instead of `print`."
+    },
+    {
+      "type": "heading",
+      "text": "Early Return — Exiting a Function Early"
+    },
+    {
+      "type": "text",
+      "md": "`return` does not have to appear only at the end of a function. You can use it earlier to exit the function as soon as you have the answer. This is called an **early return** and it can make your code cleaner and easier to read."
+    },
+    {
+      "type": "code",
+      "code": "def is_adult(age):\n    if age < 18:\n        return False   # exit early\n    return True        # only reached if age >= 18\n\nprint(is_adult(15))\nprint(is_adult(21))",
+      "output": "False\nTrue",
+      "caption": "The function exits as soon as it knows the answer."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Early return keeps code flat",
+      "md": "Instead of nesting lots of `if`/`else` blocks, you can handle the special cases early and `return`. The \"happy path\" code then sits at the bottom without any extra indentation. Many experienced programmers prefer this style."
+    },
+    {
+      "type": "heading",
+      "text": "Functions That Return Nothing"
+    },
+    {
+      "type": "text",
+      "md": "If a function has no `return` statement — or just a bare `return` with no value — Python automatically gives back `None`. This is perfectly fine for functions whose job is to *do* something (like saving a file or printing a greeting) rather than *compute* something."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    print(f\"Hello, {name}!\")\n    # no return statement\n\ndef nothing():\n    return   # bare return, same result\n\nx = greet(\"Alice\")\nprint(x)\n\ny = nothing()\nprint(y)",
+      "output": "Hello, Alice!\nNone\nNone",
+      "caption": "Both functions give back None because they do not return a value."
+    },
+    {
+      "type": "heading",
+      "text": "Returning Multiple Values"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a function needs to hand back more than one piece of data. Python makes this easy — you can return multiple values separated by commas. Under the hood Python packs them into a **tuple**, but you can unpack them instantly into separate variables."
+    },
+    {
+      "type": "code",
+      "code": "def min_max(numbers):\n    return min(numbers), max(numbers)\n\nlowest, highest = min_max([4, 1, 9, 2, 7])\nprint(lowest)   # 1\nprint(highest)  # 9",
+      "output": "1\n9",
+      "caption": "Two values come back, unpacked into two variables in one line."
+    },
+    {
+      "type": "code",
+      "code": "def split_name(full_name):\n    parts = full_name.split(\" \", 1)\n    first = parts[0]\n    last = parts[1] if len(parts) > 1 else \"\"\n    return first, last\n\nf, l = split_name(\"Ada Lovelace\")\nprint(f\"First: {f}, Last: {l}\")",
+      "output": "First: Ada, Last: Lovelace",
+      "caption": "Returning two strings and unpacking them on the left side of =."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The returned tuple is real",
+      "md": "When you write `return a, b`, Python actually returns a single tuple `(a, b)`. You can keep it as a tuple if you like:\n\n```python\nresult = min_max([4, 1, 9])\nprint(result)        # (1, 9)\nprint(result[0])     # 1\n```\n\nUnpacking into separate variables (`a, b = func()`) is just a convenient shortcut."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "code": "def safe_divide(a, b):\n    if b == 0:\n        return None   # early return for bad input\n    return a / b\n\nresult = safe_divide(10, 2)\nif result is not None:\n    print(f\"Answer: {result}\")\n\nbad = safe_divide(5, 0)\nprint(bad)",
+      "output": "Answer: 5.0\nNone",
+      "caption": "Early return handles the error case; the normal result comes at the end."
+    },
+    {
+      "type": "quiz",
+      "question": "What does a function return if it has no return statement?",
+      "options": [
+        "0",
+        "An empty string \"\"",
+        "None",
+        "It raises an error"
+      ],
+      "answerIndex": 2,
+      "explanation": "Python automatically returns None when a function finishes without a return statement (or with a bare return). None is Python's way of representing \"no value\". This is not an error — it is intentional for functions that perform actions rather than compute results."
+    }
+  ],
+  "keyTakeaways": [
+    "`return` sends a value back to the caller so your code can use it — `print` only displays it on screen.",
+    "A function with no `return` statement (or a bare `return`) gives back `None`.",
+    "You can return early to exit a function the moment you have the answer, keeping your code clean.",
+    "Returning multiple values with commas creates a tuple you can unpack into separate variables instantly."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `circle_stats` that takes a radius (a number) and returns TWO values: the circumference and the area of the circle. Use the formulas: circumference = 2 * 3.14159 * radius and area = 3.14159 * radius * radius. Then call the function with a radius of 5 and print both results.",
+    "starterCode": "def circle_stats(radius):\n    # your code here\n    pass\n\ncircumference, area = circle_stats(5)\nprint(f\"Circumference: {circumference}\")\nprint(f\"Area: {area}\")",
+    "hint": "Calculate each value on its own line, then put them both after return separated by a comma: return circumference, area",
+    "solution": "def circle_stats(radius):\n    circumference = 2 * 3.14159 * radius\n    area = 3.14159 * radius * radius\n    return circumference, area\n\ncircumference, area = circle_stats(5)\nprint(f\"Circumference: {circumference}\")\nprint(f\"Area: {area}\")"
+  }
+}

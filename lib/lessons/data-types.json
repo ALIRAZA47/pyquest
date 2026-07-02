@@ -1,0 +1,184 @@
+{
+  "slug": "data-types",
+  "title": "Data Types Overview",
+  "emoji": "🏷️",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Meet all the core building blocks Python uses to store information — numbers, text, booleans, collections, and more.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every piece of information in a program has a **type** — a label that tells Python what kind of thing it is and what you can do with it. A phone number is different from a name, which is different from a yes/no answer. Python has built-in types for all of these situations. Think of types as different **containers**: you would not store soup in a paper bag or carry sand in a colander. The right container matters."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Types are like labeled boxes",
+      "md": "Imagine a moving company with boxes labeled **BOOKS**, **FRAGILE**, **CLOTHES**. Python's data types are those labels. The label tells everyone handling the box what is inside and how to treat it. Python uses the label to decide what operations make sense — you can multiply a number, but you cannot multiply a sentence."
+    },
+    {
+      "type": "heading",
+      "text": "Numbers: int and float"
+    },
+    {
+      "type": "text",
+      "md": "Python has two main number types. **`int`** (integer) holds whole numbers — no decimal point. **`float`** (floating-point) holds numbers with a decimal point. Use `int` for counting things; use `float` for measuring things."
+    },
+    {
+      "type": "code",
+      "code": "age = 28          # int — a whole number\nprice = 9.99      # float — has a decimal point\n\nprint(age)\nprint(price)",
+      "output": "28\n9.99",
+      "caption": "Whole numbers are ints; decimals are floats."
+    },
+    {
+      "type": "heading",
+      "text": "Text: str (string)"
+    },
+    {
+      "type": "text",
+      "md": "A **`str`** (string) holds text — any sequence of characters wrapped in quotes. You can use single quotes `'hello'` or double quotes `\"hello\"`. Strings are used for names, messages, file paths, and anything else that is human-readable text."
+    },
+    {
+      "type": "code",
+      "code": "greeting = \"Hello, world!\"\nusername = 'ada_lovelace'\n\nprint(greeting)\nprint(username)",
+      "output": "Hello, world!\nada_lovelace",
+      "caption": "Both quote styles create a string."
+    },
+    {
+      "type": "heading",
+      "text": "True or False: bool"
+    },
+    {
+      "type": "text",
+      "md": "A **`bool`** (boolean) can only ever be one of two values: `True` or `False`. Booleans are the language of decisions. Whenever Python needs to make a choice — run this code or not? — it relies on a bool. Notice that `True` and `False` are capitalized; that is not optional."
+    },
+    {
+      "type": "code",
+      "code": "is_logged_in = True\nhas_premium = False\n\nprint(is_logged_in)\nprint(has_premium)",
+      "output": "True\nFalse",
+      "caption": "Booleans are always True or False — capital first letter."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Capitalization matters for booleans",
+      "md": "`True` and `False` must start with a capital letter. Writing `true` or `false` (lowercase) will cause a `NameError` because Python will think you mean a variable named `true` — which does not exist."
+    },
+    {
+      "type": "heading",
+      "text": "Ordered Collections: list and tuple"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you need to store several values together in order. Python gives you two options:\n- **`list`** — an ordered, *changeable* collection. Written with square brackets `[...]`.\n- **`tuple`** — an ordered, *unchangeable* collection. Written with parentheses `(...)`.\n\nThink of a list as a shopping list you can edit, and a tuple as the days of the week — they are fixed forever."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]  # list\ndays = (\"Mon\", \"Tue\", \"Wed\")             # tuple\n\nprint(fruits)\nprint(days)",
+      "output": "['apple', 'banana', 'cherry']\n('Mon', 'Tue', 'Wed')",
+      "caption": "Square brackets for lists, parentheses for tuples."
+    },
+    {
+      "type": "heading",
+      "text": "Key-Value Pairs: dict"
+    },
+    {
+      "type": "text",
+      "md": "A **`dict`** (dictionary) stores pairs of **keys** and **values** — like a real dictionary where you look up a word (key) to find its definition (value). Dicts use curly braces `{...}` with a colon separating each key from its value."
+    },
+    {
+      "type": "code",
+      "code": "person = {\n    \"name\": \"Ada\",\n    \"age\": 36,\n    \"is_admin\": True\n}\n\nprint(person[\"name\"])\nprint(person[\"age\"])",
+      "output": "Ada\n36",
+      "caption": "Look up a value by its key using square brackets."
+    },
+    {
+      "type": "heading",
+      "text": "Unique Items: set"
+    },
+    {
+      "type": "text",
+      "md": "A **`set`** is an unordered collection that automatically removes duplicates. If you only care whether something is present or not — and not the order — a set is the right tool. Sets also use curly braces, but without key-value pairs."
+    },
+    {
+      "type": "code",
+      "code": "tags = {\"python\", \"beginner\", \"python\", \"code\"}\nprint(tags)",
+      "output": "{'beginner', 'code', 'python'}",
+      "caption": "Duplicate 'python' was removed automatically. Order may vary."
+    },
+    {
+      "type": "heading",
+      "text": "Nothing at All: NoneType"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a variable intentionally holds **no value**. Python uses the special keyword `None` for this. Its type is called `NoneType`. You will often see `None` as a default before a value is assigned, or as a return value from a function that does not explicitly return anything."
+    },
+    {
+      "type": "code",
+      "code": "result = None\nprint(result)\nprint(type(result))",
+      "output": "None\n<class 'NoneType'>",
+      "caption": "None means 'no value here yet'."
+    },
+    {
+      "type": "heading",
+      "text": "Checking Types with type()"
+    },
+    {
+      "type": "text",
+      "md": "Not sure what type a value is? Ask Python directly using the built-in **`type()`** function. Pass any value inside the parentheses and Python will tell you its type. This is extremely handy when debugging."
+    },
+    {
+      "type": "code",
+      "code": "print(type(42))\nprint(type(3.14))\nprint(type(\"hello\"))\nprint(type(True))\nprint(type([1, 2, 3]))\nprint(type({\"a\": 1}))\nprint(type(None))",
+      "output": "<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>\n<class 'list'>\n<class 'dict'>\n<class 'NoneType'>",
+      "caption": "type() reveals the type of any value."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Everything in Python is an object",
+      "md": "You will notice that `type()` says `<class 'int'>`, not just `int`. That is because in Python, **every value is an object** — even a simple number like `42`. An object is a value that bundles data with built-in capabilities. This is one of Python's most powerful ideas, and you will learn more about it in later lessons."
+    },
+    {
+      "type": "heading",
+      "text": "Mutable vs Immutable — a quick peek"
+    },
+    {
+      "type": "text",
+      "md": "Some types can be **changed** after they are created — they are called **mutable**. Others are **frozen** once created — they are called **immutable**.\n\n- **Mutable**: `list`, `dict`, `set` — you can add, remove, or change their contents.\n- **Immutable**: `int`, `float`, `str`, `bool`, `tuple`, `NoneType` — once created, the value itself cannot be altered.\n\nThis distinction matters a lot as you write bigger programs. We will explore it deeply in dedicated lessons."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use type() whenever you feel lost",
+      "md": "Beginners often get errors because they accidentally mix up types — for example, trying to add a number to a string. Any time you are confused about what a variable holds, just print `type(your_variable)` and Python will tell you instantly."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the type() function return when called on the value 3.14?",
+      "options": [
+        "<class 'int'>",
+        "<class 'float'>",
+        "<class 'str'>",
+        "<class 'number'>"
+      ],
+      "answerIndex": 1,
+      "explanation": "3.14 has a decimal point, so Python recognizes it as a float. type(3.14) returns <class 'float'>. An int holds only whole numbers, and there is no built-in 'number' type in Python."
+    }
+  ],
+  "keyTakeaways": [
+    "Python's core types are int, float, str, bool, list, tuple, dict, set, and NoneType — each designed for a specific kind of data.",
+    "Use type() to inspect any value and find out its type — great for debugging.",
+    "In Python, every value is an object, even simple numbers and booleans.",
+    "Mutable types (list, dict, set) can be changed after creation; immutable types (int, float, str, tuple) cannot.",
+    "None is Python's way of representing 'no value' — it is not zero or an empty string, it is the deliberate absence of a value."
+  ],
+  "exercise": {
+    "prompt": "Create one variable for each of the following types: int, float, str, bool, list, and dict. Then print the type of each variable using type(). Try to pick values that mean something to you — your age, a favourite food, etc.",
+    "starterCode": "# Create your variables here\nage = \nheight = \nname = \nis_student = \nhobbies = \nprofile = \n\n# Now print the type of each one\n",
+    "hint": "Remember: ints have no decimal, floats do. Strings need quotes. Bool is True or False. Lists use [], dicts use {} with colons.",
+    "solution": "age = 25\nheight = 5.9\nname = \"Jordan\"\nis_student = True\nhobbies = [\"reading\", \"cycling\", \"cooking\"]\nprofile = {\"city\": \"London\", \"language\": \"Python\"}\n\nprint(type(age))\nprint(type(height))\nprint(type(name))\nprint(type(is_student))\nprint(type(hobbies))\nprint(type(profile))"
+  }
+}

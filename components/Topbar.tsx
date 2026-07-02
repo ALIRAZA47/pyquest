@@ -1,0 +1,54 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getLesson } from "@/lib/content";
+import { ThemeToggle } from "./ThemeToggle";
+import { MenuIcon, ChevronRight } from "./Icons";
+
+export function Topbar({ onMenu }: { onMenu: () => void }) {
+  const pathname = usePathname();
+  const slug = pathname?.startsWith("/learn/")
+    ? pathname.replace("/learn/", "")
+    : "";
+  const lesson = slug ? getLesson(slug) : undefined;
+
+  return (
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-surface/70 px-4 backdrop-blur-xl sm:px-6">
+      <button
+        type="button"
+        onClick={onMenu}
+        aria-label="Open menu"
+        className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted transition-colors hover:text-accent lg:hidden"
+      >
+        <MenuIcon className="h-4 w-4" />
+      </button>
+
+      <nav className="flex min-w-0 items-center gap-1.5 text-sm text-muted">
+        <Link href="/learn" className="shrink-0 font-medium hover:text-accent">
+          Course
+        </Link>
+        {lesson && (
+          <>
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-faint" />
+            <span className="hidden shrink-0 text-faint sm:inline">
+              {lesson.category}
+            </span>
+            <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-faint sm:inline" />
+            <span className="truncate font-semibold text-fg">{lesson.title}</span>
+          </>
+        )}
+      </nav>
+
+      <div className="ml-auto flex items-center gap-2">
+        <Link
+          href="/"
+          className="hidden rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-accent sm:block"
+        >
+          Home
+        </Link>
+        <ThemeToggle />
+      </div>
+    </header>
+  );
+}

@@ -1,0 +1,156 @@
+{
+  "slug": "defining-functions",
+  "title": "Defining Functions",
+  "emoji": "🧰",
+  "category": "Functions",
+  "difficulty": "Beginner",
+  "summary": "Learn how to create your own reusable functions in Python — the building blocks that keep your code clean, organized, and DRY.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you need to wrap a gift. You could tape, fold, and ribbon every single present from scratch each time — or you could follow a written set of steps once and repeat it whenever you need. **Functions** are exactly that: a named set of instructions you write once and use as many times as you want.\n\nIn Python, defining a function is how you teach the language a brand-new trick. Once taught, you can use that trick anywhere in your program with a single line."
+    },
+    {
+      "type": "heading",
+      "text": "Why Functions Matter"
+    },
+    {
+      "type": "text",
+      "md": "Without functions, you end up copying and pasting the same code over and over. That's a problem because:\n\n- **It wastes time.** More typing, more chances to make a mistake.\n- **It breaks easily.** If you need to fix something, you have to find every copy.\n- **It's hard to read.** A wall of repeated code doesn't tell you *what* it does.\n\nFunctions solve all three problems. This idea has a name in programming: **DRY** — Don't Repeat Yourself."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Function Is Like a Recipe",
+      "md": "A recipe has a **name** (\"Chocolate Cake\"), **ingredients** you pass in (flour, eggs, sugar), and **steps** to follow. You don't re-invent the recipe every time — you just call it by name and supply the ingredients. Python functions work the same way."
+    },
+    {
+      "type": "heading",
+      "text": "Defining Your First Function"
+    },
+    {
+      "type": "text",
+      "md": "Use the keyword `def` (short for *define*) followed by a name, parentheses, and a colon. Everything **indented** underneath belongs to the function."
+    },
+    {
+      "type": "code",
+      "code": "def greet():\n    print(\"Hello, world!\")\n\ngreet()",
+      "output": "Hello, world!",
+      "caption": "The simplest possible function — no inputs, just a task to perform."
+    },
+    {
+      "type": "text",
+      "md": "Breaking down the syntax:\n\n- `def` — tells Python you are *defining* a function\n- `greet` — the name you choose (same rules as variable names)\n- `()` — the parentheses hold any inputs; empty means no inputs\n- `:` — the colon opens the function body\n- Indented lines — the body of the function (Python requires consistent indentation, typically 4 spaces)"
+    },
+    {
+      "type": "heading",
+      "text": "Calling a Function"
+    },
+    {
+      "type": "text",
+      "md": "Defining a function does **not** run it. Think of it as writing the recipe down. To actually bake the cake, you have to *call* the function — write its name followed by `()`."
+    },
+    {
+      "type": "code",
+      "code": "def greet():\n    print(\"Hello, world!\")\n\n# Nothing has happened yet — we only defined the function.\n\ngreet()   # NOW it runs\ngreet()   # Run it again — for free!",
+      "output": "Hello, world!\nHello, world!",
+      "caption": "Define once, call as many times as you like."
+    },
+    {
+      "type": "heading",
+      "text": "Parameters and Arguments"
+    },
+    {
+      "type": "text",
+      "md": "A function becomes much more useful when it can accept **inputs**. The variable names listed inside the parentheses in the `def` line are called **parameters**. The actual values you pass when calling the function are called **arguments**.\n\n- **Parameter** — the placeholder variable in the definition\n- **Argument** — the real value you supply when calling"
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    print(\"Hello,\", name)\n\ngreet(\"Alice\")\ngreet(\"Bob\")",
+      "output": "Hello, Alice\nHello, Bob",
+      "caption": "The parameter `name` receives whatever argument you pass in."
+    },
+    {
+      "type": "text",
+      "md": "You can have multiple parameters, separated by commas."
+    },
+    {
+      "type": "code",
+      "code": "def add(a, b):\n    result = a + b\n    print(a, \"+\", b, \"=\", result)\n\nadd(3, 5)\nadd(10, 20)",
+      "output": "3 + 5 = 8\n10 + 20 = 30",
+      "caption": "Two parameters: `a` and `b`. The caller decides what numbers to add."
+    },
+    {
+      "type": "heading",
+      "text": "Documenting with Docstrings"
+    },
+    {
+      "type": "text",
+      "md": "It's good practice to explain what your function does. Python has a built-in way to do this: a **docstring** — a triple-quoted string placed as the very first line of the function body."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    \"\"\"Print a friendly greeting for the given name.\"\"\"\n    print(\"Hello,\", name)\n\ndef add(a, b):\n    \"\"\"Return the sum of a and b.\"\"\"\n    result = a + b\n    print(a, \"+\", b, \"=\", result)\n\ngreet(\"Priya\")",
+      "output": "Hello, Priya",
+      "caption": "Docstrings act as built-in documentation. Tools and teammates will thank you."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always Write a Docstring",
+      "md": "Even one short sentence is enough. Future-you (reading the code in six months) will be very grateful. Write it in plain English: \"Do X given Y.\""
+    },
+    {
+      "type": "heading",
+      "text": "Functions Without a Return Value Give None"
+    },
+    {
+      "type": "text",
+      "md": "Every function in Python returns *something*. If you don't use the `return` keyword, Python quietly returns a special value called `None` — a way of saying \"nothing here\". You will learn more about `return` in the next lesson; for now, just know it exists."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    \"\"\"Print a friendly greeting.\"\"\"\n    print(\"Hello,\", name)\n\nresult = greet(\"Sam\")\nprint(\"Return value:\", result)",
+      "output": "Hello, Sam\nReturn value: None",
+      "caption": "The function runs and prints, but its return value is None because we never used `return`."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't Forget the Colon — or the Indent",
+      "md": "Two of the most common beginner mistakes:\n\n1. **Missing colon** after the parentheses: `def greet(name)` instead of `def greet(name):`\n2. **Wrong indentation** inside the body — Python will raise an `IndentationError`.\n\nIf Python complains, check those two things first."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Calling Before Defining",
+      "md": "You must **define** a function before you **call** it. If you try to call `greet()` on line 1 but the `def greet` is on line 5, Python will raise a `NameError`. Always define first, call second."
+    },
+    {
+      "type": "quiz",
+      "question": "What is the difference between a *parameter* and an *argument*?",
+      "options": [
+        "They are two different names for the same thing.",
+        "A parameter is the placeholder in the function definition; an argument is the actual value passed when calling.",
+        "An argument is defined inside the function; a parameter is passed from outside.",
+        "Parameters are only used with `return`; arguments are used with `print`."
+      ],
+      "answerIndex": 1,
+      "explanation": "A parameter is the variable name written in the `def` line (e.g., `name` in `def greet(name):`). An argument is the real value you pass when you call the function (e.g., `\"Alice\"` in `greet(\"Alice\")`). The parameter receives the argument."
+    }
+  ],
+  "keyTakeaways": [
+    "Use `def name(params):` followed by an indented body to define a function.",
+    "Functions let you reuse code — write once, call many times (the DRY principle).",
+    "Parameters are placeholders in the definition; arguments are the values you pass when calling.",
+    "Add a docstring (triple-quoted string) as the first line of a function to document what it does.",
+    "A function with no `return` statement automatically returns `None`."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `introduce` that takes two parameters: `name` and `age`. It should print a sentence like: \"Hi, I'm Alice and I'm 30 years old.\" Add a docstring. Then call your function twice with different names and ages.",
+    "starterCode": "def introduce(name, age):\n    # Your code here\n    pass\n\n# Call it twice below\n",
+    "hint": "Use `print` inside the function. You can build the sentence with commas in print, or with an f-string like `f\"Hi, I'm {name}...\"`.",
+    "solution": "def introduce(name, age):\n    \"\"\"Print an introduction for the given name and age.\"\"\"\n    print(f\"Hi, I'm {name} and I'm {age} years old.\")\n\nintroduce(\"Alice\", 30)\nintroduce(\"Carlos\", 22)"
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "slug": "popular-libraries",
+  "title": "Popular Libraries",
+  "emoji": "🌍",
+  "category": "Where To Go Next",
+  "difficulty": "Beginner",
+  "summary": "Take a friendly tour of Python's rich ecosystem and discover which libraries can supercharge your projects.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "One of Python's biggest superpowers is its **ecosystem**. Thousands of free, open-source libraries exist so you don't have to build everything from scratch. Want to fetch data from the internet? There's a library for that. Draw a chart? Library. Train an AI model? Library.\n\nThink of libraries like **apps on your phone** — each one is purpose-built to solve a specific problem, and you just install what you need."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "How to install a library",
+      "md": "Almost every library listed here is installed with one command in your terminal:\n\n```\npip install library-name\n```\n\nThen you `import` it at the top of your Python file and start using it. That's it!"
+    },
+    {
+      "type": "heading",
+      "text": "Working With Data"
+    },
+    {
+      "type": "text",
+      "md": "**NumPy** and **Pandas** are the two most popular data libraries in Python — and they go hand in hand.\n\n- **NumPy** gives you a super-fast array type for doing math on large lists of numbers. Think of it as a turbocharged spreadsheet column.\n- **Pandas** builds on top of NumPy and gives you a `DataFrame` — a full table with rows and columns, similar to Excel — that you can filter, sort, group, and analyse in just a few lines."
+    },
+    {
+      "type": "code",
+      "code": "import pandas as pd\n\ndata = {\n    \"name\": [\"Alice\", \"Bob\", \"Carol\"],\n    \"score\": [88, 95, 72]\n}\n\ndf = pd.DataFrame(data)\nprint(df)\nprint(\"Average score:\", df[\"score\"].mean())",
+      "output": "    name  score\n0  Alice     88\n1    Bob     95\n2  Carol     72\nAverage score: 85.0",
+      "caption": "Pandas lets you create and analyse a table in just a few lines."
+    },
+    {
+      "type": "heading",
+      "text": "Drawing Charts With Matplotlib"
+    },
+    {
+      "type": "text",
+      "md": "**Matplotlib** is the classic charting library. You give it your data and it draws line charts, bar charts, scatter plots, histograms, and more. It pairs naturally with Pandas — once you have a DataFrame, plotting is often just one method call."
+    },
+    {
+      "type": "code",
+      "code": "import matplotlib.pyplot as plt\n\nweeks = [1, 2, 3, 4]\nusers = [10, 45, 130, 310]\n\nplt.plot(weeks, users, marker=\"o\")\nplt.title(\"Weekly Sign-ups\")\nplt.xlabel(\"Week\")\nplt.ylabel(\"Users\")\nplt.show()  # Opens a window with the chart",
+      "caption": "A simple line chart — the chart opens in a window when you run this locally."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Seaborn for prettier charts",
+      "md": "If you find Matplotlib charts look a bit plain, try **Seaborn** (`pip install seaborn`). It wraps Matplotlib with nicer default styles and makes complex charts (like heatmaps or regression plots) much easier to build."
+    },
+    {
+      "type": "heading",
+      "text": "Talking to the Internet With Requests"
+    },
+    {
+      "type": "text",
+      "md": "**Requests** is the friendliest way to fetch data from the web. Every time your browser loads a page, it sends an HTTP request. Requests lets your Python code do the same — get JSON from an API, download a file, submit a form, and more."
+    },
+    {
+      "type": "code",
+      "code": "import requests\n\nresponse = requests.get(\"https://api.github.com\")\nprint(response.status_code)   # 200 means success\nprint(type(response.json()))  # The response body as a dict",
+      "output": "200\n<class 'dict'>",
+      "caption": "Fetching data from GitHub's public API — no authentication needed."
+    },
+    {
+      "type": "heading",
+      "text": "Scraping Web Pages With Beautiful Soup"
+    },
+    {
+      "type": "text",
+      "md": "**Beautiful Soup** (package name: `beautifulsoup4`) helps you pull information out of HTML pages. Pair it with Requests: use Requests to download the HTML, then use Beautiful Soup to pick out the pieces you care about — headlines, prices, links, table rows, whatever you need."
+    },
+    {
+      "type": "code",
+      "code": "from bs4 import BeautifulSoup\n\nhtml = \"<h1>Hello</h1><p>Welcome to <b>Python</b>!</p>\"\nsoup = BeautifulSoup(html, \"html.parser\")\n\nprint(soup.h1.text)   # The <h1> tag's text\nprint(soup.p.text)    # The <p> tag's text",
+      "output": "Hello\nWelcome to Python!",
+      "caption": "Beautiful Soup parses HTML so you can extract text without messy string slicing."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Always check a website's terms before scraping",
+      "md": "Some websites explicitly forbid automated scraping in their Terms of Service. Always check `robots.txt` and the site's terms, be polite (add a small `time.sleep` between requests), and never scrape personal or sensitive data without permission."
+    },
+    {
+      "type": "heading",
+      "text": "Building Web Apps"
+    },
+    {
+      "type": "text",
+      "md": "Python has three major web frameworks — your choice depends on project size:\n\n- **Flask** — tiny and minimal. Great for small APIs, personal projects, and learning. You write only what you need.\n- **FastAPI** — modern, fast, and auto-generates documentation. Best for building APIs that other code or apps will consume.\n- **Django** — a full-featured framework with a built-in admin panel, authentication, and database tools. Best for large, complex web apps."
+    },
+    {
+      "type": "code",
+      "code": "# A complete Flask web app in 7 lines!\nfrom flask import Flask\n\napp = Flask(__name__)\n\n@app.route(\"/\")\ndef home():\n    return \"Hello from Python!\"\n\n# Run with: flask run",
+      "caption": "Flask lets you build a working web endpoint in just a handful of lines."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Framework size analogy",
+      "md": "Think of Flask as a **bicycle** (simple, you provide the effort), FastAPI as a **scooter** (faster, built-in extras), and Django as a **car** (lots of features and safety equipment, but more to learn upfront)."
+    },
+    {
+      "type": "heading",
+      "text": "Working With Images Using Pillow"
+    },
+    {
+      "type": "text",
+      "md": "**Pillow** (the modern fork of the old `PIL` library) lets you open, edit, and save images in Python. Resize photos, convert formats, crop, add text overlays, apply filters — all without opening an image editor."
+    },
+    {
+      "type": "code",
+      "code": "from PIL import Image\n\nimg = Image.open(\"photo.jpg\")\nprint(img.size)          # e.g. (1920, 1080)\n\nsmall = img.resize((200, 200))\nsmall.save(\"thumbnail.jpg\")",
+      "caption": "Pillow makes image manipulation as simple as calling a method."
+    },
+    {
+      "type": "heading",
+      "text": "Databases With SQLAlchemy"
+    },
+    {
+      "type": "text",
+      "md": "**SQLAlchemy** lets you talk to relational databases (SQLite, PostgreSQL, MySQL, and more) using Python objects instead of raw SQL strings. You define your tables as Python classes and SQLAlchemy handles the SQL for you — making your code cleaner and less error-prone."
+    },
+    {
+      "type": "heading",
+      "text": "Testing With pytest"
+    },
+    {
+      "type": "text",
+      "md": "**pytest** is the most popular testing framework for Python. You write small functions that check your code does what you expect, then run `pytest` in the terminal — it discovers and runs all your tests automatically and gives you a clear pass/fail report."
+    },
+    {
+      "type": "code",
+      "code": "# test_math.py\ndef add(a, b):\n    return a + b\n\ndef test_add():\n    assert add(2, 3) == 5\n    assert add(-1, 1) == 0\n\n# Run with: pytest test_math.py",
+      "caption": "pytest finds any function starting with 'test_' and runs it automatically."
+    },
+    {
+      "type": "heading",
+      "text": "Machine Learning and AI"
+    },
+    {
+      "type": "text",
+      "md": "Python dominates the AI/ML world, and three libraries lead the pack:\n\n- **scikit-learn** — the best starting point for classic ML (classification, regression, clustering). Great documentation and beginner-friendly API.\n- **PyTorch** — flexible deep learning framework favoured in research. You build neural networks by writing Python directly, so it's easy to debug.\n- **TensorFlow / Keras** — Google's deep learning framework. Keras (included in TensorFlow) offers a high-level API that's very beginner-friendly for building neural networks."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Which AI library should you start with?",
+      "md": "If you're brand new to ML, start with **scikit-learn** — it covers most practical ML tasks and has outstanding tutorials. Once you want to build neural networks, try **Keras** (part of TensorFlow) for structured projects or **PyTorch** if you want more control."
+    },
+    {
+      "type": "heading",
+      "text": "Picking the Right Library"
+    },
+    {
+      "type": "text",
+      "md": "Here's a quick cheat-sheet by goal:\n\n- **Analyse data / spreadsheets** → Pandas + NumPy\n- **Draw charts** → Matplotlib (or Seaborn)\n- **Call web APIs** → Requests\n- **Scrape web pages** → Requests + Beautiful Soup\n- **Build a web app or API** → Flask (small) / FastAPI (APIs) / Django (large)\n- **Edit images** → Pillow\n- **Store data in a database** → SQLAlchemy\n- **Write automated tests** → pytest\n- **Machine learning / AI** → scikit-learn → Keras/PyTorch"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't install libraries you don't need",
+      "md": "It's tempting to `pip install` everything that sounds interesting. Instead, install a library only when you have a real project that needs it. Too many installed packages can cause version conflicts. Use a **virtual environment** (`python -m venv venv`) for each project to keep things isolated."
+    },
+    {
+      "type": "quiz",
+      "question": "You want to download a JSON response from a public API. Which library is the best fit?",
+      "options": [
+        "Pandas",
+        "Requests",
+        "Beautiful Soup",
+        "pytest"
+      ],
+      "answerIndex": 1,
+      "explanation": "Requests is designed exactly for making HTTP requests and reading responses — including JSON. Pandas is for analysing tabular data, Beautiful Soup parses HTML, and pytest is for writing tests."
+    }
+  ],
+  "keyTakeaways": [
+    "Python's ecosystem means you rarely have to build common functionality from scratch — just install and import.",
+    "For data work, start with Pandas and NumPy; for charts, use Matplotlib.",
+    "Requests handles HTTP calls; Beautiful Soup parses HTML for web scraping.",
+    "Choose your web framework by project size: Flask (small), FastAPI (APIs), Django (large).",
+    "For machine learning, scikit-learn is the best starting point before moving to Keras or PyTorch."
+  ],
+  "exercise": {
+    "prompt": "Write a short Python script that uses the `requests` library to fetch data from the public JSONPlaceholder API (https://jsonplaceholder.typicode.com/todos/1). Print the response status code, then print the 'title' field from the JSON response.",
+    "starterCode": "import requests\n\nurl = \"https://jsonplaceholder.typicode.com/todos/1\"\n\n# 1. Make a GET request to url\n# 2. Print response.status_code\n# 3. Parse the JSON and print the 'title' field",
+    "hint": "Call `response.json()` to get the response body as a Python dictionary, then access the key `\"title\"` just like any other dict.",
+    "solution": "import requests\n\nurl = \"https://jsonplaceholder.typicode.com/todos/1\"\nresponse = requests.get(url)\n\nprint(\"Status code:\", response.status_code)\n\ndata = response.json()\nprint(\"Todo title:\", data[\"title\"])"
+  }
+}

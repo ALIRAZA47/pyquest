@@ -1,0 +1,142 @@
+{
+  "slug": "classes-and-objects",
+  "title": "Classes & Objects",
+  "emoji": "🏗️",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to build your own custom data types using classes — bundling data and behavior together in one tidy package.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "So far you have used Python's built-in types: strings, lists, numbers. But what if you want to create your **own** type — something that models a real-world thing, like a dog, a bank account, or a player in a game?\n\nThat is exactly what **classes** are for. A class lets you define a brand-new kind of object with its own data and its own actions."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Cookie Cutter vs. Cookies",
+      "md": "A **class** is like a cookie cutter — it is just the shape. An **object** (also called an *instance*) is an actual cookie made from that cutter.\n\nYou define the class once. Then you can stamp out as many individual objects as you like, each with its own data."
+    },
+    {
+      "type": "heading",
+      "text": "Defining Your First Class"
+    },
+    {
+      "type": "text",
+      "md": "Use the `class` keyword followed by the class name (by convention, use **CapitalizedWords**). The body of the class is indented, just like a function."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    pass  # an empty class for now\n\nmy_dog = Dog()  # create an instance\nprint(type(my_dog))",
+      "output": "<class '__main__.Dog'>",
+      "caption": "Even an empty class can be instantiated."
+    },
+    {
+      "type": "text",
+      "md": "`Dog()` with parentheses **creates** (instantiates) a new object from the class. The variable `my_dog` now holds that object. `type()` confirms it belongs to your `Dog` class."
+    },
+    {
+      "type": "heading",
+      "text": "Attributes — Storing Data on an Object"
+    },
+    {
+      "type": "text",
+      "md": "An **attribute** is a piece of data attached to a specific object. You define attributes inside a special method called `__init__` (pronounced \"dunder init\"), which Python calls automatically whenever you create a new instance.\n\nThink of `__init__` as the \"set up\" instructions that run the moment a cookie is stamped out."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\ndog1 = Dog(\"Bella\", \"Labrador\")\ndog2 = Dog(\"Max\", \"Poodle\")\n\nprint(dog1.name)\nprint(dog2.breed)",
+      "output": "Bella\nPoodle",
+      "caption": "Each instance keeps its own copy of the attributes."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "What is `self`?",
+      "md": "`self` is a reference to **the specific object being worked on right now**.\n\nWhen you write `dog1 = Dog(\"Bella\", \"Labrador\")`, Python secretly passes `dog1` as the first argument. `self.name = name` means \"store `name` on *this particular* dog\".\n\nYou must include `self` as the first parameter of every method — Python handles passing it automatically."
+    },
+    {
+      "type": "heading",
+      "text": "Methods — Giving Objects Behavior"
+    },
+    {
+      "type": "text",
+      "md": "A **method** is a function that lives inside a class. It describes what an object can *do*. Methods always take `self` as their first parameter so they can access the object's own data."
+    },
+    {
+      "type": "code",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        print(f\"{self.name} says: Woof!\")\n\n    def describe(self):\n        print(f\"{self.name} is a {self.breed}.\")\n\ndog1 = Dog(\"Bella\", \"Labrador\")\ndog1.bark()\ndog1.describe()",
+      "output": "Bella says: Woof!\nBella is a Labrador.",
+      "caption": "Call a method using dot notation: object.method()"
+    },
+    {
+      "type": "text",
+      "md": "Notice that when you call `dog1.bark()` you do **not** pass `self` — Python does that for you. You only write `self` in the method *definition*, not when you call it."
+    },
+    {
+      "type": "heading",
+      "text": "Each Instance is Independent"
+    },
+    {
+      "type": "text",
+      "md": "Every object created from a class has its own separate copy of the attributes. Changing one object does not affect another."
+    },
+    {
+      "type": "code",
+      "code": "dog1 = Dog(\"Bella\", \"Labrador\")\ndog2 = Dog(\"Max\", \"Poodle\")\n\ndog1.name = \"Bella-Boo\"  # change only dog1\n\ndog1.describe()\ndog2.describe()",
+      "output": "Bella-Boo is a Labrador.\nMax is a Poodle.",
+      "caption": "Modifying dog1 leaves dog2 completely untouched."
+    },
+    {
+      "type": "heading",
+      "text": "A More Complete Example"
+    },
+    {
+      "type": "text",
+      "md": "Here is a slightly bigger class to show how attributes and methods work together naturally."
+    },
+    {
+      "type": "code",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n        print(f\"Deposited ${amount}. New balance: ${self.balance}\")\n\n    def withdraw(self, amount):\n        if amount > self.balance:\n            print(\"Not enough funds!\")\n        else:\n            self.balance -= amount\n            print(f\"Withdrew ${amount}. New balance: ${self.balance}\")\n\naccount = BankAccount(\"Alice\", 100)\naccount.deposit(50)\naccount.withdraw(30)\naccount.withdraw(200)",
+      "output": "Deposited $50. New balance: $150\nWithdrew $30. New balance: $120\nNot enough funds!",
+      "caption": "The class bundles the balance (data) with deposit/withdraw (behavior)."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting `self` in a Method",
+      "md": "A very common mistake is forgetting `self` as the first parameter of a method:\n\n```python\nclass Dog:\n    def bark():          # WRONG — missing self\n        print(\"Woof!\")\n```\n\nWhen you call `dog1.bark()`, Python will raise a `TypeError` complaining about too many arguments. Always start every method with `self`."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Why Bother with Classes?",
+      "md": "Without classes, a program managing 50 dogs would need 50 separate variables for names, 50 for breeds, and so on — hard to keep track of.\n\nWith a class, each dog carries **all its own data** in one place, and you get the same helper methods for free on every instance. Code stays organized and reusable."
+    },
+    {
+      "type": "quiz",
+      "question": "What is the purpose of the `__init__` method in a class?",
+      "options": [
+        "It runs when you delete an object.",
+        "It sets up an object's attributes when the object is first created.",
+        "It is required for the class to have any methods at all.",
+        "It prints a summary of the object."
+      ],
+      "answerIndex": 1,
+      "explanation": "`__init__` is called automatically the moment you create a new instance (e.g. `Dog(\"Bella\", \"Labrador\")`). Its job is to initialize the object's attributes so the object starts in a well-defined state."
+    }
+  ],
+  "keyTakeaways": [
+    "A **class** is a blueprint; an **object** (instance) is a real thing built from that blueprint.",
+    "`__init__` runs automatically when you create an instance — use it to set up attributes with `self.attribute = value`.",
+    "`self` always refers to the specific object a method is currently working on.",
+    "Methods are just functions inside a class — they give objects behavior and always take `self` as their first parameter.",
+    "OOP keeps related data and behavior bundled together, making code easier to read, reuse, and maintain."
+  ],
+  "exercise": {
+    "prompt": "Create a class called `Cat` with the attributes `name` and `color`. Give it two methods: `meow()` which prints \"<name> says: Meow!\", and `describe()` which prints \"<name> is a <color> cat.\" Then create two different Cat instances and call both methods on each.",
+    "starterCode": "class Cat:\n    def __init__(self, name, color):\n        # store name and color as attributes\n        pass\n\n    def meow(self):\n        # print the meow message\n        pass\n\n    def describe(self):\n        # print the description\n        pass\n\n# Create two cats and call their methods\n",
+    "hint": "Use `self.name` and `self.color` inside `__init__` to save the values. In your methods, access those saved values with `self.name` and `self.color`.",
+    "solution": "class Cat:\n    def __init__(self, name, color):\n        self.name = name\n        self.color = color\n\n    def meow(self):\n        print(f\"{self.name} says: Meow!\")\n\n    def describe(self):\n        print(f\"{self.name} is a {self.color} cat.\")\n\ncat1 = Cat(\"Luna\", \"black\")\ncat2 = Cat(\"Mochi\", \"orange\")\n\ncat1.meow()\ncat1.describe()\ncat2.meow()\ncat2.describe()"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "slug": "arithmetic-operators",
+  "title": "Arithmetic Operators",
+  "emoji": "➕",
+  "category": "Operators",
+  "difficulty": "Beginner",
+  "summary": "Learn how Python does math — from basic addition to the surprisingly handy modulo operator — and understand the difference between regular and floor division.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Computers are incredible calculators. Before we teach Python to make decisions or repeat tasks, we need to teach it to **do math**. Python supports all the arithmetic you learned in school — plus a few operators you may not have seen before that turn out to be incredibly useful.\n\nIn this lesson we will walk through every arithmetic operator, run real examples, and pick up a few insights that will save you from common beginner stumbles."
+    },
+    {
+      "type": "heading",
+      "text": "The Basics: + - * /"
+    },
+    {
+      "type": "text",
+      "md": "The four everyday operators work exactly as you would expect. You can use them with whole numbers (`int`) or decimal numbers (`float`)."
+    },
+    {
+      "type": "code",
+      "code": "print(10 + 3)   # addition\nprint(10 - 3)   # subtraction\nprint(10 * 3)   # multiplication\nprint(10 / 3)   # division",
+      "output": "13\n7\n30\n3.3333333333333335",
+      "caption": "The four classic operators. Notice that / always gives a decimal result."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Division always returns a float",
+      "md": "Even `10 / 2` returns `5.0`, not `5`. The `/` operator **always** produces a `float` in Python 3. This is intentional — Python wants to be honest that division can produce a fraction."
+    },
+    {
+      "type": "heading",
+      "text": "Floor Division: //"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you only care about the **whole number** part of a division result — no decimals, no rounding, just chop everything after the decimal point. That is what `//` (floor division) does.\n\nThink of it like this: if you have 10 cookies and 3 friends, how many **whole** cookies does each person get? The answer is 3 — you ignore the leftover."
+    },
+    {
+      "type": "code",
+      "code": "print(10 / 3)    # regular division  -> float\nprint(10 // 3)   # floor division    -> int (whole part only)",
+      "output": "3.3333333333333335\n3",
+      "caption": "// discards everything after the decimal point."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Floor division rounds DOWN, not toward zero",
+      "md": "With negative numbers, `//` floors toward negative infinity, not toward zero.\n\n`-7 // 2` gives `-4`, not `-3`.\n\nThis surprises many beginners. For positive numbers it behaves exactly like truncating, but keep this in mind when working with negatives."
+    },
+    {
+      "type": "code",
+      "code": "print(-7 // 2)   # floors toward negative infinity\nprint(7 // 2)    # floors toward zero (same as truncation here)",
+      "output": "-4\n3",
+      "caption": "Floor division always goes toward the lower integer."
+    },
+    {
+      "type": "heading",
+      "text": "Modulo: %"
+    },
+    {
+      "type": "text",
+      "md": "The `%` operator gives you the **remainder** after division. Going back to the cookie example: 10 cookies shared among 3 friends — each gets 3, and there is **1 left over**. That leftover is what `%` returns."
+    },
+    {
+      "type": "code",
+      "code": "print(10 % 3)   # 10 divided by 3 is 3 remainder 1\nprint(15 % 5)   # 15 divided by 5 is 3 remainder 0\nprint(7 % 2)    # 7 divided by 2 is 3 remainder 1",
+      "output": "1\n0\n1",
+      "caption": "% returns the remainder, not the quotient."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Modulo is like a clock",
+      "md": "Imagine a 12-hour clock. After 12, the hours wrap back to 1. Modulo works the same way — it wraps numbers around. `14 % 12` gives `2`, just like 14:00 is 2 o'clock on a 12-hour clock.\n\nThis wrapping property makes `%` useful for things like cycling through a list or alternating between two states."
+    },
+    {
+      "type": "text",
+      "md": "One of the most common uses of `%` is checking whether a number is **even or odd**. An even number has no remainder when divided by 2; an odd number has a remainder of 1."
+    },
+    {
+      "type": "code",
+      "code": "number = 42\nprint(number % 2)   # 0 means even\n\nnumber = 7\nprint(number % 2)   # 1 means odd",
+      "output": "0\n1",
+      "caption": "% 2 is the classic even/odd test."
+    },
+    {
+      "type": "heading",
+      "text": "Exponentiation: **"
+    },
+    {
+      "type": "text",
+      "md": "The `**` operator raises a number to a power. `2 ** 8` means \"2 to the power of 8\", which is 2 multiplied by itself 8 times."
+    },
+    {
+      "type": "code",
+      "code": "print(2 ** 8)    # 2 to the power of 8\nprint(3 ** 3)    # 3 cubed\nprint(9 ** 0.5)  # square root of 9 (power of 0.5)",
+      "output": "256\n27\n3.0",
+      "caption": "** works with both integer and fractional powers."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Square root trick",
+      "md": "You do not need a special function for square roots. Because the square root of a number is the same as raising it to the power of `0.5`, you can write `x ** 0.5` and Python handles it perfectly."
+    },
+    {
+      "type": "heading",
+      "text": "Mixing int and float"
+    },
+    {
+      "type": "text",
+      "md": "What happens when you mix a whole number and a decimal in the same expression? Python **promotes** the result to `float` to avoid losing any precision. Think of it as Python being careful — it would rather give you too much information than too little."
+    },
+    {
+      "type": "code",
+      "code": "print(type(3 + 2))      # int + int  -> int\nprint(type(3 + 2.0))    # int + float -> float\nprint(type(10 // 2))    # floor div  -> int\nprint(type(10 // 2.0))  # floor div with float -> float",
+      "output": "<class 'int'>\n<class 'float'>\n<class 'int'>\n<class 'float'>",
+      "caption": "Any float in the expression makes the result a float."
+    },
+    {
+      "type": "heading",
+      "text": "Order of Operations"
+    },
+    {
+      "type": "text",
+      "md": "Python follows the same order of operations you learned in math class — often remembered as **PEMDAS** (Parentheses, Exponents, Multiplication/Division, Addition/Subtraction). When in doubt, use parentheses to make your intention clear."
+    },
+    {
+      "type": "code",
+      "code": "print(2 + 3 * 4)      # multiplication first -> 14\nprint((2 + 3) * 4)    # parentheses first   -> 20\nprint(2 ** 3 ** 2)    # ** is right-to-left: 2 ** (3**2) = 2**9 = 512",
+      "output": "14\n20\n512",
+      "caption": "Parentheses always win. Use them freely to make code readable."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "** is right-associative",
+      "md": "`2 ** 3 ** 2` is evaluated as `2 ** (3 ** 2)` = `2 ** 9` = `512`, NOT `(2 ** 3) ** 2` = `64`. Exponentiation chains from right to left. When chaining `**`, always use parentheses to be explicit."
+    },
+    {
+      "type": "quiz",
+      "question": "What does `17 % 5` evaluate to?",
+      "options": ["3", "2", "3.4", "0"],
+      "answerIndex": 1,
+      "explanation": "17 divided by 5 is 3 with a remainder of 2. The modulo operator returns that remainder, so `17 % 5` is `2`. You can verify: 5 * 3 = 15, and 17 - 15 = 2."
+    }
+  ],
+  "keyTakeaways": [
+    "`/` always returns a `float`; use `//` when you only want the whole-number part of a division.",
+    "The `%` (modulo) operator returns the remainder — great for even/odd checks and wrapping values.",
+    "`**` raises a number to a power; `x ** 0.5` is a handy way to compute a square root.",
+    "Mixing an `int` and a `float` in any expression promotes the result to `float`.",
+    "Parentheses override all other precedence rules — use them freely to make your math intentions clear."
+  ],
+  "exercise": {
+    "prompt": "Write a small Python program that takes the number `seconds = 3661` and prints:\n1. How many complete **hours** are in that many seconds.\n2. How many leftover **minutes** after removing the hours.\n3. How many leftover **seconds** after removing the hours and minutes.\n\nExpected output:\n```\n1 hour(s)\n1 minute(s)\n1 second(s)\n```\n\nHint: there are 3600 seconds in an hour and 60 seconds in a minute.",
+    "starterCode": "seconds = 3661\n\n# Your code here\nhours = ...\nremaining = ...\nminutes = ...\nleftover = ...\nsecs = ...\n\nprint(hours, \"hour(s)\")\nprint(minutes, \"minute(s)\")\nprint(secs, \"second(s)\")",
+    "hint": "Use `//` to get the whole number of hours from `seconds`, then use `%` to find what is left over. Repeat the same idea for minutes.",
+    "solution": "seconds = 3661\n\nhours = seconds // 3600\nremaining = seconds % 3600\nminutes = remaining // 60\nsecs = remaining % 60\n\nprint(hours, \"hour(s)\")\nprint(minutes, \"minute(s)\")\nprint(secs, \"second(s)\")"
+  }
+}

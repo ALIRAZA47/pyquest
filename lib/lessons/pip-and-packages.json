@@ -1,0 +1,158 @@
+{
+  "slug": "pip-and-packages",
+  "title": "pip & External Packages",
+  "emoji": "📥",
+  "category": "Modules & Packages",
+  "difficulty": "Beginner",
+  "summary": "Learn how to install third-party packages from PyPI using pip, import them in your code, and track your project's dependencies with a requirements.txt file.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Python ships with a great standard library, but the real superpower is the enormous ecosystem of **third-party packages** built by developers around the world. Need to make web requests? Send emails? Analyze data? Chances are someone has already written a package for it — and you can add it to your project in seconds."
+    },
+    {
+      "type": "heading",
+      "text": "What is PyPI?"
+    },
+    {
+      "type": "text",
+      "md": "**PyPI** (the Python Package Index, at [pypi.org](https://pypi.org)) is the official online store for Python packages. It hosts over 500,000 packages — all free to download. Think of it like an app store, but for Python code."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Like an App Store",
+      "md": "PyPI is the app store. `pip` is the install button. Your Python project is the phone. You browse (or search) the store, pick what you need, and pip downloads and installs it for you automatically."
+    },
+    {
+      "type": "heading",
+      "text": "Installing a Package with pip"
+    },
+    {
+      "type": "text",
+      "md": "`pip` is Python's built-in package installer. You run it from your **terminal** (not inside a Python file). The basic command is:\n\n```\npip install <package-name>\n```\n\nLet's install `requests`, one of the most popular Python packages ever. It makes sending HTTP requests (fetching web pages, calling APIs) very simple."
+    },
+    {
+      "type": "code",
+      "code": "# Run this in your terminal, NOT in a Python file:\n# pip install requests\n\n# You will see output like:\n# Collecting requests\n#   Downloading requests-2.31.0-py3-none-any.whl\n# Installing collected packages: requests\n# Successfully installed requests-2.31.0",
+      "caption": "Running pip install in your terminal"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "pip3 vs pip",
+      "md": "On some systems you may need to type `pip3` instead of `pip` to make sure you are installing for Python 3. If `pip` gives you an error, try `pip3 install requests`."
+    },
+    {
+      "type": "heading",
+      "text": "Using an Installed Package"
+    },
+    {
+      "type": "text",
+      "md": "Once a package is installed, you use `import` just like any other module. Here is a small example using `requests` to fetch data from a public API:"
+    },
+    {
+      "type": "code",
+      "code": "import requests\n\nresponse = requests.get(\"https://httpbin.org/get\")\nprint(response.status_code)\nprint(type(response))",
+      "output": "200\n<class 'requests.models.Response'>",
+      "caption": "Fetching a URL and checking the response status code"
+    },
+    {
+      "type": "text",
+      "md": "A status code of `200` means the request was successful. The `requests` library handles all the complicated networking for you — you just call `requests.get()` with a URL and you're done."
+    },
+    {
+      "type": "code",
+      "code": "import requests\n\nresponse = requests.get(\"https://httpbin.org/json\")\ndata = response.json()   # parse the JSON body into a Python dict\nprint(data)",
+      "output": "{'slideshow': {'author': 'Yours Truly', 'date': 'date of publication', 'slides': [...], 'title': 'Sample Slide Show'}}",
+      "caption": "Parsing a JSON response into a Python dictionary"
+    },
+    {
+      "type": "heading",
+      "text": "Seeing What's Installed: pip list"
+    },
+    {
+      "type": "text",
+      "md": "Want to see every package currently installed? Run `pip list` in your terminal. You will get a neat table:"
+    },
+    {
+      "type": "code",
+      "code": "# Terminal command:\n# pip list\n\n# Example output:\n# Package    Version\n# ---------- -------\n# certifi    2024.2.2\n# charset-normalizer 3.3.2\n# idna       3.6\n# pip        24.0\n# requests   2.31.0\n# urllib3    2.2.1",
+      "caption": "pip list shows all installed packages and their versions"
+    },
+    {
+      "type": "heading",
+      "text": "Saving Dependencies: requirements.txt"
+    },
+    {
+      "type": "text",
+      "md": "Imagine you share your project with a friend. They clone your code, but `requests` is not installed on their machine — your program crashes immediately. The fix is a **requirements.txt** file that lists every package your project needs.\n\nYou can generate one automatically with `pip freeze`:"
+    },
+    {
+      "type": "code",
+      "code": "# Terminal command to create requirements.txt:\n# pip freeze > requirements.txt\n\n# The file will contain lines like:\n# certifi==2024.2.2\n# charset-normalizer==3.3.2\n# idna==3.6\n# requests==2.31.0\n# urllib3==2.2.1",
+      "caption": "pip freeze captures exact package versions into a file"
+    },
+    {
+      "type": "text",
+      "md": "Now your friend (or a deployment server) can install every dependency in one command:"
+    },
+    {
+      "type": "code",
+      "code": "# Terminal command to install from requirements.txt:\n# pip install -r requirements.txt\n\n# pip reads every line and installs the listed packages.",
+      "caption": "Restoring all dependencies from requirements.txt"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Commit requirements.txt to version control",
+      "md": "Always include `requirements.txt` in your Git repository. It is the contract that tells anyone running your code exactly which packages they need."
+    },
+    {
+      "type": "heading",
+      "text": "A Word on Virtual Environments"
+    },
+    {
+      "type": "text",
+      "md": "When you run `pip install` without any extra setup, packages are installed **globally** — meaning every Python project on your machine shares them. This can cause problems: Project A needs `requests` version 2.28, but Project B needs version 2.31.\n\nThe solution is a **virtual environment** — a self-contained folder that holds its own separate copy of Python and packages, just for one project. You create one with:\n\n- `python -m venv .venv` — creates the environment\n- `source .venv/bin/activate` (Mac/Linux) or `.venv\\Scripts\\activate` (Windows) — activates it\n\nAfter activating, `pip install` only affects that project. This is the professional way to manage packages and is strongly recommended."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Installing without a virtual environment can cause conflicts",
+      "md": "If two projects need different versions of the same package and you install globally, one of them will break. Always use a virtual environment for any real project. It takes 30 seconds to set up and saves hours of headaches later."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Only install packages you trust",
+      "md": "PyPI is open — anyone can publish a package. Before installing something, check it has a good number of downloads, recent maintenance, and a reputable source. Typos in package names can lead to installing malicious code (a trick called **typosquatting**)."
+    },
+    {
+      "type": "quiz",
+      "question": "You want to save your project's current dependencies so a teammate can install them easily. Which command creates the requirements.txt file?",
+      "options": [
+        "pip list > requirements.txt",
+        "pip save requirements.txt",
+        "pip freeze > requirements.txt",
+        "pip export --file requirements.txt"
+      ],
+      "answerIndex": 2,
+      "explanation": "`pip freeze` outputs all installed packages with their exact versions in a format suitable for requirements.txt. Redirecting with `>` saves that output to the file. `pip list` shows packages too, but in a human-friendly table format that pip cannot read back later."
+    }
+  ],
+  "keyTakeaways": [
+    "PyPI is the central repository of third-party Python packages — over 500,000 are available for free.",
+    "Use `pip install <package>` in your terminal to download and install a package.",
+    "After installing, import the package in your Python file just like any other module.",
+    "Use `pip freeze > requirements.txt` to record dependencies, and `pip install -r requirements.txt` to restore them.",
+    "Always use a virtual environment so different projects do not interfere with each other's packages."
+  ],
+  "exercise": {
+    "prompt": "Install the `requests` package (if you haven't already), then write a Python script that fetches the URL `https://httpbin.org/uuid` and prints the `uuid` value from the JSON response. The response looks like `{\"uuid\": \"some-unique-id\"}`. Your script should print just the UUID string.",
+    "starterCode": "import requests\n\nresponse = requests.get(\"https://httpbin.org/uuid\")\ndata = response.json()\n# TODO: print the uuid value from data\n",
+    "hint": "The JSON response is a Python dict after calling `.json()`. Access the value with `data[\"uuid\"]`.",
+    "solution": "import requests\n\nresponse = requests.get(\"https://httpbin.org/uuid\")\ndata = response.json()\nprint(data[\"uuid\"])\n"
+  }
+}

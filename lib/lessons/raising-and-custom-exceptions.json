@@ -1,0 +1,102 @@
+{
+  "slug": "raising-and-custom-exceptions",
+  "title": "Raising & Custom Exceptions",
+  "emoji": "🚨",
+  "category": "Error Handling",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to signal errors yourself with raise, and how to create your own custom exception types so your code fails loudly and clearly.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have seen Python raise errors when something goes wrong — like dividing by zero or accessing a missing key. But what about errors that *you* want to signal? What if someone passes a negative age, or tries to withdraw more money than they have?\n\nThat is what `raise` is for. You can throw an error yourself, with a clear message, the moment something goes wrong. This is called **raising an exception**, and it is one of the most important skills in writing reliable code. The principle is called **fail loudly and early**: catch the problem immediately instead of letting it travel silently to some other part of your program."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Smoke Alarm Analogy",
+      "md": "A smoke alarm that only goes off when the house is already on fire is not very useful. You want it to trigger the **moment** it detects smoke — early, loudly, clearly.\n\nRaising exceptions is the same idea. Instead of letting your program silently do the wrong thing and explode later in a confusing way, you catch the bad situation immediately and signal it with a descriptive message."
+    },
+    {
+      "type": "heading",
+      "text": "The raise Statement"
+    },
+    {
+      "type": "code",
+      "code": "def set_age(age):\n    if age < 0:\n        raise ValueError(\"Age cannot be negative.\")\n    print(f\"Age set to {age}\")\n\nset_age(25)\nset_age(-3)",
+      "output": "Age set to 25\nTraceback (most recent call last):\n  ...\nValueError: Age cannot be negative.",
+      "caption": "raise stops the function immediately and sends the error up to whoever called it."
+    },
+    {
+      "type": "text",
+      "md": "The syntax is: `raise ExceptionType(\"your message here\")`. Python has many built-in exception types — pick the one that best describes the problem:\n\n- `ValueError` — the value is wrong (e.g. a negative age, an empty string where you need text)\n- `TypeError` — the wrong *type* was passed (e.g. a string where you need a number)\n- `RuntimeError` — something went wrong that does not fit a more specific category\n\nThe message you pass shows up in the traceback, so make it **specific and human-readable**."
+    },
+    {
+      "type": "heading",
+      "text": "Custom Exception Classes"
+    },
+    {
+      "type": "text",
+      "md": "Built-in exceptions cover general problems. But sometimes your domain has specific errors that deserve their own name — like `InsufficientFundsError` in a banking app, or `MissingIngredientError` in a recipe app. You create a custom exception by making a new class that **inherits from** `Exception`. A single `pass` inside is all you need to get started."
+    },
+    {
+      "type": "code",
+      "code": "class InsufficientFundsError(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(\n            f\"Cannot withdraw {amount}. Balance is only {balance}.\"\n        )\n    return balance - amount\n\ntry:\n    withdraw(50, 200)\nexcept InsufficientFundsError as e:\n    print(f\"Transaction failed: {e}\")",
+      "output": "Transaction failed: Cannot withdraw 200. Balance is only 50.",
+      "caption": "class InsufficientFundsError(Exception): pass is all you need. Callers can catch it by name."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Name Your Exceptions Well",
+      "md": "Custom exception names should end in `Error` (e.g. `InsufficientFundsError`, not `InsufficientFunds`) and read like a description of what went wrong. This makes `except` blocks self-documenting."
+    },
+    {
+      "type": "code",
+      "code": "class InsufficientFundsError(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(\n            f\"Cannot withdraw {amount}. Balance is only {balance}.\"\n        )\n    return balance - amount\n\ndef process_payment(balance, amount):\n    try:\n        return withdraw(balance, amount)\n    except InsufficientFundsError:\n        print(\"[LOG] Payment attempt failed.\")\n        raise  # re-raises the same exception unchanged\n\nprocess_payment(50, 200)",
+      "output": "[LOG] Payment attempt failed.\nTraceback (most recent call last):\n  ...\nInsufficientFundsError: Cannot withdraw 200. Balance is only 50.",
+      "caption": "A bare raise inside except re-raises the current exception. Perfect for logging before propagating."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Don't Swallow Exceptions Silently",
+      "md": "A very common beginner mistake:\n\n```python\ntry:\n    do_something()\nexcept Exception:\n    pass  # the error disappears silently!\n```\n\nThis hides bugs and makes programs nearly impossible to debug. If you catch an exception, either handle it meaningfully, log it, or re-raise it."
+    },
+    {
+      "type": "heading",
+      "text": "Adding Extra Data to Custom Exceptions"
+    },
+    {
+      "type": "code",
+      "code": "class InsufficientFundsError(Exception):\n    def __init__(self, balance, amount):\n        self.balance = balance\n        self.amount = amount\n        super().__init__(\n            f\"Cannot withdraw {amount}. Balance is only {balance}.\"\n        )\n\ntry:\n    raise InsufficientFundsError(50, 200)\nexcept InsufficientFundsError as e:\n    print(e)\n    print(f\"You are short by: {e.amount - e.balance}\")",
+      "output": "Cannot withdraw 200. Balance is only 50.\nYou are short by: 150",
+      "caption": "Custom exception classes can store structured data as attributes, not just a message string."
+    },
+    {
+      "type": "quiz",
+      "question": "What does a bare raise (with no argument) do inside an except block?",
+      "options": [
+        "It raises a new generic RuntimeError",
+        "It silently ignores the exception and continues",
+        "It re-raises the same exception that was caught",
+        "It converts the exception to a warning"
+      ],
+      "answerIndex": 2,
+      "explanation": "A bare raise inside an except block re-raises the exact same exception that was caught, preserving its type, message, and traceback. This is useful when you want to log or inspect an error but still let it propagate to the caller."
+    }
+  ],
+  "keyTakeaways": [
+    "Use raise ExceptionType(\"message\") to signal an error the moment you detect a problem.",
+    "Pick the right built-in type (ValueError, TypeError, etc.) or create your own by subclassing Exception.",
+    "Custom exceptions make your code more readable and let callers handle specific errors precisely.",
+    "A bare raise inside except re-raises the current exception — useful for logging before propagating.",
+    "Fail loudly and early: raise at the first sign of bad input rather than letting the problem spread silently."
+  ],
+  "exercise": {
+    "prompt": "Create a custom exception called InvalidTemperatureError. Then write a function set_temperature(temp) that raises it if temp is below -273.15 (absolute zero — the coldest physically possible temperature) or above 1000000. Otherwise, print 'Temperature set to {temp} degrees.' Test it with a valid temperature, one that is too cold, and one that is too hot.",
+    "starterCode": "class InvalidTemperatureError(Exception):\n    pass\n\ndef set_temperature(temp):\n    # your code here\n    pass\n\n# Test calls\nset_temperature(100)\nset_temperature(-300)\nset_temperature(2000000)",
+    "hint": "Use two separate if statements inside set_temperature — one checking if temp < -273.15 and another checking if temp > 1000000. Both should raise InvalidTemperatureError with a descriptive message.",
+    "solution": "class InvalidTemperatureError(Exception):\n    pass\n\ndef set_temperature(temp):\n    if temp < -273.15:\n        raise InvalidTemperatureError(\n            f\"{temp} is below absolute zero (-273.15). That is physically impossible.\"\n        )\n    if temp > 1000000:\n        raise InvalidTemperatureError(\n            f\"{temp} exceeds the maximum allowed temperature of 1,000,000 degrees.\"\n        )\n    print(f\"Temperature set to {temp} degrees.\")\n\ntry:\n    set_temperature(100)\nexcept InvalidTemperatureError as e:\n    print(f\"Error: {e}\")\n\ntry:\n    set_temperature(-300)\nexcept InvalidTemperatureError as e:\n    print(f\"Error: {e}\")\n\ntry:\n    set_temperature(2000000)\nexcept InvalidTemperatureError as e:\n    print(f\"Error: {e}\")"
+  }
+}

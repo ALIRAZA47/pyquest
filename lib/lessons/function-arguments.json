@@ -1,0 +1,164 @@
+{
+  "slug": "function-arguments",
+  "title": "Arguments & Parameters",
+  "emoji": "🎛️",
+  "category": "Functions",
+  "difficulty": "Beginner",
+  "summary": "Learn how to send information into functions using positional and keyword arguments, set smart default values, and dodge a sneaky beginner trap.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Functions are more useful when you can **pass information into them**. Instead of a function that always does the exact same thing, you can write one that adapts based on what you give it. That's what **arguments** and **parameters** are for.\n\nThink of a function like a coffee machine. The machine is the function. The coffee beans, water amount, and cup size are the arguments — you choose them each time you press the button."
+    },
+    {
+      "type": "heading",
+      "text": "Parameters vs Arguments"
+    },
+    {
+      "type": "text",
+      "md": "These two words sound similar, and beginners often mix them up. Here's the simple rule:\n\n- A **parameter** is the variable name listed inside `def` when you *define* the function.\n- An **argument** is the actual value you *pass in* when you *call* the function.\n\nThe parameter is the label on the slot. The argument is the thing you drop into it."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):      # 'name' is the PARAMETER\n    print(\"Hello,\", name)\n\ngreet(\"Alice\")        # 'Alice' is the ARGUMENT\ngreet(\"Bob\")",
+      "output": "Hello, Alice\nHello, Bob",
+      "caption": "Same function, different arguments each call."
+    },
+    {
+      "type": "heading",
+      "text": "Positional Arguments"
+    },
+    {
+      "type": "text",
+      "md": "When you call a function with multiple arguments and just list them in order, those are **positional arguments**. Python matches them to parameters by their *position* — first argument goes to the first parameter, second to the second, and so on."
+    },
+    {
+      "type": "code",
+      "code": "def describe_pet(animal, name):\n    print(name, \"is a\", animal)\n\ndescribe_pet(\"dog\", \"Rex\")\ndescribe_pet(\"cat\", \"Whiskers\")",
+      "output": "Rex is a dog\nWhiskers is a cat",
+      "caption": "Order matters with positional arguments."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Order matters!",
+      "md": "Swap the arguments and you swap the meaning. `describe_pet(\"Rex\", \"dog\")` would print `dog is a Rex` — which makes no sense. Always double-check the order when using positional arguments."
+    },
+    {
+      "type": "heading",
+      "text": "Keyword Arguments"
+    },
+    {
+      "type": "text",
+      "md": "You can also pass arguments by **name**, using the syntax `parameter_name=value`. These are called **keyword arguments**. When you use them, the order no longer matters — Python knows exactly which slot each value belongs to."
+    },
+    {
+      "type": "code",
+      "code": "def describe_pet(animal, name):\n    print(name, \"is a\", animal)\n\n# Using keyword arguments — order is flexible\ndescribe_pet(name=\"Luna\", animal=\"rabbit\")",
+      "output": "Luna is a rabbit",
+      "caption": "Keyword arguments make code self-documenting."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Keyword arguments improve readability",
+      "md": "When a function has several parameters, keyword arguments act like labels. A reader seeing `send_email(to=\"alice@example.com\", subject=\"Hi\")` immediately understands the code without looking up the function definition."
+    },
+    {
+      "type": "heading",
+      "text": "Default Parameter Values"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a parameter almost always gets the same value. You can set a **default value** in the function definition using `=`. If the caller doesn't provide that argument, the default kicks in automatically."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name, greeting=\"Hello\"):\n    print(greeting + \",\", name + \"!\")\n\ngreet(\"Alice\")                  # uses default greeting\ngreet(\"Bob\", greeting=\"Hey\")   # overrides the default",
+      "output": "Hello, Alice!\nHey, Bob!",
+      "caption": "Defaults make arguments optional for callers."
+    },
+    {
+      "type": "heading",
+      "text": "Argument Order Rules"
+    },
+    {
+      "type": "text",
+      "md": "There is one strict rule you must follow: **positional arguments must come before keyword arguments** in a function call. Python will raise a `SyntaxError` if you break this rule."
+    },
+    {
+      "type": "code",
+      "code": "def order_pizza(size, topping, extra_cheese=False):\n    print(size, topping, \"cheese:\", extra_cheese)\n\n# Correct: positional first, then keyword\norder_pizza(\"large\", \"pepperoni\", extra_cheese=True)\n\n# Also correct: all keyword\norder_pizza(size=\"small\", topping=\"mushroom\")",
+      "output": "large pepperoni cheese: True\nsmall mushroom cheese: False",
+      "caption": "Positional before keyword — always."
+    },
+    {
+      "type": "code",
+      "code": "# This will cause a SyntaxError!\norder_pizza(size=\"large\", \"pepperoni\")",
+      "output": "SyntaxError: positional argument follows keyword argument",
+      "caption": "Keyword before positional is not allowed."
+    },
+    {
+      "type": "heading",
+      "text": "The Mutable Default Argument Gotcha"
+    },
+    {
+      "type": "text",
+      "md": "Here is one of the sneakiest traps in Python. It catches experienced programmers too. **Never use a mutable object like a list or dictionary as a default parameter value.**\n\nWhy? Because Python creates the default value **once** when the function is defined, not each time it is called. All calls that use the default end up sharing the exact same list object."
+    },
+    {
+      "type": "code",
+      "code": "# DANGEROUS — don't do this!\ndef add_item(item, cart=[]):\n    cart.append(item)\n    return cart\n\nprint(add_item(\"apple\"))\nprint(add_item(\"banana\"))   # the list is NOT empty!",
+      "output": "['apple']\n['apple', 'banana']",
+      "caption": "The default list persists across calls — a nasty surprise."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Mutable defaults are shared across all calls",
+      "md": "The list `[]` in `def add_item(item, cart=[])` is created a single time and reused every time `cart` is not provided. Changes to it stick around between calls. This is almost never what you want."
+    },
+    {
+      "type": "text",
+      "md": "The fix is simple and idiomatic: use `None` as the default, then create a fresh list inside the function body if no value was passed."
+    },
+    {
+      "type": "code",
+      "code": "# SAFE — the None pattern\ndef add_item(item, cart=None):\n    if cart is None:\n        cart = []        # fresh list every time\n    cart.append(item)\n    return cart\n\nprint(add_item(\"apple\"))\nprint(add_item(\"banana\"))   # starts fresh, as expected",
+      "output": "['apple']\n['banana']",
+      "caption": "Use None as the default, then create the list inside the function."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a shared notepad",
+      "md": "Using `def f(items=[])` is like giving every customer in a coffee shop the same notepad to write their order. The second customer sees the first customer's order still there. Using `None` and creating a fresh list is like handing each customer a brand-new blank notepad."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code print?\n\n```python\ndef power(base, exponent=2):\n    return base ** exponent\n\nprint(power(3))\nprint(power(3, exponent=3))\n```",
+      "options": [
+        "9 and 27",
+        "6 and 9",
+        "3 and 9",
+        "9 and 9"
+      ],
+      "answerIndex": 0,
+      "explanation": "The first call uses the default exponent of 2, so 3 ** 2 = 9. The second call overrides it with exponent=3, so 3 ** 3 = 27."
+    }
+  ],
+  "keyTakeaways": [
+    "Parameters are the variable names in `def`; arguments are the values you pass when calling.",
+    "Positional arguments are matched by order; keyword arguments are matched by name.",
+    "Default parameter values make arguments optional — great for common cases.",
+    "Positional arguments must always come before keyword arguments in a call.",
+    "Never use a mutable object (list, dict) as a default — use `None` and create it inside the function."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `make_tag` that takes a `content` string and an optional `tag` parameter that defaults to `\"p\"`. It should return an HTML-style string wrapping the content in the tag, like `<p>Hello</p>`. Call it at least three times: once with just content, once overriding the tag positionally, and once overriding the tag as a keyword argument.",
+    "starterCode": "def make_tag(content, tag=???):\n    # return the wrapped string\n    pass\n\nprint(make_tag(\"Hello\"))\nprint(make_tag(\"World\", \"h1\"))\nprint(make_tag(\"Click me\", tag=\"a\"))",
+    "hint": "Use an f-string like `f\"<{tag}>{content}</{tag}>\"` to build the result.",
+    "solution": "def make_tag(content, tag=\"p\"):\n    return f\"<{tag}>{content}</{tag}>\"\n\nprint(make_tag(\"Hello\"))              # <p>Hello</p>\nprint(make_tag(\"World\", \"h1\"))        # <h1>World</h1>\nprint(make_tag(\"Click me\", tag=\"a\"))  # <a>Click me</a>"
+  }
+}

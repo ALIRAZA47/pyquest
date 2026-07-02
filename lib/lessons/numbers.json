@@ -1,0 +1,159 @@
+{
+  "slug": "numbers",
+  "title": "Numbers (int, float, complex)",
+  "emoji": "🔢",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how Python handles whole numbers, decimals, and the arithmetic operators that let you do real math in your programs.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Numbers are everywhere in programs — counting items in a cart, calculating a tip, measuring pixels on a screen. Python is exceptionally good at math, and it gives you several **types** of numbers to match real-world needs. In this lesson you will learn the three number types Python offers, how the arithmetic operators work, and a few quirks that trip up beginners."
+    },
+    {
+      "type": "heading",
+      "text": "Integers — Whole Numbers"
+    },
+    {
+      "type": "text",
+      "md": "An **integer** (type `int`) is any whole number — positive, negative, or zero. There is no maximum size in Python; you can work with numbers as large as your computer's memory allows.\n\n- `0`, `42`, `-7`, `1000000` are all integers.\n- You never write a decimal point for an integer."
+    },
+    {
+      "type": "code",
+      "code": "apples = 5\nbananas = 12\ntotal = apples + bananas\nprint(total)\nprint(type(total))",
+      "output": "17\n<class 'int'>",
+      "caption": "type() tells you what kind of number you have."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Big numbers? Use underscores!",
+      "md": "Python lets you write large integers with underscores as visual spacers — just like commas in everyday writing. `1_000_000` is the same as `1000000`, but much easier to read at a glance."
+    },
+    {
+      "type": "code",
+      "code": "world_population = 8_100_000_000\nprint(world_population)",
+      "output": "8100000000",
+      "caption": "Underscores are ignored by Python — they are just for you."
+    },
+    {
+      "type": "heading",
+      "text": "Floats — Decimal Numbers"
+    },
+    {
+      "type": "text",
+      "md": "A **float** (type `float`) is a number with a decimal point. The name comes from *floating-point*, the way computers store decimal values internally.\n\n- `3.14`, `0.5`, `-2.7`, `1.0` are all floats.\n- Even `1.0` is a float — the dot makes all the difference."
+    },
+    {
+      "type": "code",
+      "code": "price = 9.99\ntax_rate = 0.08\ntax = price * tax_rate\nprint(round(tax, 2))\nprint(type(price))",
+      "output": "0.8\n<class 'float'>",
+      "caption": "round(value, digits) controls how many decimal places you see."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "0.1 + 0.2 is not exactly 0.3",
+      "md": "Try this in Python:\n\n```python\nprint(0.1 + 0.2)\n```\n\nYou will see `0.30000000000000004`. This is not a Python bug — it is how all computers store decimals in binary. Most of the time it does not matter, but if you need exact decimal arithmetic (e.g., for money), look into the `decimal` module later. For now, use `round()` when displaying results to users."
+    },
+    {
+      "type": "heading",
+      "text": "Arithmetic Operators"
+    },
+    {
+      "type": "text",
+      "md": "Python supports the arithmetic you already know, plus a few extra operators that are especially useful in programming."
+    },
+    {
+      "type": "code",
+      "code": "a = 17\nb = 5\n\nprint(a + b)   # addition\nprint(a - b)   # subtraction\nprint(a * b)   # multiplication\nprint(a ** b)  # power (17 to the 5th)\nprint(a % b)   # modulo (remainder)",
+      "output": "22\n12\n85\n1419857\n2",
+      "caption": "** is \"to the power of\". % gives the leftover after division."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Modulo is like a clock",
+      "md": "Imagine a clock with 5 hours. After hour 5 you wrap back to 0. `17 % 5` asks: after filling as many groups of 5 as possible into 17, what is left over? `17 = 3 * 5 + 2`, so the answer is `2`. Modulo is great for checking whether a number is even (`n % 2 == 0`) or cycling through a fixed set of options."
+    },
+    {
+      "type": "heading",
+      "text": "Division — Three Ways"
+    },
+    {
+      "type": "text",
+      "md": "Division in Python comes in three flavours, and mixing them up is a classic beginner mistake."
+    },
+    {
+      "type": "code",
+      "code": "a = 17\nb = 5\n\nprint(a / b)   # true division — always a float\nprint(a // b)  # floor division — rounds DOWN to int\nprint(-17 // 5) # floor division goes toward negative infinity",
+      "output": "3.4\n3\n-4",
+      "caption": "/ always returns a float. // always rounds toward negative infinity."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "/ always gives a float",
+      "md": "`10 / 2` returns `5.0`, not `5`. If you need a whole number result, use `//` instead. Many beginners are surprised that dividing two integers can produce a float."
+    },
+    {
+      "type": "heading",
+      "text": "Helpful Built-in Functions"
+    },
+    {
+      "type": "code",
+      "code": "print(abs(-42))        # absolute value\nprint(round(3.74159, 2)) # round to 2 decimal places\nprint(round(2.5))      # rounds to nearest even number",
+      "output": "42\n3.74\n2",
+      "caption": "abs() removes the minus sign. round() with no second argument returns the nearest integer."
+    },
+    {
+      "type": "heading",
+      "text": "A Peek at the math Module"
+    },
+    {
+      "type": "text",
+      "md": "Python's built-in `math` module gives you access to powerful mathematical functions and constants. You bring it in with `import math`. We will cover modules properly in a later lesson — for now, here is a taste."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\nprint(math.pi)          # the constant π\nprint(math.sqrt(144))   # square root\nprint(math.floor(3.9))  # round down\nprint(math.ceil(3.1))   # round up",
+      "output": "3.141592653589793\n12.0\n3\n4",
+      "caption": "math.sqrt() always returns a float, even when the answer is a whole number."
+    },
+    {
+      "type": "heading",
+      "text": "Complex Numbers (just a quick look)"
+    },
+    {
+      "type": "text",
+      "md": "Python also has a built-in **complex** number type for situations like electrical engineering or advanced mathematics. You write them with a `j` suffix for the imaginary part. Most beginners will not need these for a long time — but it is nice to know Python has them."
+    },
+    {
+      "type": "code",
+      "code": "c = 3 + 4j\nprint(c)\nprint(type(c))\nprint(c.real, c.imag)",
+      "output": "(3+4j)\n<class 'complex'>\n3.0 4.0",
+      "caption": "Python uses j (not i) for the imaginary unit, following engineering convention."
+    },
+    {
+      "type": "quiz",
+      "question": "What does 15 // 4 evaluate to in Python?",
+      "options": ["3.75", "3", "4", "Error"],
+      "answerIndex": 1,
+      "explanation": "// is floor division — it divides and then rounds DOWN to the nearest whole number. 15 / 4 = 3.75, and the floor of 3.75 is 3. The result is an int, not a float."
+    }
+  ],
+  "keyTakeaways": [
+    "`int` holds whole numbers of any size; `float` holds decimals.",
+    "Use underscores in big literals like `1_000_000` to improve readability.",
+    "`/` always returns a float; use `//` for integer (floor) division and `%` for the remainder.",
+    "Floating-point arithmetic is not always exact — use `round()` when displaying results.",
+    "The `math` module provides advanced functions like `sqrt()` and constants like `pi`."
+  ],
+  "exercise": {
+    "prompt": "Write a small program that calculates the area and circumference of a circle. Ask for nothing — just hard-code a radius of 7. Use math.pi for π. Print both results rounded to 2 decimal places.\n\nFormulas:\n- Area = π × r²\n- Circumference = 2 × π × r",
+    "starterCode": "import math\n\nradius = 7\n\n# Calculate area\n# Calculate circumference\n# Print both",
+    "hint": "Remember that ** is the power operator, so radius squared is radius ** 2. Wrap each result in round(..., 2) before printing.",
+    "solution": "import math\n\nradius = 7\n\narea = math.pi * radius ** 2\ncircumference = 2 * math.pi * radius\n\nprint(\"Area:\", round(area, 2))\nprint(\"Circumference:\", round(circumference, 2))"
+  }
+}

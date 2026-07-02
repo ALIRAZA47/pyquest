@@ -1,0 +1,162 @@
+{
+  "slug": "variable-scope",
+  "title": "Variable Scope",
+  "emoji": "🔭",
+  "category": "Functions",
+  "difficulty": "Intermediate",
+  "summary": "Learn where variables live, which parts of your code can see them, and why keeping variables close to where they are used makes your programs easier to understand.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine your home has different rooms. A notebook kept in your bedroom is only accessible in your bedroom — you cannot reach it from the kitchen without walking to get it. Variables in Python work the same way. Every variable has a **scope**: the region of code where it exists and can be used.\n\nUnderstanding scope is one of those skills that quietly saves you hours of frustration. It explains why a variable seems to \"disappear\" inside a function, or why changing a variable in one place does not affect another."
+    },
+    {
+      "type": "heading",
+      "text": "Local Scope: Variables Born Inside a Function"
+    },
+    {
+      "type": "text",
+      "md": "When you create a variable **inside** a function, it is **local** to that function. It springs into life when the function runs and disappears when the function finishes. Code outside the function cannot see it at all."
+    },
+    {
+      "type": "code",
+      "code": "def make_greeting():\n    message = \"Hello, world!\"  # local variable\n    print(message)\n\nmake_greeting()\nprint(message)  # NameError — message doesn't exist out here",
+      "output": "Hello, world!\nNameError: name 'message' is not defined",
+      "caption": "message only exists inside make_greeting()"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a function like a pop-up tent",
+      "md": "Everything created **inside** the tent stays inside the tent. Once you fold it up (the function ends), everything inside is gone. People standing outside the tent never knew those things existed."
+    },
+    {
+      "type": "heading",
+      "text": "Global Scope: Variables at the Top Level"
+    },
+    {
+      "type": "text",
+      "md": "A variable created **outside** any function lives in **global** scope. Every function in the same file can **read** it — but reading and **changing** are two different things, as you will soon see."
+    },
+    {
+      "type": "code",
+      "code": "country = \"Canada\"  # global variable\n\ndef show_country():\n    print(country)  # reading a global is fine\n\nshow_country()",
+      "output": "Canada",
+      "caption": "Functions can read global variables without any special keyword"
+    },
+    {
+      "type": "heading",
+      "text": "The LEGB Rule: How Python Finds a Variable"
+    },
+    {
+      "type": "text",
+      "md": "When Python sees a variable name, it searches for it in this order:\n\n- **L** — Local: inside the current function\n- **E** — Enclosing: inside any outer functions that wrap this one\n- **G** — Global: at the top level of the file\n- **B** — Built-in: names Python always provides, like `print`, `len`, `range`\n\nPython stops as soon as it finds the name. If it reaches the end of the list without finding it, you get a `NameError`."
+    },
+    {
+      "type": "code",
+      "code": "x = \"global\"\n\ndef outer():\n    x = \"enclosing\"\n\n    def inner():\n        print(x)  # finds 'enclosing' before 'global'\n\n    inner()\n\nouter()",
+      "output": "enclosing",
+      "caption": "LEGB in action: inner() finds x in the enclosing scope first"
+    },
+    {
+      "type": "heading",
+      "text": "Trying to Change a Global Inside a Function"
+    },
+    {
+      "type": "text",
+      "md": "Here is the tricky part. If you try to **assign** to a global variable inside a function, Python does not change the global — it creates a **brand new local variable** with the same name instead."
+    },
+    {
+      "type": "code",
+      "code": "score = 0\n\ndef add_point():\n    score = score + 1  # Python sees assignment, makes it local\n    print(score)\n\nadd_point()",
+      "output": "UnboundLocalError: local variable 'score' referenced before assignment",
+      "caption": "Python decides score is local but it has no value yet — crash!"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Assignment makes a variable local",
+      "md": "The moment Python sees `score = ...` inside a function, it treats **every** use of `score` in that function as local — even the ones that appear **before** the assignment line. This is why the error says \"referenced before assignment\" even though `score` exists globally."
+    },
+    {
+      "type": "heading",
+      "text": "The global Keyword"
+    },
+    {
+      "type": "text",
+      "md": "If you genuinely need a function to modify a global variable, you must declare your intention with the `global` keyword. This tells Python: \"When I say `score`, I mean the one at the top level.\""
+    },
+    {
+      "type": "code",
+      "code": "score = 0\n\ndef add_point():\n    global score\n    score = score + 1\n\nadd_point()\nadd_point()\nprint(score)",
+      "output": "2",
+      "caption": "global score tells Python to use the top-level variable"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Use global sparingly",
+      "md": "Relying heavily on global variables makes code hard to reason about. When any function anywhere can change a global, tracking down bugs becomes a nightmare. **Prefer returning values** from functions and passing data in as arguments instead."
+    },
+    {
+      "type": "heading",
+      "text": "The nonlocal Keyword (Nested Functions)"
+    },
+    {
+      "type": "text",
+      "md": "When you have a function inside another function, `nonlocal` lets the inner function modify a variable that belongs to the **enclosing** (outer) function — not the global level."
+    },
+    {
+      "type": "code",
+      "code": "def make_counter():\n    count = 0\n\n    def increment():\n        nonlocal count\n        count = count + 1\n        print(count)\n\n    increment()\n    increment()\n    increment()\n\nmake_counter()",
+      "output": "1\n2\n3",
+      "caption": "nonlocal lets increment() modify count in make_counter()"
+    },
+    {
+      "type": "heading",
+      "text": "The Better Pattern: Return Values"
+    },
+    {
+      "type": "text",
+      "md": "Instead of reaching out to modify a global, the cleanest approach is to **pass data in** as a parameter and **return the new value** out. This keeps each function self-contained and easy to test."
+    },
+    {
+      "type": "code",
+      "code": "def add_point(current_score):\n    return current_score + 1\n\nscore = 0\nscore = add_point(score)\nscore = add_point(score)\nprint(score)",
+      "output": "2",
+      "caption": "No globals needed — data flows in and out cleanly"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Keep variables close to where they are used",
+      "md": "A local variable is like a sticky note on your desk — it is right there when you need it and gone when you are done. A global variable is like a whiteboard in the hallway — everyone can see and change it, which leads to confusion. Default to local; reach for global only when you truly need to."
+    },
+    {
+      "type": "quiz",
+      "question": "What will the following code print?\n\n```python\nvalue = 10\n\ndef double():\n    value = value * 2\n    print(value)\n\ndouble()\n```",
+      "options": [
+        "20",
+        "10",
+        "UnboundLocalError",
+        "NameError: value is not defined"
+      ],
+      "answerIndex": 2,
+      "explanation": "Because `value = value * 2` contains an assignment to `value`, Python treats `value` as a local variable throughout the entire function. But it has no local value yet when Python tries to read it on the right side of `*`, so you get an `UnboundLocalError`. To fix this, either pass `value` as a parameter or use the `global` keyword."
+    }
+  ],
+  "keyTakeaways": [
+    "A variable created inside a function is **local** — invisible to the outside world and gone when the function ends.",
+    "Python looks up names using the **LEGB rule**: Local, Enclosing, Global, Built-in — in that order.",
+    "Assigning to a name inside a function makes Python treat it as **local everywhere** in that function, even before the assignment line.",
+    "Use `global` to modify a top-level variable and `nonlocal` to modify a variable in an enclosing function — but prefer passing arguments and returning values instead.",
+    "Keeping data local and passing it explicitly makes code easier to read, test, and debug."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `apply_discount` that takes two parameters: `price` (a number) and `discount_percent` (a number like 10 for 10%). It should calculate and **return** the discounted price. Then call it and print the result. Do NOT use any global variables — keep all data local or passed as arguments.",
+    "starterCode": "def apply_discount(price, discount_percent):\n    # calculate the discounted price and return it\n    pass\n\noriginal_price = 80\ndiscount = 25\nfinal_price = apply_discount(original_price, discount)\nprint(f\"Original: ${original_price}, After discount: ${final_price}\")",
+    "hint": "The discount amount is `price * discount_percent / 100`. Subtract that from `price` to get the final price.",
+    "solution": "def apply_discount(price, discount_percent):\n    discount_amount = price * discount_percent / 100\n    return price - discount_amount\n\noriginal_price = 80\ndiscount = 25\nfinal_price = apply_discount(original_price, discount)\nprint(f\"Original: ${original_price}, After discount: ${final_price}\")"
+  }
+}

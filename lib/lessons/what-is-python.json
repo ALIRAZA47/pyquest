@@ -1,0 +1,130 @@
+{
+  "slug": "what-is-python",
+  "title": "What is Python?",
+  "emoji": "🐍",
+  "category": "Getting Started",
+  "difficulty": "Beginner",
+  "summary": "Meet Python — the friendly, powerful programming language used everywhere from Instagram to NASA — and find out why it is the perfect starting point for beginners.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You are about to learn one of the most popular programming languages on the planet. But before you write a single line of code, let's answer the obvious question: **what even is Python, and why should you care?**\n\nPython is a programming language — a way to give instructions to a computer. Think of it like a recipe: you write down the steps, and the computer follows them exactly. What makes Python special is how *human-friendly* those steps look."
+    },
+    {
+      "type": "heading",
+      "text": "A Quick Origin Story"
+    },
+    {
+      "type": "text",
+      "md": "Python was created by a Dutch programmer named **Guido van Rossum**. He started working on it in the late 1980s and released the first version in **1991**.\n\nHere is a fun fact: the name has nothing to do with the snake. Guido was a fan of the British comedy show **Monty Python's Flying Circus**, and he wanted a name that was short, unique, and a little playful. The snake just made for a great logo."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Python is named after comedy, not a reptile",
+      "md": "Guido van Rossum wanted the language to be fun and approachable — so he named it after a comedy troupe. That spirit of making things enjoyable is baked right into Python's design philosophy."
+    },
+    {
+      "type": "heading",
+      "text": "Why Python Reads Like English"
+    },
+    {
+      "type": "text",
+      "md": "Many older programming languages were designed to be efficient for *computers*, not easy for *humans*. They use lots of curly braces `{}`, semicolons `;`, and symbols that look like line noise.\n\nPython takes a different approach. It was designed so that **reading code feels a bit like reading plain English sentences**. There are no mandatory semicolons at the end of lines. No curly braces wrapping every block of logic. Just clean, indented code that shows structure visually."
+    },
+    {
+      "type": "code",
+      "code": "# This is Python. Notice how readable it is!\nname = \"Alice\"\nage = 30\n\nif age >= 18:\n    print(name + \" is an adult.\")\nelse:\n    print(name + \" is a minor.\")",
+      "output": "Alice is an adult.",
+      "caption": "Even if you have never coded before, you can probably guess what this does."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "You already understand more than you think",
+      "md": "Look at the code above. Words like `if`, `else`, and `print` mean exactly what you would guess in plain English. Python is designed this way on purpose — to lower the barrier for beginners."
+    },
+    {
+      "type": "heading",
+      "text": "What Can You Actually Build With Python?"
+    },
+    {
+      "type": "text",
+      "md": "Python is not a toy language — it powers some of the biggest products in the world. Here are a few real examples:\n\n- **Web apps** — Instagram and YouTube both use Python on their servers.\n- **Data science and AI** — Scientists and engineers use Python to analyse data, build machine learning models, and train AI systems.\n- **Automation** — Rename thousands of files, scrape websites, send emails, or schedule tasks automatically.\n- **Games** — Simple 2D games (and even some complex ones) are built in Python.\n- **Science and research** — NASA uses Python for spacecraft data analysis.\n\nThe same language that helps a beginner print `Hello, world!` also powers Instagram's 2 billion users. That is a remarkable range."
+    },
+    {
+      "type": "code",
+      "code": "# A tiny taste of what Python can do:\n# Automate something repetitive in just a few lines.\n\nfiles_to_rename = [\"photo1.jpg\", \"photo2.jpg\", \"photo3.jpg\"]\n\nfor old_name in files_to_rename:\n    new_name = old_name.replace(\"photo\", \"vacation_\")\n    print(\"Renamed:\", old_name, \"→\", new_name)",
+      "output": "Renamed: photo1.jpg → vacation_1.jpg\nRenamed: photo2.jpg → vacation_2.jpg\nRenamed: photo3.jpg → vacation_3.jpg",
+      "caption": "A loop that renames a list of files — a common automation task."
+    },
+    {
+      "type": "heading",
+      "text": "Interpreted, Not Compiled — What Does That Mean?"
+    },
+    {
+      "type": "text",
+      "md": "Programming languages come in two main flavours: **compiled** and **interpreted**.\n\nA **compiled** language (like C or C++) translates your entire program into machine code before it runs. It is like baking a whole cake, then serving it. Fast to eat, but slow to prepare.\n\nAn **interpreted** language like Python reads and runs your code **one line at a time**, on the fly. It is like a chef cooking each dish as the customer orders it. Slightly slower to execute, but you can **run your code instantly** without a compile step and see results right away.\n\nFor beginners, this is a huge advantage: you write a line, you run it, you see what happens. Rapid experimentation makes learning much faster."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Interpreted = instant feedback",
+      "md": "Imagine learning to cook. Would you rather see the result of your recipe only after the entire meal is done (compiled), or taste as you go and adjust (interpreted)? Python lets you taste as you go — that is why it is so great for learning."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Python Program"
+    },
+    {
+      "type": "text",
+      "md": "By tradition, the first program anyone writes in a new language prints the message `Hello, World!`. In many languages this takes several lines of setup. In Python, it is exactly one line."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello, World!\")",
+      "output": "Hello, World!",
+      "caption": "The classic first program. In Python, one line is all it takes."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Capitalisation matters — always",
+      "md": "Python is **case-sensitive**. `print` works. `Print` or `PRINT` will give you an error. This catches almost every beginner at some point, so keep it in mind from day one."
+    },
+    {
+      "type": "heading",
+      "text": "Why Do So Many People Learn Python First?"
+    },
+    {
+      "type": "text",
+      "md": "Python consistently ranks as the **#1 most popular first programming language** in surveys and university courses worldwide. Here is why:\n\n- **Readable syntax** — code looks like English, so you spend less time fighting symbols.\n- **Instant results** — no compile step means you see output immediately.\n- **Huge community** — millions of tutorials, Stack Overflow answers, and free libraries exist.\n- **Versatile** — once you know Python, you can go in almost any direction: web, data, AI, automation.\n- **Forgiving** — Python tells you clearly what went wrong when you make a mistake.\n\nIn short, Python was *designed* to be learned. Everything else is a bonus."
+    },
+    {
+      "type": "quiz",
+      "question": "Python was named after which of the following?",
+      "options": [
+        "The snake species Python regius",
+        "The British comedy show Monty Python's Flying Circus",
+        "Its creator's favourite pet",
+        "A Greek mythological serpent"
+      ],
+      "answerIndex": 1,
+      "explanation": "Guido van Rossum was a fan of Monty Python's Flying Circus and chose the name because it was short, unique, and fun — not because of the snake. The snake logo came later and stuck because it made great branding!"
+    }
+  ],
+  "keyTakeaways": [
+    "Python was created by Guido van Rossum in 1991 and named after Monty Python, not the snake.",
+    "Python's syntax is designed to read like plain English — no semicolons or curly braces cluttering the code.",
+    "Python is interpreted, meaning you can run code instantly and see results line by line.",
+    "Python is used everywhere: web apps (Instagram, YouTube), AI, automation, science, and games.",
+    "Python is the world's most popular first programming language because it rewards beginners quickly."
+  ],
+  "exercise": {
+    "prompt": "Write a short Python program that introduces yourself. Print your name on one line, then print one thing you are excited to build with Python on the next line.",
+    "starterCode": "# Replace the placeholders with your own details!\nprint(\"My name is ...\")\nprint(\"I want to build ...\")",
+    "hint": "Each print() call outputs one line. Put the text you want to display inside the parentheses, wrapped in double quotes.",
+    "solution": "print(\"My name is Alex.\")\nprint(\"I want to build a web app that recommends movies.\")"
+  }
+}

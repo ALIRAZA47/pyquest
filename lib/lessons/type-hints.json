@@ -1,0 +1,174 @@
+{
+  "slug": "type-hints",
+  "title": "Type Hints",
+  "emoji": "🏷️",
+  "category": "Writing Pythonic Code",
+  "difficulty": "Intermediate",
+  "summary": "Learn how to add optional type annotations to your Python code to make it clearer, easier to maintain, and less bug-prone.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Python is a **dynamically typed** language, which means you can write a function and pass any value you like — Python won't stop you. That freedom is great when you're exploring, but it can cause confusion later: *What kind of value does this function expect? What does it return?*\n\nType hints are Python's answer. They let you **label** your variables and functions with the kinds of values they work with. Think of them as sticky notes attached to your code that say \"this should be a string\" or \"this returns a number.\""
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Type hints are optional",
+      "md": "Python itself **never enforces** type hints at runtime. Your program runs exactly the same whether you add them or not. Their power comes from tools like editors (VS Code, PyCharm) and the static checker **mypy**, which read the hints and warn you about mistakes before you even run your code."
+    },
+    {
+      "type": "heading",
+      "text": "Annotating Function Parameters and Return Values"
+    },
+    {
+      "type": "text",
+      "md": "The most common place to add type hints is on **function definitions**. You write the expected type after a colon following each parameter name, and you write the return type after `->` before the colon that ends the `def` line."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name: str) -> str:\n    return \"Hello, \" + name\n\nresult = greet(\"Alice\")\nprint(result)",
+      "output": "Hello, Alice",
+      "caption": "name: str means the function expects a string. -> str means it returns a string."
+    },
+    {
+      "type": "text",
+      "md": "Let's add another example with numbers:\n\n- `age: int` — expects a whole number\n- `-> float` — returns a decimal number"
+    },
+    {
+      "type": "code",
+      "code": "def years_until_retirement(age: int, retirement_age: int) -> int:\n    return retirement_age - age\n\nprint(years_until_retirement(30, 65))",
+      "output": "35",
+      "caption": "Both parameters are annotated as int, and the return type is also int."
+    },
+    {
+      "type": "heading",
+      "text": "Annotating Variables"
+    },
+    {
+      "type": "text",
+      "md": "You can also annotate plain variables. The syntax is `variable_name: type = value`. This is useful when you declare a variable before you know its value, or when the type might not be obvious at a glance."
+    },
+    {
+      "type": "code",
+      "code": "count: int = 0\nname: str = \"Bob\"\nprice: float = 9.99\nis_active: bool = True\n\nprint(count, name, price, is_active)",
+      "output": "0 Bob 9.99 True",
+      "caption": "Variable annotations make the intended type explicit right at the declaration."
+    },
+    {
+      "type": "heading",
+      "text": "Common Built-in Types"
+    },
+    {
+      "type": "text",
+      "md": "The most common types you will annotate with are Python's built-in ones:\n\n- `str` — text\n- `int` — whole numbers\n- `float` — decimal numbers\n- `bool` — `True` or `False`\n- `list` — a list\n- `dict` — a dictionary\n- `tuple` — a tuple\n- `None` — the absence of a value (use as a return type when a function returns nothing)"
+    },
+    {
+      "type": "code",
+      "code": "def log_message(message: str) -> None:\n    print(\"[LOG]\", message)\n\nlog_message(\"Server started\")",
+      "output": "[LOG] Server started",
+      "caption": "-> None means the function does not return a meaningful value."
+    },
+    {
+      "type": "heading",
+      "text": "Typing Collections: list, dict, and More"
+    },
+    {
+      "type": "text",
+      "md": "Knowing that a variable is a `list` is useful, but knowing it is a **list of integers** is even better. Since Python 3.9, you can write the item type right inside square brackets."
+    },
+    {
+      "type": "code",
+      "code": "def total(scores: list[int]) -> int:\n    return sum(scores)\n\nprint(total([10, 20, 30]))",
+      "output": "60",
+      "caption": "list[int] means a list where every item is an integer."
+    },
+    {
+      "type": "code",
+      "code": "def word_lengths(words: list[str]) -> dict[str, int]:\n    return {word: len(word) for word in words}\n\nprint(word_lengths([\"cat\", \"elephant\", \"ox\"]))",
+      "output": "{'cat': 3, 'elephant': 8, 'ox': 2}",
+      "caption": "dict[str, int] means keys are strings and values are integers."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a labelled box",
+      "md": "Imagine a moving box labelled **\"Books — Paperback\"**. You could technically put anything inside, but the label tells everyone what belongs there and makes sorting much easier. Type hints are those labels on your code's boxes."
+    },
+    {
+      "type": "heading",
+      "text": "Optional Values: X | None"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a value might be present or it might be missing (`None`). Python 3.10 introduced a clean way to express this: `X | None`. This is called a **union type** — it means the value is either of type X or it is None.\n\nIn older Python (3.9 and below) you would write `Optional[X]` from the `typing` module, but `X | None` is now preferred."
+    },
+    {
+      "type": "code",
+      "code": "def find_user(user_id: int) -> str | None:\n    users = {1: \"Alice\", 2: \"Bob\"}\n    return users.get(user_id)  # returns None if not found\n\nprint(find_user(1))\nprint(find_user(99))",
+      "output": "Alice\nNone",
+      "caption": "str | None signals that callers must handle the possibility of None."
+    },
+    {
+      "type": "code",
+      "code": "# Older style using typing.Optional (still valid)\nfrom typing import Optional\n\ndef get_nickname(name: str) -> Optional[str]:\n    nicknames = {\"Robert\": \"Bob\"}\n    return nicknames.get(name)\n\nprint(get_nickname(\"Robert\"))\nprint(get_nickname(\"Alice\"))",
+      "output": "Bob\nNone",
+      "caption": "Optional[str] is equivalent to str | None. You will see both in real code."
+    },
+    {
+      "type": "heading",
+      "text": "Why Bother? The Real Benefits"
+    },
+    {
+      "type": "text",
+      "md": "You might be thinking: \"If Python ignores them, why add them at all?\" Great question. Here are the concrete benefits:\n\n- **Better autocomplete** — your editor knows what methods are available on a value.\n- **Catch bugs early** — tools like `mypy` can spot type mismatches before you run the code.\n- **Self-documenting code** — reading a function signature tells you exactly what it needs and gives back.\n- **Safer refactoring** — when you change a function's input type, mypy flags every place that breaks."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Python does NOT enforce type hints at runtime",
+      "md": "This trips up many beginners. Even with type hints, **Python will not raise an error** if you pass the wrong type at runtime.\n\n```python\ndef double(n: int) -> int:\n    return n * 2\n\nprint(double(\"ha\"))  # prints 'haha' — no error!\n```\n\nType hints are only checked by external tools like `mypy`. If you need runtime enforcement, look at libraries like `pydantic`."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Run mypy to check your hints",
+      "md": "Install mypy with `pip install mypy`, then run `mypy your_file.py` from the terminal. It will report any type mismatches it finds — all without running your program."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "code": "def summarize_scores(name: str, scores: list[int]) -> dict[str, int | float]:\n    total = sum(scores)\n    average = total / len(scores) if scores else 0.0\n    return {\"total\": total, \"average\": average}\n\nresult = summarize_scores(\"Alice\", [85, 92, 78])\nprint(result)",
+      "output": "{'total': 255, 'average': 85.0}",
+      "caption": "A realistic function with annotated parameters, a list type, and a complex return type."
+    },
+    {
+      "type": "quiz",
+      "question": "What happens when you call a Python function with the wrong type — for example, passing a string where an int is annotated?",
+      "options": [
+        "Python raises a TypeError immediately",
+        "Python silently ignores the annotation and runs normally",
+        "Python prints a warning but continues running",
+        "The program refuses to start"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python does NOT enforce type hints at runtime. The program runs exactly as if the hints were not there. Only external tools like mypy perform type checking — Python itself does not."
+    }
+  ],
+  "keyTakeaways": [
+    "Type hints let you annotate functions and variables with expected types using `name: type` and `-> return_type` syntax.",
+    "Python never enforces type hints at runtime — they exist purely for editors, tools like mypy, and human readers.",
+    "Use `list[int]`, `dict[str, int]`, and similar forms to describe collections with typed contents.",
+    "Use `X | None` (or `Optional[X]`) when a value might be absent.",
+    "Type hints make code self-documenting, improve autocomplete, and help catch bugs before you run your program."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `format_greeting` that takes a `name` (str) and an optional `title` (str or None, defaulting to None). If a title is provided, return `\"Hello, Dr. Alice\"` (or whatever title+name). If no title, return `\"Hello, Alice\"`. Add full type hints to the function signature.",
+    "starterCode": "def format_greeting(name: str, title: str | None = None) -> str:\n    # your code here\n    pass\n\nprint(format_greeting(\"Alice\"))\nprint(format_greeting(\"Smith\", \"Dr.\"))",
+    "hint": "Check whether `title` is None using an `if` statement, then build the string accordingly using string concatenation or an f-string.",
+    "solution": "def format_greeting(name: str, title: str | None = None) -> str:\n    if title is None:\n        return f\"Hello, {name}\"\n    return f\"Hello, {title} {name}\"\n\nprint(format_greeting(\"Alice\"))        # Hello, Alice\nprint(format_greeting(\"Smith\", \"Dr.\")) # Hello, Dr. Smith"
+  }
+}

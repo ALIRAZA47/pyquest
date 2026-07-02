@@ -1,0 +1,149 @@
+{
+  "slug": "assignment-operators",
+  "title": "Assignment Operators",
+  "emoji": "📝",
+  "category": "Operators",
+  "difficulty": "Beginner",
+  "summary": "Learn how assignment operators let you update variables quickly and cleanly — from the basic = to handy shortcuts like += and *=.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every program needs to keep track of changing values. A score goes up. A countdown ticks down. A message gets a new word added. **Assignment operators** are the tools Python gives you to update variables without rewriting them from scratch.\n\nYou already know the basic one: `=`. But Python has a whole family of shortcuts that make your code shorter, cleaner, and easier to read."
+    },
+    {
+      "type": "heading",
+      "text": "The Basic Assignment Operator"
+    },
+    {
+      "type": "text",
+      "md": "The `=` operator stores a value in a variable. Think of a variable as a labeled box, and `=` as the action of putting something inside it."
+    },
+    {
+      "type": "code",
+      "code": "score = 0\nname = \"Alex\"\nprint(score)\nprint(name)",
+      "output": "0\nAlex",
+      "caption": "= puts a value into a variable"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "= is not math equality",
+      "md": "In Python, `=` means **store this value**. It does not mean \"is equal to\". To *check* if two things are equal, Python uses `==` (two equals signs). These are completely different things!"
+    },
+    {
+      "type": "heading",
+      "text": "Updating a Variable the Long Way"
+    },
+    {
+      "type": "text",
+      "md": "Suppose you have a score of 10 and you want to add 5 to it. You could write it like this:"
+    },
+    {
+      "type": "code",
+      "code": "score = 10\nscore = score + 5\nprint(score)",
+      "output": "15",
+      "caption": "Updating a variable by referring to itself"
+    },
+    {
+      "type": "text",
+      "md": "This works perfectly fine. But notice that `score` appears **twice** on that second line. Python reads the right side first (`score + 5` = 15), then stores the result back into `score`. It is correct — just a bit repetitive."
+    },
+    {
+      "type": "heading",
+      "text": "Meet the Augmented Assignment Operators"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Like a tally counter",
+      "md": "Imagine a hand-held tally counter. Every time you press the button, it adds 1 to whatever number is already showing. You do not type the old number in — you just press **+1**. Augmented assignment operators work exactly like that button."
+    },
+    {
+      "type": "text",
+      "md": "Python lets you combine an operation and an assignment into one step using **augmented assignment operators**. The most common ones are:\n\n- `+=` — add and assign\n- `-=` — subtract and assign\n- `*=` — multiply and assign\n- `/=` — divide and assign\n- `//=` — floor divide and assign\n- `%=` — modulo and assign\n- `**=` — exponentiate and assign"
+    },
+    {
+      "type": "code",
+      "code": "score = 10\nscore += 5   # same as: score = score + 5\nprint(score)",
+      "output": "15",
+      "caption": "+= adds to the current value"
+    },
+    {
+      "type": "heading",
+      "text": "All the Augmented Operators in Action"
+    },
+    {
+      "type": "code",
+      "code": "x = 20\n\nx -= 4    # subtract\nprint(x)  # 16\n\nx *= 3    # multiply\nprint(x)  # 48\n\nx /= 6    # divide (result is a float)\nprint(x)  # 8.0\n\nx //= 3   # floor divide (no decimal)\nprint(x)  # 2.0\n\nx **= 4   # raise to a power\nprint(x)  # 16.0\n\nx %= 5    # remainder after dividing by 5\nprint(x)  # 1.0",
+      "output": "16\n48\n8.0\n2.0\n16.0\n1.0",
+      "caption": "Every augmented operator updates x in place"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use += in loops and counters",
+      "md": "Augmented assignment really shines inside loops. Whenever you need a counter or a running total, `+=` is your best friend. It keeps the code clean and easy to scan."
+    },
+    {
+      "type": "heading",
+      "text": "Using += in a Loop"
+    },
+    {
+      "type": "code",
+      "code": "total = 0\nfor number in [10, 25, 5, 60]:\n    total += number\n\nprint(total)",
+      "output": "100",
+      "caption": "Accumulating a total with +="
+    },
+    {
+      "type": "text",
+      "md": "Each time the loop runs, `total += number` adds the current `number` to whatever `total` already holds. By the end, `total` has accumulated all four values."
+    },
+    {
+      "type": "heading",
+      "text": "It Works With Strings and Lists Too"
+    },
+    {
+      "type": "text",
+      "md": "`+=` is not just for numbers. You can use it to **append** text to a string or **extend** a list — the same idea applies."
+    },
+    {
+      "type": "code",
+      "code": "message = \"Hello\"\nmessage += \", world\"\nmessage += \"!\"\nprint(message)",
+      "output": "Hello, world!",
+      "caption": "+= builds up a string piece by piece"
+    },
+    {
+      "type": "code",
+      "code": "items = [\"apple\", \"banana\"]\nitems += [\"cherry\"]\nprint(items)",
+      "output": "['apple', 'banana', 'cherry']",
+      "caption": "+= adds elements to a list"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "You must assign a value first",
+      "md": "You **cannot** use an augmented operator on a variable that does not exist yet. This will crash:\n\n```python\n# WRONG — counter was never defined\ncounter += 1\n```\n\nAlways initialize the variable first:\n\n```python\ncounter = 0   # start here\ncounter += 1  # now this works\n```"
+    },
+    {
+      "type": "quiz",
+      "question": "What is the value of `x` after this code runs?\n\n```python\nx = 8\nx *= 3\nx -= 4\n```",
+      "options": ["20", "24", "28", "11"],
+      "answerIndex": 0,
+      "explanation": "First, x *= 3 turns 8 into 24. Then x -= 4 subtracts 4, giving 20. Each augmented operator updates x in place before the next line runs."
+    }
+  ],
+  "keyTakeaways": [
+    "`=` stores a value in a variable — it is not a math equality check.",
+    "`x += 5` is shorthand for `x = x + 5` — it reads and updates the variable in one step.",
+    "Python has seven augmented operators: `+=`, `-=`, `*=`, `/=`, `//=`, `%=`, and `**=`.",
+    "`+=` works with strings and lists, not just numbers.",
+    "Always initialize a variable before using an augmented operator on it."
+  ],
+  "exercise": {
+    "prompt": "Write a program that starts with a `coins` variable set to 100. Then:\n1. Add 50 coins (a bonus reward).\n2. Subtract 30 coins (a purchase).\n3. Double the remaining coins (a multiplier power-up).\n4. Print the final number of coins.",
+    "starterCode": "coins = 100\n# your code here\nprint(coins)",
+    "hint": "Use +=, -=, and *= one step at a time. Each line updates `coins` before the next line runs.",
+    "solution": "coins = 100\ncoins += 50   # bonus reward: 150\ncoins -= 30   # purchase: 120\ncoins *= 2    # multiplier: 240\nprint(coins)  # 240"
+  }
+}

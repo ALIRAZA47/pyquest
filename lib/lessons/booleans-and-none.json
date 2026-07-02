@@ -1,0 +1,164 @@
+{
+  "slug": "booleans-and-none",
+  "title": "Booleans & None",
+  "emoji": "✅",
+  "category": "Python Basics",
+  "difficulty": "Beginner",
+  "summary": "Learn how Python represents yes/no decisions with True and False, discover the special None value, and understand why some values secretly act like false.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every program needs to make decisions. \"Is the user logged in? Is the list empty? Did the search find anything?\" To answer questions like these, Python has a special type called a **boolean** — a value that is either `True` or `False`. No in-between, no maybes. Just those two."
+    },
+    {
+      "type": "heading",
+      "text": "Meet True and False"
+    },
+    {
+      "type": "text",
+      "md": "In Python, booleans are written with a **capital first letter**: `True` and `False`. This matters — `true` (all lowercase) is not the same thing and will cause an error. Think of them as Python's way of saying \"yes\" and \"no\"."
+    },
+    {
+      "type": "code",
+      "code": "is_raining = True\nis_sunny = False\n\nprint(is_raining)\nprint(is_sunny)\nprint(type(is_raining))",
+      "output": "True\nFalse\n<class 'bool'>",
+      "caption": "Booleans are their own type in Python, called bool."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Capitalization matters!",
+      "md": "Python is case-sensitive. `True` works, but `true` will throw a `NameError`. Always capitalize the T and F when writing boolean values."
+    },
+    {
+      "type": "heading",
+      "text": "Comparisons Produce Booleans"
+    },
+    {
+      "type": "text",
+      "md": "You rarely type `True` or `False` directly. Instead, you write a **comparison**, and Python figures out the boolean for you. Comparisons use operators like `==` (equal to), `!=` (not equal), `>`, `<`, `>=`, and `<=`."
+    },
+    {
+      "type": "code",
+      "code": "age = 20\n\nprint(age == 20)   # Is age exactly 20?\nprint(age > 18)    # Is age greater than 18?\nprint(age < 18)    # Is age less than 18?\nprint(age != 30)   # Is age not equal to 30?",
+      "output": "True\nTrue\nFalse\nTrue",
+      "caption": "Each comparison evaluates to either True or False."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "== vs =",
+      "md": "Think of `=` as putting something in a box (assignment), and `==` as asking \"are these the same?\" (comparison). `age = 20` stores the number. `age == 20` asks a yes-or-no question."
+    },
+    {
+      "type": "heading",
+      "text": "Truthy and Falsy Values"
+    },
+    {
+      "type": "text",
+      "md": "Here is something surprising: **every value in Python can act like a boolean**, even if it is not actually `True` or `False`. Python calls this being **truthy** or **falsy**. When Python needs a yes/no answer, it will treat certain values as false automatically."
+    },
+    {
+      "type": "text",
+      "md": "Values that are **falsy** (act like `False`):\n- `False` itself\n- `0` (the number zero)\n- `\"\"` (an empty string)\n- `[]` (an empty list)\n- `{}` (an empty dictionary)\n- `None` (more on this shortly)\n\nPretty much **everything else is truthy** — a non-zero number, a non-empty string, a list with items, etc."
+    },
+    {
+      "type": "code",
+      "code": "print(bool(0))      # zero is falsy\nprint(bool(42))     # non-zero is truthy\nprint(bool(\"\"))     # empty string is falsy\nprint(bool(\"hi\"))   # non-empty string is truthy\nprint(bool([]))     # empty list is falsy\nprint(bool([1, 2])) # non-empty list is truthy",
+      "output": "False\nTrue\nFalse\nTrue\nFalse\nTrue",
+      "caption": "bool() converts any value to its True/False equivalent."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Why does this matter?",
+      "md": "Truthy and falsy values let you write shorter, more readable conditions. Instead of `if len(my_list) > 0:` you can just write `if my_list:` — Python handles the check for you."
+    },
+    {
+      "type": "heading",
+      "text": "None: The Absence of a Value"
+    },
+    {
+      "type": "text",
+      "md": "`None` is Python's way of saying **\"there is nothing here\"**. It is not zero, not an empty string — it is the complete absence of a value. You will see it when a function does not explicitly return anything, or when you want to signal that a variable has not been set yet."
+    },
+    {
+      "type": "code",
+      "code": "result = None\nprint(result)\nprint(type(result))",
+      "output": "None\n<class 'NoneType'>",
+      "caption": "None has its own special type called NoneType."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name):\n    print(\"Hello, \" + name)\n\nreturn_value = greet(\"Ada\")\nprint(return_value)",
+      "output": "Hello, Ada\nNone",
+      "caption": "Functions that don't return a value implicitly return None."
+    },
+    {
+      "type": "heading",
+      "text": "Checking for None with `is`"
+    },
+    {
+      "type": "text",
+      "md": "To check if a variable is `None`, use the keyword `is` rather than `==`. This is the Python convention, and it is more precise. `is` checks that two things are the exact same object in memory — and since there is only ever one `None` in Python, this is the right tool."
+    },
+    {
+      "type": "code",
+      "code": "user_input = None\n\nif user_input is None:\n    print(\"No input provided yet.\")\nelse:\n    print(\"Got input:\", user_input)",
+      "output": "No input provided yet.",
+      "caption": "Use `is None` to check for the absence of a value."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Avoid == None",
+      "md": "While `value == None` often works, the Python community strongly prefers `value is None`. Some custom objects can override `==` in unexpected ways, making `is None` safer and clearer."
+    },
+    {
+      "type": "heading",
+      "text": "Booleans Are Really 1 and 0"
+    },
+    {
+      "type": "text",
+      "md": "Here is a fun peek under the hood: Python's `True` and `False` are actually secretly the numbers `1` and `0`. This means you can do arithmetic with them! It is not something you do every day, but it explains a lot about how Python works internally."
+    },
+    {
+      "type": "code",
+      "code": "print(True + True)   # 1 + 1\nprint(True + False)  # 1 + 0\nprint(False * 100)   # 0 * 100\nprint(int(True))     # converts to integer\nprint(int(False))",
+      "output": "2\n1\n0\n1\n0",
+      "caption": "True equals 1 and False equals 0 under the hood."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "bool is a subtype of int",
+      "md": "Technically, `bool` inherits from `int` in Python. That is why `isinstance(True, int)` returns `True`. This is a quirk of Python's history — but in everyday code, treat `True` and `False` as booleans, not numbers."
+    },
+    {
+      "type": "quiz",
+      "question": "What does `bool(\"\")` return?",
+      "options": [
+        "True, because the variable exists",
+        "False, because an empty string is falsy",
+        "None, because there is no content",
+        "An error, because strings cannot be converted to bool"
+      ],
+      "answerIndex": 1,
+      "explanation": "An empty string `\"\"` is one of Python's falsy values. `bool(\"\")` returns `False`. Any non-empty string like `\"hi\"` would return `True`."
+    }
+  ],
+  "keyTakeaways": [
+    "`True` and `False` must be capitalized — `true` and `false` are not valid Python.",
+    "Comparisons like `==`, `>`, and `!=` always produce a boolean result.",
+    "Many values are truthy or falsy — `0`, `\"\"`, `[]`, `{}`, and `None` all act like `False`.",
+    "`None` means \"no value\" and should be checked with `is None`, not `== None`.",
+    "Under the hood, `True` is `1` and `False` is `0` — booleans are a special kind of integer."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `describe_value` that takes any single argument and prints: \"Truthy\" if the value is truthy, or \"Falsy\" if it is falsy. Then call it with at least four different values — try things like `0`, `\"hello\"`, `[]`, and `None` — and observe the output.",
+    "starterCode": "def describe_value(val):\n    # Your code here\n    pass\n\ndescribe_value(0)\ndescribe_value(\"hello\")\ndescribe_value([])\ndescribe_value(None)",
+    "hint": "Use `if val:` to check if something is truthy. Remember, Python will automatically treat the value as True or False inside an if statement.",
+    "solution": "def describe_value(val):\n    if val:\n        print(\"Truthy\")\n    else:\n        print(\"Falsy\")\n\ndescribe_value(0)       # Falsy\ndescribe_value(\"hello\") # Truthy\ndescribe_value([])      # Falsy\ndescribe_value(None)    # Falsy"
+  }
+}

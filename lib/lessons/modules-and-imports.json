@@ -1,0 +1,160 @@
+{
+  "slug": "modules-and-imports",
+  "title": "Modules & import",
+  "emoji": "📦",
+  "category": "Modules & Packages",
+  "difficulty": "Beginner",
+  "summary": "Learn how to use Python's built-in modules, import exactly what you need, create your own reusable module, and understand the special __name__ guard.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are baking a cake. You do not grow your own wheat or churn your own butter — you grab ingredients from the pantry. Python modules work the same way. A **module** is a file of ready-made code you can pull into your program so you do not have to write everything from scratch. Python ships with a huge pantry of modules called the **standard library**, and you can also create your own."
+    },
+    {
+      "type": "heading",
+      "text": "What is a module?"
+    },
+    {
+      "type": "text",
+      "md": "A module is simply a **`.py` file** that contains functions, variables, or classes. When you `import` it, Python runs that file and makes everything inside available to you. That is all there is to it — no magic involved."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The toolbox analogy",
+      "md": "Think of a module as a **toolbox**. The `math` module is a toolbox full of mathematical tools. You import the toolbox once, then reach in and grab any tool you need — `math.sqrt`, `math.pi`, `math.floor`, and so on."
+    },
+    {
+      "type": "heading",
+      "text": "import math"
+    },
+    {
+      "type": "text",
+      "md": "The simplest way to use a module is to `import` it by name. After that you access its contents using a **dot** — like `math.sqrt(25)`. The dot is like saying \"from the math toolbox, give me sqrt\"."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\nresult = math.sqrt(25)\nprint(result)\n\nprint(math.pi)\nprint(math.floor(3.9))",
+      "output": "5.0\n3.141592653589793\n3",
+      "caption": "Importing the whole math module and using a few of its tools"
+    },
+    {
+      "type": "heading",
+      "text": "from ... import — grab just what you need"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you only need one or two tools from a module. You can import them **directly** so you do not have to type the module name every time. Use the `from ... import` form:"
+    },
+    {
+      "type": "code",
+      "code": "from math import sqrt, pi\n\nprint(sqrt(49))\nprint(pi)",
+      "output": "7.0\n3.141592653589793",
+      "caption": "Importing sqrt and pi directly — no 'math.' prefix needed"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Which style should you use?",
+      "md": "Use `import math` (the whole module) when you use many things from it. Use `from math import sqrt` when you only need one or two specific things. Both are perfectly fine — it is a style choice."
+    },
+    {
+      "type": "heading",
+      "text": "import ... as — giving a module a nickname"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a module name is long or clashes with a name you already have. You can give it a **short alias** using `as`. This is very common with popular libraries like `numpy` (aliased as `np`) or `pandas` (aliased as `pd`)."
+    },
+    {
+      "type": "code",
+      "code": "import math as m\n\nprint(m.sqrt(16))\nprint(m.ceil(2.1))",
+      "output": "4.0\n3",
+      "caption": "Using 'as' to create a shorter alias for math"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Do not overwrite built-in names",
+      "md": "Avoid naming your own variables or files after built-in modules. If you create a file called `math.py` in your project, Python will import **your file** instead of the real `math` module, causing confusing errors. The same goes for names like `random.py`, `os.py`, or `json.py`."
+    },
+    {
+      "type": "heading",
+      "text": "Creating your own module"
+    },
+    {
+      "type": "text",
+      "md": "Any `.py` file you write is a module. Put reusable functions in one file, then import them into another. Here is a tiny example. Suppose you have two files side by side:\n\n- `greetings.py` — your custom module\n- `main.py` — your main program"
+    },
+    {
+      "type": "code",
+      "code": "# greetings.py\n\ndef hello(name):\n    return f\"Hello, {name}!\"\n\ndef goodbye(name):\n    return f\"Goodbye, {name}. See you soon!\"",
+      "caption": "greetings.py — a simple module with two functions"
+    },
+    {
+      "type": "code",
+      "code": "# main.py\n\nimport greetings\n\nprint(greetings.hello(\"Alice\"))\nprint(greetings.goodbye(\"Bob\"))",
+      "output": "Hello, Alice!\nGoodbye, Bob. See you soon!",
+      "caption": "main.py — importing and using the greetings module"
+    },
+    {
+      "type": "heading",
+      "text": "The if __name__ == \"__main__\" guard"
+    },
+    {
+      "type": "text",
+      "md": "Here is something that trips up almost every beginner. When Python **imports** a module, it runs all the code at the top level of that file. If your module has test prints or function calls at the top level, they will run every time someone imports it — which is almost never what you want.\n\nThe fix is a special guard:"
+    },
+    {
+      "type": "code",
+      "code": "# greetings.py\n\ndef hello(name):\n    return f\"Hello, {name}!\"\n\nif __name__ == \"__main__\":\n    # This only runs when you execute this file directly.\n    # It does NOT run when someone imports greetings.\n    print(hello(\"World\"))",
+      "output": "Hello, World!",
+      "caption": "The guard keeps test code from running on import"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "How does __name__ work?",
+      "md": "Every Python file has a built-in variable called `__name__`. When you **run** a file directly (`python greetings.py`), Python sets `__name__` to the string `\"__main__\"`. When a file is **imported**, `__name__` is set to the module's filename (e.g. `\"greetings\"`). The guard checks which situation you are in."
+    },
+    {
+      "type": "heading",
+      "text": "Where does Python look for modules?"
+    },
+    {
+      "type": "text",
+      "md": "When you write `import greetings`, Python searches for it in this order:\n\n- **Your current directory** — the folder where your script lives\n- **Installed packages** — things you installed with `pip`\n- **The standard library** — Python's built-in modules like `math` and `random`\n\nYou can see the full search path by printing `sys.path`:"
+    },
+    {
+      "type": "code",
+      "code": "import sys\n\nfor path in sys.path:\n    print(path)",
+      "caption": "sys.path shows where Python searches for modules (output varies by system)"
+    },
+    {
+      "type": "quiz",
+      "question": "You have a file called utils.py with a function called add(). Which line correctly imports ONLY the add function so you can call it as add(2, 3)?",
+      "options": [
+        "import utils.add",
+        "from utils import add",
+        "import add from utils",
+        "from add import utils"
+      ],
+      "answerIndex": 1,
+      "explanation": "The correct syntax is 'from <module> import <name>'. This brings add directly into your namespace so you can call add(2, 3) without the 'utils.' prefix."
+    }
+  ],
+  "keyTakeaways": [
+    "A module is just a .py file — any file you write is automatically a module.",
+    "Use `import math` to import a whole module, or `from math import sqrt` to grab one specific item.",
+    "Give long module names a short alias with `import numpy as np`.",
+    "Wrap code you only want to run directly (not on import) in an `if __name__ == \"__main__\":` guard.",
+    "Python searches your current folder first, then installed packages, then the standard library."
+  ],
+  "exercise": {
+    "prompt": "Create a module called calculator.py that contains four functions: add(a, b), subtract(a, b), multiply(a, b), and divide(a, b). The divide function should return the string 'Cannot divide by zero' if b is 0. Add an if __name__ == '__main__': block that tests each function and prints the results. Then, in a separate file main.py, import only add and multiply from calculator and print their results.",
+    "starterCode": "# calculator.py\n\ndef add(a, b):\n    pass  # replace with your code\n\ndef subtract(a, b):\n    pass\n\ndef multiply(a, b):\n    pass\n\ndef divide(a, b):\n    pass\n\nif __name__ == \"__main__\":\n    pass  # test your functions here",
+    "hint": "For divide, use an if statement: if b == 0: return 'Cannot divide by zero'. Otherwise return a / b. In main.py use: from calculator import add, multiply",
+    "solution": "# calculator.py\n\ndef add(a, b):\n    return a + b\n\ndef subtract(a, b):\n    return a - b\n\ndef multiply(a, b):\n    return a * b\n\ndef divide(a, b):\n    if b == 0:\n        return \"Cannot divide by zero\"\n    return a / b\n\nif __name__ == \"__main__\":\n    print(add(10, 5))       # 15\n    print(subtract(10, 5))  # 5\n    print(multiply(10, 5))  # 50\n    print(divide(10, 5))    # 2.0\n    print(divide(10, 0))    # Cannot divide by zero\n\n# main.py\n\nfrom calculator import add, multiply\n\nprint(add(3, 4))       # 7\nprint(multiply(3, 4))  # 12"
+  }
+}

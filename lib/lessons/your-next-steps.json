@@ -1,0 +1,137 @@
+{
+  "slug": "your-next-steps",
+  "title": "Your Next Steps",
+  "emoji": "🎓",
+  "category": "Where To Go Next",
+  "difficulty": "Beginner",
+  "summary": "You know the fundamentals — now discover how to keep growing by building real projects, reading great code, and joining a community that will cheer you on.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You made it. Seriously — stop for a moment and recognize that. You started from zero and learned how Python thinks: variables, loops, functions, conditionals, lists, dictionaries, and more. That is a genuinely big deal.\n\nNow comes the most exciting part: **using what you know to build real things**. This lesson is a map for what to do next so you never feel lost or stuck."
+    },
+    {
+      "type": "heading",
+      "text": "The Secret to Getting Better"
+    },
+    {
+      "type": "text",
+      "md": "Reading about coding makes you a better reader. **Building things makes you a better programmer.**\n\nThe best next step is always: pick a small project that interests you, start it, and finish it — even if it is messy. Every bug you fight teaches you more than any tutorial. Every feature you ship gives you real confidence."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Learning to cook vs. watching cooking shows",
+      "md": "You can watch a thousand cooking videos and still burn your first omelette. The only way to actually learn to cook is to stand at the stove. Programming is exactly the same. Read a little, then **build a lot**."
+    },
+    {
+      "type": "heading",
+      "text": "Project Ideas by Interest"
+    },
+    {
+      "type": "text",
+      "md": "You do not need a brilliant idea. You need *a* idea. Here are real beginner projects grouped by what excites you:\n\n**Automation (\"make my computer do boring things\"):**\n- A script that renames hundreds of files at once\n- A script that reads your downloads folder and sorts files into folders by type\n- A script that sends you a daily weather summary by email\n\n**Data & Numbers:**\n- Load a CSV of your monthly spending and calculate totals per category\n- Fetch stock prices from a free API and plot them with `matplotlib`\n- Analyse the most common words in your favourite book\n\n**Games:**\n- A text-based number guessing game (you already know enough!)\n- Rock, paper, scissors against the computer\n- A simple quiz game that reads questions from a file\n\n**Web & Bots:**\n- A tiny web app that converts temperatures (use the `flask` library)\n- A Discord or Telegram bot that replies to messages\n- A web scraper that tracks prices on a shopping site\n\nPick **one**. Start **today**."
+    },
+    {
+      "type": "heading",
+      "text": "A Taste: Your First Mini-Project"
+    },
+    {
+      "type": "text",
+      "md": "Here is a complete, working \"number guessing game\" — built entirely from what you already know. Read it slowly. You will recognise every single line."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\nsecret = random.randint(1, 100)\nguesses = 0\n\nprint(\"I'm thinking of a number between 1 and 100!\")\n\nwhile True:\n    guess = int(input(\"Your guess: \"))\n    guesses += 1\n\n    if guess < secret:\n        print(\"Too low! Try higher.\")\n    elif guess > secret:\n        print(\"Too high! Try lower.\")\n    else:\n        print(f\"Correct! You got it in {guesses} guesses.\")\n        break",
+      "caption": "A complete mini-game — all concepts you already know."
+    },
+    {
+      "type": "text",
+      "md": "See? You can already build something fun. The next step is simply to make it more interesting: add a high-score tracker, limit guesses to 10, or let the player choose the difficulty."
+    },
+    {
+      "type": "heading",
+      "text": "Read Other People's Code"
+    },
+    {
+      "type": "text",
+      "md": "One of the fastest ways to improve is to **read code written by others**.\n\n- Browse [GitHub](https://github.com) and search for topics you care about — filter by Python\n- Look at the source code of libraries you use (most are open source)\n- When you find a snippet you do not understand, paste it into a Python file and experiment with it\n\nReading code is like reading novels: the more you read, the better your own writing becomes."
+    },
+    {
+      "type": "heading",
+      "text": "How to Use the Official Docs"
+    },
+    {
+      "type": "text",
+      "md": "The [Python documentation](https://docs.python.org/3/) can look overwhelming at first. Here is how beginners actually use it:\n\n1. **Search for what you need** — e.g. \"python list sort\" or \"python read file\"\n2. Skim the examples first, then read the explanation\n3. Try the examples yourself in a Python file or the REPL\n\nYou do not need to read the docs cover-to-cover. Think of them as a dictionary — you look up the word you need, not every word."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The REPL is your best friend",
+      "md": "Open a terminal and type `python3` to start an interactive session. You can test any idea instantly — no file needed. It is perfect for experimenting with a new function or checking how something behaves."
+    },
+    {
+      "type": "heading",
+      "text": "Habits That Separate Good Programmers"
+    },
+    {
+      "type": "text",
+      "md": "You do not need to code for eight hours a day. Consistency matters far more than marathon sessions:\n\n- **30 minutes a day beats 4 hours on Saturday** — daily practice builds real habit\n- **Commit your work to Git** — even small personal projects benefit from version history\n- **Write code, get stuck, search for help, solve it** — this cycle is normal, not a sign of failure\n- **Celebrate small wins** — every feature that works is worth acknowledging"
+    },
+    {
+      "type": "code",
+      "code": "# A good daily habit: keep a tiny \"learning log\"\n# Open this file each session, add one line about what you learned\n\nwith open(\"learning_log.txt\", \"a\") as log:\n    entry = input(\"What did you learn or build today? \")\n    log.write(entry + \"\\n\")\n\nprint(\"Logged! Keep going.\")",
+      "output": "What did you learn or build today? I built the number guessing game!\nLogged! Keep going.",
+      "caption": "A 6-line script to track your progress — try it right now."
+    },
+    {
+      "type": "heading",
+      "text": "Communities Where You Belong"
+    },
+    {
+      "type": "text",
+      "md": "Programming feels less lonely when you learn alongside others. Great places to connect:\n\n- **r/learnpython** on Reddit — friendly community specifically for beginners, questions always welcome\n- **Python Discord** — real-time chat with thousands of Pythonistas at every level\n- **Stack Overflow** — search for error messages and questions; millions of answers already exist\n- **Local meetups** — search \"Python meetup [your city]\" on Meetup.com\n\nDo not be afraid to ask beginner questions anywhere. Everyone started at zero."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Tutorial purgatory is a real trap",
+      "md": "Many beginners keep taking course after course without ever building anything. If you find yourself thinking \"I'll start my project once I know just a little more\" — that feeling never goes away on its own. **Start the project now**, with imperfect knowledge. That is exactly how every professional did it."
+    },
+    {
+      "type": "heading",
+      "text": "What You Already Know"
+    },
+    {
+      "type": "text",
+      "md": "Here is a quick reminder of the foundation you have built:\n\n- **Variables & data types** — storing and working with information\n- **Conditionals** — making decisions with `if`, `elif`, `else`\n- **Loops** — repeating actions with `for` and `while`\n- **Functions** — packaging logic so you can reuse it\n- **Lists & dictionaries** — organising collections of data\n- **File I/O** — reading and writing real files\n- **Importing modules** — using Python's vast standard library\n\nThat is not \"a little\" knowledge. That is **the core of programming**. Almost every Python program in the world is built from exactly those concepts."
+    },
+    {
+      "type": "quiz",
+      "question": "Which habit will help you improve the most as a beginner programmer?",
+      "options": [
+        "Watching as many tutorial videos as possible before writing any code",
+        "Building small real projects regularly, even with imperfect knowledge",
+        "Memorising the entire Python documentation before starting",
+        "Waiting until you feel fully ready to tackle a big project"
+      ],
+      "answerIndex": 1,
+      "explanation": "Building things — even small, messy things — is the single fastest way to improve. Tutorials and docs are great support tools, but actual hands-on building is where real learning happens. Start small, finish it, then start something slightly bigger."
+    }
+  ],
+  "keyTakeaways": [
+    "You already know the fundamentals — every real Python project is built from exactly what you have learned.",
+    "Building beats reading: pick one small project today and start it, even if you feel unready.",
+    "Read other people's code on GitHub to absorb patterns and style naturally.",
+    "Consistent short sessions (30 min/day) beat rare marathon sessions every time.",
+    "Communities like r/learnpython and Python Discord welcome beginners — ask questions freely."
+  ],
+  "exercise": {
+    "prompt": "Build a personal \"goal tracker\" script. When you run it, it asks for a goal you want to achieve. It saves the goal to a file called `goals.txt` along with today's date. Then it reads the file and prints all the goals you have set so far. Run it a few times to add multiple goals.",
+    "starterCode": "# Hint: you will need to import the datetime module\n# and use open() in both 'a' (append) and 'r' (read) modes\n\nfrom datetime import date\n\n# Your code here\n",
+    "hint": "Use `date.today()` to get today's date. Open the file with mode `'a'` to add a new goal without erasing old ones. Then open it with mode `'r'` to read all goals back and print them one by one.",
+    "solution": "from datetime import date\n\n# Add a new goal\ngoal = input(\"What is a goal you want to achieve? \")\ntoday = date.today()\n\nwith open(\"goals.txt\", \"a\") as f:\n    f.write(f\"{today}: {goal}\\n\")\n\nprint(\"\\nGoal saved! Here are all your goals so far:\\n\")\n\n# Read and display all goals\nwith open(\"goals.txt\", \"r\") as f:\n    for line in f:\n        print(\"-\", line.strip())"
+  }
+}

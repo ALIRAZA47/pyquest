@@ -1,0 +1,188 @@
+{
+  "slug": "lists",
+  "title": "Lists",
+  "emoji": "📋",
+  "category": "Data Structures",
+  "difficulty": "Beginner",
+  "summary": "Learn how to store and manage collections of things in Python using lists — one of the most useful tools in any programmer's toolkit.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're writing a grocery list on paper. You jot down items one after another, you can add more at the bottom, cross things out, or reorder them. Python's **list** works exactly the same way — it's an ordered collection of items you can change whenever you like.\n\nLists are everywhere in real programs: a playlist of songs, a queue of tasks, a table of scores. Once you understand lists, a huge range of programming problems become easy to solve."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a List"
+    },
+    {
+      "type": "text",
+      "md": "You create a list with square brackets `[]`, separating items with commas. Lists can hold **any type** of value — numbers, strings, booleans, even other lists — and they can mix types freely."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\nscores = [98, 72, 85, 60]\nmixed = [\"hello\", 42, True, 3.14]\nempty = []\n\nprint(fruits)\nprint(mixed)",
+      "output": "['apple', 'banana', 'cherry']\n['hello', 42, True, 3.14]",
+      "caption": "Lists can hold any types, even mixed together"
+    },
+    {
+      "type": "heading",
+      "text": "Indexing and Slicing"
+    },
+    {
+      "type": "text",
+      "md": "Each item in a list has a **position number** called an index. Python starts counting from **0**, not 1. So the first item is at index `0`, the second at `1`, and so on.\n\nYou can also count from the end using **negative indexes**: `-1` is the last item, `-2` is second-to-last, etc.\n\n**Slicing** lets you grab a range of items using `list[start:stop]` — it returns everything from `start` up to (but not including) `stop`."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\", \"date\"]\n\nprint(fruits[0])    # first item\nprint(fruits[2])    # third item\nprint(fruits[-1])   # last item\nprint(fruits[1:3])  # slice: items at index 1 and 2",
+      "output": "apple\ncherry\ndate\n['banana', 'cherry']",
+      "caption": "Indexing picks one item; slicing picks a range"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Index 0, not 1!",
+      "md": "A very common beginner mistake is reaching for index `1` when you want the **first** item. Remember: Python lists start at `0`. If you try `fruits[4]` on a 4-item list, Python throws an `IndexError` — there is no index 4 when the last index is 3."
+    },
+    {
+      "type": "heading",
+      "text": "Changing Items"
+    },
+    {
+      "type": "text",
+      "md": "Lists are **mutable** — that's a fancy word for \"changeable\". You can replace any item by assigning to its index directly."
+    },
+    {
+      "type": "code",
+      "code": "colors = [\"red\", \"green\", \"blue\"]\nprint(colors)\n\ncolors[1] = \"yellow\"   # replace \"green\" with \"yellow\"\nprint(colors)",
+      "output": "['red', 'green', 'blue']\n['red', 'yellow', 'blue']",
+      "caption": "Assigning to an index changes that item in place"
+    },
+    {
+      "type": "heading",
+      "text": "Useful List Methods"
+    },
+    {
+      "type": "text",
+      "md": "Python lists come with built-in **methods** — actions you can call on a list using dot notation (`my_list.method()`). Here are the most important ones:\n\n- `append(item)` — add one item to the **end**\n- `insert(index, item)` — add an item at a specific position\n- `remove(item)` — remove the **first** occurrence of a value\n- `pop(index)` — remove and **return** the item at a position (default: last)\n- `extend(other_list)` — add all items from another list to the end\n- `sort()` — sort the list **in place** (modifies the original)\n- `reverse()` — reverse the order **in place**\n- `count(item)` — count how many times a value appears\n- `index(item)` — find the position of the first occurrence of a value"
+    },
+    {
+      "type": "code",
+      "code": "nums = [3, 1, 4, 1, 5]\n\nnums.append(9)\nprint(\"append:\", nums)\n\nnums.insert(2, 99)\nprint(\"insert at 2:\", nums)\n\nnums.remove(1)        # removes first 1\nprint(\"remove first 1:\", nums)\n\npopped = nums.pop()   # removes last item\nprint(\"popped:\", popped, \"| list now:\", nums)\n\nprint(\"count of 1:\", nums.count(1))",
+      "output": "append: [3, 1, 4, 1, 5, 9]\ninsert at 2: [3, 1, 99, 4, 1, 5, 9]\nremove first 1: [3, 99, 4, 1, 5, 9]\npopped: 9 | list now: [3, 99, 4, 1, 5]\ncount of 1: 1",
+      "caption": "Common list methods in action"
+    },
+    {
+      "type": "code",
+      "code": "letters = [\"c\", \"a\", \"b\"]\nletters.sort()\nprint(\"sorted in place:\", letters)\n\nletters.reverse()\nprint(\"reversed:\", letters)\n\nmore = [\"d\", \"e\"]\nletters.extend(more)\nprint(\"extended:\", letters)",
+      "output": "sorted in place: ['a', 'b', 'c']\nreversed: ['c', 'b', 'a']\nextended: ['c', 'b', 'a', 'd', 'e']",
+      "caption": "sort(), reverse(), and extend() all modify the list in place"
+    },
+    {
+      "type": "heading",
+      "text": "len() and the in Operator"
+    },
+    {
+      "type": "text",
+      "md": "Two quick but essential tools:\n\n- `len(my_list)` tells you how many items are in the list.\n- `item in my_list` checks whether a value exists anywhere in the list — it gives back `True` or `False`."
+    },
+    {
+      "type": "code",
+      "code": "animals = [\"cat\", \"dog\", \"rabbit\"]\n\nprint(len(animals))\nprint(\"dog\" in animals)\nprint(\"fish\" in animals)",
+      "output": "3\nTrue\nFalse",
+      "caption": "len() counts items; 'in' checks membership"
+    },
+    {
+      "type": "heading",
+      "text": "Looping Through a List"
+    },
+    {
+      "type": "text",
+      "md": "One of the most common things you'll do with a list is visit each item one by one. Python's `for` loop makes this effortless."
+    },
+    {
+      "type": "code",
+      "code": "tasks = [\"wash dishes\", \"buy milk\", \"call mom\"]\n\nfor task in tasks:\n    print(\"TODO:\", task)",
+      "output": "TODO: wash dishes\nTODO: buy milk\nTODO: call mom",
+      "caption": "for loops let you process every item in a list"
+    },
+    {
+      "type": "heading",
+      "text": "sorted() vs .sort()"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "sorted() returns a new list; .sort() changes the original",
+      "md": "Use `sorted(my_list)` when you want a **new** sorted list and need to keep the original untouched. Use `my_list.sort()` when you want to sort **in place** and don't need the original order anymore. This small distinction prevents tricky bugs."
+    },
+    {
+      "type": "code",
+      "code": "scores = [5, 2, 8, 1]\n\nnew_order = sorted(scores)   # original unchanged\nprint(\"original:\", scores)\nprint(\"sorted copy:\", new_order)\n\nscores.sort()                # modifies in place\nprint(\"after .sort():\", scores)",
+      "output": "original: [5, 2, 8, 1]\nsorted copy: [1, 2, 5, 8]\nafter .sort(): [1, 2, 5, 8]",
+      "caption": "sorted() vs .sort() — know which one you need"
+    },
+    {
+      "type": "heading",
+      "text": "Nested Lists"
+    },
+    {
+      "type": "text",
+      "md": "A list can contain other lists as items. This is called a **nested list** and is useful for representing things like a grid, a table of data, or a matrix. You access inner items by chaining indexes."
+    },
+    {
+      "type": "code",
+      "code": "grid = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nprint(grid[0])       # first row\nprint(grid[1][2])    # row 1, column 2",
+      "output": "[1, 2, 3]\n6",
+      "caption": "Nested lists — index twice to reach an inner item"
+    },
+    {
+      "type": "heading",
+      "text": "The Copy Gotcha"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Assigning a list does NOT copy it",
+      "md": "When you write `b = a`, both `a` and `b` point to the **same** list in memory. Changing `b` also changes `a`! This is called **aliasing** and surprises almost every beginner at least once.\n\nTo make a true independent copy, use `b = a.copy()` or `b = a[:]`."
+    },
+    {
+      "type": "code",
+      "code": "a = [1, 2, 3]\nb = a          # b is NOT a copy — it's the same list!\nb.append(99)\nprint(\"a:\", a)  # a is also changed!\n\nc = a.copy()   # real copy\nc.append(42)\nprint(\"a after copy change:\", a)  # a is safe now",
+      "output": "a: [1, 2, 3, 99]\na after copy change: [1, 2, 3, 99]",
+      "caption": "Use .copy() to avoid accidentally sharing a list"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Lists are like a whiteboard",
+      "md": "Think of a list as a **shared whiteboard**. If two people have the same whiteboard, when one person erases something, it's gone for both. `.copy()` is like taking a **photo** of the whiteboard — changes to the photo don't affect the original."
+    },
+    {
+      "type": "quiz",
+      "question": "What does this code print?\n\n```python\nitems = [\"a\", \"b\", \"c\", \"d\"]\nprint(items[-2])\n```",
+      "options": [
+        "\"b\"",
+        "\"c\"",
+        "\"d\"",
+        "An IndexError"
+      ],
+      "answerIndex": 1,
+      "explanation": "Negative indexes count from the end. `-1` is the last item (`\"d\"`), so `-2` is the second-to-last item, which is `\"c\"`."
+    }
+  ],
+  "keyTakeaways": [
+    "Lists store ordered, changeable collections of any values — even mixed types.",
+    "Indexing starts at 0; use negative indexes to count from the end.",
+    "Methods like append, remove, sort, and pop let you modify lists in place.",
+    "Use sorted() for a new sorted copy; use .sort() to sort the original.",
+    "Assigning one list to another variable does NOT copy it — use .copy() to get an independent list."
+  ],
+  "exercise": {
+    "prompt": "Create a list called `wishlist` with at least 3 items (strings of things you'd like). Then: (1) print the first and last items using indexing, (2) add a new item with append(), (3) sort the list alphabetically and print it, (4) print how many items are in the list using len().",
+    "starterCode": "wishlist = [\"...\", \"...\", \"...\"]\n\n# 1. Print first and last items\n\n# 2. Add a new item\n\n# 3. Sort and print\n\n# 4. Print the count",
+    "hint": "Remember: the first item is at index 0, and the last is at index -1. Use wishlist.sort() to sort in place, then print(wishlist). Use len(wishlist) to count items.",
+    "solution": "wishlist = [\"guitar\", \"laptop\", \"telescope\"]\n\n# 1. Print first and last items\nprint(wishlist[0])\nprint(wishlist[-1])\n\n# 2. Add a new item\nwishlist.append(\"backpack\")\n\n# 3. Sort and print\nwishlist.sort()\nprint(wishlist)\n\n# 4. Print the count\nprint(len(wishlist))"
+  }
+}

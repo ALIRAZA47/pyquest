@@ -1,0 +1,182 @@
+{
+  "slug": "for-loops",
+  "title": "for Loops",
+  "emoji": "🔁",
+  "category": "Control Flow",
+  "difficulty": "Beginner",
+  "summary": "Learn how to repeat actions over lists, strings, and ranges using Python's for loop — the workhorse of everyday Python code.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you have a grocery list with 10 items, and you need to read each one aloud. You wouldn't write 10 separate instructions — you'd just say \"go through the list, one item at a time.\" That's exactly what a **for loop** does in Python.\n\nA `for` loop lets you visit every item in a collection and do something with it. It's one of the most useful things you'll ever learn in programming."
+    },
+    {
+      "type": "heading",
+      "text": "Your First for Loop"
+    },
+    {
+      "type": "text",
+      "md": "The basic structure is: `for item in collection:` followed by indented code. Python will run that indented code once for each item, automatically moving to the next one each time."
+    },
+    {
+      "type": "code",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor fruit in fruits:\n    print(fruit)",
+      "output": "apple\nbanana\ncherry",
+      "caption": "The loop visits each item in the list, one at a time."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a for loop like a conveyor belt",
+      "md": "Picture a conveyor belt at a supermarket checkout. Each item slides up to you one at a time. You scan it, then it moves on and the next item arrives. The `for` loop is Python's conveyor belt — it hands you each item in the collection, one by one, until there are none left."
+    },
+    {
+      "type": "heading",
+      "text": "The Loop Variable"
+    },
+    {
+      "type": "text",
+      "md": "The word between `for` and `in` is called the **loop variable**. It holds the current item on each pass through the loop. You can name it anything — but a descriptive name (like `fruit` for a list of fruits) makes your code much easier to read.\n\nThe loop variable changes automatically each time — you never have to update it yourself."
+    },
+    {
+      "type": "code",
+      "code": "temperatures = [72, 68, 75, 80, 65]\n\nfor temp in temperatures:\n    if temp > 73:\n        print(temp, \"is warm\")\n    else:\n        print(temp, \"is cool\")",
+      "output": "72 is cool\n68 is cool\n75 is warm\n80 is warm\n65 is cool",
+      "caption": "You can use the loop variable in any expression inside the loop."
+    },
+    {
+      "type": "heading",
+      "text": "Looping Over a String"
+    },
+    {
+      "type": "text",
+      "md": "A string is just a sequence of characters. You can loop over it the same way you loop over a list — Python will hand you one character at a time."
+    },
+    {
+      "type": "code",
+      "code": "word = \"hello\"\n\nfor letter in word:\n    print(letter)",
+      "output": "h\ne\nl\nl\no",
+      "caption": "Each character in the string gets its own loop iteration."
+    },
+    {
+      "type": "heading",
+      "text": "Counting with range()"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you just want to repeat something a set number of times, or count through numbers. The built-in `range()` function creates a sequence of numbers for you to loop over.\n\n- `range(stop)` — counts from 0 up to (but not including) `stop`\n- `range(start, stop)` — counts from `start` up to (but not including) `stop`\n- `range(start, stop, step)` — counts from `start` to `stop`, jumping by `step`"
+    },
+    {
+      "type": "code",
+      "code": "# Count from 0 to 4\nfor i in range(5):\n    print(i)",
+      "output": "0\n1\n2\n3\n4",
+      "caption": "range(5) gives you 0, 1, 2, 3, 4 — five numbers starting from zero."
+    },
+    {
+      "type": "code",
+      "code": "# Count from 1 to 5\nfor i in range(1, 6):\n    print(i)",
+      "output": "1\n2\n3\n4\n5",
+      "caption": "range(1, 6) starts at 1 and stops before 6."
+    },
+    {
+      "type": "code",
+      "code": "# Count by twos\nfor i in range(0, 10, 2):\n    print(i)",
+      "output": "0\n2\n4\n6\n8",
+      "caption": "The third argument is the step — how much to jump each time."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "range() stops BEFORE the end number",
+      "md": "A very common beginner mistake: `range(5)` gives you `0, 1, 2, 3, 4` — **not** `0, 1, 2, 3, 4, 5`. The stop value is always excluded. If you want to include `5`, write `range(6)` or `range(1, 6)`."
+    },
+    {
+      "type": "heading",
+      "text": "Building Results in a Loop"
+    },
+    {
+      "type": "text",
+      "md": "One of the most powerful patterns in programming is **accumulating** a result inside a loop. You start with an empty container (or zero), and add to it with each pass through the loop."
+    },
+    {
+      "type": "code",
+      "code": "numbers = [3, 7, 2, 9, 4]\ntotal = 0\n\nfor num in numbers:\n    total = total + num\n\nprint(\"Sum:\", total)",
+      "output": "Sum: 25",
+      "caption": "Start with total = 0, then add each number as the loop runs."
+    },
+    {
+      "type": "code",
+      "code": "# Collect only even numbers into a new list\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8]\nevens = []\n\nfor num in numbers:\n    if num % 2 == 0:\n        evens.append(num)\n\nprint(evens)",
+      "output": "[2, 4, 6, 8]",
+      "caption": "Start with an empty list and append items that pass a condition."
+    },
+    {
+      "type": "heading",
+      "text": "Getting Index and Value with enumerate()"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you need to know both the **position** of an item and its **value**. The `enumerate()` function gives you both at once, as a pair of values you can unpack into two variables."
+    },
+    {
+      "type": "code",
+      "code": "colors = [\"red\", \"green\", \"blue\"]\n\nfor index, color in enumerate(colors):\n    print(index, color)",
+      "output": "0 red\n1 green\n2 blue",
+      "caption": "enumerate() pairs each item with its position number."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use enumerate() instead of range(len(...))",
+      "md": "New Python learners sometimes write `for i in range(len(my_list)):` to get an index. That works, but `enumerate()` is cleaner and more Pythonic. It's easier to read and less likely to cause off-by-one mistakes."
+    },
+    {
+      "type": "heading",
+      "text": "Looping Over a Dictionary"
+    },
+    {
+      "type": "text",
+      "md": "Dictionaries store key-value pairs. When you loop over a dictionary, Python gives you the **keys** by default. Use `.values()` to loop over values, or `.items()` to get both the key and value together."
+    },
+    {
+      "type": "code",
+      "code": "scores = {\"Alice\": 92, \"Bob\": 85, \"Carol\": 78}\n\n# Loop over keys and values together\nfor name, score in scores.items():\n    print(name, \"scored\", score)",
+      "output": "Alice scored 92\nBob scored 85\nCarol scored 78",
+      "caption": ".items() gives you each key-value pair as a tuple you can unpack."
+    },
+    {
+      "type": "heading",
+      "text": "When Should You Use a for Loop?"
+    },
+    {
+      "type": "text",
+      "md": "Use a `for` loop when:\n- You have a **known collection** to work through (a list, string, dictionary, range of numbers)\n- You want to process, filter, or transform every item\n- You want to build up a result by looking at each item one at a time\n\nIf you don't know in advance how many times you'll loop, a `while` loop (a later lesson) is the better fit."
+    },
+    {
+      "type": "quiz",
+      "question": "What does range(2, 8, 2) produce?",
+      "options": [
+        "2, 4, 6, 8",
+        "2, 4, 6",
+        "0, 2, 4, 6, 8",
+        "2, 3, 4, 5, 6, 7"
+      ],
+      "answerIndex": 1,
+      "explanation": "range(2, 8, 2) starts at 2, counts up by 2 each step, and stops before 8. So it produces 2, 4, 6. The 8 is excluded because the stop value is never included."
+    }
+  ],
+  "keyTakeaways": [
+    "A for loop visits each item in a collection one at a time — list, string, range, or dictionary.",
+    "range(stop), range(start, stop), and range(start, stop, step) let you loop over numbers without making a list.",
+    "The loop variable holds the current item on each pass — name it something descriptive.",
+    "Use enumerate() when you need both the index and the value of each item.",
+    "Accumulate results by starting with an empty list or zero, then building up inside the loop."
+  ],
+  "exercise": {
+    "prompt": "Write a program that loops over a list of five words and prints each word along with how many letters it contains. For example, for the word \"cat\" it should print: cat has 3 letters",
+    "starterCode": "words = [\"apple\", \"hi\", \"python\", \"code\", \"fun\"]\n\n# Your loop here\n",
+    "hint": "Use len() inside the loop to count the letters in each word. You can use the loop variable directly as both the word to print and the thing to measure.",
+    "solution": "words = [\"apple\", \"hi\", \"python\", \"code\", \"fun\"]\n\nfor word in words:\n    print(word, \"has\", len(word), \"letters\")"
+  }
+}
