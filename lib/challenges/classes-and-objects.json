@@ -1,0 +1,54 @@
+{
+  "slug": "classes-and-objects",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        print(f\"{self.name} says: Woof!\")\n\ndog1 = Dog(\"Bella\", \"Labrador\")\ndog2 = Dog(\"Max\", \"Poodle\")\ndog1.bark()\ndog2.bark()",
+      "options": [
+        "Bella says: Woof!\nMax says: Woof!",
+        "dog1 says: Woof!\ndog2 says: Woof!",
+        "Bella says: Woof!\nBella says: Woof!",
+        "Woof!\nWoof!"
+      ],
+      "answerIndex": 0,
+      "explanation": "Each Dog instance stores its own `name`. When `bark()` is called, `self.name` refers to the name of that specific dog — \"Bella\" for dog1 and \"Max\" for dog2."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "class Dog:\n    def bark():\n        print(\"Woof!\")\n\ndog = Dog()\ndog.bark()",
+      "options": [
+        "The class name should be lowercase.",
+        "The `bark` method is missing `self` as its first parameter.",
+        "`Dog()` should be called with arguments.",
+        "`print` should use an f-string."
+      ],
+      "answerIndex": 1,
+      "explanation": "Every method inside a class must take `self` as its first parameter. Without it, Python tries to pass the object automatically and raises a TypeError about unexpected arguments. The fix is `def bark(self):`."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the `__init__` method so that each Cat stores its name as an attribute.",
+      "codeTemplate": "class Cat:\n    def __init__(self, name):\n        {{blank}}.name = name\n\ncat = Cat(\"Luna\")\nprint(cat.name)",
+      "blanks": [
+        { "answer": "self", "accept": ["self"] }
+      ],
+      "explanation": "`self` refers to the specific object being created. Writing `self.name = name` stores the value of `name` on that particular Cat instance so it can be accessed later with `cat.name`."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a BankAccount class, create an instance, and deposit money.",
+      "lines": [
+        "class BankAccount:",
+        "    def __init__(self, owner):",
+        "        self.owner = owner",
+        "        self.balance = 0",
+        "account = BankAccount(\"Alice\")",
+        "account.balance += 50",
+        "print(account.balance)"
+      ],
+      "explanation": "You must define the class and its `__init__` method before creating an instance. The instance (`account`) is created next, then you can update its `balance` attribute and print it."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "slug": "defining-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def greet(name):\n    print(\"Hello,\", name)\n\ngreet(\"Alice\")\ngreet(\"Bob\")",
+      "options": [
+        "Hello, Alice\nHello, Bob",
+        "Hello, name\nHello, name",
+        "Hello, Alice",
+        "greet(\"Alice\")\ngreet(\"Bob\")"
+      ],
+      "answerIndex": 0,
+      "explanation": "Each call to greet() passes a different argument. The first call passes \"Alice\", so the parameter `name` receives \"Alice\" and prints \"Hello, Alice\". The second call passes \"Bob\", printing \"Hello, Bob\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "def add(a, b)\n    result = a + b\n    print(a, \"+\", b, \"=\", result)\n\nadd(3, 5)",
+      "options": [
+        "The variables `a` and `b` should be named `x` and `y`.",
+        "The `def` line is missing a colon `:` at the end.",
+        "The `print` line should use `return` instead.",
+        "`add(3, 5)` should be written before the `def` block."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python requires a colon `:` at the end of every `def` line to open the function body. The correct line is `def add(a, b):`. Without it, Python raises a SyntaxError."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it defines a function called `welcome` that prints \"Welcome!\".",
+      "codeTemplate": "{{blank}} welcome():\n    print(\"Welcome!\")\n\nwelcome()",
+      "blanks": [
+        { "answer": "def", "accept": ["def"] }
+      ],
+      "explanation": "The keyword `def` is how you tell Python you are defining a function. It must appear at the start of the line, followed by the function name and parentheses."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define and call a function that greets a user by name.",
+      "lines": [
+        "def greet(name):",
+        "    \"\"\"Print a greeting for the given name.\"\"\"",
+        "    print(\"Hello,\", name)",
+        "greet(\"Sam\")"
+      ],
+      "explanation": "You must first define the function with `def`, then add the docstring as the very first line of the body, then the code that does the work, and finally call the function after the definition is complete."
+    }
+  ]
+}

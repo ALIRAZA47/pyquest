@@ -1,0 +1,46 @@
+{
+  "slug": "lists",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\", \"date\"]\nprint(fruits[1])\nprint(fruits[-1])",
+      "options": ["apple\ndate", "banana\ndate", "banana\ncherry", "apple\ncherry"],
+      "answerIndex": 1,
+      "explanation": "fruits[1] is the second item (remember, indexing starts at 0!), which is \"banana\". fruits[-1] counts from the end, giving the last item \"date\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "animals = [\"cat\", \"dog\", \"rabbit\"]\nprint(animals[3])",
+      "options": [
+        "The list uses the wrong brackets — should be () not [].",
+        "Index 3 is out of range. A 3-item list has indexes 0, 1, and 2, so the last valid index is 2 (or -1 for the last item).",
+        "print() cannot display list items by index.",
+        "The variable name 'animals' is reserved in Python."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python lists start at index 0, so a 3-item list has valid indexes 0, 1, and 2. Accessing index 3 raises an IndexError. Use animals[2] or animals[-1] to get the last item."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it adds \"mango\" to the end of the list, then prints how many items are in the list.",
+      "codeTemplate": "fruits = [\"apple\", \"banana\"]\nfruits.{{blank}}(\"mango\")\nprint({{blank}}(fruits))",
+      "blanks": [
+        { "answer": "append", "accept": ["append"] },
+        { "answer": "len", "accept": ["len"] }
+      ],
+      "explanation": "append() adds one item to the end of a list, making it [\"apple\", \"banana\", \"mango\"]. len() counts the items in the list and returns 3."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to create a list, sort it, and print the sorted result.",
+      "lines": [
+        "scores = [3, 1, 4, 1, 5]",
+        "scores.sort()",
+        "print(scores)"
+      ],
+      "explanation": "You must create the list first, then call .sort() to sort it in place, and finally print() to see the result: [1, 1, 3, 4, 5]."
+    }
+  ]
+}

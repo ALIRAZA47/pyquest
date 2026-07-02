@@ -1,0 +1,45 @@
+{
+  "slug": "dictionaries",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "scores = {\"Alice\": 90, \"Bob\": 75}\nscores[\"Bob\"] = 82\nscores[\"Charlie\"] = 88\nprint(scores[\"Bob\"])",
+      "options": ["75", "82", "88", "90"],
+      "answerIndex": 1,
+      "explanation": "scores[\"Bob\"] starts at 75, but then scores[\"Bob\"] = 82 overwrites it. When you assign to an existing key, Python replaces the old value. So the final value for \"Bob\" is 82."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print the city from the dictionary, but it crashes. What is wrong?",
+      "code": "person = {\"name\": \"Amara\", \"age\": 28, \"city\": \"Lagos\"}\nprint(person[\"location\"])",
+      "options": [
+        "\"location\" is not a key in the dictionary — it should be person[\"city\"]",
+        "Dictionaries cannot store strings as values",
+        "You must use .get() instead of square brackets every time"
+      ],
+      "answerIndex": 0,
+      "explanation": "The dictionary has the key \"city\", not \"location\". Using a key that does not exist causes a KeyError. The fix is to use the correct key: person[\"city\"]. Alternatively, person.get(\"location\") would return None instead of crashing."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it safely prints a person's email, showing \"No email\" if the key is missing.",
+      "codeTemplate": "person = {\"name\": \"Amara\", \"age\": 28}\nprint(person.{{blank}}(\"email\", \"No email\"))",
+      "blanks": [
+        { "answer": "get", "accept": ["get"] }
+      ],
+      "explanation": "The .get(key, default) method looks up a key without risking a KeyError. If \"email\" is not in the dictionary, it returns the default value \"No email\" instead of crashing."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to build a dictionary, add an entry, and print all items.",
+      "lines": [
+        "inventory = {\"apples\": 10, \"bananas\": 5}",
+        "inventory[\"grapes\"] = 8",
+        "for item, count in inventory.items():",
+        "    print(item, count)"
+      ],
+      "explanation": "First create the dictionary, then add the new \"grapes\" entry with bracket assignment, and finally loop over .items() to print each key-value pair. The print statement must be indented inside the for loop."
+    }
+  ]
+}

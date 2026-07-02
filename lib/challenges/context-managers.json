@@ -1,0 +1,55 @@
+{
+  "slug": "context-managers",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Greeter:\n    def __enter__(self):\n        print(\"Opening\")\n        return self\n\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        print(\"Closing\")\n        return False\n\nwith Greeter():\n    print(\"Inside\")",
+      "options": [
+        "Opening\nInside\nClosing",
+        "Inside\nOpening\nClosing",
+        "Opening\nClosing\nInside",
+        "Inside"
+      ],
+      "answerIndex": 0,
+      "explanation": "__enter__ runs first when the with block starts, then the body of the block runs, then __exit__ runs when the block ends. So the order is always: Opening, Inside, Closing."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This context manager using @contextmanager has a bug — if an exception happens inside the with block, the cleanup code won't run. How should it be fixed?",
+      "code": "from contextlib import contextmanager\n\n@contextmanager\ndef open_resource():\n    print(\"Setup\")\n    yield\n    print(\"Cleanup\")  # May be skipped on error!",
+      "options": [
+        "Remove the @contextmanager decorator and use a class with __enter__ and __exit__ instead.",
+        "Wrap the yield in a try/finally block so that the cleanup code always runs, even when an exception occurs.",
+        "Add return True after the yield to suppress all exceptions."
+      ],
+      "answerIndex": 1,
+      "explanation": "When using @contextmanager, any exception raised inside the with block is re-raised at the yield point. Code after a bare yield will be skipped. Wrapping yield in try: yield ... finally: cleanup() guarantees cleanup always runs, regardless of whether an exception occurred."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the class so it can be used as a context manager with the with statement. The __enter__ method should return self, and __exit__ should print \"Done\" and return False.",
+      "codeTemplate": "class Resource:\n    def __{{blank}}__(self):\n        print(\"Starting\")\n        return self\n\n    def __{{blank}}__(self, exc_type, exc_val, exc_tb):\n        print(\"Done\")\n        return False",
+      "blanks": [
+        { "answer": "enter", "accept": ["enter"] },
+        { "answer": "exit", "accept": ["exit"] }
+      ],
+      "explanation": "A class becomes a context manager by defining __enter__ (called when the with block starts) and __exit__ (called when the block ends, with information about any exception that occurred). Both names must be spelled exactly right, including the double underscores."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to write a working @contextmanager that prints \"open\" before the block and \"closed\" after it.",
+      "lines": [
+        "from contextlib import contextmanager",
+        "@contextmanager",
+        "def file_like():",
+        "    print(\"open\")",
+        "    try:",
+        "        yield",
+        "    finally:",
+        "        print(\"closed\")"
+      ],
+      "explanation": "First import contextmanager, then apply the decorator, then define the function. Inside the function, setup code (print open) comes before the try block. The yield suspends execution and hands control to the with block body. The finally block runs cleanup (print closed) whether the block succeeded or raised an exception."
+    }
+  ]
+}

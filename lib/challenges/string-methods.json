@@ -1,0 +1,45 @@
+{
+  "slug": "string-methods",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "greeting = \"hello\"\ngreeting.upper()\nprint(greeting)",
+      "options": ["HELLO", "Hello", "hello", "Error: string was not changed"],
+      "answerIndex": 2,
+      "explanation": "String methods never modify the original string — they return a brand-new string. Because the result of greeting.upper() was never saved to a variable, greeting still holds the original 'hello'. To keep the uppercase version you would write: greeting = greeting.upper()."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print 'alice@example.com' (all lowercase, no extra spaces), but it doesn't work as expected. What is wrong?",
+      "code": "email = \"  Alice@Example.COM  \"\nemail.strip()\nemail.lower()\nprint(email)",
+      "options": [
+        "strip() and lower() need parentheses with an argument to work",
+        "The results of strip() and lower() are never saved — reassign the result or chain the methods: email = email.strip().lower()",
+        "You must call lower() before strip(), not after"
+      ],
+      "answerIndex": 1,
+      "explanation": "Calling email.strip() and email.lower() without saving the result throws the new strings away. The fix is to capture the return value: email = email.strip().lower(). Because each method returns a new string, you can chain them in one line."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints 'PYTHON IS FUN'.",
+      "codeTemplate": "text = \"python is fun\"\nprint(text.{{blank}}())",
+      "blanks": [
+        { "answer": "upper", "accept": ["upper"] }
+      ],
+      "explanation": "upper() converts every letter in the string to capitals and returns the new string. Since we pass the result straight to print(), there is no need to save it in a variable."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code splits the sentence into words and prints them joined by a dash, like: 'I-love-Python'.",
+      "lines": [
+        "sentence = \"I love Python\"",
+        "words = sentence.split()",
+        "result = \"-\".join(words)",
+        "print(result)"
+      ],
+      "explanation": "First create the string, then split() it into a list of words (splitting on whitespace by default), then use join() called on the separator '-' to glue them back together, and finally print the result."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "slug": "break-continue-pass",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "numbers = [10, 20, 30, 40, 50]\n\nfor n in numbers:\n    if n == 30:\n        break\n    print(n)",
+      "options": ["10\n20", "10\n20\n30", "10\n20\n30\n40\n50", "30\n40\n50"],
+      "answerIndex": 0,
+      "explanation": "break exits the loop immediately when n equals 30, so 30 itself is never printed. Only 10 and 20 are printed before the break fires."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print only the positive numbers, but it prints all of them. What is wrong?",
+      "code": "nums = [3, -1, 7, -4, 2]\n\nfor n in nums:\n    if n < 0:\n        break\n    print(n)",
+      "options": [
+        "break should be continue — break exits the whole loop, but we only want to skip negative numbers",
+        "The condition should be n > 0 instead of n < 0",
+        "print(n) should come before the if statement"
+      ],
+      "answerIndex": 0,
+      "explanation": "break stops the entire loop the moment it hits a negative number. Using continue instead tells Python to skip just that iteration and keep going, so all positive numbers are printed."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints every word except \"skip\".",
+      "codeTemplate": "words = [\"hello\", \"skip\", \"world\"]\n\nfor word in words:\n    if word == \"skip\":\n        {{blank}}\n    print(word)",
+      "blanks": [
+        { "answer": "continue", "accept": ["continue"] }
+      ],
+      "explanation": "continue tells Python to skip the rest of the loop body for this iteration and move to the next word, so \"skip\" is never passed to print."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code searches for \"mango\" and prints a message if it is not found.",
+      "lines": [
+        "fruits = [\"apple\", \"banana\", \"cherry\"]",
+        "for fruit in fruits:",
+        "    if fruit == \"mango\":",
+        "        break",
+        "else:",
+        "    print(\"mango not found\")"
+      ],
+      "explanation": "The list comes first, then the for loop. Inside the loop we check for the target and break if found. The else block is at the same indentation as for — it runs only when no break occurred, meaning the target was never found."
+    }
+  ]
+}

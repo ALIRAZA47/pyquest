@@ -1,0 +1,46 @@
+{
+  "slug": "tuples",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "person = (\"Alice\", 30, \"engineer\")\nprint(person[0])\nprint(person[-1])",
+      "options": ["Alice\nengineer", "Alice\n30", "30\nengineer", "engineer\nAlice"],
+      "answerIndex": 0,
+      "explanation": "person[0] accesses the first element, \"Alice\". person[-1] counts from the end, giving the last element, \"engineer\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code tries to change the first element of a tuple, but it has a bug. What is wrong?",
+      "code": "point = (3, 7)\npoint[0] = 10\nprint(point)",
+      "options": [
+        "Tuples use curly braces {}, not parentheses ()",
+        "Tuples are immutable — you cannot change their elements after creation",
+        "The index should be 1, not 0, to access the first element"
+      ],
+      "answerIndex": 1,
+      "explanation": "Tuples are immutable, meaning their contents cannot be changed after creation. Trying to assign a new value to point[0] raises a TypeError. If you need to change values, use a list instead."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it unpacks the tuple and prints each value on its own line.",
+      "codeTemplate": "color = (255, 128, 0)\nr, {{blank}}, b = color\nprint(r)\nprint(g)\nprint(b)",
+      "blanks": [
+        { "answer": "g", "accept": ["g"] }
+      ],
+      "explanation": "Tuple unpacking assigns each element to a matching variable in order. Here r gets 255, g gets 128, and b gets 0. The number of variables on the left must match the number of elements in the tuple."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to swap two variables using tuple unpacking, then print them.",
+      "lines": [
+        "a = \"hello\"",
+        "b = \"world\"",
+        "a, b = b, a",
+        "print(a)",
+        "print(b)"
+      ],
+      "explanation": "First assign the starting values to a and b. Then swap them in one line using tuple unpacking — Python packs the right side into a tuple and unpacks it onto the left. Finally, print both variables to confirm the swap."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "exceptions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Oops, divided by zero!\")\nelse:\n    print(\"Division worked fine.\")\nfinally:\n    print(\"All done.\")",
+      "options": [
+        "Oops, divided by zero!\nAll done.",
+        "Division worked fine.\nAll done.",
+        "Oops, divided by zero!",
+        "All done."
+      ],
+      "answerIndex": 0,
+      "explanation": "Dividing by zero raises a ZeroDivisionError, so the except block prints 'Oops, divided by zero!'. Because an exception occurred, the else block is skipped. The finally block always runs, so 'All done.' prints last."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to safely convert user input to an integer and print it, but it has a bug. What is wrong?",
+      "code": "try:\n    number = int(\"hello\")\nexcept:\n    print(\"Please enter a valid number.\")\nprint(\"You entered:\", number)",
+      "options": [
+        "The print statement should be inside the try block, not after it.",
+        "except with no exception type is too broad and will hide unrelated bugs; also, 'number' is never assigned when the exception fires, so the final print will crash.",
+        "int() cannot be used inside a try block."
+      ],
+      "answerIndex": 1,
+      "explanation": "There are two problems. First, using a bare 'except:' catches everything, including bugs you didn't intend to handle — always name the specific exception, like 'except ValueError:'. Second, if the conversion fails, 'number' is never assigned, so 'print(\"You entered:\", number)' after the block will raise a NameError. Move that print into the try block or the else block where 'number' is guaranteed to exist."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it catches a KeyError when the name is not in the dictionary and prints 'Name not found.'",
+      "codeTemplate": "scores = {\"Alice\": 95, \"Bob\": 87}\n\ntry:\n    print(scores[\"Charlie\"])\nexcept {{blank}}:\n    print(\"Name not found.\")",
+      "blanks": [
+        {
+          "answer": "KeyError",
+          "accept": ["KeyError"]
+        }
+      ],
+      "explanation": "Accessing a dictionary key that does not exist raises a KeyError. By catching KeyError specifically, we handle only that case and let any other unexpected errors surface normally."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a function that converts a string to an integer and returns 0 if it fails.",
+      "lines": [
+        "def safe_int(value):",
+        "    try:",
+        "        return int(value)",
+        "    except ValueError:",
+        "        return 0"
+      ],
+      "explanation": "The function definition comes first. Inside it, the try block attempts the risky conversion. If int() raises a ValueError (e.g. the string is not a number), the except block catches it and returns 0 as a safe fallback."
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import { getNavSections } from "@/lib/content";
 import { ALL_SLUGS, TOTAL_LESSONS } from "@/lib/curriculum";
 import { useProgress } from "@/components/ProgressContext";
 import { ProgressRing } from "@/components/ProgressRing";
+import { Glyph, categoryGlyph, lessonGlyph } from "@/components/glyphs";
 import { CheckIcon, ArrowRight, TargetIcon } from "@/components/Icons";
 
 const SECTIONS = getNavSections();
@@ -73,8 +74,8 @@ export default function LearnDashboard() {
           return (
             <section key={section.name}>
               <div className="mb-4 flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-xl">
-                  {section.emoji}
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <Glyph name={categoryGlyph(section.name)} className="h-5 w-5" />
                 </span>
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2">
@@ -105,8 +106,11 @@ export default function LearnDashboard() {
                         href={`/learn/${lesson.slug}`}
                         className="group flex h-full items-start gap-3 rounded-2xl border border-border bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-soft"
                       >
-                        <span className="text-2xl" aria-hidden>
-                          {lesson.emoji}
+                        <span
+                          className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-surface-2 text-accent"
+                          aria-hidden
+                        >
+                          <Glyph name={lessonGlyph(lesson.slug)} className="h-5 w-5" />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">

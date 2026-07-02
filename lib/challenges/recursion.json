@@ -1,0 +1,49 @@
+{
+  "slug": "recursion",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def countdown(n):\n    if n <= 0:\n        print(\"Blast off!\")\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(3)",
+      "options": ["3\n2\n1\nBlast off!", "Blast off!\n1\n2\n3", "3\n2\n1", "1\n2\n3\nBlast off!"],
+      "answerIndex": 0,
+      "explanation": "countdown(3) prints 3, then calls countdown(2), which prints 2 and calls countdown(1), which prints 1 and calls countdown(0). When n is 0, the base case triggers and prints 'Blast off!'. The numbers appear top-to-bottom as each call runs before the next one."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This recursive factorial function has a bug. What is wrong?",
+      "code": "def factorial(n):\n    return n * factorial(n - 1)\n\nprint(factorial(4))",
+      "options": [
+        "The function multiplies by n instead of n + 1.",
+        "There is no base case, so the function calls itself forever and raises a RecursionError.",
+        "factorial should use a loop, not recursion.",
+        "The function should return n, not n * factorial(n - 1)."
+      ],
+      "answerIndex": 1,
+      "explanation": "The function is missing a base case. Without one, it keeps calling factorial(n - 1) with smaller and smaller numbers (0, -1, -2, ...) and never stops. A correct version adds: if n == 0 or n == 1: return 1. That gives the recursion a stopping point so it can unwind and return the right answer."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the recursive function so that sum_down(3) returns 6 (3 + 2 + 1).",
+      "codeTemplate": "def sum_down(n):\n    if n == {{blank}}:\n        return 1\n    return n + sum_down({{blank}})\n\nprint(sum_down(3))  # 6",
+      "blanks": [
+        { "answer": "1", "accept": ["1"] },
+        { "answer": "n - 1", "accept": ["n-1", "n - 1"] }
+      ],
+      "explanation": "The base case is n == 1: the sum of all integers down to 1, starting from 1, is just 1. For any larger n, we add n to the result of sum_down(n - 1), which handles the rest of the numbers below n. Each call gets one step closer to the base case."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define and call a recursive function that prints numbers from 1 up to n.",
+      "lines": [
+        "def count_up(n, current=1):",
+        "    if current > n:",
+        "        return",
+        "    print(current)",
+        "    count_up(n, current + 1)",
+        "count_up(3)"
+      ],
+      "explanation": "The function definition comes first, then the base case check (if current > n: return) to stop the recursion, then the action (print the current number), then the recursive call with current + 1 to move forward. Finally, count_up(3) calls the function. This prints 1, 2, 3 by counting up one step at a time."
+    }
+  ]
+}

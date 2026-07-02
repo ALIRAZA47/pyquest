@@ -1,0 +1,46 @@
+{
+  "slug": "function-arguments",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def greet(name, greeting=\"Hello\"):\n    print(greeting + \",\", name + \"!\")\n\ngreet(\"Alice\")\ngreet(\"Bob\", greeting=\"Hi\")",
+      "options": ["Hello, Alice!\nHi, Bob!", "Hello, Alice!\nHello, Bob!", "Hi, Alice!\nHi, Bob!", "Hello, Alice\nHi, Bob"],
+      "answerIndex": 0,
+      "explanation": "The first call uses the default greeting \"Hello\", so it prints \"Hello, Alice!\". The second call overrides the default with greeting=\"Hi\", so it prints \"Hi, Bob!\". Notice the comma and exclamation mark come from the print statement itself."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "def describe_pet(animal, name):\n    print(name, \"is a\", animal)\n\ndescribe_pet(name=\"Rex\", \"dog\")",
+      "options": [
+        "The function should use print(animal, name) instead of print(name, animal).",
+        "A positional argument (\"dog\") comes after a keyword argument (name=\"Rex\"), which is not allowed.",
+        "The parameter order in the def line should be (name, animal) instead of (animal, name)."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python requires all positional arguments to come before keyword arguments in a function call. Here, \"dog\" is a positional argument placed after the keyword argument name=\"Rex\", which causes a SyntaxError. The fix is to write describe_pet(\"dog\", name=\"Rex\") or describe_pet(\"dog\", \"Rex\")."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the function definition so that calling make_tag(\"Hello\") returns \"<p>Hello</p>\" and calling make_tag(\"Hi\", tag=\"h1\") returns \"<h1>Hi</h1>\".",
+      "codeTemplate": "def make_tag(content, tag={{blank}}):\n    return f\"<{tag}>{content}</{tag}>\"",
+      "blanks": [
+        { "answer": "\"p\"", "accept": ["\"p\"", "'p'"] }
+      ],
+      "explanation": "The default value for tag should be \"p\" so the function wraps content in a paragraph tag when no tag is specified. Using a string default like \"p\" is safe because strings are immutable — unlike lists or dicts, they cannot be accidentally shared across calls."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define and call a safe add_item function that starts with a fresh list every time.",
+      "lines": [
+        "def add_item(item, cart=None):",
+        "    if cart is None:",
+        "        cart = []",
+        "    cart.append(item)",
+        "    return cart"
+      ],
+      "explanation": "The function signature comes first with None as the safe default. Inside, we check if cart is None and create a fresh list if so — this avoids the mutable default trap where a shared list grows across calls. Then we append the item and return the cart."
+    }
+  ]
+}

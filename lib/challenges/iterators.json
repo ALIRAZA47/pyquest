@@ -1,0 +1,49 @@
+{
+  "slug": "iterators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "colors = [\"red\", \"green\", \"blue\"]\nit = iter(colors)\nprint(next(it))\nprint(next(it))\nprint(next(it, \"none left\"))\nprint(next(it, \"none left\"))",
+      "options": ["red\ngreen\nblue\nnone left", "red\ngreen\nblue\nblue", "red\ngreen\nnone left\nnone left", "red\ngreen\nblue"],
+      "answerIndex": 0,
+      "explanation": "iter() creates an iterator from the list. Each call to next() returns the next item: red, then green, then blue. The fourth call finds no more items, but because a default of \"none left\" was provided, it returns that instead of raising StopIteration."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This class is supposed to count up from 1 to the given stop value, but it has a bug. What is wrong?",
+      "code": "class Counter:\n    def __init__(self, stop):\n        self.current = 1\n        self.stop = stop\n\n    def __iter__(self):\n        return self\n\n    def __next__(self):\n        if self.current > self.stop:\n            raise StopIteration\n        self.current += 1\n        return self.current\n\nfor n in Counter(3):\n    print(n)",
+      "options": [
+        "The value should be returned before incrementing self.current, not after — so save the value first, then increment, then return the saved value.",
+        "__iter__ should return a new Counter object, not self.",
+        "StopIteration should be raised when self.current == self.stop, not when it is greater."
+      ],
+      "answerIndex": 0,
+      "explanation": "The code increments self.current before returning it, so it skips 1 and returns 2, 3, 4 instead of 1, 2, 3. The fix is to save the current value first: value = self.current, then self.current += 1, then return value."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the generator function so it yields each number from 1 up to and including n.",
+      "codeTemplate": "def count_up(n):\n    i = 1\n    while i <= n:\n        {{blank}} i\n        i += 1\n\nfor num in count_up(3):\n    print(num)",
+      "blanks": [
+        { "answer": "yield", "accept": ["yield"] }
+      ],
+      "explanation": "The yield keyword is what makes a function a generator. It pauses the function, sends the current value of i back to the caller, and resumes from that point the next time next() is called. Without yield, the function would just be an ordinary loop that prints nothing."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so that the for loop manually mimics what Python does internally — getting an iterator, fetching items, and stopping cleanly.",
+      "lines": [
+        "items = [\"a\", \"b\", \"c\"]",
+        "it = iter(items)",
+        "while True:",
+        "    try:",
+        "        val = next(it)",
+        "        print(val)",
+        "    except StopIteration:",
+        "        break"
+      ],
+      "explanation": "First create the list, then call iter() to get an iterator from it. The while True loop runs forever until we break out. Inside the try block, next(it) fetches the next item; when the iterator is exhausted it raises StopIteration, which the except clause catches and uses to break out of the loop. This is exactly what a for loop does behind the scenes."
+    }
+  ]
+}

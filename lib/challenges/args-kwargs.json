@@ -1,0 +1,45 @@
+{
+  "slug": "args-kwargs",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def add_all(*args):\n    total = 0\n    for n in args:\n        total += n\n    return total\n\nprint(add_all(4, 6))\nprint(add_all(1, 2, 3))",
+      "options": ["10\n6", "10\n6\n", "10\n6\nNone", "10\n6\n0"],
+      "answerIndex": 0,
+      "explanation": "*args collects all positional arguments into a tuple and the loop adds them up. add_all(4, 6) returns 10 and add_all(1, 2, 3) returns 6, each printed on its own line."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "def show_info(**kwargs, *args):\n    for key, value in kwargs.items():\n        print(f\"{key}: {value}\")\n    for item in args:\n        print(item)\n\nshow_info(color=\"red\", \"apple\", \"banana\")",
+      "options": [
+        "**kwargs must come after *args in the parameter list, not before it",
+        "You cannot use both *args and **kwargs in the same function",
+        "The for loop over kwargs.items() should use a regular for loop, not an f-string"
+      ],
+      "answerIndex": 0,
+      "explanation": "Python requires a strict parameter order: regular params first, then *args, then keyword-only params, then **kwargs. Putting **kwargs before *args causes a SyntaxError. The fix is: def show_info(*args, **kwargs)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so that calling greet(**options) prints \"Hi, Ada!\".",
+      "codeTemplate": "def greet(name, greeting):\n    print(f\"{greeting}, {name}!\")\n\noptions = {\"name\": \"Ada\", \"greeting\": \"Hi\"}\ngreet({{blank}}options)",
+      "blanks": [
+        { "answer": "**", "accept": ["**"] }
+      ],
+      "explanation": "Using ** before a dictionary at the call site unpacks its key-value pairs into keyword arguments. So greet(**options) is the same as greet(name=\"Ada\", greeting=\"Hi\")."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define and call a function that prints each topping passed to it.",
+      "lines": [
+        "def list_toppings(*args):",
+        "    for topping in args:",
+        "        print(topping)",
+        "list_toppings(\"cheese\", \"peppers\", \"olives\")"
+      ],
+      "explanation": "First define the function with *args to collect the toppings, then write the for loop inside it to print each one, and finally call the function with the toppings as positional arguments."
+    }
+  ]
+}

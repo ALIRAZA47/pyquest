@@ -1,0 +1,46 @@
+{
+  "slug": "input-output",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"a\", \"b\", \"c\", sep=\"-\")\nprint(\"done\", end=\"!\")\nprint(\"!\")",
+      "options": ["a-b-c\ndone!!", "a b c\ndone!!", "a-b-c\ndone!\n!", "a-b-c\ndone!!"],
+      "answerIndex": 3,
+      "explanation": "The first print uses sep=\"-\" so the values are joined with dashes: a-b-c. The second print uses end=\"!\" so it does NOT add a newline and prints done! immediately followed by the third print which outputs ! and then a newline. The result is a-b-c on one line and done!! on the next."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print the user's age next year, but it crashes. What is wrong?",
+      "code": "age = input(\"How old are you? \")\nnext_year_age = age + 1\nprint(f\"Next year you will be {next_year_age}\")",
+      "options": [
+        "The f-string is missing the variable name — it should be {age}",
+        "input() returns a string, so age must be converted with int() before adding 1",
+        "You cannot use + to add to a variable from input(); use * instead"
+      ],
+      "answerIndex": 1,
+      "explanation": "input() always returns a string, even when the user types a number. Adding 1 to a string causes a TypeError. The fix is to wrap input() with int(): age = int(input(\"How old are you? \")). Then age holds the number 20 (for example) and age + 1 works correctly."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the f-string so the code prints: Hello, Jordan! You are 17 years old.",
+      "codeTemplate": "name = \"Jordan\"\nage = 17\nprint(f\"Hello, {{blank}}! You are {{blank}} years old.\")",
+      "blanks": [
+        { "answer": "name", "accept": ["name"] },
+        { "answer": "age", "accept": ["age"] }
+      ],
+      "explanation": "In an f-string, variables are placed inside curly braces {}. Writing {name} inserts the value of name and {age} inserts the value of age, producing Hello, Jordan! You are 17 years old."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to ask for a price, apply a 10% discount, and print the result.",
+      "lines": [
+        "price = float(input(\"Enter price: \"))",
+        "discount = price * 0.10",
+        "final = price - discount",
+        "print(f\"You save ${discount:.2f}, final price: ${final:.2f}\")"
+      ],
+      "explanation": "First you collect the price from the user with input() and convert it to a float. Then you calculate the discount (10% of the price). Next you subtract the discount from the original price. Finally you print both values using an f-string with :.2f to show two decimal places."
+    }
+  ]
+}

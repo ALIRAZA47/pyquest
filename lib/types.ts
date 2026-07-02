@@ -36,6 +36,43 @@ export interface Slide {
   emoji?: string;
 }
 
+// Interactive, auto-graded practice challenges.
+export interface FillBlank {
+  answer: string;
+  accept?: string[];
+}
+
+export type Challenge =
+  | {
+      type: "predict-output";
+      prompt: string;
+      code: string;
+      options: string[];
+      answerIndex: number;
+      explanation: string;
+    }
+  | {
+      type: "fix-bug";
+      prompt: string;
+      code: string;
+      options: string[];
+      answerIndex: number;
+      explanation: string;
+    }
+  | {
+      type: "fill-blank";
+      prompt: string;
+      codeTemplate: string; // uses the literal marker {{blank}}
+      blanks: FillBlank[];
+      explanation: string;
+    }
+  | {
+      type: "reorder";
+      prompt: string;
+      lines: string[]; // given in the CORRECT order
+      explanation: string;
+    };
+
 export interface Lesson {
   slug: string;
   title: string;
@@ -48,6 +85,7 @@ export interface Lesson {
   keyTakeaways: string[];
   exercise?: Exercise;
   slides?: Slide[];
+  challenges?: Challenge[];
 }
 
 export interface CategoryMeta {

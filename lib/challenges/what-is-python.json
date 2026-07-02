@@ -1,0 +1,44 @@
+{
+  "slug": "what-is-python",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"Hello, World!\")",
+      "options": ["Hello, World!", "hello, world!", "Hello World", "print(\"Hello, World!\")"],
+      "answerIndex": 0,
+      "explanation": "print() outputs the text inside the parentheses exactly as written, including the comma and exclamation mark. The surrounding double quotes are not printed — they just tell Python that it is a piece of text."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "Print(\"Hello, World!\")",
+      "options": [
+        "The message needs single quotes instead of double quotes",
+        "Print should be lowercase — Python is case-sensitive, so it must be print",
+        "There should be a semicolon at the end of the line"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python is case-sensitive. The built-in function is called print (all lowercase). Using Print or PRINT causes a NameError because Python does not recognise them as the same thing."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints your name. Fill in the function name that displays text on screen.",
+      "codeTemplate": "{{blank}}(\"Alice\")",
+      "blanks": [
+        { "answer": "print", "accept": ["print"] }
+      ],
+      "explanation": "print() is Python's built-in function for displaying output. Whatever you put inside the parentheses (wrapped in quotes for text) gets shown on screen."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code prints both facts about Python.",
+      "lines": [
+        "language = \"Python\"",
+        "year = 1991",
+        "print(language + \" was first released in\", year)"
+      ],
+      "explanation": "You must define variables before you can use them. language and year are stored first, then print() uses both of them to build the output message."
+    }
+  ]
+}

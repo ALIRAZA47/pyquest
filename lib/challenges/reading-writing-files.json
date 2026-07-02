@@ -1,0 +1,46 @@
+{
+  "slug": "reading-writing-files",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "with open(\"demo.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"Hello\")\n    f.write(\" World\")\n\nwith open(\"demo.txt\", \"r\", encoding=\"utf-8\") as f:\n    print(f.read())",
+      "options": ["Hello\n World", "Hello World", "Hello\nWorld", "Hello World\n"],
+      "answerIndex": 1,
+      "explanation": "write() does not add newlines automatically, so the two write() calls produce a single string \"Hello World\" with no line break in between. read() then loads that whole string and print() outputs it."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to save a score to a file, but it crashes. What is wrong?",
+      "code": "score = 42\n\nwith open(\"score.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(score)",
+      "options": [
+        "The mode should be \"a\" instead of \"w\"",
+        "write() only accepts strings — score must be converted with str(score)",
+        "open() is missing the file path argument"
+      ],
+      "answerIndex": 1,
+      "explanation": "Unlike print(), the write() method does not accept integers. You must convert the value to a string first: f.write(str(score)). This is a common gotcha when saving numbers to files."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it opens 'notes.txt' in append mode and adds a new line to the end without erasing existing content.",
+      "codeTemplate": "with open(\"notes.txt\", {{blank}}, encoding=\"utf-8\") as f:\n    f.write(\"New note\\n\")",
+      "blanks": [
+        { "answer": "\"a\"", "accept": ["\"a\"", "'a'"] }
+      ],
+      "explanation": "Append mode (\"a\") moves the file cursor to the very end before writing, so your new content is added after everything already in the file. Using \"w\" instead would erase all existing content first."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to write a file, then read it back and print each line without extra blank lines.",
+      "lines": [
+        "with open(\"msg.txt\", \"w\", encoding=\"utf-8\") as f:",
+        "    f.write(\"Hello\\nWorld\\n\")",
+        "with open(\"msg.txt\", \"r\", encoding=\"utf-8\") as f:",
+        "    for line in f:",
+        "        print(line.strip())"
+      ],
+      "explanation": "You must write the file before you can read it. The with block for writing comes first, then a separate with block opens the file in read mode. Looping over the file object and calling strip() removes the trailing newline so each word prints on its own clean line."
+    }
+  ]
+}

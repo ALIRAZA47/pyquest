@@ -1,0 +1,45 @@
+{
+  "slug": "the-standard-library",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "import math\n\nprint(math.ceil(4.2))\nprint(math.sqrt(25))",
+      "options": ["5\n5.0", "4\n5", "5\n25.0", "4.2\n5.0"],
+      "answerIndex": 0,
+      "explanation": "math.ceil(4.2) rounds UP to the nearest whole number, giving 5. math.sqrt(25) returns the square root of 25, which is 5.0 (a float). So the output is 5 on the first line and 5.0 on the second."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code tries to convert a Python dictionary to a JSON string, but it has a bug. What is wrong?",
+      "code": "import json\n\ndata = {\"name\": \"Alice\", \"score\": 42}\njson_text = json.loads(data)\nprint(json_text)",
+      "options": [
+        "json.loads should be json.dumps — loads converts JSON text TO Python, not the other way around",
+        "The dictionary needs quotes around its keys before being passed to json",
+        "You must use import json.dumps instead of import json"
+      ],
+      "answerIndex": 0,
+      "explanation": "json.loads() converts a JSON *string* into a Python object. To go the other direction — Python object to JSON string — you need json.dumps(). The fix is to change json.loads(data) to json.dumps(data)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it imports Counter from the collections module and prints the count of each word.",
+      "codeTemplate": "from {{blank}} import Counter\n\nwords = [\"cat\", \"dog\", \"cat\", \"bird\"]\nprint(Counter(words))",
+      "blanks": [
+        { "answer": "collections", "accept": ["collections"] }
+      ],
+      "explanation": "Counter lives inside the collections module. Writing 'from collections import Counter' lets you use Counter directly without typing collections.Counter every time."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to import the random module and print a random choice from a list of fruits.",
+      "lines": [
+        "import random",
+        "fruits = [\"apple\", \"banana\", \"mango\"]",
+        "pick = random.choice(fruits)",
+        "print(\"You got:\", pick)"
+      ],
+      "explanation": "You must import random first, then define the list, then call random.choice() on it, and finally print the result. Python executes top to bottom, so each step must come after the thing it depends on."
+    }
+  ]
+}

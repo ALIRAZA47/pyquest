@@ -1,0 +1,51 @@
+{
+  "slug": "working-with-json",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "import json\n\njson_string = '{\"city\": \"Tokyo\", \"active\": true, \"count\": null}'\ndata = json.loads(json_string)\n\nprint(data[\"city\"])\nprint(data[\"active\"])\nprint(data[\"count\"])",
+      "options": [
+        "Tokyo\nTrue\nNone",
+        "Tokyo\ntrue\nnull",
+        "Tokyo\nTrue\nnull",
+        "Error"
+      ],
+      "answerIndex": 0,
+      "explanation": "json.loads() converts JSON types to Python types: JSON's true becomes Python's True, and JSON's null becomes Python's None. The city string stays a string."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "import json\n\nuser = {\"name\": \"Sam\", \"score\": 95}\njson_string = json.loads(user)\nprint(json_string)",
+      "options": [
+        "json.loads() should be json.load() when working with dicts",
+        "json.loads() expects a JSON string, but user is a dict — use json.dumps() instead",
+        "The dict is missing double quotes around its keys"
+      ],
+      "answerIndex": 1,
+      "explanation": "json.loads() converts a JSON string INTO a Python object. Here we want to go the other direction — from a Python dict INTO a JSON string — so the correct function is json.dumps(user)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints a prettily formatted JSON string with 2-space indentation.",
+      "codeTemplate": "import json\n\ndata = {\"language\": \"Python\", \"level\": \"beginner\"}\nresult = json.{{blank}}(data, {{blank}}=2)\nprint(result)",
+      "blanks": [
+        { "answer": "dumps", "accept": ["dumps"] },
+        { "answer": "indent", "accept": ["indent"] }
+      ],
+      "explanation": "json.dumps() converts a Python object to a JSON string. Passing indent=2 tells it to add newlines and 2-space indentation so the output is human-readable."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to convert a JSON string into a Python dict and print one of its values.",
+      "lines": [
+        "import json",
+        "text = '{\"animal\": \"cat\", \"legs\": 4}'",
+        "data = json.loads(text)",
+        "print(data[\"animal\"])"
+      ],
+      "explanation": "First import the json module, then define the JSON string, then parse it with json.loads() to get a Python dict, and finally access the key you want to print."
+    }
+  ]
+}

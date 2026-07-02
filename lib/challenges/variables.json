@@ -1,0 +1,46 @@
+{
+  "slug": "variables",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "score = 0\nscore = 50\nscore = score + 10\nprint(score)",
+      "options": ["0", "50", "60", "10"],
+      "answerIndex": 2,
+      "explanation": "The variable score starts at 0, gets reassigned to 50, then gets reassigned to score + 10, which is 50 + 10 = 60. Each assignment replaces the previous value, so only the final value 60 is printed."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "my_name = \"Jordan\"\nmy_age = 20\nprint(\"Hi, I'm\" + my_name + \"and I'm\" + my_age + \"years old\")",
+      "options": [
+        "The variable names use underscores, which are not allowed in Python",
+        "my_age is a number (int) and cannot be joined to strings with +. Use str(my_age) or use commas in print() instead",
+        "print() cannot accept more than two arguments"
+      ],
+      "answerIndex": 1,
+      "explanation": "You cannot use + to join a string and an integer directly in Python. Fix it with str(my_age) to convert the number to a string first, or use commas: print(\"Hi, I'm\", my_name, \"and I'm\", my_age, \"years old\")."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it assigns 'Alex' to name and 25 to age on a single line using multiple assignment.",
+      "codeTemplate": "{{blank}}, {{blank}} = \"Alex\", 25\nprint(name)\nprint(age)",
+      "blanks": [
+        { "answer": "name", "accept": ["name"] },
+        { "answer": "age", "accept": ["age"] }
+      ],
+      "explanation": "Python's multiple assignment lets you assign several variables at once by listing the names on the left separated by commas, and the values on the right in the same order. So name, age = \"Alex\", 25 stores \"Alex\" in name and 25 in age."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the program stores a tax rate as a constant, creates a price variable, and prints the final price after tax.",
+      "lines": [
+        "TAX_RATE = 0.1",
+        "price = 50",
+        "final_price = price + price * TAX_RATE",
+        "print(final_price)"
+      ],
+      "explanation": "Constants like TAX_RATE are typically defined first so they are ready to use. Then price is assigned its value. Next, final_price is calculated using both variables. Finally, print() displays the result. Running this order gives 55.0."
+    }
+  ]
+}

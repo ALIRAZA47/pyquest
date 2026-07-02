@@ -1,0 +1,52 @@
+{
+  "slug": "list-comprehensions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "numbers = [1, 2, 3, 4, 5]\nsquares = [n ** 2 for n in numbers if n % 2 != 0]\nprint(squares)",
+      "options": [
+        "[1, 9, 25]",
+        "[1, 4, 9, 16, 25]",
+        "[4, 16]",
+        "[2, 4]"
+      ],
+      "answerIndex": 0,
+      "explanation": "The filter `if n % 2 != 0` keeps only the odd numbers: 1, 3, 5. Then `n ** 2` squares each one: 1, 9, 25. Even numbers (2 and 4) are skipped entirely."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should build a list of uppercase words, but it has a bug. What is wrong?",
+      "code": "words = [\"hello\", \"world\", \"python\"]\nupper = [w.upper for w in words]\nprint(upper)",
+      "options": [
+        "The variable should be named `uppercased`, not `upper`.",
+        "`w.upper` is missing parentheses — it should be `w.upper()` to actually call the method.",
+        "The list `words` should use single quotes instead of double quotes."
+      ],
+      "answerIndex": 1,
+      "explanation": "`upper` without parentheses refers to the method object itself, not its result. You must write `w.upper()` to call it and get the uppercase string. This is a common mistake when using methods inside comprehensions."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the comprehension so it produces a list of Fahrenheit values from the Celsius list.",
+      "codeTemplate": "celsius = [0, 20, 100]\nfahrenheit = [{{blank}} for c in celsius]\nprint(fahrenheit)",
+      "blanks": [
+        {
+          "answer": "c * 9/5 + 32",
+          "accept": ["c * 9/5 + 32", "c*9/5+32", "c * (9/5) + 32", "(c * 9/5) + 32"]
+        }
+      ],
+      "explanation": "The conversion formula is F = C * 9/5 + 32. This expression goes before the `for` keyword and is applied to every element `c` in the source list, producing [32.0, 68.0, 212.0]."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to build a list of lengths for words longer than 4 characters.",
+      "lines": [
+        "words = [\"hi\", \"apple\", \"cat\", \"banana\"]",
+        "long_lengths = [len(w) for w in words if len(w) > 4]",
+        "print(long_lengths)"
+      ],
+      "explanation": "First define the source list, then write the comprehension that filters words longer than 4 characters and collects their lengths, then print the result. Output: [5, 6]."
+    }
+  ]
+}

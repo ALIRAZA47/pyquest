@@ -1,0 +1,53 @@
+{
+  "slug": "string-formatting",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "name = \"Sam\"\nscore = 9.5\nprint(f\"{name} scored {score:.0f} out of 10.\")",
+      "options": [
+        "Sam scored 9.5 out of 10.",
+        "Sam scored 10 out of 10.",
+        "Sam scored 9 out of 10.",
+        "Sam scored 9.50 out of 10."
+      ],
+      "answerIndex": 1,
+      "explanation": "The format spec :.0f means zero decimal places, so 9.5 is rounded to 10. The result is 'Sam scored 10 out of 10.' — a handy way to display rounded numbers without changing the original variable."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "city = \"Paris\"\npopulation = 2161000\nprint(\"Population of {city}: {population:,}\")",
+      "options": [
+        "The variable names city and population are misspelled.",
+        "The string is missing the f prefix, so the curly braces are printed literally instead of being replaced with the variable values.",
+        "The :, format spec is not valid for integers."
+      ],
+      "answerIndex": 1,
+      "explanation": "Without the f before the opening quote, Python treats the string as a plain string and prints it exactly as written — curly braces and all. Adding f before the quote (f\"Population of {city}: {population:,}\") activates f-string mode and substitutes the variable values."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the f-string so it prints the total formatted with a thousands separator and exactly 2 decimal places.",
+      "codeTemplate": "total = 9875.6\nprint(f\"Grand total: ${total:{{blank}}}\")",
+      "blanks": [
+        {
+          "answer": ",.2f",
+          "accept": [",.2f"]
+        }
+      ],
+      "explanation": "The format spec ,.2f combines two things: the comma adds a thousands separator, and .2f rounds to exactly two decimal places. So 9875.6 becomes 9,875.60 — a clean, currency-style display."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to print a tidy two-column table showing an item and its price.",
+      "lines": [
+        "item = \"Notebook\"",
+        "price = 3.99",
+        "print(f\"{'Item':<12} {'Price':>8}\")",
+        "print(f\"{item:<12} {price:>8.2f}\")"
+      ],
+      "explanation": "You must define the variables first, then print the header row, then print the data row. The :<12 spec left-aligns text in a 12-character field, and :>8.2f right-aligns the price in 8 characters with 2 decimal places, creating neat columns."
+    }
+  ]
+}

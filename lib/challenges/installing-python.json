@@ -1,0 +1,47 @@
+{
+  "slug": "installing-python",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"Hello, world!\")",
+      "options": ["Hello, world!", "hello, world!", "print(\"Hello, world!\")", "Hello world"],
+      "answerIndex": 0,
+      "explanation": "The print() function outputs exactly what is inside the quotes. The capital H, comma, and exclamation mark are all part of the string, so they appear in the output exactly as written."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "Print(\"Hello, world!\")",
+      "options": [
+        "The string needs single quotes instead of double quotes",
+        "print is lowercase in Python — it should be print(), not Print()",
+        "There should be a semicolon at the end of the line",
+        "The parentheses should be square brackets"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python is case-sensitive. The built-in function is print() with a lowercase p. Writing Print() causes a NameError because Python does not recognise it as a built-in command."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the terminal command to run a Python file called hello.py on macOS or Linux.",
+      "codeTemplate": "{{blank}} hello.py",
+      "blanks": [
+        { "answer": "python3", "accept": ["python3", "python"] }
+      ],
+      "explanation": "On macOS and Linux you run Python files with python3 followed by the filename. On Windows the command is usually python instead of python3, so both are accepted here."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to create and run a simple Python program.",
+      "lines": [
+        "# Step 1: Create a new file called hello.py in your editor",
+        "# Step 2: Type your code inside the file",
+        "print(\"Hello, world!\")",
+        "# Step 3: Save the file, then run it from the terminal",
+        "python3 hello.py"
+      ],
+      "explanation": "You must create the file first, then write code inside it, save it, and finally run it from the terminal using python3. Trying to run the file before saving it would run an empty or outdated version."
+    }
+  ]
+}

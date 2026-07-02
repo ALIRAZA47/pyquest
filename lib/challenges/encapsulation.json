@@ -1,0 +1,50 @@
+{
+  "slug": "encapsulation",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.__balance = balance\n\n    def deposit(self, amount):\n        self.__balance += amount\n\n    def get_balance(self):\n        return self.__balance\n\nacc = BankAccount(\"Alice\", 100)\nacc.deposit(50)\nprint(acc.get_balance())",
+      "options": ["100", "150", "50", "0"],
+      "answerIndex": 1,
+      "explanation": "The account starts with a balance of 100. After depositing 50, __balance becomes 150. get_balance() returns that private value, so 150 is printed. The double underscore hides __balance from outside code but the methods inside the class can still access it normally."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code tries to print the temperature in Fahrenheit, but it crashes. What is wrong?",
+      "code": "class Temperature:\n    def __init__(self, celsius):\n        self.__celsius = celsius\n\n    @property\n    def fahrenheit(self):\n        return self.__celsius * 9 / 5 + 32\n\nt = Temperature(100)\nt.fahrenheit = 212\nprint(t.fahrenheit)",
+      "options": [
+        "fahrenheit should be a regular method, not a @property.",
+        "fahrenheit has no setter defined, so assigning to t.fahrenheit raises an AttributeError. Remove the assignment or add a @fahrenheit.setter.",
+        "__celsius should use a single underscore instead of double underscore.",
+        "The formula for Fahrenheit is wrong; it should be celsius * 9 - 5 + 32."
+      ],
+      "answerIndex": 1,
+      "explanation": "A @property with no matching setter is read-only. Trying to assign t.fahrenheit = 212 raises AttributeError: can't set attribute. Since Fahrenheit is computed from Celsius, the fix is simply to remove the assignment line. If you need to set it, you would add a @fahrenheit.setter that converts the value back to Celsius."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the class so that reading u.age calls the getter and returns the private __age value.",
+      "codeTemplate": "class User:\n    def __init__(self, age):\n        self.__age = age\n\n    @{{blank}}\n    def age(self):\n        return self.__age\n\nu = User(25)\nprint(u.age)",
+      "blanks": [
+        { "answer": "property", "accept": ["property"] }
+      ],
+      "explanation": "The @property decorator turns the age method into a getter. After that, writing u.age (without parentheses) calls the method and returns self.__age. Without @property, u.age would just be the method object itself, not the value."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a Circle class with a private radius and a read-only area property, then print the area.",
+      "lines": [
+        "class Circle:",
+        "    def __init__(self, radius):",
+        "        self.__radius = radius",
+        "    @property",
+        "    def area(self):",
+        "        return 3.14 * self.__radius ** 2",
+        "c = Circle(5)",
+        "print(c.area)"
+      ],
+      "explanation": "The class definition comes first, then __init__ sets the private attribute, then the @property decorator immediately precedes the area method that computes the value. Finally, outside the class, we create an instance and print the property — which calls the getter automatically."
+    }
+  ]
+}

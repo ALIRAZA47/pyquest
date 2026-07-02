@@ -1,0 +1,59 @@
+{
+  "slug": "dunder-methods",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n\n    def __repr__(self):\n        return f\"Money({self.amount!r}, {self.currency!r})\"\n\nwallet = Money(50, 'USD')\nprint(str(wallet))\nprint(repr(wallet))",
+      "options": [
+        "USD 50.00\nMoney(50, 'USD')",
+        "Money(50, 'USD')\nUSD 50.00",
+        "USD 50.00\nUSD 50.00",
+        "Money(50, 'USD')\nMoney(50, 'USD')"
+      ],
+      "answerIndex": 0,
+      "explanation": "str(wallet) calls __str__, which returns the user-friendly 'USD 50.00'. repr(wallet) calls __repr__, which returns the developer-friendly 'Money(50, 'USD')'. They serve different purposes — __str__ for humans, __repr__ for debugging."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print 'True' when two Vector objects have the same x and y values, but it always prints 'False'. What is wrong?",
+      "code": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __eq__(self, other):\n        return self.x == other.x\n\nv1 = Vector(3, 5)\nv2 = Vector(3, 5)\nprint(v1 == v2)",
+      "options": [
+        "__eq__ should return NotImplemented instead of a boolean",
+        "__eq__ only compares x but forgets to also compare y — it should return self.x == other.x and self.y == other.y",
+        "__eq__ should be named __equals__ for Python to recognise it"
+      ],
+      "answerIndex": 1,
+      "explanation": "The bug is that __eq__ only checks self.x == other.x and ignores the y component. Since v1 and v2 both have x=3, the check passes — but the method is still incomplete. For true equality both x AND y must match, so the correct return is: return self.x == other.x and self.y == other.y."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the ShoppingCart class so that len(cart) returns the number of items in the cart.",
+      "codeTemplate": "class ShoppingCart:\n    def __init__(self):\n        self.items = []\n\n    def add(self, item):\n        self.items.append(item)\n\n    def __{{blank}}__(self):\n        return len(self.items)\n\ncart = ShoppingCart()\ncart.add('apple')\ncart.add('bread')\nprint(len(cart))",
+      "blanks": [
+        {
+          "answer": "len",
+          "accept": ["len"]
+        }
+      ],
+      "explanation": "The built-in len() function calls __len__ on the object behind the scenes. By defining __len__ to return len(self.items), you teach Python how to measure the size of your ShoppingCart — so len(cart) returns 2."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a Point class whose + operator combines two points into a new one, then print the result.",
+      "lines": [
+        "class Point:",
+        "    def __init__(self, x, y):",
+        "        self.x = x",
+        "        self.y = y",
+        "    def __add__(self, other):",
+        "        return Point(self.x + other.x, self.y + other.y)",
+        "    def __repr__(self):",
+        "        return f\"Point({self.x}, {self.y})\"",
+        "p = Point(1, 2) + Point(3, 4)",
+        "print(p)"
+      ],
+      "explanation": "The class definition must come first, with __init__ setting up x and y, then __add__ to handle the + operator by creating a new Point with combined coordinates, and __repr__ so print() shows something readable. Finally, the code that uses the class comes after the class is fully defined."
+    }
+  ]
+}

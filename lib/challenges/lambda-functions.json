@@ -1,0 +1,53 @@
+{
+  "slug": "lambda-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "numbers = [3, 1, 4, 1, 5]\nsorted_nums = sorted(numbers, key=lambda n: -n)\nprint(sorted_nums)",
+      "options": [
+        "[5, 4, 3, 1, 1]",
+        "[1, 1, 3, 4, 5]",
+        "[3, 1, 4, 1, 5]",
+        "[-5, -4, -3, -1, -1]"
+      ],
+      "answerIndex": 0,
+      "explanation": "The lambda returns the negative of each number. sorted() sorts by those negative values in ascending order, which is the same as sorting the original numbers in descending order. So the result is [5, 4, 3, 1, 1]. The original numbers are never changed — only the comparison key is negated."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to keep only the words longer than 3 characters, but it has a bug. What is wrong?",
+      "code": "words = [\"hi\", \"hello\", \"cat\", \"world\"]\nlong_words = list(filter(lambda w: return len(w) > 3, words))\nprint(long_words)",
+      "options": [
+        "filter() should be replaced with map()",
+        "The lambda uses return, but lambdas cannot have a return keyword — the expression alone is the return value",
+        "len(w) > 3 should be len(w) >= 3 to include words of exactly 3 characters",
+        "list() is not needed around filter()"
+      ],
+      "answerIndex": 1,
+      "explanation": "Lambdas can only contain a single expression — you never write return inside one. The value of the expression is automatically returned. The fix is: lambda w: len(w) > 3 (removing the return keyword)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the lambda so that sorted() orders the names from shortest to longest.",
+      "codeTemplate": "names = [\"Charlie\", \"Bo\", \"Alice\", \"Di\"]\nresult = sorted(names, key=lambda name: {{blank}}(name))\nprint(result)",
+      "blanks": [
+        {
+          "answer": "len",
+          "accept": ["len"]
+        }
+      ],
+      "explanation": "Passing key=lambda name: len(name) tells sorted() to compare names by their length rather than alphabetically. The output is ['Bo', 'Di', 'Alice', 'Charlie'] — ordered shortest to longest."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to square every number in the list and print the result.",
+      "lines": [
+        "numbers = [1, 2, 3, 4]",
+        "squared = list(map(lambda n: n ** 2, numbers))",
+        "print(squared)"
+      ],
+      "explanation": "You must define the list first, then use map() with a lambda to apply the squaring operation to each element, and finally print the result. map() returns an iterator, so list() converts it to a printable list."
+    }
+  ]
+}

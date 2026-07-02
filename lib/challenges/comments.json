@@ -1,0 +1,46 @@
+{
+  "slug": "comments",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "# This line is a comment\nprint(\"Python is fun!\")  # so is this one\n# print(\"This won't show\")",
+      "options": ["Python is fun!", "This line is a comment\nPython is fun!\nThis won't show", "Python is fun!\nThis won't show", "This won't show"],
+      "answerIndex": 0,
+      "explanation": "Python completely ignores every line that starts with # and everything after # on any line. Only the print(\"Python is fun!\") line actually runs, so that's the only output you see."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "price = 10.00\ntotal = price * 1.08  # apply 8% tax\nprint(total)\n# print(\"Done!\"",
+      "options": [
+        "The inline comment on the total line should be removed — Python cannot handle comments after code.",
+        "The last line is missing a closing parenthesis — it reads # print(\"Done!\" instead of # print(\"Done!\").",
+        "You cannot use # to comment out a line that contains a function call like print()."
+      ],
+      "answerIndex": 1,
+      "explanation": "The last line is commented out with #, so Python never runs it — but the code inside still needs to be valid text. More importantly, the original print call is missing its closing parenthesis. Writing # print(\"Done!\") with the closing paren would be the correct (commented-out) form. The missing ) is the bug, even though the line is commented out — it is good practice to keep commented code syntactically correct so it works when you re-enable it."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so the function has a proper docstring describing what it does.",
+      "codeTemplate": "def double(n):\n    {{blank}}Return n multiplied by 2.{{blank}}\n    return n * 2\n\nprint(double(5))",
+      "blanks": [
+        { "answer": "\"\"\"", "accept": ["\"\"\""] },
+        { "answer": "\"\"\"", "accept": ["\"\"\""] }
+      ],
+      "explanation": "Docstrings are written with triple quotes (\"\"\"\"\"\" or '''...'''). The opening \"\"\" comes right after the def line, and the closing \"\"\" ends the docstring. Python (and tools like help()) can read docstrings — unlike regular # comments."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to print a converted temperature with a descriptive comment.",
+      "lines": [
+        "# Convert Celsius to Fahrenheit",
+        "celsius = 100",
+        "fahrenheit = (celsius * 9 / 5) + 32",
+        "print(fahrenheit)"
+      ],
+      "explanation": "The full-line comment comes first to describe the goal, then we set the input value (celsius), calculate the result (fahrenheit), and finally print it. This order makes the code easy to read from top to bottom."
+    }
+  ]
+}

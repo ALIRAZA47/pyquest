@@ -1,0 +1,46 @@
+{
+  "slug": "for-loops",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "for i in range(1, 6, 2):\n    print(i)",
+      "options": ["1\n2\n3\n4\n5", "1\n3\n5", "0\n2\n4", "1\n3\n5\n7"],
+      "answerIndex": 1,
+      "explanation": "range(1, 6, 2) starts at 1, jumps by 2 each step, and stops before 6. So it produces 1, 3, 5. The value 6 is excluded because range() never includes the stop number, and 7 would go past it."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print each fruit in the list, but it has a bug. What is wrong?",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor fruit in fruits\n    print(fruit)",
+      "options": [
+        "The list should use parentheses () instead of square brackets [].",
+        "The for loop line is missing a colon (:) at the end.",
+        "print(fruit) should be print(fruits) to print the whole list."
+      ],
+      "answerIndex": 1,
+      "explanation": "Every for loop line must end with a colon (:). Without it, Python raises a SyntaxError. The correct line is: for fruit in fruits:"
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the index and color together, like: 0 red",
+      "codeTemplate": "colors = [\"red\", \"green\", \"blue\"]\n\nfor index, color in {{blank}}(colors):\n    print(index, color)",
+      "blanks": [
+        { "answer": "enumerate", "accept": ["enumerate"] }
+      ],
+      "explanation": "enumerate() pairs each item with its position number, giving you both the index and the value in a single loop. Without it, you would only get the color, not its position."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to add up all numbers in the list and print the total.",
+      "lines": [
+        "numbers = [4, 7, 2, 5]",
+        "total = 0",
+        "for num in numbers:",
+        "    total = total + num",
+        "print(\"Total:\", total)"
+      ],
+      "explanation": "You must define the list first, then create the accumulator variable (total = 0) before the loop starts, then run the loop that adds each number, and finally print the result after the loop finishes."
+    }
+  ]
+}

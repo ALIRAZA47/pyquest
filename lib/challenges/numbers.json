@@ -1,0 +1,45 @@
+{
+  "slug": "numbers",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "a = 17\nb = 5\nprint(a / b)\nprint(a // b)\nprint(a % b)",
+      "options": ["3.4\n3\n2", "3\n3\n2", "3.4\n3.0\n2", "3.4\n3\n12"],
+      "answerIndex": 0,
+      "explanation": "/ (true division) always returns a float, so 17 / 5 is 3.4. // (floor division) rounds down to the nearest whole number, giving 3 (an int). % (modulo) gives the remainder: 17 = 3 * 5 + 2, so the remainder is 2."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print the integer result of dividing 20 by 4, but it prints the wrong type. What should be changed?",
+      "code": "result = 20 / 4\nprint(result)\nprint(type(result))",
+      "options": [
+        "Change / to // to use floor division and get an int result",
+        "Change 20 to 20.0 so both sides are floats",
+        "Wrap the result in str() before printing"
+      ],
+      "answerIndex": 0,
+      "explanation": "The / operator always returns a float in Python, so 20 / 4 gives 5.0 and type shows <class 'float'>. Using // (floor division) instead returns the integer 5, with type <class 'int'>."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the absolute value of -99 and then the result of 2 to the power of 8.",
+      "codeTemplate": "print({{blank}}(-99))\nprint(2 {{blank}} 8)",
+      "blanks": [
+        { "answer": "abs", "accept": ["abs"] },
+        { "answer": "**", "accept": ["**"] }
+      ],
+      "explanation": "abs() removes the minus sign and returns the non-negative value — abs(-99) gives 99. The ** operator raises a number to a power, so 2 ** 8 gives 256."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to import math and print the square root of 225 rounded to 1 decimal place.",
+      "lines": [
+        "import math",
+        "result = math.sqrt(225)",
+        "print(round(result, 1))"
+      ],
+      "explanation": "You must import the math module before you can use math.sqrt(). Then you store the square root in a variable, and finally pass it to round() before printing. math.sqrt(225) is 15.0, so round(15.0, 1) prints 15.0."
+    }
+  ]
+}

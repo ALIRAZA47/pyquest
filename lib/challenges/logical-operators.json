@@ -1,0 +1,46 @@
+{
+  "slug": "logical-operators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "age = 15\nhas_parent_note = True\nis_registered = False\n\ncan_join = (age >= 18 or has_parent_note) and not is_registered\nprint(can_join)",
+      "options": ["False", "True", "None", "Error"],
+      "answerIndex": 1,
+      "explanation": "age >= 18 is False, but has_parent_note is True — so the 'or' gives True. not is_registered is not False which is True. True and True gives True, so can_join is True."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print 'Yes' when color is 'red' or 'blue', but it always prints 'Yes' no matter what color is. What is wrong?",
+      "code": "color = \"green\"\n\nif color == \"red\" or \"blue\":\n    print(\"Yes\")\nelse:\n    print(\"No\")",
+      "options": [
+        "Change 'or' to 'and'",
+        "Write the full comparison on both sides: color == \"red\" or color == \"blue\"",
+        "Put the condition inside not: not (color == \"red\" or \"blue\")"
+      ],
+      "answerIndex": 1,
+      "explanation": "The string \"blue\" is always truthy, so 'color == \"red\" or \"blue\"' is always True. You must write the full comparison on each side: 'color == \"red\" or color == \"blue\"'. This way Python checks color against each value individually."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints True when the user is at least 18 years old AND has a ticket.",
+      "codeTemplate": "age = 20\nhas_ticket = True\n\nresult = age >= 18 {{blank}} has_ticket\nprint(result)",
+      "blanks": [
+        { "answer": "and", "accept": ["and"] }
+      ],
+      "explanation": "'and' requires both conditions to be True. Since age is 20 (>= 18) and has_ticket is True, the result is True."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to check if someone can enter: they must be a member OR a VIP, and must NOT be banned.",
+      "lines": [
+        "is_member = False",
+        "is_vip = True",
+        "is_banned = False",
+        "if (is_member or is_vip) and not is_banned:",
+        "    print(\"Access granted!\")"
+      ],
+      "explanation": "You must define all three variables before the if statement can use them. The condition checks 'is_member or is_vip' (at least one must be True) and 'not is_banned' (they must not be banned). Both parts use 'and' so both must be True for access to be granted."
+    }
+  ]
+}

@@ -77,3 +77,14 @@ generate({
       ? "missing slides array"
       : null,
 });
+
+generate({
+  dir: path.join(root, "lib", "challenges"),
+  outFile: path.join(root, "lib", "generated-challenges.ts"),
+  exportName: "RAW_CHALLENGES",
+  idPrefix: "C_",
+  validate: (p) =>
+    !p || typeof p !== "object" || !Array.isArray(p.challenges)
+      ? "missing challenges array"
+      : null,
+});

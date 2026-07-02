@@ -1,0 +1,48 @@
+{
+  "slug": "decorators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def shout(func):\n    def wrapper():\n        print(\">>>\")\n        func()\n        print(\"<<<\")\n    return wrapper\n\n@shout\ndef greet():\n    print(\"Hello!\")\n\ngreet()",
+      "options": ["Hello!", ">>>\nHello!\n<<<", ">>>\n<<<\nHello!", "shout\nHello!"],
+      "answerIndex": 1,
+      "explanation": "The @shout decorator wraps greet. When greet() is called, it actually calls wrapper(), which prints '>>>' first, then calls the original greet() to print 'Hello!', then prints '<<<'. The output appears in that exact order."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This decorator is supposed to print the result of calling add(3, 4), but it always prints None instead. What is wrong?",
+      "code": "import functools\n\ndef my_decorator(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        result = func(*args, **kwargs)\n    return wrapper\n\n@my_decorator\ndef add(a, b):\n    return a + b\n\nprint(add(3, 4))",
+      "options": [
+        "functools.wraps should be removed — it breaks the return value.",
+        "The wrapper function never returns the result; add return result inside wrapper.",
+        "The decorator should call func() without arguments."
+      ],
+      "answerIndex": 1,
+      "explanation": "The wrapper captures the result of func(*args, **kwargs) in a variable but never returns it. Because every Python function returns None by default when there is no return statement, add(3, 4) silently produces None. The fix is to add 'return result' as the last line inside wrapper."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the decorator so it prints 'Starting...' before the wrapped function runs, and works on functions with any number of arguments.",
+      "codeTemplate": "import functools\n\ndef announce(func):\n    @functools.wraps(func)\n    def wrapper({{blank}}):\n        print(\"Starting...\")\n        return func({{blank}})\n    return wrapper\n\n@announce\ndef add(a, b):\n    return a + b\n\nprint(add(2, 3))",
+      "blanks": [
+        { "answer": "*args, **kwargs", "accept": ["*args, **kwargs", "*args,**kwargs"] },
+        { "answer": "*args, **kwargs", "accept": ["*args, **kwargs", "*args,**kwargs"] }
+      ],
+      "explanation": "Using *args and **kwargs in the wrapper signature lets the decorator accept any combination of positional and keyword arguments and forward them unchanged to the original function. This is the standard pattern that makes a decorator work with any function signature."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a working decorator and apply it to a function.",
+      "lines": [
+        "def bold(func):",
+        "    def wrapper():",
+        "        print(\"**\", end=\"\")",
+        "        func()",
+        "        print(\"**\")",
+        "    return wrapper"
+      ],
+      "explanation": "A decorator function must first be defined (def bold(func):), then the inner wrapper function is defined inside it with the before/after behavior, and finally the outer function returns the wrapper. The @bold syntax (or manual assignment) can only come after the decorator itself is fully defined."
+    }
+  ]
+}

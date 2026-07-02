@@ -1,0 +1,52 @@
+{
+  "slug": "data-types",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "score = 42\nprice = 9.99\nprint(type(score))\nprint(type(price))",
+      "options": [
+        "<class 'int'>\n<class 'float'>",
+        "<class 'number'>\n<class 'decimal'>",
+        "<class 'float'>\n<class 'int'>",
+        "<class 'int'>\n<class 'int'>"
+      ],
+      "answerIndex": 0,
+      "explanation": "42 has no decimal point so Python treats it as an int. 9.99 has a decimal point so Python treats it as a float. type() always returns <class 'typename'> — there is no built-in 'number' or 'decimal' type."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "is_active = true\nprint(is_active)",
+      "options": [
+        "true should be True — Python booleans must start with a capital letter",
+        "is_active is not a valid variable name — use isActive instead",
+        "print() cannot display boolean values, use str() first"
+      ],
+      "answerIndex": 0,
+      "explanation": "Python's boolean literals are True and False — both must start with a capital letter. Writing true (lowercase) makes Python look for a variable named true, which does not exist, causing a NameError. The fix is: is_active = True"
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it creates a dictionary and prints the value stored under the key \"name\".",
+      "codeTemplate": "person = {\"name\": \"Ada\", \"age\": 36}\nprint(person[{{blank}}])",
+      "blanks": [
+        {
+          "answer": "\"name\"",
+          "accept": ["\"name\"", "'name'"]
+        }
+      ],
+      "explanation": "Dictionaries are looked up by key. The key here is the string \"name\", so you write person[\"name\"] (or person['name']) to retrieve \"Ada\". Using a number like person[0] would raise a KeyError because 0 is not a key in this dictionary."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to create a list of fruits and print its type.",
+      "lines": [
+        "fruits = [\"apple\", \"banana\", \"cherry\"]",
+        "print(fruits)",
+        "print(type(fruits))"
+      ],
+      "explanation": "You must create the list first, then you can print its contents, and finally check its type with type(). Calling print() or type() before the variable exists would cause a NameError."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "slug": "type-hints",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def add(a: int, b: int) -> int:\n    return a + b\n\nprint(add(3, 4))",
+      "options": ["7", "34", "int", "Error: wrong type"],
+      "answerIndex": 0,
+      "explanation": "Type hints don't change how Python runs your code. The function adds 3 + 4 and returns 7, just as it would without any annotations."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Python does NOT enforce type hints at runtime. What does this code actually print?",
+      "code": "def repeat(text: str, times: int) -> str:\n    return text * times\n\nprint(repeat(\"ha\", 3))",
+      "options": ["hahaha", "ha ha ha", "Error: expected str", "hhhaaa"],
+      "answerIndex": 0,
+      "explanation": "The function multiplies the string \"ha\" by 3, which produces \"hahaha\". Type hints on the parameters don't affect execution — Python runs the code as written."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This function is meant to return the length of a list of scores, but the return type hint is wrong. What should be fixed?",
+      "code": "def count_scores(scores: list[int]) -> str:\n    return len(scores)",
+      "options": [
+        "Change list[int] to list[str] because scores can be any type",
+        "Change -> str to -> int because len() returns an integer",
+        "Remove the type hints entirely — they cause a runtime error",
+        "Change len(scores) to str(len(scores)) to match the return hint"
+      ],
+      "answerIndex": 1,
+      "explanation": "len() always returns an integer, so the return type hint should be -> int, not -> str. The hint is misleading as written — a static checker like mypy would flag this mismatch."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the function signature so it accepts a string name and returns a string, then fill in the return type for a function that prints a log and returns nothing.",
+      "codeTemplate": "def greet(name: {{blank}}) -> {{blank}}:\n    return \"Hi, \" + name\n\ndef log(msg: str) -> {{blank}}:\n    print(msg)",
+      "blanks": [
+        { "answer": "str", "accept": ["str"] },
+        { "answer": "str", "accept": ["str"] },
+        { "answer": "None", "accept": ["None"] }
+      ],
+      "explanation": "name: str annotates the parameter as a string. -> str means the function returns a string. -> None is used when a function does not return a meaningful value — it just performs an action like printing."
+    }
+  ]
+}

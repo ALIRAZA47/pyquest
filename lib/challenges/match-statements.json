@@ -1,0 +1,50 @@
+{
+  "slug": "match-statements",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "status_code = 500\n\nmatch status_code:\n    case 200:\n        print(\"OK\")\n    case 404:\n        print(\"Not Found\")\n    case 500:\n        print(\"Server Error\")\n    case _:\n        print(\"Unknown\")",
+      "options": ["OK", "Not Found", "Server Error", "Unknown"],
+      "answerIndex": 2,
+      "explanation": "The value 500 is matched against each case in order. It does not match 200 or 404, but it does match 500, so \"Server Error\" is printed. Python stops checking after the first match."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print \"Have a great weekend!\" when the day is \"Saturday\", but it prints \"Just another day.\" instead. What is wrong?",
+      "code": "day = \"Saturday\"\n\nmatch day:\n    case \"Monday\" | \"Friday\":\n        print(\"Weekday fun!\")\n    case _:\n        print(\"Just another day.\")\n    case \"Saturday\" | \"Sunday\":\n        print(\"Have a great weekend!\")",
+      "options": [
+        "The | operator cannot be used to combine days in a single case.",
+        "The case _ wildcard is placed before the \"Saturday\" | \"Sunday\" case, so it matches first and the weekend case is never reached.",
+        "The variable day must be an integer, not a string, for match to work."
+      ],
+      "answerIndex": 1,
+      "explanation": "Python checks cases top to bottom and stops at the first match. Because case _ catches everything, it matches \"Saturday\" before the weekend case gets a chance. Moving case _: to the very end fixes the bug — the wildcard should always be last."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the match statement so it prints \"Freezing!\" when temp is 0, and \"Unknown\" for any other value.",
+      "codeTemplate": "temp = 0\n\nmatch temp:\n    case {{blank}}:\n        print(\"Freezing!\")\n    case {{blank}}:\n        print(\"Unknown\")",
+      "blanks": [
+        { "answer": "0", "accept": ["0"] },
+        { "answer": "_", "accept": ["_"] }
+      ],
+      "explanation": "case 0 matches the literal integer 0 and prints \"Freezing!\". case _ is the wildcard catch-all that matches anything else and prints \"Unknown\". The wildcard must come last so it does not swallow earlier cases."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code prints the correct grade message for a \"C\".",
+      "lines": [
+        "grade = \"C\"",
+        "match grade:",
+        "    case \"A\":",
+        "        print(\"Excellent!\")",
+        "    case \"B\" | \"C\":",
+        "        print(\"Good work!\")",
+        "    case _:",
+        "        print(\"Keep trying!\")"
+      ],
+      "explanation": "The variable is assigned first, then match inspects it. Each case branch must be indented inside the match block and listed from most-specific to least-specific, with the wildcard _ last. Because grade is \"C\", the case \"B\" | \"C\" branch matches and prints \"Good work!\"."
+    }
+  ]
+}

@@ -98,8 +98,8 @@ export function Slides({ slides }: { slides: Slide[] }) {
               transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex items-start gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent/15 text-lg">
-                  {slide.emoji || index + 1}
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent/15 font-bold text-accent">
+                  {index + 1}
                 </span>
                 <h3 className="mt-1 text-xl font-bold tracking-tight text-fg">
                   {slide.title}

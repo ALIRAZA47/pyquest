@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { Glyph } from "@/components/glyphs";
 
 export default function NotFound() {
   return (
     <div className="grid min-h-screen place-items-center px-6 text-center">
       <div>
-        <div className="text-7xl">🐍</div>
+        <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-accent/15 to-accent-2/15 text-accent">
+          <Glyph name="snake" className="h-10 w-10" />
+        </div>
         <h1 className="mt-4 text-3xl font-black tracking-tight">
           <span className="font-mono text-accent">IndexError</span>: page not found
         </h1>

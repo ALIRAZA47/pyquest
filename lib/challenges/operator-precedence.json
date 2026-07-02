@@ -1,0 +1,47 @@
+{
+  "slug": "operator-precedence",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(2 + 3 * 4)\nprint((2 + 3) * 4)",
+      "options": ["20\n28", "14\n20", "14\n14", "20\n20"],
+      "answerIndex": 1,
+      "explanation": "In the first line, multiplication has higher precedence than addition, so 3 * 4 = 12 is calculated first, then 2 + 12 = 14. In the second line, parentheses override precedence, so (2 + 3) = 5 is calculated first, then 5 * 4 = 20."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to calculate the average of three scores, but it gives the wrong answer. What is wrong?",
+      "code": "score1 = 80\nscore2 = 90\nscore3 = 70\naverage = score1 + score2 + score3 / 3\nprint(average)",
+      "options": [
+        "The variable names are too long and confuse Python.",
+        "Division has higher precedence than addition, so only score3 is divided by 3. Wrap the addition in parentheses: (score1 + score2 + score3) / 3.",
+        "You should use integer division (//) instead of regular division (/)."
+      ],
+      "answerIndex": 1,
+      "explanation": "Because / has higher precedence than +, Python evaluates score3 / 3 first (getting about 23.33), then adds score1 and score2. The fix is to add parentheses: (score1 + score2 + score3) / 3, which sums all three scores before dividing."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the expression so the result is 19. Hint: exponentiation runs first, then multiplication, then addition.",
+      "codeTemplate": "result = 3 + 4 * 2 ** {{blank}}\nprint(result)",
+      "blanks": [
+        {
+          "answer": "2",
+          "accept": ["2"]
+        }
+      ],
+      "explanation": "With the exponent 2, Python evaluates right to left for **: 2 ** 2 = 4. Then multiplication: 4 * 4 = 16. Then addition: 3 + 16 = 19. The precedence ladder is ** first, then *, then +."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code correctly prints the result of 2 raised to the power of 3 squared (which is 512, not 64).",
+      "lines": [
+        "result = 2 ** 3 ** 2",
+        "print(result)",
+        "# 3**2 runs first (right-to-left), giving 2**9 = 512"
+      ],
+      "explanation": "The exponentiation operator ** is right-to-left, so 3 ** 2 = 9 is evaluated first, then 2 ** 9 = 512. If it were left-to-right, you would get (2 ** 3) ** 2 = 64, which is a different and much smaller number."
+    }
+  ]
+}

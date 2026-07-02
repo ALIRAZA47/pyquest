@@ -2,6 +2,8 @@
 
 import { ThemeProvider } from "next-themes";
 import { ProgressProvider } from "@/components/ProgressContext";
+import { ConfettiHost } from "@/components/ConfettiHost";
+import { Toaster } from "@/components/Toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -11,7 +13,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       disableTransitionOnChange={false}
     >
-      <ProgressProvider>{children}</ProgressProvider>
+      <ProgressProvider>
+        {children}
+        <Toaster />
+        <ConfettiHost />
+      </ProgressProvider>
     </ThemeProvider>
   );
 }

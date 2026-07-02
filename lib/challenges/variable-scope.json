@@ -1,0 +1,50 @@
+{
+  "slug": "variable-scope",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "x = \"global\"\n\ndef outer():\n    x = \"enclosing\"\n\n    def inner():\n        print(x)\n\n    inner()\n\nouter()",
+      "options": ["global", "enclosing", "NameError: name 'x' is not defined", "None"],
+      "answerIndex": 1,
+      "explanation": "Python searches for x using the LEGB rule: Local first, then Enclosing, then Global. inner() has no local x, so Python looks at the enclosing scope (outer()), where x = \"enclosing\" is defined. It finds it there and stops — it never needs to check the global x = \"global\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to add 1 to score each time add_point() is called, but it crashes. What is wrong?",
+      "code": "score = 0\n\ndef add_point():\n    score = score + 1\n\nadd_point()\nprint(score)",
+      "options": [
+        "score should be initialised to 1, not 0",
+        "The function needs the global keyword before score so Python knows to use the top-level variable instead of creating a new local one",
+        "print(score) should be inside the function, not outside it"
+      ],
+      "answerIndex": 1,
+      "explanation": "Because score = score + 1 contains an assignment to score, Python treats score as local throughout the entire function — even when reading it on the right side. That local score has no value yet, causing an UnboundLocalError. Adding global score at the top of the function tells Python to use the top-level score instead."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the function so it correctly modifies the global variable total.",
+      "codeTemplate": "total = 10\n\ndef add_five():\n    {{blank}} total\n    total = total + 5\n\nadd_five()\nprint(total)",
+      "blanks": [
+        { "answer": "global", "accept": ["global"] }
+      ],
+      "explanation": "Writing global total at the start of the function tells Python that every reference to total inside that function refers to the top-level variable, not a new local one. Without it, the assignment total = total + 5 would make Python treat total as local, causing an UnboundLocalError."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a counter using nonlocal, then print 1 and 2.",
+      "lines": [
+        "def make_counter():",
+        "    count = 0",
+        "    def increment():",
+        "        nonlocal count",
+        "        count = count + 1",
+        "        print(count)",
+        "    increment()",
+        "    increment()",
+        "make_counter()"
+      ],
+      "explanation": "make_counter() defines count = 0 in its local scope. The nested increment() function uses nonlocal count to reach into make_counter()'s scope and modify count directly. Each call to increment() adds 1 and prints, so the output is 1 then 2. Finally make_counter() is called to run everything."
+    }
+  ]
+}

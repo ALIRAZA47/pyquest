@@ -1,0 +1,59 @@
+{
+  "slug": "inheritance",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(f\"{self.name} makes a sound.\")\n\nclass Cat(Animal):\n    def speak(self):\n        print(f\"{self.name} says: Meow!\")\n\nwhiskers = Cat(\"Whiskers\")\nwhiskers.speak()",
+      "options": [
+        "Whiskers says: Meow!",
+        "Whiskers makes a sound.",
+        "Cat says: Meow!",
+        "Animal makes a sound."
+      ],
+      "answerIndex": 0,
+      "explanation": "Cat overrides the speak() method from Animal. When Python looks for speak() on a Cat instance, it finds Cat's version first and uses that — so it prints \"Whiskers says: Meow!\" instead of the parent's generic message."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print \"Rex is eating.\" but it crashes instead. What is wrong?",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f\"{self.name} is eating.\")\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        self.breed = breed\n\nrex = Dog(\"Rex\", \"Poodle\")\nrex.eat()",
+      "options": [
+        "Dog.__init__ should not accept a breed argument",
+        "super().__init__(name) is missing from Dog.__init__, so self.name is never set",
+        "The eat() method needs to be copied into the Dog class"
+      ],
+      "answerIndex": 1,
+      "explanation": "Dog defines its own __init__ but never calls super().__init__(name). That means Animal's setup never runs and self.name is never created. When eat() tries to use self.name it raises an AttributeError. Adding super().__init__(name) as the first line of Dog.__init__ fixes it."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the Dog class so it inherits from Animal and its __init__ correctly sets up both the parent and the breed attribute.",
+      "codeTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Dog({{blank}}):\n    def __init__(self, name, breed):\n        {{blank}}.__init__(name)\n        self.breed = breed\n\nfido = Dog(\"Fido\", \"Labrador\")\nprint(fido.name)\nprint(fido.breed)",
+      "blanks": [
+        {
+          "answer": "Animal",
+          "accept": ["Animal"]
+        },
+        {
+          "answer": "super()",
+          "accept": ["super()"]
+        }
+      ],
+      "explanation": "class Dog(Animal) makes Dog a subclass that inherits everything from Animal. Inside __init__, super().__init__(name) calls Animal's __init__ so self.name gets set properly — then we add self.breed on top."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a Bird class that inherits from Animal, stores a can_fly attribute, and overrides speak().",
+      "lines": [
+        "class Bird(Animal):",
+        "    def __init__(self, name, can_fly):",
+        "        super().__init__(name)",
+        "        self.can_fly = can_fly",
+        "    def speak(self):",
+        "        print(f\"{self.name} says: Tweet!\")"
+      ],
+      "explanation": "First declare the class with Animal in parentheses to inherit from it. Then define __init__ and call super().__init__(name) before storing can_fly — the parent must set up self.name first. Finally, override speak() to give Bird its own sound."
+    }
+  ]
+}

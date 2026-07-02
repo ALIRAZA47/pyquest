@@ -1,0 +1,44 @@
+{
+  "slug": "string-slicing",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "word = \"Python\"\nprint(word[0])\nprint(word[-1])\nprint(word[1:4])",
+      "options": ["P\nn\nyth", "P\nn\ntho", "P\no\nyth", "y\nn\nyth"],
+      "answerIndex": 0,
+      "explanation": "word[0] is the first character 'P'. word[-1] is the last character 'n'. word[1:4] returns characters at positions 1, 2, and 3 — 'y', 't', 'h' — giving 'yth'. Remember: the stop index (4) is not included."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to print the last 3 characters of the string, but it has a bug. What is wrong?",
+      "code": "word = \"Python\"\nprint(word[3:6])\nprint(word[-3])",
+      "options": [
+        "word[-3] should be word[-3:] — a missing colon means it only grabs one character instead of a slice",
+        "word[3:6] is wrong; it should be word[3:5]",
+        "word[-3] is correct, but word[3:6] should be word[3:]"
+      ],
+      "answerIndex": 0,
+      "explanation": "word[-3] without a colon is an index, not a slice — it returns only the single character at position -3, which is 't'. To get the last 3 characters as a slice, you need word[-3:] (with a colon), which returns 'hon'."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the word reversed: nohtyP",
+      "codeTemplate": "word = \"Python\"\nprint(word[{{blank}}])",
+      "blanks": [
+        { "answer": "::-1", "accept": ["::-1"] }
+      ],
+      "explanation": "The slice [::-1] uses a step of -1, which walks backwards through the entire string. With start and stop omitted, it reverses the whole string — the classic Python one-liner for reversal."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to print every other character of a word, then print it reversed.",
+      "lines": [
+        "word = \"abcdef\"",
+        "print(word[::2])",
+        "print(word[::-1])"
+      ],
+      "explanation": "First you define the string, then print every other character using a step of 2 (giving 'ace'), and finally print the whole string in reverse order using a step of -1 (giving 'fedcba')."
+    }
+  ]
+}

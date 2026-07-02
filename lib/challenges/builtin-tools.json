@@ -1,0 +1,53 @@
+{
+  "slug": "builtin-tools",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor number, fruit in enumerate(fruits, start=1):\n    print(f\"{number}. {fruit}\")",
+      "options": [
+        "0. apple\n1. banana\n2. cherry",
+        "1. apple\n2. banana\n3. cherry",
+        "apple 1\nbanana 2\ncherry 3",
+        "1 apple\n2 banana\n3 cherry"
+      ],
+      "answerIndex": 1,
+      "explanation": "enumerate(fruits, start=1) counts from 1 instead of 0. Each loop unpacks the pair as (number, fruit), and the f-string formats them as '1. apple', '2. banana', '3. cherry'."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "names = [\"Alice\", \"Bob\"]\nscores = [95, 82, 70]\n\nfor name, score in zip(names, scores):\n    print(name, score)",
+      "options": [
+        "Alice 95\nBob 82\nNone 70",
+        "Alice 95\nBob 82\n70",
+        "Alice 95\nBob 82",
+        "An error is raised because the lists are different lengths"
+      ],
+      "answerIndex": 2,
+      "explanation": "zip() stops when the shortest list runs out. There are only 2 names, so only 2 pairs are produced. The score 70 is silently ignored — no error and no None placeholder."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print only the even numbers, but it prints all of them instead. What is wrong?",
+      "code": "numbers = [1, 2, 3, 4, 5, 6]\n\ndef is_even(n):\n    return n % 2 == 0\n\nevens = list(map(is_even, numbers))\nprint(evens)",
+      "options": [
+        "map() should be replaced with filter() — map() transforms every item, but filter() keeps only items where the function returns True",
+        "is_even should return n % 2 instead of n % 2 == 0",
+        "list() should not be used here — map() already returns a list"
+      ],
+      "answerIndex": 0,
+      "explanation": "map(is_even, numbers) applies is_even to every item and collects the True/False results — it does not remove anything. filter(is_even, numbers) is the right tool: it keeps only the numbers for which is_even returns True, giving [2, 4, 6]."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the total of all scores and then True if any score is 100.",
+      "codeTemplate": "scores = [72, 85, 100, 60]\n\nprint({{blank}}(scores))\nprint({{blank}}(s == 100 for s in scores))",
+      "blanks": [
+        { "answer": "sum", "accept": ["sum"] },
+        { "answer": "any", "accept": ["any"] }
+      ],
+      "explanation": "sum(scores) adds all items in the list and returns the total (317). any(s == 100 for s in scores) checks whether at least one score equals 100 and returns True — no explicit loop needed."
+    }
+  ]
+}

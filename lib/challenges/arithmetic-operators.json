@@ -1,0 +1,45 @@
+{
+  "slug": "arithmetic-operators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(10 / 2)\nprint(10 // 3)\nprint(10 % 3)",
+      "options": ["5\n3\n1", "5.0\n3\n1", "5.0\n3.0\n1", "5\n3.3333333333333335\n1"],
+      "answerIndex": 1,
+      "explanation": "The `/` operator always returns a float, so `10 / 2` gives `5.0` (not the integer `5`). `//` is floor division and returns the whole-number part, so `10 // 3` is `3`. `%` is the modulo (remainder) operator: 10 divided by 3 is 3 with a remainder of 1, so `10 % 3` is `1`."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print whether 42 is even, but it has a bug. What is wrong?",
+      "code": "number = 42\nprint(number / 2)",
+      "options": [
+        "Use `%` instead of `/` — the modulo operator gives the remainder, not the result of division. An even number gives 0.",
+        "Use `//` instead of `/` — floor division is needed to check even numbers.",
+        "Use `**` instead of `/` — exponentiation is needed to check for even numbers."
+      ],
+      "answerIndex": 0,
+      "explanation": "To test if a number is even, we need the remainder after dividing by 2. The `%` (modulo) operator does exactly that. `42 % 2` gives `0`, which tells us 42 is even. The `/` operator just performs regular division and returns `21.0`, which tells us nothing about even/odd."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the square root of 25 (which is 5.0).",
+      "codeTemplate": "result = 25 {{blank}} 0.5\nprint(result)",
+      "blanks": [
+        { "answer": "**", "accept": ["**"] }
+      ],
+      "explanation": "Raising a number to the power of `0.5` is the same as taking its square root. The `**` operator is Python's exponentiation operator, so `25 ** 0.5` gives `5.0`. You don't need a special function — just use `**`."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code converts 90 seconds into minutes and leftover seconds, then prints both.",
+      "lines": [
+        "total = 90",
+        "minutes = total // 60",
+        "leftover = total % 60",
+        "print(minutes, \"minute(s)\", leftover, \"second(s)\")"
+      ],
+      "explanation": "First we set `total = 90`. Then `//` (floor division) gives the complete minutes: `90 // 60` is `1`. Next `%` (modulo) gives the remaining seconds: `90 % 60` is `30`. Finally we print both values. The output would be `1 minute(s) 30 second(s)`."
+    }
+  ]
+}

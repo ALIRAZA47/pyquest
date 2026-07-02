@@ -1,0 +1,48 @@
+{
+  "slug": "sets",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "nums = [1, 2, 3, 2, 1, 4]\nunique = set(nums)\nprint(len(unique))",
+      "options": ["6", "4", "3", "2"],
+      "answerIndex": 1,
+      "explanation": "Converting the list to a set removes duplicates. The unique values are {1, 2, 3, 4}, so len() returns 4."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to create an empty set and add one item to it. What is wrong?",
+      "code": "my_set = {}\nmy_set.add(\"hello\")\nprint(my_set)",
+      "options": [
+        "Change {} to set() — curly braces alone create an empty dictionary, not a set, so .add() fails with an AttributeError",
+        "Use my_set.append(\"hello\") instead of my_set.add(\"hello\")",
+        "Change print(my_set) to print(list(my_set))"
+      ],
+      "answerIndex": 0,
+      "explanation": "In Python, {} creates an empty dictionary, not an empty set. Dictionaries do not have an .add() method, so calling it raises an AttributeError. The fix is to write my_set = set() to create a proper empty set."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints only the names that appear in BOTH lists.",
+      "codeTemplate": "morning = {\"alice\", \"bob\", \"carol\"}\nevening = {\"bob\", \"carol\", \"dave\"}\n\nprint(morning {{blank}} evening)",
+      "blanks": [
+        {
+          "answer": "&",
+          "accept": ["&"]
+        }
+      ],
+      "explanation": "The & operator gives the intersection of two sets — only items that appear in both. Here, \"bob\" and \"carol\" are in both morning and evening, so the result is {'bob', 'carol'}."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to remove duplicates from a list and print the unique values in alphabetical order.",
+      "lines": [
+        "words = [\"cat\", \"dog\", \"cat\", \"bird\", \"dog\"]",
+        "unique_words = set(words)",
+        "sorted_words = sorted(unique_words)",
+        "print(sorted_words)"
+      ],
+      "explanation": "First define the list, then convert it to a set to remove duplicates, then sort the set to get alphabetical order, and finally print the result. This is the classic list -> set -> sorted list deduplication pattern."
+    }
+  ]
+}

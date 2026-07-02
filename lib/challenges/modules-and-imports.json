@@ -1,0 +1,45 @@
+{
+  "slug": "modules-and-imports",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "from math import sqrt, floor\n\nprint(sqrt(81))\nprint(floor(4.9))",
+      "options": ["9.0\n4", "9\n4", "9.0\n5", "81\n4.9"],
+      "answerIndex": 0,
+      "explanation": "sqrt(81) returns 9.0 (a float, not an integer), and floor(4.9) rounds down to 4. The 'from math import' form lets you call sqrt and floor directly without the 'math.' prefix."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "import math as m\n\nprint(math.sqrt(25))",
+      "options": [
+        "math.sqrt should be written as m.sqrt because the module was imported with the alias 'm'",
+        "sqrt is not available in the math module",
+        "The 'as' keyword is not valid Python syntax"
+      ],
+      "answerIndex": 0,
+      "explanation": "When you use 'import math as m', the name 'math' is no longer defined — only 'm' is. You must use the alias you chose, so the correct call is m.sqrt(25)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it imports only the 'ceil' function from math and prints the result of rounding 3.2 up.",
+      "codeTemplate": "from math {{blank}} ceil\n\nprint(ceil(3.2))",
+      "blanks": [
+        { "answer": "import", "accept": ["import"] }
+      ],
+      "explanation": "The 'from <module> import <name>' syntax lets you bring a specific item directly into your namespace. Here, 'from math import ceil' makes ceil available without needing to write 'math.ceil'."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a module guard that only runs the print when the file is executed directly.",
+      "lines": [
+        "def greet(name):",
+        "    return f\"Hi, {name}!\"",
+        "if __name__ == \"__main__\":",
+        "    print(greet(\"Ada\"))"
+      ],
+      "explanation": "The function must be defined before it can be called. The 'if __name__ == \"__main__\":' guard goes after the function definition, and the print call is indented inside it. This ensures the print only runs when the file is executed directly, not when it is imported."
+    }
+  ]
+}

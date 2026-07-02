@@ -1,0 +1,45 @@
+{
+  "slug": "comparison-operators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "x = 7\nprint(1 < x < 10)\nprint(0 <= x <= 5)",
+      "options": ["True\nTrue", "True\nFalse", "False\nTrue", "False\nFalse"],
+      "answerIndex": 1,
+      "explanation": "x is 7. The chained comparison 1 < 7 < 10 is True because 7 is between 1 and 10. The chained comparison 0 <= 7 <= 5 is False because 7 is not less than or equal to 5."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "score = 95\nif score = 100:\n    print(\"Perfect score!\")",
+      "options": [
+        "score should be compared using is, not ==",
+        "The condition uses = (assignment) instead of == (comparison)",
+        "The string \"Perfect score!\" needs to be on the same line as score"
+      ],
+      "answerIndex": 1,
+      "explanation": "Inside an if condition you must use == to compare values. A single = is the assignment operator and causes a SyntaxError. The fix is to write: if score == 100:"
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it stores whether age qualifies as an adult (18 or older) and prints True.",
+      "codeTemplate": "age = 20\nis_adult = age {{blank}} 18\nprint(is_adult)",
+      "blanks": [
+        { "answer": ">=", "accept": [">="] }
+      ],
+      "explanation": "The >= operator means 'greater than or equal to'. Since age is 20, the expression 20 >= 18 evaluates to True, which gets stored in is_adult."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to compare two strings and print the result.",
+      "lines": [
+        "word1 = \"apple\"",
+        "word2 = \"banana\"",
+        "result = word1 < word2",
+        "print(result)"
+      ],
+      "explanation": "You must first define both variables, then compute the comparison and store it in result, and finally print result. Python compares strings alphabetically, so 'apple' < 'banana' is True because 'a' comes before 'b'."
+    }
+  ]
+}

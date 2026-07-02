@@ -7,12 +7,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getNavSections } from "@/lib/content";
 import { TOTAL_LESSONS } from "@/lib/curriculum";
 import { useProgress } from "./ProgressContext";
-import { ProgressRing } from "./ProgressRing";
+import { Glyph, categoryGlyph, rankGlyph } from "./glyphs";
 import {
   SearchIcon,
   ChevronDown,
   CheckIcon,
   CloseIcon,
+  FlameIcon,
 } from "./Icons";
 
 const SECTIONS = getNavSections();
@@ -25,7 +26,15 @@ export function Sidebar({
   onClose: () => void;
 }) {
   const pathname = usePathname();
-  const { isComplete, count } = useProgress();
+  const {
+    isComplete,
+    count,
+    level,
+    rankName,
+    levelFraction,
+    xp,
+    streak,
+  } = useProgress();
   const [query, setQuery] = useState("");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -47,15 +56,13 @@ export function Sidebar({
     })).filter((s) => s.lessons.length > 0);
   }, [query]);
 
-  const pct = TOTAL_LESSONS ? count / TOTAL_LESSONS : 0;
-
   const content = (
     <div className="flex h-full flex-col">
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
         <Link href="/" className="flex items-center gap-2.5" onClick={onClose}>
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-lg shadow-glow">
-            🐍
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-white shadow-glow">
+            <Glyph name="snake" className="h-5 w-5" />
           </span>
           <span className="text-xl font-black tracking-tight">
             <span className="text-gradient">PyQuest</span>
@@ -74,24 +81,69 @@ export function Sidebar({
         </button>
       </div>
 
-      {/* Progress */}
+      {/* Player card */}
       <Link
-        href="/learn"
+        href="/learn/profile"
         onClick={onClose}
-        className="mx-4 mb-3 flex items-center gap-3 rounded-2xl border border-border bg-surface-2/60 p-3 transition-colors hover:border-accent/40"
+        className="mx-4 mb-2 block rounded-2xl border border-border bg-surface-2/60 p-3 transition-colors hover:border-accent/40"
       >
-        <ProgressRing value={pct} size={42} stroke={4}>
-          <span className="text-[10px] font-bold text-fg">
-            {Math.round(pct * 100)}%
+        <div className="flex items-center gap-2.5">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent-2/20 text-accent">
+            <Glyph name={rankGlyph(rankName)} className="h-5 w-5" />
           </span>
-        </ProgressRing>
-        <div className="min-w-0">
-          <div className="text-sm font-semibold text-fg">Your progress</div>
-          <div className="text-xs text-muted">
-            {count} of {TOTAL_LESSONS} lessons done
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="truncate text-sm font-bold text-fg">
+                Lv {level} · {rankName}
+              </span>
+              {streak > 0 && (
+                <span className="ml-auto flex shrink-0 items-center gap-0.5 text-xs font-bold text-orange-500">
+                  <FlameIcon className="h-3.5 w-3.5" />
+                  {streak}
+                </span>
+              )}
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-border">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-accent to-accent-2 transition-all duration-500"
+                style={{ width: `${Math.round(levelFraction * 100)}%` }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-[10px] text-faint">
+              <span>{xp} XP</span>
+              <span>
+                {count}/{TOTAL_LESSONS} lessons
+              </span>
+            </div>
           </div>
         </div>
       </Link>
+
+      {/* Quick links */}
+      <div className="mx-4 mb-2 grid grid-cols-3 gap-1.5">
+        {[
+          { href: "/learn/playground", icon: "flask", label: "Playground" },
+          { href: "/learn/review", icon: "loop", label: "Practice" },
+          { href: "/learn/profile", icon: "trophy", label: "Badges" },
+        ].map((q) => {
+          const active = pathname === q.href;
+          return (
+            <Link
+              key={q.href}
+              href={q.href}
+              onClick={onClose}
+              className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-[10px] font-semibold transition-colors ${
+                active
+                  ? "border-accent/50 bg-accent/10 text-accent"
+                  : "border-border bg-surface-2/60 text-muted hover:border-accent/40 hover:text-accent"
+              }`}
+            >
+              <Glyph name={q.icon} className="h-4 w-4" />
+              {q.label}
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Search */}
       <div className="relative mx-4 mb-2">
@@ -125,7 +177,10 @@ export function Sidebar({
                 }
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-surface-2/70"
               >
-                <span className="text-sm">{section.emoji}</span>
+                <Glyph
+                  name={categoryGlyph(section.name)}
+                  className="h-4 w-4 text-accent/80"
+                />
                 <span className="flex-1 text-[11px] font-bold uppercase tracking-wider text-muted">
                   {section.name}
                 </span>

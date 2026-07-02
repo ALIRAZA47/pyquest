@@ -1,0 +1,45 @@
+{
+  "slug": "strings-basics",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "word = \"hi\"\nresult = word * 3 + \"!\"\nprint(result)",
+      "options": ["hi3!", "hihihi!", "hi hi hi !", "Error"],
+      "answerIndex": 1,
+      "explanation": "`word * 3` repeats the string \"hi\" three times, giving \"hihihi\". Then `+ \"!\"` joins the exclamation mark on the end, producing \"hihihi!\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print \"Score: 100\" but it crashes. What is wrong?",
+      "code": "score = 100\nprint(\"Score: \" + score)",
+      "options": [
+        "score should be inside the print() call by itself",
+        "You cannot concatenate a string and an integer — wrap score with str() first",
+        "The string \"Score: \" needs to use single quotes instead of double quotes"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python does not automatically convert numbers to text. Using `+` between a string and an integer raises a TypeError. The fix is `\"Score: \" + str(score)` so both sides are strings."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints the number of characters in the word \"Python\".",
+      "codeTemplate": "word = \"Python\"\nprint({{blank}}(word))",
+      "blanks": [
+        { "answer": "len", "accept": ["len"] }
+      ],
+      "explanation": "`len()` is the built-in function that counts every character in a string. `len(\"Python\")` returns 6."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to build a full name and print a greeting.",
+      "lines": [
+        "first = \"Ada\"",
+        "last = \"Lovelace\"",
+        "full_name = first + \" \" + last",
+        "print(\"Hello, \" + full_name + \"!\")"
+      ],
+      "explanation": "You must define `first` and `last` before you can combine them, and you must build `full_name` before you can use it inside the `print()` call."
+    }
+  ]
+}

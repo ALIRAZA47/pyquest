@@ -1,0 +1,53 @@
+{
+  "slug": "the-init-method",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Dog:\n    def __init__(self, name, breed=\"Unknown\"):\n        self.name = name\n        self.breed = breed\n\ndog1 = Dog(\"Rex\", \"Labrador\")\ndog2 = Dog(\"Buddy\")\n\nprint(dog1.name, dog1.breed)\nprint(dog2.name, dog2.breed)",
+      "options": [
+        "Rex Labrador\nBuddy Unknown",
+        "Rex Unknown\nBuddy Labrador",
+        "Rex Labrador\nBuddy Labrador",
+        "Error: breed is required"
+      ],
+      "answerIndex": 0,
+      "explanation": "dog1 gets both name and breed, so it prints 'Rex Labrador'. dog2 only gets a name, so breed falls back to the default value 'Unknown', printing 'Buddy Unknown'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "class Rectangle:\n    def __init__(self, width, height):\n        width = width\n        height = height\n        self.area = width * height\n\nr = Rectangle(4, 5)\nprint(r.area)\nprint(r.width)",
+      "options": [
+        "self.area should be written as area = width * height",
+        "width and height are assigned to local variables instead of self.width and self.height, so r.width raises an AttributeError",
+        "You must call r.__init__(4, 5) manually after creating the instance"
+      ],
+      "answerIndex": 1,
+      "explanation": "Inside __init__, writing width = width only creates a local variable that disappears when the method ends. To store data on the object you must write self.width = width and self.height = height. Without that, accessing r.width raises an AttributeError."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the __init__ method so that a BankAccount stores the owner's name and a starting balance, then prints correctly.",
+      "codeTemplate": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = {{blank}}\n        self.balance = {{blank}}\n\nacc = BankAccount(\"Alice\", 100)\nprint(acc.owner)\nprint(acc.balance)",
+      "blanks": [
+        { "answer": "owner", "accept": ["owner"] },
+        { "answer": "balance", "accept": ["balance"] }
+      ],
+      "explanation": "self.owner = owner stores the owner argument on the object, and self.balance = balance stores the balance. Without self., the values would only live as temporary local variables and you could not access them later via acc.owner or acc.balance."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a Movie class and print the title of a new instance.",
+      "lines": [
+        "class Movie:",
+        "    def __init__(self, title, year):",
+        "        self.title = title",
+        "        self.year = year",
+        "m = Movie(\"Inception\", 2010)",
+        "print(m.title)"
+      ],
+      "explanation": "First define the class and its __init__ method with the attribute assignments inside it. Then create an instance by calling Movie(...), and finally print the attribute. Python calls __init__ automatically when you create the instance, so the title is ready to print right away."
+    }
+  ]
+}

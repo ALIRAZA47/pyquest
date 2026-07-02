@@ -1,0 +1,50 @@
+{
+  "slug": "generators",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def count_up(limit):\n    n = 0\n    while n < limit:\n        yield n\n        n += 1\n\ngen = count_up(3)\nprint(next(gen))\nprint(next(gen))",
+      "options": ["0\n1", "0\n1\n2", "1\n2", "0"],
+      "answerIndex": 0,
+      "explanation": "Each call to next() resumes the generator from where it paused. The first next() yields 0, the second yields 1. We only call next() twice, so 2 is never printed."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print the squares 0, 1, 4, 9, 16 — but it prints nothing. What is wrong?",
+      "code": "def squares(limit):\n    for n in range(limit):\n        return n * n\n\nfor value in squares(5):\n    print(value)",
+      "options": [
+        "return should be yield — return ends the function immediately after the first value, so nothing is ever looped over",
+        "range(limit) should be range(limit + 1) to include 16",
+        "The for loop should use next() instead of iterating directly"
+      ],
+      "answerIndex": 0,
+      "explanation": "Using return makes this a regular function that returns just the first squared value (0) and then exits. Replacing return with yield turns it into a generator that pauses and produces each value one at a time, allowing the for loop to collect all five squares."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the generator expression so it works like a lazy version of the list [0, 1, 4, 9, 16] and the final print shows the total 30.",
+      "codeTemplate": "gen = (x * x for x in {{blank}}(5))\nprint(sum(gen))",
+      "blanks": [
+        { "answer": "range", "accept": ["range"] }
+      ],
+      "explanation": "range(5) produces the numbers 0 through 4. The generator expression (x * x for x in range(5)) lazily squares each one. sum() consumes the generator and adds them up: 0 + 1 + 4 + 9 + 16 = 30."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a generator that yields the first n even numbers and then print them all.",
+      "lines": [
+        "def even_numbers(n):",
+        "    count = 0",
+        "    num = 0",
+        "    while count < n:",
+        "        yield num",
+        "        num += 2",
+        "        count += 1",
+        "for val in even_numbers(4):",
+        "    print(val)"
+      ],
+      "explanation": "The function sets up two counters: num tracks the current even number and count tracks how many have been yielded. Each loop iteration yields the current even number, advances num by 2, and increments count. Once count reaches n the while condition is False and the generator is exhausted, so the for loop stops."
+    }
+  ]
+}

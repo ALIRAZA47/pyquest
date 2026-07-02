@@ -4,12 +4,28 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Exercise as ExerciseType } from "@/lib/types";
 import { CodeBlock } from "./CodeBlock";
+import { PyRunner } from "./PyRunner";
 import { Markdown } from "./Markdown";
-import { FlameIcon, ChevronDown } from "./Icons";
+import { useProgress } from "./ProgressContext";
+import { XP } from "@/lib/gamification";
+import { Glyph } from "./glyphs";
+import { FlameIcon, ChevronDown, LightbulbIcon } from "./Icons";
 
-export function Exercise({ exercise }: { exercise: ExerciseType }) {
+export function Exercise({
+  exercise,
+  slug,
+}: {
+  exercise: ExerciseType;
+  slug: string;
+}) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
+  const { awardXp, hasEvent } = useProgress();
+
+  const starter =
+    exercise.starterCode && exercise.starterCode.trim()
+      ? exercise.starterCode
+      : "# Write your solution here, then press Run ▶\n";
 
   return (
     <section className="mt-10 overflow-hidden rounded-2xl border border-python/30 bg-gradient-to-br from-python/[0.06] to-transparent">
@@ -23,6 +39,11 @@ export function Exercise({ exercise }: { exercise: ExerciseType }) {
           </div>
           <div className="font-semibold text-fg">Practice exercise</div>
         </div>
+        {hasEvent(`exrun:${slug}`) && (
+          <span className="ml-auto rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-500">
+            +{XP.EXERCISE_RUN} XP earned
+          </span>
+        )}
       </div>
 
       <div className="p-5">
@@ -30,11 +51,18 @@ export function Exercise({ exercise }: { exercise: ExerciseType }) {
           <Markdown text={exercise.prompt} />
         </div>
 
-        {exercise.starterCode && exercise.starterCode.trim() && (
-          <div className="mt-2">
-            <CodeBlock code={exercise.starterCode} caption="starter code" />
-          </div>
-        )}
+        <div className="mt-2">
+          <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-faint">
+            <Glyph name="pencil" className="h-3.5 w-3.5" />
+            Try it live — edit the code and hit Run to execute real Python:
+          </p>
+          <PyRunner
+            initialCode={starter}
+            caption="solution.py"
+            minRows={5}
+            onFirstRun={() => awardXp(`exrun:${slug}`, XP.EXERCISE_RUN)}
+          />
+        </div>
 
         <div className="mt-4 flex flex-wrap gap-2.5">
           {exercise.hint && (
@@ -69,8 +97,9 @@ export function Exercise({ exercise }: { exercise: ExerciseType }) {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="mt-3 rounded-xl border border-border bg-surface-2/60 p-4 text-sm text-muted">
-                💡 {exercise.hint}
+              <div className="mt-3 flex items-start gap-2 rounded-xl border border-border bg-surface-2/60 p-4 text-sm text-muted">
+                <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                <span>{exercise.hint}</span>
               </div>
             </motion.div>
           )}

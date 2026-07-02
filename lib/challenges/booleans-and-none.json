@@ -1,0 +1,50 @@
+{
+  "slug": "booleans-and-none",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(bool(\"\"))\nprint(bool(\"hello\"))\nprint(bool(0))\nprint(bool(1))",
+      "options": [
+        "False\nTrue\nFalse\nTrue",
+        "True\nTrue\nFalse\nTrue",
+        "False\nTrue\nTrue\nTrue",
+        "False\nFalse\nFalse\nTrue"
+      ],
+      "answerIndex": 0,
+      "explanation": "An empty string \"\" and the number 0 are both falsy, so bool() returns False for them. A non-empty string like \"hello\" and a non-zero number like 1 are truthy, so bool() returns True."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "is_active = true\nprint(is_active)",
+      "options": [
+        "true should be True — Python booleans must be capitalized",
+        "is_active is not a valid variable name — use isActive instead",
+        "print() cannot display boolean values"
+      ],
+      "answerIndex": 0,
+      "explanation": "Python is case-sensitive. The boolean value must be written as True (capital T), not true. Writing true causes a NameError because Python looks for a variable named true, which does not exist."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it checks whether `score` is None using the recommended Python convention.",
+      "codeTemplate": "score = None\n\nif score {{blank}} None:\n    print(\"No score yet.\")",
+      "blanks": [
+        { "answer": "is", "accept": ["is"] }
+      ],
+      "explanation": "The correct way to check for None in Python is with `is`, not `==`. This is the recommended convention because `is` checks that the value is the exact None object, which is safer and clearer."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to print the result of a comparison and its type.",
+      "lines": [
+        "age = 17",
+        "result = age >= 18",
+        "print(result)",
+        "print(type(result))"
+      ],
+      "explanation": "You must first store the age, then compute the comparison and store it in result, then print the value and its type. The type() call on a boolean shows <class 'bool'>."
+    }
+  ]
+}

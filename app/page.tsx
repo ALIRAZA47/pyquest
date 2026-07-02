@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CURRICULUM, TOTAL_LESSONS, ALL_SLUGS } from "@/lib/curriculum";
 import { CodeBlock } from "@/components/CodeBlock";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Glyph, categoryGlyph } from "@/components/glyphs";
 import {
   ArrowRight,
   SparklesIcon,
@@ -81,8 +82,8 @@ export default function Home() {
       {/* Nav */}
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
         <div className="flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-lg shadow-glow">
-            🐍
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-white shadow-glow">
+            <Glyph name="snake" className="h-5 w-5" />
           </span>
           <span className="text-xl font-black tracking-tight text-gradient">PyQuest</span>
         </div>
@@ -234,8 +235,8 @@ export default function Home() {
                 className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:border-accent/40 hover:shadow-soft"
               >
                 <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-xl">
-                    {cat.emoji}
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <Glyph name={categoryGlyph(cat.name)} className="h-5 w-5" />
                   </span>
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-faint">
@@ -279,8 +280,8 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <p className="mt-10 text-center text-sm text-faint">
-          Built with 🐍 &amp; care · PyQuest — the beautiful way to learn Python.
+        <p className="mt-10 flex items-center justify-center gap-1.5 text-center text-sm text-faint">
+          Built with care · PyQuest — the beautiful way to learn Python.
         </p>
       </section>
     </div>

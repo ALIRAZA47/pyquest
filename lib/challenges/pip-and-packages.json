@@ -1,0 +1,51 @@
+{
+  "slug": "pip-and-packages",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A script imports `requests` and checks a response. What does this code print?",
+      "code": "import requests\n\nresponse = requests.get(\"https://httpbin.org/get\")\nprint(response.status_code)\nprint(type(response))",
+      "options": [
+        "200\n<class 'requests.models.Response'>",
+        "200\n<class 'dict'>",
+        "OK\n<class 'requests.models.Response'>",
+        "200\nNone"
+      ],
+      "answerIndex": 0,
+      "explanation": "A successful HTTP request returns status code 200. The variable `response` is an instance of `requests.models.Response`, so `type(response)` prints that class name — not `dict`, even though the body can be parsed into one later with `.json()`."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code tries to parse the JSON body from an API response, but it crashes. What is wrong?",
+      "code": "import requests\n\nresponse = requests.get(\"https://httpbin.org/json\")\ndata = response.json\nprint(data)",
+      "options": [
+        "The URL should use http:// instead of https://",
+        "`response.json` should be called as a function: `response.json()`",
+        "`requests.get` should be `requests.fetch`",
+        "You must import `json` separately before calling `.json`"
+      ],
+      "answerIndex": 1,
+      "explanation": "`json` is a method on the response object, so it must be called with parentheses: `response.json()`. Without the parentheses, `data` is bound to the method itself (a function object), not the parsed dictionary — so printing it gives something unhelpful like `<bound method ...>` instead of a dict."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the terminal command that saves all currently installed packages and their exact versions to `requirements.txt`.",
+      "codeTemplate": "pip {{blank}} > requirements.txt",
+      "blanks": [
+        { "answer": "freeze", "accept": ["freeze"] }
+      ],
+      "explanation": "`pip freeze` outputs every installed package in `name==version` format. Redirecting that output with `>` writes it into `requirements.txt`. This file can later be used with `pip install -r requirements.txt` so anyone can recreate the same environment."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to fetch a URL, parse the JSON response, and print a value from it.",
+      "lines": [
+        "import requests",
+        "response = requests.get(\"https://httpbin.org/uuid\")",
+        "data = response.json()",
+        "print(data[\"uuid\"])"
+      ],
+      "explanation": "You must import `requests` first, then make the HTTP request with `requests.get()`, then call `.json()` on the response to get a Python dict, and finally access and print the value you want using its key."
+    }
+  ]
+}

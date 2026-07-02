@@ -1,0 +1,54 @@
+{
+  "slug": "if-statements",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "score = 45\n\nif score >= 50:\n    print(\"You passed!\")\n    print(\"Great work.\")\n\nprint(\"Thanks for playing.\")",
+      "options": [
+        "You passed!\nGreat work.\nThanks for playing.",
+        "Thanks for playing.",
+        "You passed!\nThanks for playing.",
+        "Nothing is printed."
+      ],
+      "answerIndex": 1,
+      "explanation": "score is 45, which is not >= 50, so the if condition is False. Python skips both indented lines entirely. Only the last line — which is NOT indented and so is always outside the if block — actually runs and prints \"Thanks for playing.\""
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should print \"You can vote!\" when age is 20, but it causes an error instead. What is wrong?",
+      "code": "age = 20\n\nif age >= 18\n    print(\"You can vote!\")",
+      "options": [
+        "The variable name should be capitalized: Age = 20",
+        "There is a missing colon at the end of the if line — it should be: if age >= 18:",
+        "The print statement needs to be on the same line as the if"
+      ],
+      "answerIndex": 1,
+      "explanation": "Every if statement must end with a colon (:). Without it Python raises a SyntaxError. The correct line is: if age >= 18: — the colon tells Python that a block of indented code is about to follow."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints \"Warm\" when temperature is 25, \"Cold\" when it is below 15, and \"Just right\" for anything in between.",
+      "codeTemplate": "temperature = 25\n\nif temperature >= 30:\n    print(\"Hot\")\n{{blank}} temperature >= 15:\n    print(\"Warm\")\n{{blank}}:\n    print(\"Cold\")",
+      "blanks": [
+        { "answer": "elif", "accept": ["elif"] },
+        { "answer": "else", "accept": ["else"] }
+      ],
+      "explanation": "elif (short for 'else if') checks an additional condition when the first if was False. else is the final fallback that runs when no earlier condition matched. Together they let Python pick exactly one branch from multiple options."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the program checks whether a number is positive, negative, or zero and prints the correct label.",
+      "lines": [
+        "number = -4",
+        "if number > 0:",
+        "    print(\"Positive\")",
+        "elif number < 0:",
+        "    print(\"Negative\")",
+        "else:",
+        "    print(\"Zero\")"
+      ],
+      "explanation": "First assign the variable, then open the if block, then add elif for the next condition, and finally else as the fallback. Python checks each condition from top to bottom and runs only the first matching branch — here number is -4, so 'Negative' prints."
+    }
+  ]
+}

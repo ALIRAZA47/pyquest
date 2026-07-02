@@ -1,0 +1,53 @@
+{
+  "slug": "how-python-works",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"Line 1\")\nprint(\"Line 2\")\nprint(\"Line 3\")",
+      "options": [
+        "Line 1\nLine 2\nLine 3",
+        "Line 3\nLine 2\nLine 1",
+        "Line 1\nLine 3\nLine 2",
+        "All lines at the same time"
+      ],
+      "answerIndex": 0,
+      "explanation": "Python reads and runs code from top to bottom, one line at a time. So Line 1 prints first, then Line 2, then Line 3 — in exactly the order they appear."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"Starting up!\")\nprint(oops)\nprint(\"All done!\")",
+      "options": [
+        "Starting up!\nAll done!",
+        "Starting up!\nNameError: name 'oops' is not defined",
+        "NameError: name 'oops' is not defined",
+        "Starting up!\noops\nAll done!"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python runs line by line from the top. The first print succeeds and outputs 'Starting up!'. Then Python hits the second line and finds that 'oops' is not a defined variable, so it raises a NameError and stops immediately. The third print never runs."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "print(message)\nmessage = \"Hello, Python!\"",
+      "options": [
+        "print() is spelled incorrectly",
+        "The variable 'message' is used before it is defined — the assignment must come first",
+        "The string needs to use single quotes instead of double quotes",
+        "Python cannot store text in a variable called 'message'"
+      ],
+      "answerIndex": 1,
+      "explanation": "Python reads top to bottom. When it reaches print(message) on line 1, the variable 'message' has not been created yet — that only happens on line 2. Moving the assignment above the print call fixes the NameError."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code runs without errors and prints the favorite color.",
+      "lines": [
+        "color = \"blue\"",
+        "print(\"My favorite color is\", color)"
+      ],
+      "explanation": "Python must see the variable 'color' defined before it can use it in print(). Defining the variable first (line 1) then printing it (line 2) follows Python's top-to-bottom execution order and avoids a NameError."
+    }
+  ]
+}

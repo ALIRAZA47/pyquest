@@ -1,0 +1,47 @@
+{
+  "slug": "type-conversion",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "x = \"7\"\nprint(x + x)",
+      "options": ["14", "77", "7 7", "TypeError"],
+      "answerIndex": 1,
+      "explanation": "x is a string (\"7\"), not a number. Adding two strings in Python concatenates them, so \"7\" + \"7\" gives \"77\". To get 14, you would need int(x) + int(x)."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to add 5 to the user's input and print the result, but it raises a TypeError. What is wrong?",
+      "code": "number = input(\"Enter a number: \")\nprint(number + 5)",
+      "options": [
+        "Use print(int(number) + 5) — input() returns a string, so you must convert it to int before doing math.",
+        "Use print(number ++ 5) — the + operator needs two plus signs for addition.",
+        "Use print(number, 5) — the comma adds numbers together in Python."
+      ],
+      "answerIndex": 0,
+      "explanation": "input() always returns a string, even when the user types a number. You cannot add a string and an integer directly. Wrapping number in int() converts it to an integer first, so int(number) + 5 works correctly."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it converts the score to a string and prints: \"You scored 95 points!\"",
+      "codeTemplate": "score = 95\nmessage = \"You scored \" + {{blank}}(score) + \" points!\"\nprint(message)",
+      "blanks": [
+        { "answer": "str", "accept": ["str"] }
+      ],
+      "explanation": "str() converts the integer 95 into the string \"95\" so it can be joined with the other text using the + operator. Without str(), Python would raise a TypeError because you cannot concatenate a string and an integer directly."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(int(3.9))\nprint(bool(\"\"))\nprint(bool(42))",
+      "options": [
+        "4\nFalse\nTrue",
+        "3\nFalse\nTrue",
+        "3\nTrue\nFalse",
+        "4\nTrue\nTrue"
+      ],
+      "answerIndex": 1,
+      "explanation": "int() truncates the decimal — it does not round — so int(3.9) is 3, not 4. An empty string is falsy, so bool(\"\") is False. The number 42 is non-zero and therefore truthy, so bool(42) is True."
+    }
+  ]
+}

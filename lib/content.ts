@@ -1,7 +1,9 @@
 import type {
   Block,
+  Challenge,
   Difficulty,
   Exercise,
+  FillBlank,
   Lesson,
   LessonMeta,
   Slide,
@@ -9,6 +11,7 @@ import type {
 import { ALL_SLUGS, CURRICULUM, categoryForSlug } from "./curriculum";
 import { RAW_LESSONS } from "./generated-lessons";
 import { RAW_SLIDES } from "./generated-slides";
+import { RAW_CHALLENGES } from "./generated-challenges";
 
 // The content access layer. Lesson JSON is authored per-file and imported via
 // the generated RAW_LESSONS map. Everything here is defensive: any missing or
@@ -116,6 +119,67 @@ function normalizeSlides(raw: unknown): Slide[] | undefined {
   return slides.length ? slides : undefined;
 }
 
+function normalizeChallenges(raw: unknown): Challenge[] | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const arr = (raw as Record<string, unknown>).challenges;
+  if (!Array.isArray(arr)) return undefined;
+
+  const out: Challenge[] = [];
+  for (const item of arr) {
+    if (!item || typeof item !== "object") continue;
+    const c = item as Record<string, unknown>;
+    const prompt = asString(c.prompt);
+    const explanation = asString(c.explanation);
+
+    if (c.type === "predict-output" || c.type === "fix-bug") {
+      const options = Array.isArray(c.options)
+        ? (c.options as unknown[]).map((o) => asString(o))
+        : [];
+      let idx = typeof c.answerIndex === "number" ? c.answerIndex : 0;
+      if (options.length < 2) continue;
+      if (idx < 0 || idx >= options.length) idx = 0;
+      out.push({
+        type: c.type,
+        prompt,
+        code: asString(c.code),
+        options,
+        answerIndex: idx,
+        explanation,
+      });
+    } else if (c.type === "fill-blank") {
+      const codeTemplate = asString(c.codeTemplate);
+      const blanks: FillBlank[] = Array.isArray(c.blanks)
+        ? (c.blanks as unknown[])
+            .map((b): FillBlank | null => {
+              if (!b || typeof b !== "object") return null;
+              const bo = b as Record<string, unknown>;
+              const answer = asString(bo.answer);
+              if (!answer) return null;
+              return {
+                answer,
+                accept: Array.isArray(bo.accept)
+                  ? (bo.accept as unknown[]).map((a) => asString(a)).filter(Boolean)
+                  : undefined,
+              };
+            })
+            .filter((b): b is FillBlank => b !== null)
+        : [];
+      const markerCount = (codeTemplate.match(/\{\{blank\}\}/g) || []).length;
+      // Only keep if the markers line up with the provided answers.
+      if (!codeTemplate || blanks.length === 0 || markerCount !== blanks.length)
+        continue;
+      out.push({ type: "fill-blank", prompt, codeTemplate, blanks, explanation });
+    } else if (c.type === "reorder") {
+      const lines = Array.isArray(c.lines)
+        ? (c.lines as unknown[]).map((l) => asString(l))
+        : [];
+      if (lines.length < 2) continue;
+      out.push({ type: "reorder", prompt, lines, explanation });
+    }
+  }
+  return out.length ? out : undefined;
+}
+
 function placeholder(slug: string): Lesson {
   const cat = categoryForSlug(slug);
   return {
@@ -165,6 +229,7 @@ function normalize(slug: string, raw: unknown): Lesson {
     keyTakeaways: takeaways,
     exercise: normalizeExercise(r.exercise),
     slides: normalizeSlides(RAW_SLIDES[slug]),
+    challenges: normalizeChallenges(RAW_CHALLENGES[slug]),
   };
   return lesson;
 }

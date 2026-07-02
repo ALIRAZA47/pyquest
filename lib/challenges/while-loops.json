@@ -1,0 +1,47 @@
+{
+  "slug": "while-loops",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "x = 5\nwhile x > 0:\n    print(x)\n    x -= 2",
+      "options": ["5\n3\n1", "5\n4\n3\n2\n1", "5\n3\n1\n-1", "Nothing — it runs forever"],
+      "answerIndex": 0,
+      "explanation": "x starts at 5. Each pass through the loop subtracts 2: 5 → 3 → 1 → -1. After printing 1, x becomes -1. Since -1 is not greater than 0, the condition is False and the loop stops. The printed values are 5, 3, and 1."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print the numbers 1, 2, and 3, then print 'Done!'. What is wrong?",
+      "code": "count = 1\n\nwhile count <= 3:\n    print(count)\n\nprint(\"Done!\")",
+      "options": [
+        "The condition should be count < 3 instead of count <= 3",
+        "count is never updated inside the loop, so it stays 1 forever and the loop never ends",
+        "print(\"Done!\") should be inside the loop, not after it"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without count += 1 inside the loop, count stays at 1 on every pass. The condition count <= 3 is always True, so the loop runs forever. Adding count += 1 (or count = count + 1) inside the loop lets count eventually reach 4, which makes the condition False and stops the loop."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it counts from 1 to 4, printing each number, using the += shortcut.",
+      "codeTemplate": "count = 1\n\nwhile count {{blank}} 4:\n    print(count)\n    count {{blank}} 1",
+      "blanks": [
+        { "answer": "<= ", "accept": ["<=", "<= "] },
+        { "answer": "+=", "accept": ["+="] }
+      ],
+      "explanation": "count <= 4 keeps the loop running while count is 4 or below. count += 1 increases count by 1 each time so it eventually reaches 5, the condition becomes False, and the loop stops after printing 1, 2, 3, and 4."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the program counts down from 3 to 1, then prints 'Blastoff!'",
+      "lines": [
+        "count = 3",
+        "while count > 0:",
+        "    print(count)",
+        "    count -= 1",
+        "print(\"Blastoff!\")"
+      ],
+      "explanation": "First set count to 3. Then start the while loop with the condition count > 0. Inside the loop, print the current count and then subtract 1. After the loop ends (when count reaches 0), print 'Blastoff!' outside the loop."
+    }
+  ]
+}

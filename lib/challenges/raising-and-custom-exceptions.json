@@ -1,0 +1,53 @@
+{
+  "slug": "raising-and-custom-exceptions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def set_age(age):\n    if age < 0:\n        raise ValueError(\"Age cannot be negative.\")\n    print(f\"Age set to {age}\")\n\ntry:\n    set_age(30)\n    set_age(-1)\nexcept ValueError as e:\n    print(f\"Error: {e}\")",
+      "options": [
+        "Age set to 30\nError: Age cannot be negative.",
+        "Age set to 30\nAge set to -1",
+        "Error: Age cannot be negative.",
+        "Age set to 30\nValueError: Age cannot be negative."
+      ],
+      "answerIndex": 0,
+      "explanation": "set_age(30) succeeds and prints 'Age set to 30'. Then set_age(-1) hits the raise ValueError line, which is caught by the except block and prints 'Error: Age cannot be negative.' The f-string inserts the exception message via {e}."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should raise an InsufficientFundsError when amount exceeds balance, but it crashes instead. What is wrong?",
+      "code": "class InsufficientFundsError(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError\n    return balance - amount\n\ntry:\n    withdraw(50, 200)\nexcept InsufficientFundsError as e:\n    print(f\"Failed: {e}\")",
+      "options": [
+        "The class should inherit from RuntimeError, not Exception",
+        "raise InsufficientFundsError should be raise InsufficientFundsError(\"message\") — you must call it like a function with parentheses to create an instance",
+        "The except block should use except Exception instead of the custom class name",
+        "withdraw should return None instead of balance - amount"
+      ],
+      "answerIndex": 1,
+      "explanation": "raise InsufficientFundsError (without parentheses) raises the class itself rather than creating an instance of it. While Python technically allows this, it produces no message and is bad practice. The fix is raise InsufficientFundsError(\"Cannot withdraw — insufficient funds.\") so a proper exception instance with a helpful message is created."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the custom exception class and the raise statement so that passing a negative amount triggers the custom error.",
+      "codeTemplate": "class NegativeAmountError({{blank}}):\n    pass\n\ndef process(amount):\n    if amount < 0:\n        {{blank}} NegativeAmountError(\"Amount must not be negative.\")\n    print(f\"Processing {amount}\")",
+      "blanks": [
+        { "answer": "Exception", "accept": ["Exception"] },
+        { "answer": "raise", "accept": ["raise"] }
+      ],
+      "explanation": "Custom exceptions must inherit from Exception (or a subclass of it) so Python treats them as exceptions. The raise keyword is what actually signals the error — without it the condition check does nothing."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to define a custom exception, raise it inside a function, and catch it with a helpful message.",
+      "lines": [
+        "class TooHotError(Exception):",
+        "    pass",
+        "def check_temp(t):",
+        "    if t > 100:",
+        "        raise TooHotError(\"Temperature is too high!\")"
+      ],
+      "explanation": "First define the custom exception class (with its pass body). Then define the function, write the if condition inside it, and finally raise the custom exception. Python must know about TooHotError before check_temp can reference it."
+    }
+  ]
+}

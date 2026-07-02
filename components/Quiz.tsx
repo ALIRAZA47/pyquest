@@ -4,18 +4,33 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckIcon, CloseIcon, TargetIcon } from "./Icons";
 import { Markdown } from "./Markdown";
+import { useProgress } from "./ProgressContext";
+import { XP } from "@/lib/gamification";
 
 interface QuizProps {
   question: string;
   options: string[];
   answerIndex: number;
   explanation: string;
+  xpKey?: string;
 }
 
-export function Quiz({ question, options, answerIndex, explanation }: QuizProps) {
+export function Quiz({
+  question,
+  options,
+  answerIndex,
+  explanation,
+  xpKey,
+}: QuizProps) {
   const [selected, setSelected] = useState<number | null>(null);
+  const { awardXp } = useProgress();
   const answered = selected !== null;
   const correct = selected === answerIndex;
+
+  const choose = (i: number) => {
+    setSelected(i);
+    if (i === answerIndex && xpKey) awardXp(xpKey, XP.QUIZ_CORRECT);
+  };
 
   return (
     <div className="my-7 overflow-hidden rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] to-accent-2/[0.05]">
@@ -42,7 +57,7 @@ export function Quiz({ question, options, answerIndex, explanation }: QuizProps)
                 key={i}
                 type="button"
                 disabled={answered}
-                onClick={() => setSelected(i)}
+                onClick={() => choose(i)}
                 className={[
                   "group flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all",
                   state === "idle" &&

@@ -1,0 +1,46 @@
+{
+  "slug": "return-values",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def double_print(x):\n    print(x * 2)\n\ndef double_return(x):\n    return x * 2\n\na = double_print(3)\nb = double_return(3)\nprint(a)\nprint(b)",
+      "options": ["6\nNone\n6", "6\n6\n6", "None\n6\nNone", "6\n6\nNone"],
+      "answerIndex": 0,
+      "explanation": "double_print(3) prints 6 as a side effect, then gives back None (no return statement). double_return(3) silently gives back 6, which gets stored in b. So the output is: 6 (from inside double_print), then None (print(a)), then 6 (print(b))."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. The programmer wants result to hold the squared value so they can use it in a calculation — but it doesn't work. What is wrong?",
+      "code": "def square(n):\n    print(n * n)\n\nresult = square(5)\nprint(result + 1)",
+      "options": [
+        "Change print(n * n) to return n * n — the function must return the value, not just print it",
+        "Change result = square(5) to result = square(5) + 1",
+        "Add a second parameter to square so it accepts the +1 directly"
+      ],
+      "answerIndex": 0,
+      "explanation": "print(n * n) only displays the number on screen; it does not hand it back to the caller. Because square has no return statement, Python returns None, so result is None. Adding + 1 to None causes a TypeError. Replacing print(n * n) with return n * n fixes it — the value is sent back and stored in result."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the function so it returns both the sum and the product of two numbers, then unpacks them into two variables.",
+      "codeTemplate": "def sum_and_product(a, b):\n    {{blank}} a + b, a * b\n\ntotal, product = sum_and_product(3, 4)\nprint(total)\nprint(product)",
+      "blanks": [
+        { "answer": "return", "accept": ["return"] }
+      ],
+      "explanation": "The keyword return followed by two comma-separated expressions hands both values back as a tuple. Writing return a + b, a * b lets the caller unpack them with total, product = sum_and_product(3, 4), giving 7 and 12."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the function returns False early when age is under 18, and True otherwise.",
+      "lines": [
+        "def is_adult(age):",
+        "    if age < 18:",
+        "        return False",
+        "    return True",
+        "print(is_adult(20))"
+      ],
+      "explanation": "The function definition comes first, followed by the early-return guard that exits with False when age < 18. The final return True is only reached when age is 18 or older. Calling print(is_adult(20)) then shows True."
+    }
+  ]
+}

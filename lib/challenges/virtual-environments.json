@@ -1,0 +1,53 @@
+{
+  "slug": "virtual-environments",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A developer runs these terminal commands in order. What does the prompt look like AFTER the third command succeeds?",
+      "code": "# Command 1\npython -m venv .venv\n\n# Command 2\nsource .venv/bin/activate\n\n# Command 3\npip install requests",
+      "options": [
+        "(.venv) your-computer:myproject you$",
+        "your-computer:myproject you$",
+        "(.venv) pip install requests",
+        "Error: environment not found"
+      ],
+      "answerIndex": 0,
+      "explanation": "After running 'source .venv/bin/activate', the terminal prompt gains a (.venv) prefix to show you are inside the environment. It stays there until you run 'deactivate'. The pip install command does not change the prompt."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A developer wants to install Flask into their virtual environment, but it ends up in the global Python location instead. What went wrong?",
+      "code": "# In the terminal:\npython -m venv .venv\npip install flask",
+      "options": [
+        "They should have used 'python -m pip' instead of 'pip'",
+        "They forgot to activate the environment before running pip install",
+        "They should have named the folder 'venv' instead of '.venv'",
+        "pip install does not work inside a virtual environment"
+      ],
+      "answerIndex": 1,
+      "explanation": "Creating a virtual environment with 'python -m venv .venv' does not automatically activate it. You must run 'source .venv/bin/activate' (macOS/Linux) or '.venv\\Scripts\\activate.bat' (Windows) first. Without activation, pip still points at the global Python location. Always look for the (.venv) label in your prompt before installing anything."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two terminal commands: first to save the current environment's packages to a file, then to install from that file in a fresh environment.",
+      "codeTemplate": "# Save dependencies\npip {{blank}} > requirements.txt\n\n# Recreate the environment elsewhere\npip install {{blank}} requirements.txt",
+      "blanks": [
+        { "answer": "freeze", "accept": ["freeze"] },
+        { "answer": "-r", "accept": ["-r"] }
+      ],
+      "explanation": "'pip freeze' prints all installed packages and their exact versions. Redirecting it with '>' saves the list to requirements.txt. Later, 'pip install -r requirements.txt' reads that file and installs every package at the exact same version — perfect for sharing a project with teammates or deploying to a server."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these terminal commands in the correct order to set up and use a new virtual environment from scratch.",
+      "lines": [
+        "python -m venv .venv",
+        "source .venv/bin/activate",
+        "pip install pandas",
+        "pip freeze > requirements.txt",
+        "deactivate"
+      ],
+      "explanation": "You must create the environment first, then activate it so pip knows where to install. After installing your packages you save them to requirements.txt so others can recreate the environment. Finally, deactivate returns you to the global Python when you are done for the day."
+    }
+  ]
+}

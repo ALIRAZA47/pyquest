@@ -9,13 +9,16 @@ import { Callout } from "./Callout";
 import { Quiz } from "./Quiz";
 import { Exercise } from "./Exercise";
 import { Slides } from "./Slides";
+import { Challenges } from "./Challenges";
 import { Markdown } from "./Markdown";
 import { useProgress } from "./ProgressContext";
+import { Glyph, lessonGlyph } from "./glyphs";
 import {
   CheckIcon,
   ArrowLeft,
   ArrowRight,
   SparklesIcon,
+  PlayIcon,
 } from "./Icons";
 
 const DIFFICULTY_STYLE: Record<string, string> = {
@@ -24,7 +27,15 @@ const DIFFICULTY_STYLE: Record<string, string> = {
   Advanced: "border-rose-500/30 bg-rose-500/10 text-rose-500",
 };
 
-function BlockView({ block }: { block: Block }) {
+function BlockView({
+  block,
+  slug,
+  index,
+}: {
+  block: Block;
+  slug: string;
+  index: number;
+}) {
   switch (block.type) {
     case "text":
       return (
@@ -50,6 +61,7 @@ function BlockView({ block }: { block: Block }) {
           options={block.options}
           answerIndex={block.answerIndex}
           explanation={block.explanation}
+          xpKey={`quiz:${slug}:${index}`}
         />
       );
     default:
@@ -65,7 +77,9 @@ function WalkthroughDeck({ slides }: { slides: NonNullable<Lesson["slides"]> }) 
       transition={{ duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="mt-8 flex items-center gap-2">
-        <span className="text-lg">👀</span>
+        <span className="grid h-6 w-6 place-items-center rounded-md bg-accent/10 text-accent">
+          <PlayIcon className="h-3 w-3" />
+        </span>
         <h2 className="text-lg font-bold tracking-tight text-fg">
           See it in action
         </h2>
@@ -91,8 +105,15 @@ export function LessonRenderer({
   index: number;
   total: number;
 }) {
-  const { isComplete, toggle, markComplete } = useProgress();
+  const { isComplete, toggle, markComplete, celebrate } = useProgress();
   const done = isComplete(lesson.slug);
+
+  const completeAndCelebrate = () => {
+    if (!isComplete(lesson.slug)) {
+      markComplete(lesson.slug);
+      celebrate();
+    }
+  };
 
   // Show the walkthrough deck right after the opening paragraph (index 0 when
   // it's a text block), or before all blocks otherwise.
@@ -131,8 +152,14 @@ export function LessonRenderer({
         </div>
 
         <div className="mt-5 flex items-start gap-4">
-          <span className="text-4xl sm:text-5xl" aria-hidden>
-            {lesson.emoji}
+          <span
+            className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-accent/15 to-accent-2/15 text-accent sm:h-16 sm:w-16"
+            aria-hidden
+          >
+            <Glyph
+              name={lessonGlyph(lesson.slug)}
+              className="h-7 w-7 sm:h-8 sm:w-8"
+            />
           </span>
           <div>
             <h1 className="text-3xl font-black tracking-tight text-fg sm:text-4xl">
@@ -144,7 +171,10 @@ export function LessonRenderer({
 
         <button
           type="button"
-          onClick={() => toggle(lesson.slug)}
+          onClick={() => {
+            if (!done) celebrate();
+            toggle(lesson.slug);
+          }}
           className={`mt-5 flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition-all ${
             done
               ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-500"
@@ -183,7 +213,7 @@ export function LessonRenderer({
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
-              <BlockView block={block} />
+              <BlockView block={block} slug={lesson.slug} index={i} />
             </motion.div>
             {lesson.slides &&
               lesson.slides.length > 0 &&
@@ -214,15 +244,20 @@ export function LessonRenderer({
         </section>
       )}
 
+      {/* Interactive challenges */}
+      {lesson.challenges && lesson.challenges.length > 0 && (
+        <Challenges challenges={lesson.challenges} slug={lesson.slug} />
+      )}
+
       {/* Exercise */}
-      {lesson.exercise && <Exercise exercise={lesson.exercise} />}
+      {lesson.exercise && <Exercise exercise={lesson.exercise} slug={lesson.slug} />}
 
       {/* Completion nudge + navigation */}
       <div className="mt-12">
         {!done && (
           <button
             type="button"
-            onClick={() => markComplete(lesson.slug)}
+            onClick={completeAndCelebrate}
             className="mb-6 w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.06] px-5 py-4 text-center text-sm font-semibold text-emerald-500 transition-colors hover:bg-emerald-500/10"
           >
             ✓ Finished this lesson? Mark it complete and keep the streak going!
@@ -238,8 +273,12 @@ export function LessonRenderer({
               <ArrowLeft className="h-5 w-5 shrink-0 text-faint transition-transform group-hover:-translate-x-1 group-hover:text-accent" />
               <span className="min-w-0">
                 <span className="block text-xs text-faint">Previous</span>
-                <span className="block truncate font-semibold text-fg">
-                  {prev.emoji} {prev.title}
+                <span className="flex items-center gap-1.5 font-semibold text-fg">
+                  <Glyph
+                    name={lessonGlyph(prev.slug)}
+                    className="h-4 w-4 shrink-0 text-accent"
+                  />
+                  <span className="truncate">{prev.title}</span>
                 </span>
               </span>
             </Link>
@@ -253,8 +292,12 @@ export function LessonRenderer({
             >
               <span className="min-w-0">
                 <span className="block text-xs text-faint">Up next</span>
-                <span className="block truncate font-semibold text-fg">
-                  {next.emoji} {next.title}
+                <span className="flex items-center justify-end gap-1.5 font-semibold text-fg">
+                  <span className="truncate">{next.title}</span>
+                  <Glyph
+                    name={lessonGlyph(next.slug)}
+                    className="h-4 w-4 shrink-0 text-accent"
+                  />
                 </span>
               </span>
               <ArrowRight className="h-5 w-5 shrink-0 text-faint transition-transform group-hover:translate-x-1 group-hover:text-accent" />
@@ -266,8 +309,9 @@ export function LessonRenderer({
             >
               <span>
                 <span className="block text-xs text-accent/70">You made it</span>
-                <span className="block font-semibold text-accent">
-                  🎓 Back to dashboard
+                <span className="flex items-center justify-end gap-1.5 font-semibold text-accent">
+                  <Glyph name="gradcap" className="h-4 w-4" />
+                  Back to dashboard
                 </span>
               </span>
               <ArrowRight className="h-5 w-5 text-accent" />

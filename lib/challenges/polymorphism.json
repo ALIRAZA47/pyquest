@@ -1,0 +1,47 @@
+{
+  "slug": "polymorphism",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "class Dog:\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat:\n    def speak(self):\n        return \"Meow!\"\n\nanimals = [Dog(), Cat(), Dog()]\n\nfor animal in animals:\n    print(animal.speak())",
+      "options": ["Woof!\nMeow!\nWoof!", "Woof!\nWoof!\nMeow!", "Dog\nCat\nDog", "Meow!\nWoof!\nMeow!"],
+      "answerIndex": 0,
+      "explanation": "The loop visits each object in order: Dog, Cat, Dog. Each one's speak() method is called and returns its own string. So the output follows the order of the list: Woof!, Meow!, Woof!."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is supposed to print the sound each animal makes, but it raises an error. What is wrong?",
+      "code": "class Dog:\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat:\n    def Make_Sound(self):\n        return \"Meow!\"\n\nanimals = [Dog(), Cat()]\n\nfor animal in animals:\n    print(animal.speak())",
+      "options": [
+        "The list should only contain objects of the same class.",
+        "Cat's method is named Make_Sound instead of speak, so Python can't find speak() on a Cat object.",
+        "The for loop should use a while loop instead."
+      ],
+      "answerIndex": 1,
+      "explanation": "Polymorphism only works when method names match exactly. Cat defines Make_Sound() but the loop calls speak(). When the loop reaches the Cat object it raises an AttributeError. Renaming Make_Sound to speak fixes the problem."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the Animal base class so that Dog inherits from it and the output is Woof!",
+      "codeTemplate": "class Animal:\n    def speak(self):\n        return \"...\"\n\nclass Dog({{blank}}):\n    def speak(self):\n        return \"Woof!\"\n\nprint(Dog().speak())",
+      "blanks": [
+        { "answer": "Animal", "accept": ["Animal"] }
+      ],
+      "explanation": "Dog must inherit from Animal by placing Animal inside the parentheses: class Dog(Animal). Even though Dog overrides speak(), it still needs to declare its parent class correctly. This is method overriding — a key form of polymorphism."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the code prints the area of each shape.",
+      "lines": [
+        "class Circle:",
+        "    def area(self):",
+        "        return 3.14 * self.radius ** 2",
+        "shapes = [Circle()]",
+        "for shape in shapes:",
+        "    print(shape.area())"
+      ],
+      "explanation": "First you define the Circle class with its area() method, then create a list of shape objects, and finally loop through the list calling area() on each one. The class definition must come before you create any instances from it."
+    }
+  ]
+}

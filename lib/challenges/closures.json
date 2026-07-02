@@ -1,0 +1,48 @@
+{
+  "slug": "closures",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "def make_multiplier(n):\n    def multiply(x):\n        return x * n\n    return multiply\n\ndouble = make_multiplier(2)\ntriple = make_multiplier(3)\n\nprint(double(4))\nprint(triple(4))",
+      "options": ["8\n12", "4\n4", "2\n3", "8\n8"],
+      "answerIndex": 0,
+      "explanation": "double is a closure that captured n=2, so double(4) returns 4*2=8. triple captured n=3, so triple(4) returns 4*3=12. Each call to make_multiplier creates a separate closure with its own remembered value of n."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This counter is supposed to print 1, then 2, then 3. What is wrong?",
+      "code": "def make_counter():\n    count = 0\n\n    def increment():\n        count += 1\n        return count\n\n    return increment\n\ncounter = make_counter()\nprint(counter())\nprint(counter())\nprint(counter())",
+      "options": [
+        "Add nonlocal count inside increment — without it Python treats count as a new local variable and crashes when it tries to read it before assigning",
+        "Change count = 0 to count = 1 so the counter starts at the right number",
+        "Call make_counter() three separate times instead of reusing the same counter"
+      ],
+      "answerIndex": 0,
+      "explanation": "count += 1 is an assignment, so Python assumes count is a local variable inside increment. But count has no local value yet, causing an UnboundLocalError. Adding nonlocal count tells Python to look up and modify the count that lives in make_counter's scope instead."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the factory function so it returns an inner function that adds n to any number.",
+      "codeTemplate": "def make_adder(n):\n    def add(x):\n        return x + {{blank}}\n    {{blank}} add\n\nadd10 = make_adder(10)\nprint(add10(5))   # prints 15",
+      "blanks": [
+        { "answer": "n", "accept": ["n"] },
+        { "answer": "return", "accept": ["return"] }
+      ],
+      "explanation": "Inside add, we use n which is captured from make_adder's enclosing scope — that is exactly what makes it a closure. We then return the inner function object (not a call to it) so the caller can use it later."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to build a greeting closure and print 'Hey, Maya!'",
+      "lines": [
+        "def make_greeter(name):",
+        "    def greet():",
+        "        print(f\"Hey, {name}!\")",
+        "    return greet",
+        "say_hi = make_greeter(\"Maya\")",
+        "say_hi()"
+      ],
+      "explanation": "First we define make_greeter with its inner greet function, then return greet (the function object, not a call). After that we call make_greeter(\"Maya\") to create the closure and store it in say_hi, and finally we invoke say_hi() to trigger the print."
+    }
+  ]
+}

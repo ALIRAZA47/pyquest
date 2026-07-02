@@ -1,0 +1,47 @@
+{
+  "slug": "popular-libraries",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "import pandas as pd\n\ndata = {\"name\": [\"Alice\", \"Bob\"], \"score\": [80, 100]}\ndf = pd.DataFrame(data)\nprint(df[\"score\"].mean())",
+      "options": ["90.0", "180.0", "80.0", "100.0"],
+      "answerIndex": 0,
+      "explanation": "df[\"score\"] contains [80, 100]. The mean of those two values is (80 + 100) / 2 = 90.0. Pandas' .mean() always returns a float, so the output is 90.0."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code tries to parse HTML with Beautiful Soup, but it crashes. What is wrong?",
+      "code": "from bs4 import BeautifulSoup\n\nhtml = \"<h1>Hello</h1>\"\nsoup = BeautifulSoup(html)\nprint(soup.h1.text)",
+      "options": [
+        "BeautifulSoup needs a second argument specifying the parser, such as \"html.parser\"",
+        "You should use soup.h1() instead of soup.h1.text to get the text",
+        "The html string must be fetched with requests.get() before being parsed"
+      ],
+      "answerIndex": 0,
+      "explanation": "BeautifulSoup requires a second argument telling it which parser to use. The fix is: BeautifulSoup(html, \"html.parser\"). Without it you get a warning (or error in some versions) because Beautiful Soup cannot guess the parser."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it fetches a web page and prints whether the request was successful (status code 200).",
+      "codeTemplate": "import {{blank}}\n\nresponse = requests.get(\"https://api.github.com\")\nprint(response.{{blank}})",
+      "blanks": [
+        { "answer": "requests", "accept": ["requests"] },
+        { "answer": "status_code", "accept": ["status_code"] }
+      ],
+      "explanation": "First you import the requests library, then call requests.get() to make an HTTP GET request. The response object has a status_code attribute that holds the numeric HTTP status (200 means success)."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to create a tiny Flask web app.",
+      "lines": [
+        "from flask import Flask",
+        "app = Flask(__name__)",
+        "@app.route(\"/\")",
+        "def home():",
+        "    return \"Hello from Python!\""
+      ],
+      "explanation": "You must import Flask first, then create the app object, then use the @app.route decorator to register a URL, and finally define the function that runs when that URL is visited. The return value is what the browser receives."
+    }
+  ]
+}

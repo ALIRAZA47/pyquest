@@ -1,0 +1,52 @@
+{
+  "slug": "your-next-steps",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson showed a learning log script. What does this shorter version print?",
+      "code": "with open(\"log.txt\", \"w\") as log:\n    log.write(\"Built a guessing game\\n\")\n\nwith open(\"log.txt\", \"r\") as log:\n    for line in log:\n        print(line.strip())",
+      "options": [
+        "Built a guessing game",
+        "Built a guessing game\\n",
+        "log.txt",
+        "None"
+      ],
+      "answerIndex": 0,
+      "explanation": "The script writes one line to the file, then reads it back and prints each line with .strip() to remove the trailing newline character. So the output is just: Built a guessing game"
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This script is meant to add a goal to a file and then read all goals back, but it has a bug. What is wrong?",
+      "code": "with open(\"goals.txt\", \"w\") as f:\n    f.write(\"Learn Python\\n\")\n\nwith open(\"goals.txt\", \"r\") as f:\n    for line in f:\n        print(\"-\", line.strip())",
+      "options": [
+        "The file should be opened with mode \"r\" for writing",
+        "The file should be opened with mode \"a\" instead of \"w\" so existing goals are not erased each time",
+        "You cannot open the same file twice in one script",
+        "line.strip() should be line.split() instead"
+      ],
+      "answerIndex": 1,
+      "explanation": "Mode \"w\" overwrites the file every time the script runs, erasing all previous goals. Mode \"a\" (append) adds to the end of the file without deleting what is already there — which is exactly what a goal tracker needs."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the number guessing game snippet so it keeps looping until the player's guess matches the secret number.",
+      "codeTemplate": "secret = 42\n\n{{blank}} True:\n    guess = int(input(\"Guess: \"))\n    if guess == secret:\n        print(\"Correct!\")\n        {{blank}}",
+      "blanks": [
+        { "answer": "while", "accept": ["while"] },
+        { "answer": "break", "accept": ["break"] }
+      ],
+      "explanation": "\"while True\" creates an infinite loop that keeps asking for guesses. \"break\" exits the loop as soon as the player guesses correctly — the same pattern used in the guessing game from this lesson."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to write a goal to a file and then confirm it was saved.",
+      "lines": [
+        "goal = input(\"Enter a goal: \")",
+        "with open(\"goals.txt\", \"a\") as f:",
+        "    f.write(goal + \"\\n\")",
+        "print(\"Goal saved!\")"
+      ],
+      "explanation": "First you collect the goal from the user, then open the file in append mode, write the goal with a newline, and finally print a confirmation message. The write must happen inside the with block so the file is still open."
+    }
+  ]
+}

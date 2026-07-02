@@ -1,0 +1,49 @@
+{
+  "slug": "the-repl",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "You type the following into the Python REPL. What does Python show?",
+      "code": ">>> 10 * 3\n>>> 100 / 4",
+      "options": ["30\n25.0", "30\n25", "10 * 3\n100 / 4", "Error"],
+      "answerIndex": 0,
+      "explanation": "The REPL evaluates each expression and prints the result immediately. 10 * 3 is 30 (an integer), and 100 / 4 is 25.0 (a float, because division always returns a float in Python 3)."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A beginner wants to open the Python REPL but nothing interactive appears — Python just runs and exits. What is wrong?",
+      "code": "$ python greet.py",
+      "options": [
+        "They should type python3 greet.py instead",
+        "They should type just python with no filename — providing a filename runs that file instead of opening the REPL",
+        "They need to add >>> before the command",
+        "They should press Ctrl+D first"
+      ],
+      "answerIndex": 1,
+      "explanation": "Typing python greet.py tells Python to run the file greet.py and then quit. To open the interactive REPL, you type python with no filename at all — then you see the >>> prompt and can type expressions one at a time."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the REPL session so it greets Ada by name using an f-string.",
+      "codeTemplate": ">>> name = \"Ada\"\n>>> print(f\"Hello, {{blank}}!\")",
+      "blanks": [
+        {
+          "answer": "{name}",
+          "accept": ["{name}"]
+        }
+      ],
+      "explanation": "Inside an f-string, curly braces {} hold a variable name. Writing {name} tells Python to look up the value of the variable name and insert it into the string, producing Hello, Ada!."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these REPL lines in the right order to define a variable, calculate with it, and then exit.",
+      "lines": [
+        ">>> x = 5",
+        ">>> x * 10",
+        "50",
+        ">>> exit()"
+      ],
+      "explanation": "First you assign the variable x = 5, then you type the expression x * 10 and the REPL immediately prints 50, and finally exit() closes the session and returns you to the terminal."
+    }
+  ]
+}

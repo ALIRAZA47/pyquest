@@ -1,0 +1,54 @@
+{
+  "slug": "regular-expressions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "import re\n\ntext = \"I have 3 cats and 12 dogs\"\nresult = re.findall(r\"\\d+\", text)\nprint(result)",
+      "options": [
+        "['3', '12']",
+        "3\n12",
+        "'3'",
+        "['3 cats', '12 dogs']"
+      ],
+      "answerIndex": 0,
+      "explanation": "re.findall returns a list of all non-overlapping matches as strings. The pattern \\d+ matches one or more digits, so it finds '3' and '12', giving the list ['3', '12']. It does NOT print each match on its own line — it returns a Python list."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code crashes at runtime. What is the bug?",
+      "code": "import re\n\ntext = \"No digits here!\"\nmatch = re.search(r\"\\d+\", text)\nprint(match.group())",
+      "options": [
+        "The pattern r\"\\d+\" is wrong — it should be r\"[0-9]+\" to match digits",
+        "re.search returns None when nothing is found, so calling .group() on it raises an AttributeError. The code must check if match is not None first.",
+        "print() cannot display the result of .group() — use str() first"
+      ],
+      "answerIndex": 1,
+      "explanation": "When re.search finds no match it returns None, not a Match object. Calling .group() on None raises AttributeError. Always guard with: if match: print(match.group()). The pattern itself is perfectly valid — \\d+ and [0-9]+ behave the same way."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it replaces every price (like $10 or $250) with the word FREE and prints the result.",
+      "codeTemplate": "import re\n\ntext = \"Apples $2, Oranges $5\"\nresult = re.{{blank}}(r\"\\$\\d+\", \"FREE\", text)\nprint(result)",
+      "blanks": [
+        {
+          "answer": "sub",
+          "accept": ["sub"]
+        }
+      ],
+      "explanation": "re.sub(pattern, replacement, text) replaces every match of the pattern with the replacement string. Here it finds $2 and $5 (the \\$ matches a literal dollar sign, \\d+ matches the digits) and swaps each one for 'FREE', printing: Apples FREE, Oranges FREE."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to extract the username and domain from an email address and print them separately.",
+      "lines": [
+        "import re",
+        "email = \"alice@example.com\"",
+        "match = re.search(r\"(\\w+)@([\\w.]+)\", email)",
+        "if match:",
+        "    print(match.group(1), match.group(2))"
+      ],
+      "explanation": "You must import re first, then define the string, then run re.search with a pattern that has two capturing groups — one for the username before @ and one for the domain after it. Only after confirming match is not None (the if match: guard) is it safe to call match.group(1) and match.group(2) to get the two captured pieces."
+    }
+  ]
+}

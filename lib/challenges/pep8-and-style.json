@@ -1,0 +1,48 @@
+{
+  "slug": "pep8-and-style",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "MAX_SPEED = 120\n\ndef calculate_distance(speed, hours):\n    return speed * hours\n\nresult = calculate_distance(MAX_SPEED, 2)\nprint(result)",
+      "options": ["240", "120", "2", "60"],
+      "answerIndex": 0,
+      "explanation": "calculate_distance multiplies speed (120) by hours (2), giving 240. The code follows PEP 8 style: UPPER_CASE constant, snake_case function name, spaces around operators, and 4-space indentation."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a PEP 8 style bug. What is wrong?",
+      "code": "def calculateArea(width, height):\n  return width * height\n\nresult = calculateArea(5, 3)\nprint(result)",
+      "options": [
+        "The function name should be snake_case (calculate_area) and the body should use 4 spaces instead of 2",
+        "The return statement is missing parentheses around width * height",
+        "There should be no blank line between the function and the result variable"
+      ],
+      "answerIndex": 0,
+      "explanation": "PEP 8 requires snake_case for function names (calculate_area, not calculateArea) and 4 spaces per indentation level, not 2. Both issues make the code harder to read and inconsistent with Python conventions."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the constant name and variable name so both follow PEP 8 naming conventions. The code should print 314.159.",
+      "codeTemplate": "{{blank}} = 3.14159\n\ndef circle_area({{blank}}):\n    return PI * radius * radius\n\nprint(circle_area(10))",
+      "blanks": [
+        { "answer": "PI", "accept": ["PI"] },
+        { "answer": "radius", "accept": ["radius"] }
+      ],
+      "explanation": "Constants like PI are written in UPPER_CASE per PEP 8. Function parameters are variables and use snake_case (all lowercase). Both conventions signal at a glance what kind of name you are looking at."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these import lines in the correct PEP 8 order (standard library first, then third-party, then local).",
+      "lines": [
+        "import math",
+        "import os",
+        "",
+        "import requests",
+        "",
+        "import my_utils"
+      ],
+      "explanation": "PEP 8 groups imports in three sections separated by blank lines: (1) standard library modules like math and os that ship with Python, (2) third-party packages like requests installed via pip, and (3) your own local modules. This order makes dependencies obvious at a glance."
+    }
+  ]
+}

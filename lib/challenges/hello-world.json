@@ -1,0 +1,49 @@
+{
+  "slug": "hello-world",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "print(\"Hello\", \"World\", \"from Python!\")",
+      "options": [
+        "Hello World from Python!",
+        "Hello,World,from Python!",
+        "HelloWorldfrom Python!",
+        "Error — you can't pass multiple strings to print()"
+      ],
+      "answerIndex": 0,
+      "explanation": "When you separate items with commas inside print(), Python automatically adds a single space between each one. So the three strings are joined with spaces, giving you: Hello World from Python!"
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug. What is wrong?",
+      "code": "print(Hello, World!)",
+      "options": [
+        "print() cannot take more than one item",
+        "The text Hello and World! are missing quotes — Python needs quotes around text to treat it as a string",
+        "There should be a semicolon at the end of the line"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without quotes, Python tries to look up Hello and World! as variable names rather than treating them as text. This causes a SyntaxError. The fix is: print(\"Hello, World!\") — always wrap your text in quotes."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it prints: Learning Python is fun",
+      "codeTemplate": "{{blank}}(\"Learning Python is fun\")",
+      "blanks": [
+        { "answer": "print", "accept": ["print"] }
+      ],
+      "explanation": "print() is the built-in Python command that displays text on the screen. You put the message inside its parentheses, wrapped in quotes."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order so the program prints three lines: Hello!, I am learning Python., See you soon!",
+      "lines": [
+        "print(\"Hello!\")",
+        "print(\"I am learning Python.\")",
+        "print(\"See you soon!\")"
+      ],
+      "explanation": "Each print() call outputs on its own line and runs from top to bottom. So the first print() gives Hello!, then I am learning Python., and finally See you soon!"
+    }
+  ]
+}
