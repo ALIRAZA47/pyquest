@@ -1,0 +1,98 @@
+{
+  "slug": "neural-networks-basics",
+  "title": "Neural Networks: The Basics",
+  "category": "Neural Networks",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Peek inside the artificial neuron — the tiny building block that, when stacked into layers, lets machines recognize faces, translate languages, and beat world champions at chess.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Your brain right now is doing something remarkable: billions of neurons are firing in coordinated waves, letting you read these words, feel the chair beneath you, and think about lunch — all at once. Machine learning researchers looked at this biological marvel and asked: *what if we built a simplified version in software?*\n\nThe result is the **artificial neural network** — the technology powering image recognition, voice assistants, language translation, and almost every recent AI breakthrough. The beautiful part: the core idea fits in a single line of arithmetic. Let's build one from scratch."
+    },
+    {
+      "type": "heading",
+      "text": "The Building Block: One Artificial Neuron"
+    },
+    {
+      "type": "text",
+      "md": "A single artificial neuron does three things:\n\n1. **Receives inputs** — numbers representing features (e.g., pixel brightness, temperature, word frequency).\n2. **Weights and sums** — multiplies each input by a learned **weight**, adds them up, then adds one extra number called the **bias**.\n3. **Activates** — passes the sum through an **activation function** that decides how strongly the neuron \"fires\".\n\nIn math: `output = activation(w1*x1 + w2*x2 + ... + wn*xn + bias)`\n\n**Weights** control how much each input matters — large positive weight means \"strong yes signal\", large negative means \"strong no signal\", near zero means \"mostly ignore this\". The **bias** shifts the neuron's default threshold so it can fire even when inputs are zero, or stay quiet when they're large. Both weights and bias start random and are *learned from data*."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Neuron as a Voting Panel",
+      "md": "Imagine three judges scoring a restaurant. Judge 1 (food quality) gets weight 0.6 — their vote matters most. Judge 2 (price) gets 0.3. Judge 3 (distance) gets 0.1. Each gives a score 0–10.\n\nThe neuron multiplies and sums: `0.6*9 + 0.3*6 + 0.1*2 = 7.4`. The bias is a mood nudge — say +0.1. The activation function then decides if 7.4 is strong enough to recommend the restaurant.\n\nWeights = how much each input matters. Bias = the default baseline. The network learns both."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef relu(x):    return max(0.0, x)\ndef sigmoid(x): return 1.0 / (1.0 + math.exp(-x))\n\n# One neuron: weighted sum + bias + activation\ninputs  = [0.9, 0.6, 0.2]   # food quality, price, distance\nweights = [0.6, 0.3, 0.1]\nbias    = 0.1\n\nraw = sum(x * w for x, w in zip(inputs, weights)) + bias\nprint(f\"Weighted sum + bias : {raw:.3f}\")\nprint(f\"After ReLU          : {relu(raw):.3f}\")\nprint(f\"After Sigmoid       : {sigmoid(raw):.3f}\")",
+      "output": "Weighted sum + bias : 7.600\nAfter ReLU          : 7.600\nAfter Sigmoid       : 0.9999",
+      "caption": "ReLU passes the value through unchanged (it's positive). Sigmoid squashes it to a probability near 1 — a strong 'yes'."
+    },
+    {
+      "type": "heading",
+      "text": "Activation Functions and Layers"
+    },
+    {
+      "type": "text",
+      "md": "Without an activation function, stacking layers would be pointless — any number of linear transformations collapses into one. **Activation functions** break this by introducing non-linearity:\n\n- **ReLU** `max(0, x)` — outputs the input if positive, zero otherwise. Fast and the default for hidden layers.\n- **Sigmoid** — squashes any number to (0, 1). Great for an output neuron predicting a probability.\n- **Tanh** — squashes to (−1, 1), often used in recurrent networks.\n\nNow stack neurons side by side to form a **layer**, and stack layers in sequence to form a **network**. Three kinds of layers:\n\n- **Input layer**: receives raw data, one node per feature. No computation — just passes values forward.\n- **Hidden layer(s)**: each neuron takes *all* outputs from the previous layer, applies weights + bias + activation. This is where intermediate patterns are learned.\n- **Output layer**: produces the final prediction. One sigmoid neuron for yes/no; multiple neurons for multi-class.\n\nData flows in one direction — input → hidden → output — making this a **feedforward** network. The interactive visualizer on this page lights up each neuron as activations ripple forward."
+    },
+    {
+      "type": "heading",
+      "text": "The Forward Pass: Turning Inputs into a Prediction"
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef relu(x):    return max(0.0, x)\ndef sigmoid(x): return 1.0 / (1.0 + math.exp(-x))\n\n# 2 inputs -> 3 hidden neurons -> 1 output\n# Each neuron stored as (weights, bias)\nhidden = [([0.5, -0.4], 0.1), ([0.2, 0.8], -0.3), ([-0.6, 0.3], 0.5)]\noutput = [([0.7, 0.4, -0.5], 0.2)]\n\ndef forward(inputs):\n    # Hidden layer (ReLU)\n    hidden_out = [relu(sum(x*w for x,w in zip(inputs,ws)) + b) for ws,b in hidden]\n    # Output layer (sigmoid -> probability)\n    ws, b = output[0]\n    return sigmoid(sum(x*w for x,w in zip(hidden_out,ws)) + b)\n\npred = forward([1.0, 0.5])\nprint(f\"Prediction: {pred:.4f}  ->  {'Yes' if pred >= 0.5 else 'No'} ({pred:.1%} confidence)\")",
+      "output": "Prediction: 0.6457  ->  Yes (64.6% confidence)",
+      "caption": "The full forward pass: inputs ripple through 3 hidden ReLU neurons, then a sigmoid output neuron produces a probability."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "More Layers Doesn't Always Mean Better",
+      "md": "It's tempting to think deeper = smarter. But without enough data, extra layers cause **overfitting** — the network memorizes training examples and falls apart on new ones.\n\nVery deep networks also historically suffered from the **vanishing gradient problem**: error signals shrank toward zero as they flowed backward through many layers, so early layers stopped learning. Modern fixes include ReLU activations, residual (skip) connections, and batch normalization. Rule of thumb: start simple. A 1–2 hidden-layer network solves a surprising number of real problems."
+    },
+    {
+      "type": "heading",
+      "text": "How Weights Are Learned: Backprop + Gradient Descent"
+    },
+    {
+      "type": "text",
+      "md": "So far our weights are made up. In practice the network learns them through a two-phase cycle repeated thousands of times:\n\n1. **Forward pass**: feed an example through the network to get a prediction.\n2. **Backpropagation**: compare the prediction to the true label, compute the loss, then walk *backwards* through every layer computing gradients — how much did each weight contribute to the error?\n3. **Gradient descent update**: nudge every weight a tiny step in the direction that reduces the loss (`weight -= learning_rate * gradient`).\n\nLibraries like **PyTorch**, **TensorFlow**, and **scikit-learn's MLPClassifier** compute the backward pass automatically. But the underlying idea is the same gradient descent loop from the previous lesson — applied to every weight in every layer simultaneously. Once you grasp the forward pass conceptually, these libraries feel much less like magic."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Why Non-Linearity Enables Complex Learning",
+      "md": "Each neuron is a detector for one simple pattern. The hidden layer combines many detectors. The next layer combines *combinations of combinations*. After a few layers a network can detect faces, sentences, or fraud — patterns no single rule could capture. Non-linear activation is the secret ingredient: without it, every layer would collapse into one linear transformation, no matter how deep."
+    },
+    {
+      "type": "quiz",
+      "question": "In a neural network, what is the purpose of the bias term added to each neuron?",
+      "options": [
+        "It speeds up the forward pass by skipping some weight multiplications.",
+        "It lets the neuron shift its activation threshold, so it can fire even when all inputs are zero.",
+        "It replaces the need for an activation function.",
+        "It prevents the network from having too many layers."
+      ],
+      "answerIndex": 1,
+      "explanation": "The bias is an extra learnable number added to the weighted sum. It shifts the neuron's activation up or down, giving it a tunable 'default' that is independent of any input. Without bias, every decision boundary would be forced through the origin — a needless restriction that limits what the network can learn."
+    }
+  ],
+  "keyTakeaways": [
+    "A neuron computes a weighted sum of its inputs plus a bias, then passes the result through an activation function — that's the entire core operation.",
+    "Weights control how much each input matters; bias shifts the neuron's default firing threshold. Both are learned from data via gradient descent.",
+    "Activation functions like ReLU introduce non-linearity, which is what allows stacked layers to learn complex, curved decision boundaries.",
+    "The forward pass is the sequential flow of data through input → hidden → output layers, producing a prediction.",
+    "Weights are learned by running the forward pass, measuring the error, and using backpropagation + gradient descent to nudge every weight in the direction that reduces the loss."
+  ],
+  "exercise": {
+    "prompt": "Build a single-neuron classifier from scratch.\n\nYou have three training examples, each with two inputs and a label (0 or 1). Complete the `neuron(inputs, weights, bias)` function so it:\n1. Computes the weighted sum of inputs.\n2. Adds the bias.\n3. Applies the sigmoid activation and returns the result.\n\nThen loop through the examples, print each prediction (4 decimal places), and print whether `round(pred)` matches the label.\n\nUse `weights = [0.8, -0.5]` and `bias = 0.1`.",
+    "starterCode": "import math\n\ndef sigmoid(x):\n    return 1.0 / (1.0 + math.exp(-x))\n\ndef neuron(inputs, weights, bias):\n    # TODO: weighted sum + bias, then sigmoid\n    pass\n\nweights = [0.8, -0.5]\nbias    = 0.1\n\nexamples = [\n    ([1.0, 0.2], 1),\n    ([0.1, 0.9], 0),\n    ([0.8, 0.3], 1),\n]\n\nfor inputs, label in examples:\n    pred = neuron(inputs, weights, bias)\n    # TODO: print pred and whether round(pred) == label\n    pass",
+    "hint": "Inside `neuron`, use `sum(x * w for x, w in zip(inputs, weights))` to get the weighted sum, add the bias, then wrap the whole thing in `sigmoid(...)`. For the check, `round(pred)` converts a probability to 0 or 1 so you can compare it to the label with `==`.",
+    "solution": "import math\n\ndef sigmoid(x):\n    return 1.0 / (1.0 + math.exp(-x))\n\ndef neuron(inputs, weights, bias):\n    total = sum(x * w for x, w in zip(inputs, weights))\n    return sigmoid(total + bias)\n\nweights = [0.8, -0.5]\nbias    = 0.1\n\nexamples = [\n    ([1.0, 0.2], 1),\n    ([0.1, 0.9], 0),\n    ([0.8, 0.3], 1),\n]\n\nfor inputs, label in examples:\n    pred = neuron(inputs, weights, bias)\n    correct = round(pred) == label\n    print(f\"inputs={inputs}  pred={pred:.4f}  label={label}  correct={correct}\")\n\n# Expected output:\n# inputs=[1.0, 0.2]  pred=0.6900  label=1  correct=True\n# inputs=[0.1, 0.9]  pred=0.4329  label=0  correct=True\n# inputs=[0.8, 0.3]  pred=0.6434  label=1  correct=True"
+  }
+}

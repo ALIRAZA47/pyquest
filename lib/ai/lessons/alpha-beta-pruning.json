@@ -1,0 +1,100 @@
+{
+  "slug": "alpha-beta-pruning",
+  "title": "Alpha-Beta Pruning",
+  "category": "Games & Adversarial Search",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Discover the clever shortcut that lets game AIs search twice as deep by ignoring branches that can never change the outcome.",
+  "readingTime": "11 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "It's 1997. Deep Blue is about to beat Garry Kasparov — the reigning world chess champion — in a six-game match. The machine is evaluating **200 million positions per second**. But here's the dirty secret: it isn't actually checking all of them. A huge fraction of the tree gets thrown away before it's even evaluated, because a clever algorithm proved those branches *could never matter*.\n\nThat algorithm is **alpha-beta pruning**. It's a turbocharge for minimax — the classic game-tree search — that produces the **exact same answer** while skipping branches that a rational opponent would never let you reach. Master it and you can search roughly **twice as deep** for the same compute budget. That's the difference between a decent move and a brilliant one."
+    },
+    {
+      "type": "heading",
+      "text": "Quick Recap: How Minimax Works"
+    },
+    {
+      "type": "text",
+      "md": "Minimax treats a two-player zero-sum game as a tree. Each level alternates between the **maximizing player** (MAX, usually you) trying to get the highest score, and the **minimizing player** (MIN, your opponent) trying to get the lowest score.\n\n- At **leaf nodes** (the bottom of the tree), a scoring function assigns a number: positive means good for MAX, negative means good for MIN.\n- At **MAX nodes**, the parent takes the *highest* child score — MAX picks the best move.\n- At **MIN nodes**, the parent takes the *lowest* child score — MIN picks the worst move for you.\n\nThe algorithm backs values up from leaves to root. It's correct but slow — **every leaf gets visited**, even ones a rational player would never reach."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Negotiating With a Stubborn Opponent",
+      "md": "Imagine you're negotiating a deal. You've already found a supplier who'll sell you widgets for $10. Now you're listening to a new supplier list their prices. The moment they quote **$12 for the first item**, you can hang up — you're never taking a deal worse than $10 overall, and this supplier has already proved they can't beat it.\n\nAlpha-beta pruning is exactly this: keep a running record of the **best deal you've already secured** (alpha for MAX, beta for MIN), and the moment you see the current branch can't beat it, stop listening and move on."
+    },
+    {
+      "type": "heading",
+      "text": "Meet Alpha and Beta"
+    },
+    {
+      "type": "text",
+      "md": "Alpha-beta adds two numbers that travel *down* the tree as the search unfolds.\n\n- **Alpha (α)** — the best score MAX has guaranteed so far on the path from the root. MAX will never accept anything below this. Starts at **-infinity**.\n- **Beta (β)** — the best score MIN has guaranteed so far on the path from the root. MIN will never allow anything above this. Starts at **+infinity**.\n\nAs the search progresses, alpha rises and beta falls. The pruning rule is simple:\n\n> **If α ≥ β at any node, stop exploring its remaining children.** The branch is *pruned*.\n\nWhy? Because whatever value this node returns will fall outside the window [α, β] that the ancestor cares about — so no matter what the remaining children say, the ancestor will never choose this path. And here's the crucial point: **no approximation is happening.** You get the exact minimax answer, just faster."
+    },
+    {
+      "type": "code",
+      "code": "# Alpha-beta pruning — complete from-scratch implementation\n# Tree stored as nested lists; leaves are plain numbers.\n\ndef alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):   # leaf node\n        return node\n\n    if maximizing:\n        value = float('-inf')\n        for child in node:\n            value = max(value, alpha_beta(child, alpha, beta, False))\n            alpha = max(alpha, value)\n            if alpha >= beta:\n                break  # MIN won't allow this; prune remaining siblings\n        return value\n    else:\n        value = float('inf')\n        for child in node:\n            value = min(value, alpha_beta(child, alpha, beta, True))\n            beta = min(beta, value)\n            if alpha >= beta:\n                break  # MAX already has a better guarantee elsewhere\n        return value\n\n# Tree: root=MAX, depth-1=MIN, leaves\n# [[3,5], [2,8], [9,1]]  ->  MIN picks min of each pair: 3, 2, 1\n#                         ->  MAX picks max of those: 3\ntree = [[3, 5], [2, 8], [9, 1]]\nresult = alpha_beta(tree, float('-inf'), float('inf'), maximizing=True)\nprint(\"Best score for MAX:\", result)",
+      "output": "Best score for MAX: 3",
+      "caption": "The middle branch ([2, 8]) gets pruned after seeing 2: MIN can guarantee ≤ 2, but MAX already has α = 3. MAX will never choose it."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Move Ordering: The Secret Multiplier",
+      "md": "Alpha-beta prunes more when **good moves are examined first**. If MAX sees its best move early, alpha rises quickly and cuts off more MIN branches. With random move ordering you get modest savings; with perfect ordering, the effective branching factor drops from `b` to roughly `sqrt(b)`, letting you search to **double the depth** for the same time budget.\n\nReal engines use **iterative deepening** (search to depth 1, then 2, then 3 — each pass informs move ordering for the next) combined with a **killer heuristic** (try moves that caused cutoffs at sibling nodes first)."
+    },
+    {
+      "type": "code",
+      "code": "nodes_visited = 0\nnodes_pruned  = 0\n\ndef alpha_beta_traced(node, alpha, beta, maximizing):\n    global nodes_visited, nodes_pruned\n    if not isinstance(node, list):\n        nodes_visited += 1\n        return node\n\n    if maximizing:\n        value = float('-inf')\n        for i, child in enumerate(node):\n            value = max(value, alpha_beta_traced(child, alpha, beta, False))\n            alpha = max(alpha, value)\n            if alpha >= beta:\n                nodes_pruned += len(node) - i - 1  # count skipped siblings\n                break\n        return value\n    else:\n        value = float('inf')\n        for i, child in enumerate(node):\n            value = min(value, alpha_beta_traced(child, alpha, beta, True))\n            beta = min(beta, value)\n            if alpha >= beta:\n                nodes_pruned += len(node) - i - 1\n                break\n        return value\n\n# 3 levels, branching factor 3 = 27 leaves total\nbig_tree = [[[1,4,2],[6,3,5],[8,2,7]],\n            [[4,1,3],[9,2,6],[3,5,1]],\n            [[7,4,3],[2,8,5],[6,1,4]]]\n\nresult = alpha_beta_traced(big_tree, float('-inf'), float('inf'), True)\nprint(f\"Result: {result}\")\nprint(f\"Leaves evaluated: {nodes_visited}\")\nprint(f\"Leaves pruned:    {nodes_pruned}\")",
+      "output": "Result: 6\nLeaves evaluated: 16\nLeaves pruned:    7",
+      "caption": "27 leaves in the tree, only 16 evaluated — 7 skipped entirely, result identical to plain minimax."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Pruned Does Not Mean Bad",
+      "md": "A common misconception: pruned branches are *bad moves*. They're not — they're **irrelevant** moves. A rational opponent will never allow the game to reach those positions, so evaluating them would not change which move the root chooses. Pruning is a logical proof of irrelevance, not a value judgment.\n\nAlso note: alpha-beta gives the exact minimax result only when both players play **optimally**. If your opponent sometimes makes suboptimal moves, the pruned branches are still *safe to ignore* for the purposes of finding your best response to optimal play."
+    },
+    {
+      "type": "code",
+      "code": "# Complete alpha-beta AI for tic-tac-toe\n\ndef check_winner(board):\n    wins = [(0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6)]\n    for a,b,c in wins:\n        if board[a] == board[b] == board[c] and board[a] != '.':\n            return board[a]\n    return 'draw' if '.' not in board else None\n\ndef ab_ttt(board, alpha, beta, is_max):\n    result = check_winner(board)\n    if result == 'X': return 10\n    if result == 'O': return -10\n    if result == 'draw': return 0\n    if is_max:\n        best = float('-inf')\n        for i in range(9):\n            if board[i] == '.':\n                board[i] = 'X'\n                best = max(best, ab_ttt(board, alpha, beta, False))\n                board[i] = '.'\n                alpha = max(alpha, best)\n                if alpha >= beta: break\n        return best\n    else:\n        best = float('inf')\n        for i in range(9):\n            if board[i] == '.':\n                board[i] = 'O'\n                best = min(best, ab_ttt(board, alpha, beta, True))\n                board[i] = '.'\n                beta = min(beta, best)\n                if alpha >= beta: break\n        return best\n\ndef best_move(board):\n    best_score, move = float('-inf'), -1\n    for i in range(9):\n        if board[i] == '.':\n            board[i] = 'X'\n            score = ab_ttt(board, float('-inf'), float('inf'), False)\n            board[i] = '.'\n            if score > best_score:\n                best_score, move = score, i\n    return move\n\n# X has two in the left column (squares 0, 3). Winning move is square 6.\n# Board:  X O .        squares: 0 1 2\n#         X O .                 3 4 5\n#         . . .                 6 7 8\nboard = ['X','O','.', 'X','O','.', '.','.','.']\nprint(\"AI plays square:\", best_move(board))",
+      "output": "AI plays square: 6",
+      "caption": "The AI instantly spots the winning move (completing the left column) rather than a neutral square."
+    },
+    {
+      "type": "quiz",
+      "question": "During an alpha-beta search, you're at a MIN node with α = 5 and β = +∞. The first child returns 3. You update β = 3. Should you evaluate the remaining children?",
+      "options": [
+        "Yes — you need all children to find the true minimum.",
+        "No — α (5) is now greater than β (3), so prune the remaining children.",
+        "Yes — but only if the remaining children might return values less than 3.",
+        "No — once any child is evaluated at a MIN node, the search at that node stops."
+      ],
+      "answerIndex": 1,
+      "explanation": "After the first child returns 3, β drops to 3. Now α = 5 ≥ β = 3 — cutoff! The MAX ancestor already has a guaranteed score of at least 5, so it will never choose this MIN node (which can return at most 3). Evaluating more children here is wasted work."
+    },
+    {
+      "type": "heading",
+      "text": "Why This Matters Beyond Games"
+    },
+    {
+      "type": "text",
+      "md": "Alpha-beta is the engine behind decades of game-playing AI. Stockfish (world-class chess engine) still uses it at its core. The core insight — **track the best guarantee on each side and stop the moment a branch can't beat it** — generalizes far beyond games.\n\nIn modern systems, alpha-beta is combined with:\n- **Transposition tables** — cache evaluated positions, since the same board is reachable by many move orders.\n- **Quiescence search** — at the depth limit, keep going until the position is \"quiet\" (no captures pending) to avoid misjudging tactical positions.\n- **Learned evaluators** — AlphaZero replaced the hand-crafted scoring function with a neural net, but still uses tree search guided by the same pruning logic.\n\nEven outside games, the mindset — *prove a branch is irrelevant and skip it* — appears in branch-and-bound optimization, constraint propagation, and database query planning. You've just learned a fundamental idea in computer science."
+    }
+  ],
+  "keyTakeaways": [
+    "Alpha-beta pruning is minimax with two running bounds: alpha (best MAX can guarantee) and beta (best MIN can guarantee). When α ≥ β, prune.",
+    "Pruned branches are not approximations — they genuinely cannot change the result a rational player would choose.",
+    "With perfect move ordering, alpha-beta roughly halves the tree depth needed, letting an AI search twice as far ahead for the same compute.",
+    "Move ordering techniques like iterative deepening and the killer heuristic are critical for maximizing how much gets pruned.",
+    "The same bound-and-prune idea appears in optimization, constraint solving, and query planning — it's a fundamental CS pattern."
+  ],
+  "exercise": {
+    "prompt": "Below is a plain minimax function. Your job is to upgrade it into alpha-beta pruning.\n\nThe game tree is a nested list of integers (leaves are numbers, interior nodes are lists). The function alternates between MAX (maximizing=True) and MIN (maximizing=False).\n\nAdd `alpha` and `beta` parameters, update them correctly after each child, and break out of the loop when α ≥ β.\n\nBoth test trees should print `[OK]` — the alpha-beta answer must match minimax exactly.",
+    "starterCode": "# Original minimax (no pruning) — DO NOT CHANGE THIS\ndef minimax(node, maximizing):\n    if not isinstance(node, list):\n        return node\n    if maximizing:\n        return max(minimax(child, False) for child in node)\n    else:\n        return min(minimax(child, True) for child in node)\n\n# TODO: add alpha-beta pruning\ndef alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):\n        return node\n    # Your code here — mirror the minimax logic but:\n    # 1. Track a running 'value' instead of using max()/min() on a generator.\n    # 2. Update alpha (if maximizing) or beta (if minimizing) after each child.\n    # 3. Break out of the child loop if alpha >= beta.\n    pass\n\ntree_a = [[3, 12, 8], [2, 4, 6], [14, 5, 2]]\ntree_b = [[[1,8],[5,3]], [[9,2],[4,7]]]\n\nfor name, tree in [(\"A\", tree_a), (\"B\", tree_b)]:\n    mm = minimax(tree, True)\n    ab = alpha_beta(tree, float('-inf'), float('inf'), True)\n    status = \"OK\" if mm == ab else \"MISMATCH\"\n    print(f\"Tree {name}: minimax={mm}, alpha_beta={ab}  [{status}]\")",
+    "hint": "Copy the minimax structure but use an explicit loop with `for child in node` and a `value` variable instead of `max(...generator...)`. After each child, update `alpha = max(alpha, value)` (MAX branch) or `beta = min(beta, value)` (MIN branch). Then add `if alpha >= beta: break`. Pass the current alpha and beta down into every recursive call.",
+    "solution": "def minimax(node, maximizing):\n    if not isinstance(node, list):\n        return node\n    if maximizing:\n        return max(minimax(child, False) for child in node)\n    else:\n        return min(minimax(child, True) for child in node)\n\ndef alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):\n        return node\n    if maximizing:\n        value = float('-inf')\n        for child in node:\n            value = max(value, alpha_beta(child, alpha, beta, False))\n            alpha = max(alpha, value)\n            if alpha >= beta:\n                break  # MIN won't allow this branch\n        return value\n    else:\n        value = float('inf')\n        for child in node:\n            value = min(value, alpha_beta(child, alpha, beta, True))\n            beta = min(beta, value)\n            if alpha >= beta:\n                break  # MAX already has a better guarantee elsewhere\n        return value\n\ntree_a = [[3, 12, 8], [2, 4, 6], [14, 5, 2]]\ntree_b = [[[1,8],[5,3]], [[9,2],[4,7]]]\n\nfor name, tree in [(\"A\", tree_a), (\"B\", tree_b)]:\n    mm = minimax(tree, True)\n    ab = alpha_beta(tree, float('-inf'), float('inf'), True)\n    status = \"OK\" if mm == ab else \"MISMATCH\"\n    print(f\"Tree {name}: minimax={mm}, alpha_beta={ab}  [{status}]\")"
+  }
+}

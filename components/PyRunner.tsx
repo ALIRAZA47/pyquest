@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { runPython, isPyodideReady } from "@/lib/pyodide";
 import { explainError } from "@/lib/pyerrors";
+import { HighlightedCode } from "./PyCode";
 import { PlayIcon } from "./Icons";
 import { LightbulbIcon, WarningIcon } from "./Icons";
 
@@ -27,7 +28,7 @@ export function PyRunner({
   const [output, setOutput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const ranOnce = useRef(false);
-  const rows = Math.max(minRows ?? 3, code.split("\n").length);
+  const minLines = minRows ?? 3;
 
   const handleTab = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab") {
@@ -107,17 +108,26 @@ export function PyRunner({
         </div>
       </div>
 
-      <textarea
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        onKeyDown={handleTab}
-        spellCheck={false}
-        autoCapitalize="off"
-        autoCorrect="off"
-        rows={rows}
-        className="block w-full resize-none bg-transparent px-4 py-4 font-mono text-[13.5px] leading-[1.7] text-fg outline-none"
-        style={{ tabSize: 4 }}
-      />
+      {/* Syntax-highlighted editor: a colored layer behind a transparent input */}
+      <div className="relative w-full">
+        <pre
+          aria-hidden
+          className="m-0 overflow-hidden whitespace-pre-wrap break-words px-4 py-4 font-mono text-[13.5px] leading-[1.7] text-fg"
+          style={{ tabSize: 4, minHeight: `calc(${minLines} * 1.7em + 2rem)` }}
+        >
+          <HighlightedCode code={code.endsWith("\n") ? code + " " : code} />
+        </pre>
+        <textarea
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={handleTab}
+          spellCheck={false}
+          autoCapitalize="off"
+          autoCorrect="off"
+          className="absolute inset-0 h-full w-full resize-none overflow-hidden whitespace-pre-wrap break-words bg-transparent px-4 py-4 font-mono text-[13.5px] leading-[1.7] text-transparent outline-none"
+          style={{ tabSize: 4, caretColor: "rgb(var(--fg))" }}
+        />
+      </div>
 
       <AnimatePresence initial={false}>
         {(status === "done" || status === "error" || busy) && (

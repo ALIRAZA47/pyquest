@@ -167,7 +167,7 @@
   ],
   "exercise": {
     "prompt": "Create a variable called `full_name` by concatenating a first name and a last name with a space in between. Then print a message that reads: \"Hello, [full_name]! Your name has [N] characters.\" — where N is the length of the full name (not counting the greeting itself).",
-    "starterCode": "first = \"Ada\"\nlast = \"Lovelace\"\n\n# Combine first and last with a space\nfull_name = \n\n# Print the greeting\n",
+    "starterCode": "first = \"Ada\"\nlast = \"Lovelace\"\n\n# Combine first and last with a space\nfull_name = \"\"  # TODO: replace with first + \" \" + last\n\n# Print the greeting\n",
     "hint": "Use + to join the strings (don't forget the space!), then use len(full_name) to get the length, and str() to convert it before concatenating into the message.",
     "solution": "first = \"Ada\"\nlast = \"Lovelace\"\n\nfull_name = first + \" \" + last\n\nprint(\"Hello, \" + full_name + \"! Your name has \" + str(len(full_name)) + \" characters.\")"
   }

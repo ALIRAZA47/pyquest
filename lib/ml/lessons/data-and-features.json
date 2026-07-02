@@ -1,0 +1,132 @@
+{
+  "slug": "data-and-features",
+  "title": "Data, Features & Labels",
+  "category": "ML Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how machine learning sees the world: rows as examples, columns as features, and one special column called the label that the model tries to predict.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are a doctor trying to predict whether a patient has a disease. You look at their age, blood pressure, cholesterol level, and whether they smoke. Each of these measurements tells you something useful. A machine learning model works exactly the same way — you hand it a pile of measurements, tell it what the right answer was for each past patient, and it learns patterns that help it predict future patients.\n\nBefore any algorithm runs, before any math happens, you need **data in the right shape**. Getting that shape right is more than half the battle."
+    },
+    {
+      "type": "heading",
+      "text": "The Spreadsheet View of Data"
+    },
+    {
+      "type": "text",
+      "md": "Picture your data as a classic spreadsheet. Each **row** is one example — one patient, one email, one house sale, one day of weather. Rows are also called **samples** or **observations**.\n\nEach **column** (except the last special one) is a **feature** — a measurable property of that example. Features are the inputs you feed the model. The collection of all feature values for a single row is called a **feature vector**.\n\nThe one special column is the **label** (also called the **target** or **y**). This is the answer you already know for past examples, and the thing you want the model to predict for future ones. Features are usually called **X**; the label is called **y**."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Flash Cards Analogy",
+      "md": "Think of each row as a flash card. The **front of the card** shows all the features — age: 45, smoker: yes, cholesterol: 220. The **back of the card** shows the label — disease: yes.\n\nYou study thousands of cards (training). Then someone hands you a new card with only the front filled in and asks you to guess the back. That's exactly what a trained model does."
+    },
+    {
+      "type": "heading",
+      "text": "Building Feature Rows in Python"
+    },
+    {
+      "type": "text",
+      "md": "You don't need any library to understand features. A feature vector is just a list of numbers. A dataset is just a list of those lists. Let's build one from scratch to make it concrete."
+    },
+    {
+      "type": "code",
+      "code": "# Each row = one house. Features: [size_sqft, num_rooms, age_years]\n# Label (y): price in thousands\n\nX = [\n    [1200, 3, 10],\n    [850,  2, 25],\n    [2100, 5, 3 ],\n    [500,  1, 40],\n]\n\ny = [250, 180, 420, 95]\n\nprint(\"Number of samples:\", len(X))\nprint(\"Number of features:\", len(X[0]))\nprint(\"Feature vector for house 0:\", X[0])\nprint(\"Label for house 0: $\", y[0], \"k\")",
+      "output": "Number of samples: 4\nNumber of features: 3\nFeature vector for house 0: [1200, 3, 10]\nLabel for house 0: $ 250 k",
+      "caption": "A dataset is just lists of lists — no library required."
+    },
+    {
+      "type": "text",
+      "md": "You can also use **dictionaries** to keep track of which feature is which — especially helpful while exploring your data. In real projects, libraries like pandas turn this into a DataFrame, but the idea is identical."
+    },
+    {
+      "type": "code",
+      "code": "# Same data as named dicts (easier to read during exploration)\nsamples = [\n    {\"size_sqft\": 1200, \"num_rooms\": 3, \"age_years\": 10, \"price_k\": 250},\n    {\"size_sqft\": 850,  \"num_rooms\": 2, \"age_years\": 25, \"price_k\": 180},\n]\n\nfor s in samples:\n    features = {k: v for k, v in s.items() if k != \"price_k\"}\n    label    = s[\"price_k\"]\n    print(\"X:\", features, \"-> y:\", label)",
+      "output": "X: {'size_sqft': 1200, 'num_rooms': 3, 'age_years': 10} -> y: 250\nX: {'size_sqft': 850, 'num_rooms': 2, 'age_years': 25} -> y: 180",
+      "caption": "Separating features from the label is the first real data step in every ML project."
+    },
+    {
+      "type": "heading",
+      "text": "Train, Validation, and Test Sets"
+    },
+    {
+      "type": "text",
+      "md": "Here is a crucial question: once the model has learned from your data, how do you know if it actually *learned* something general, or just *memorized* your specific examples?\n\nThe answer is to **hide some data from the model during training** and only use it later to measure performance. We split our dataset into three buckets:\n\n- **Training set (~70-80%)** — the examples the model learns from.\n- **Validation set (~10-15%)** — examples we check during development to tune settings (called hyperparameters).\n- **Test set (~10-15%)** — examples locked away until the very end, to give an honest final score.\n\nThe test set is your **blind exam**. You never look at it until you are completely done building. If you peek and adjust your model, the score becomes dishonest."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef train_val_test_split(data, val_ratio=0.15, test_ratio=0.15, seed=42):\n    random.seed(seed)\n    shuffled = data[:]\n    random.shuffle(shuffled)\n    n = len(shuffled)\n    n_test = int(n * test_ratio)\n    n_val  = int(n * val_ratio)\n    test   = shuffled[:n_test]\n    val    = shuffled[n_test:n_test + n_val]\n    train  = shuffled[n_test + n_val:]\n    return train, val, test\n\nall_data = list(range(100))  # pretend 100 samples\ntrain, val, test = train_val_test_split(all_data)\nprint(f\"Train: {len(train)}  Val: {len(val)}  Test: {len(test)}\")",
+      "output": "Train: 70  Val: 15  Test: 15",
+      "caption": "A simple pure-Python split. Real libraries (sklearn.model_selection.train_test_split) do this in one line."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The Data Leakage Trap",
+      "md": "**Never** use test-set data to make any decision during training — not even to choose how many features to use. If information from the test set 'leaks' into your training process, your final accuracy score will be falsely optimistic. In the real world your model will perform worse than you thought.\n\nAlso: always **shuffle before splitting**, otherwise you might accidentally put all the rare examples in the test set."
+    },
+    {
+      "type": "heading",
+      "text": "Garbage In, Garbage Out"
+    },
+    {
+      "type": "text",
+      "md": "No algorithm, no matter how clever, can rescue a bad dataset. This is such a well-known truth in ML that it has its own name: **GIGO — garbage in, garbage out**.\n\nCommon data quality problems:\n- **Missing values** — a sensor didn't record, a form field was left blank.\n- **Wrong labels** — a human annotator made an error.\n- **Biased collection** — you only collected data from one city, but you want to predict for the whole country.\n- **Irrelevant features** — including a column like 'customer ID' that has nothing to do with the outcome but can confuse some models.\n\nSpending time cleaning and understanding your data is never wasted time."
+    },
+    {
+      "type": "heading",
+      "text": "Feature Scaling: Why Size Matters"
+    },
+    {
+      "type": "text",
+      "md": "Look back at our house features: `[size_sqft, num_rooms, age_years]` = `[1200, 3, 10]`. The first feature is hundreds of times larger than the others just because of the **units** we chose. Many algorithms (especially those that measure 'distance' between points, or use gradient descent) can be thrown off by this imbalance — they might treat size as far more important than rooms simply because its numbers are bigger.\n\n**Feature scaling** fixes this by transforming every feature into a comparable range. The two most common methods are:\n\n- **Min-Max normalization** — squeezes values into [0, 1]. Formula in words: subtract the minimum, then divide by (max minus min).\n- **Standardization (Z-score)** — shifts values so they have mean 0 and standard deviation 1. Formula in words: subtract the mean, then divide by the standard deviation.\n\nNeither method changes *which* data point is largest or smallest — it only rescales the axis."
+    },
+    {
+      "type": "code",
+      "code": "def min_max_scale(values):\n    mn, mx = min(values), max(values)\n    return [(v - mn) / (mx - mn) for v in values]\n\ndef z_score_scale(values):\n    n = len(values)\n    mean = sum(values) / n\n    std  = (sum((v - mean) ** 2 for v in values) / n) ** 0.5\n    return [(v - mean) / std for v in values]\n\nsizes = [1200, 850, 2100, 500]\nprint(\"Original:    \", sizes)\nprint(\"Min-Max:     \", [round(v, 2) for v in min_max_scale(sizes)])\nprint(\"Z-score:     \", [round(v, 2) for v in z_score_scale(sizes)])",
+      "output": "Original:     [1200, 850, 2100, 500]\nMin-Max:      [0.43, 0.22, 1.0, 0.0]\nZ-score:      [-0.05, -0.43, 1.19, -0.71]",
+      "caption": "Both methods put features on a level playing field without losing information."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When Do You Need Scaling?",
+      "md": "**Always scale** for: k-nearest neighbors, support vector machines, neural networks, linear/logistic regression with gradient descent.\n\n**Scaling doesn't matter** for: decision trees and random forests — they split on thresholds, so the scale of a feature is irrelevant.\n\nWhen in doubt, scale. It rarely hurts and often helps."
+    },
+    {
+      "type": "quiz",
+      "question": "You are building a model to predict apartment rent. Your dataset has columns: apartment_id, size_m2, floor, distance_to_metro_km, rent_euros. Which column is the label (y)?",
+      "options": [
+        "apartment_id",
+        "size_m2",
+        "distance_to_metro_km",
+        "rent_euros"
+      ],
+      "answerIndex": 3,
+      "explanation": "The label is the value you want to predict — rent_euros. The other numeric columns (size_m2, floor, distance_to_metro_km) are features (inputs). apartment_id is an identifier with no predictive meaning and should be dropped before training."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "In Real Projects",
+      "md": "Libraries like **pandas** give you DataFrames that make all of this easier to inspect and manipulate. **scikit-learn** provides `train_test_split`, `MinMaxScaler`, and `StandardScaler` out of the box. But they are doing exactly what you just wrote by hand — now you know what's happening inside."
+    }
+  ],
+  "keyTakeaways": [
+    "Rows are samples/examples; columns are features (X); the one column you want to predict is the label (y).",
+    "A feature vector is simply the list of feature values for one sample.",
+    "Always split data into train, validation, and test sets — the test set is a sealed envelope you open only once.",
+    "Garbage in, garbage out: no algorithm compensates for bad, biased, or mislabeled data.",
+    "Feature scaling (min-max or z-score) puts all features on the same playing field, which matters for distance-based and gradient-based algorithms."
+  ],
+  "exercise": {
+    "prompt": "You are given a small dataset of students as a list of dicts. Each dict has keys: 'study_hours', 'sleep_hours', 'prev_score', and 'passed' (0 or 1).\n\nYour tasks:\n1. Separate the data into X (list of feature lists) and y (list of labels). Features are study_hours, sleep_hours, prev_score in that order.\n2. Split X and y into 60% train and 40% test (no shuffling needed — just slice).\n3. Apply min-max normalization to the 'study_hours' column of the training set and print the scaled values rounded to 2 decimal places.",
+    "starterCode": "students = [\n    {\"study_hours\": 8,  \"sleep_hours\": 7, \"prev_score\": 72, \"passed\": 1},\n    {\"study_hours\": 2,  \"sleep_hours\": 5, \"prev_score\": 45, \"passed\": 0},\n    {\"study_hours\": 5,  \"sleep_hours\": 8, \"prev_score\": 60, \"passed\": 1},\n    {\"study_hours\": 1,  \"sleep_hours\": 4, \"prev_score\": 38, \"passed\": 0},\n    {\"study_hours\": 9,  \"sleep_hours\": 7, \"prev_score\": 85, \"passed\": 1},\n    {\"study_hours\": 3,  \"sleep_hours\": 6, \"prev_score\": 50, \"passed\": 0},\n    {\"study_hours\": 7,  \"sleep_hours\": 8, \"prev_score\": 78, \"passed\": 1},\n    {\"study_hours\": 4,  \"sleep_hours\": 5, \"prev_score\": 55, \"passed\": 0},\n    {\"study_hours\": 6,  \"sleep_hours\": 7, \"prev_score\": 65, \"passed\": 1},\n    {\"study_hours\": 10, \"sleep_hours\": 8, \"prev_score\": 90, \"passed\": 1},\n]\n\n# Step 1: Build X and y\nX = []\ny = []\n# your code here\n\n# Step 2: Split into train / test (60 / 40 split)\n# your code here\n\n# Step 3: Min-max scale study_hours in the training set\n# your code here\n\n# Print results\n",
+    "hint": "For Step 1, loop over students and append [s['study_hours'], s['sleep_hours'], s['prev_score']] to X and s['passed'] to y. For Step 2, use integer index: split = int(0.6 * len(X)). For Step 3, extract the first column of X_train, find min and max, then apply (v - mn) / (mx - mn) to each value.",
+    "solution": "students = [\n    {\"study_hours\": 8,  \"sleep_hours\": 7, \"prev_score\": 72, \"passed\": 1},\n    {\"study_hours\": 2,  \"sleep_hours\": 5, \"prev_score\": 45, \"passed\": 0},\n    {\"study_hours\": 5,  \"sleep_hours\": 8, \"prev_score\": 60, \"passed\": 1},\n    {\"study_hours\": 1,  \"sleep_hours\": 4, \"prev_score\": 38, \"passed\": 0},\n    {\"study_hours\": 9,  \"sleep_hours\": 7, \"prev_score\": 85, \"passed\": 1},\n    {\"study_hours\": 3,  \"sleep_hours\": 6, \"prev_score\": 50, \"passed\": 0},\n    {\"study_hours\": 7,  \"sleep_hours\": 8, \"prev_score\": 78, \"passed\": 1},\n    {\"study_hours\": 4,  \"sleep_hours\": 5, \"prev_score\": 55, \"passed\": 0},\n    {\"study_hours\": 6,  \"sleep_hours\": 7, \"prev_score\": 65, \"passed\": 1},\n    {\"study_hours\": 10, \"sleep_hours\": 8, \"prev_score\": 90, \"passed\": 1},\n]\n\n# Step 1: Build X and y\nX = []\ny = []\nfor s in students:\n    X.append([s[\"study_hours\"], s[\"sleep_hours\"], s[\"prev_score\"]])\n    y.append(s[\"passed\"])\n\n# Step 2: 60 / 40 split\nsplit = int(0.6 * len(X))\nX_train, X_test = X[:split], X[split:]\ny_train, y_test = y[:split], y[split:]\n\n# Step 3: Min-max scale study_hours (column 0) in training set\nstudy_train = [row[0] for row in X_train]\nmn, mx = min(study_train), max(study_train)\nscaled = [round((v - mn) / (mx - mn), 2) for v in study_train]\n\nprint(\"Train size:\", len(X_train), \"  Test size:\", len(X_test))\nprint(\"Raw study_hours (train):\", study_train)\nprint(\"Scaled study_hours (train):\", scaled)"
+  }
+}

@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ALL_SLUGS } from "@/lib/curriculum";
+import { courseForPath } from "@/lib/courses";
 
-// Global lesson navigation: `[` / `k` = previous lesson, `]` / `j` = next.
-// Ignored while typing in inputs or when a modifier key is held.
+// Global lesson navigation across any course: `[` / `k` = previous lesson,
+// `]` / `j` = next. Ignored while typing in inputs.
 export function KeyboardNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -22,20 +22,23 @@ export function KeyboardNav() {
       ) {
         return;
       }
-      if (!pathname?.startsWith("/learn/")) return;
-      const slug = pathname.replace("/learn/", "");
-      const idx = ALL_SLUGS.indexOf(slug);
+      const info = courseForPath(pathname);
+      const base = info.base;
+      if (!pathname?.startsWith(base + "/")) return;
+      const slug = pathname.slice(base.length + 1);
+      const slugs = info.course.allSlugs;
+      const idx = slugs.indexOf(slug);
       if (idx === -1) return;
 
       if (e.key === "[" || e.key.toLowerCase() === "k") {
         if (idx > 0) {
           e.preventDefault();
-          router.push(`/learn/${ALL_SLUGS[idx - 1]}`);
+          router.push(`${base}/${slugs[idx - 1]}`);
         }
       } else if (e.key === "]" || e.key.toLowerCase() === "j") {
-        if (idx < ALL_SLUGS.length - 1) {
+        if (idx < slugs.length - 1) {
           e.preventDefault();
-          router.push(`/learn/${ALL_SLUGS[idx + 1]}`);
+          router.push(`${base}/${slugs[idx + 1]}`);
         }
       }
     };

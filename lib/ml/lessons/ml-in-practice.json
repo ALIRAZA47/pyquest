@@ -1,0 +1,96 @@
+{
+  "slug": "ml-in-practice",
+  "title": "ML in Practice",
+  "category": "Putting It Together",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Walk through the real machine learning workflow — from messy data to a deployed model — and learn the essential tools, pitfalls, and next steps every practitioner needs.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've learned what ML is, studied a handful of algorithms, and maybe even trained a model or two. But real-world ML doesn't start at *\"run the algorithm\"*. It starts with a messy spreadsheet, a vague business question, and a lot of detective work. In practice, the algorithm itself is often the *smallest* part of the job. Knowing **the full workflow** — every stage from problem definition to production monitoring — is what separates someone who read about ML from someone who actually ships it."
+    },
+    {
+      "type": "heading",
+      "text": "The Seven Stages — A Walkthrough"
+    },
+    {
+      "type": "text",
+      "md": "Think of an ML project as a pipeline: **(1) Define the problem** — write one crisp sentence about what you're predicting and how you'll measure success. **(2) Gather and clean data** — raw data is almost never ready to use. **(3) Split the data** — reserve a test set before touching anything else. **(4) Pick a model** — start simple; earn the right to complexity later. **(5) Train** — run the learning algorithm on your training set. **(6) Evaluate** — measure performance on unseen data. **(7) Tune, deploy, and monitor** — improve, ship, and keep watching.\n\nEach stage has its own traps. Let's walk through them."
+    },
+    {
+      "type": "heading",
+      "text": "Stages 1 & 2 — Define the Problem and Clean the Data"
+    },
+    {
+      "type": "text",
+      "md": "Common data problems include **missing values**, wrong data types (a number stored as text like `\"$4,500\"`), outliers from data entry errors, duplicate rows, and **imbalanced classes** (99% of examples are *not-fraud*, making it easy to look accurate while learning nothing). Here's a minimal cleaning pass:"
+    },
+    {
+      "type": "code",
+      "code": "# Simulate a tiny raw dataset with problems\nraw = [\n    {\"age\": 25, \"income\": 50000, \"churned\": 0},\n    {\"age\": None, \"income\": 62000, \"churned\": 1},  # missing age\n    {\"age\": 999, \"income\": 48000, \"churned\": 0},  # outlier age\n    {\"age\": 31, \"income\": 55000, \"churned\": 0},\n    {\"age\": 31, \"income\": 55000, \"churned\": 0},  # duplicate\n]\n\nclean = []\nseen = set()\nfor row in raw:\n    key = (row[\"age\"], row[\"income\"], row[\"churned\"])\n    if row[\"age\"] is None: continue      # drop missing\n    if row[\"age\"] > 120:   continue      # drop outlier\n    if key in seen:        continue      # drop duplicate\n    seen.add(key)\n    clean.append(row)\n\nprint(f\"Raw rows: {len(raw)}, Clean rows: {len(clean)}\")",
+      "output": "Raw rows: 5, Clean rows: 3",
+      "caption": "A minimal data-cleaning pass — real projects do far more, but the logic is identical."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Data is the Ingredient, the Model is the Recipe",
+      "md": "A world-class chef with rotten vegetables still produces a bad dish. No matter how clever your algorithm, garbage data produces a garbage model. This is so common in ML that practitioners have a saying: **\"garbage in, garbage out.\"** Spending 70% of your project time on data collection and cleaning is completely normal — and worth it."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Stage 3 — Split First (Data Leakage Is the Silent Killer)",
+      "md": "Once your data is clean, the **very first thing** you do is set aside a **test set** (typically 20%) that the model will never see during training — your unbiased final exam.\n\n**Data leakage** happens when information from the test set sneaks into training. Classic mistake: computing the *average salary across all rows* (including test rows) and using it as a feature. The model has effectively \"peeked\" at test data — its measured accuracy looks great but falls apart in production. The fix: **always split first, then engineer features using only training-set statistics**."
+    },
+    {
+      "type": "heading",
+      "text": "Stages 4, 5 & 6 — Pick, Train, and Evaluate"
+    },
+    {
+      "type": "text",
+      "md": "**Picking a model** is less about finding the *perfect* algorithm and more about starting sensibly. For classification, start with Logistic Regression or a Decision Tree. For regression, start with Linear Regression. Upgrade to Random Forest or Gradient Boosting only after benchmarking the simple baseline.\n\n**Training** is running the algorithm on your training set — in real projects one scikit-learn line handles this. **Evaluation** is measuring performance on the test set. The right metric matters:\n- **Accuracy** — fraction correct. Misleading when classes are imbalanced.\n- **Precision / Recall** — for classification, how often is the model right when it says *positive*, and how many true positives does it catch?\n- **Mean Absolute Error (MAE)** — for regression, the average gap between prediction and reality."
+    },
+    {
+      "type": "code",
+      "code": "y_true = [0, 1, 1, 0, 1, 0, 1, 1]\ny_pred = [0, 1, 0, 0, 1, 1, 1, 1]  # one false negative, one false positive\n\ncorrect   = sum(t == p for t, p in zip(y_true, y_pred))\naccuracy  = correct / len(y_true)\ntp = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\nfp = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\nfn = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\nprecision = tp / (tp + fp) if (tp + fp) > 0 else 0\nrecall    = tp / (tp + fn) if (tp + fn) > 0 else 0\n\nprint(f\"Accuracy:  {accuracy:.2f}\")\nprint(f\"Precision: {precision:.2f}\")\nprint(f\"Recall:    {recall:.2f}\")",
+      "output": "Accuracy:  0.75\nPrecision: 0.80\nRecall:    0.80",
+      "caption": "Computing three evaluation metrics from scratch — the formulas are simpler than they look."
+    },
+    {
+      "type": "heading",
+      "text": "Stage 7 — Tune, Deploy, and Monitor"
+    },
+    {
+      "type": "text",
+      "md": "**Tuning** means adjusting *hyperparameters* — settings you choose before training, like how deep a decision tree grows. You try different values on a held-out validation set and keep the best. **Deployment** puts the model somewhere real users can call it: a REST API, a nightly batch job, or a function in a mobile app.\n\n**Monitoring** is the step most beginners forget. The world changes — customer behaviour in January can look nothing like July. A model that was 92% accurate at launch can silently drift to 70% over time (**model drift**). Good practitioners watch performance dashboards and retrain when accuracy slips. The workflow is a **cycle**, not a straight line.\n\n**The essential toolkit:** **NumPy** (fast arrays), **pandas** (spreadsheet-style data wrangling), **scikit-learn** (plug-and-play algorithms and metrics), **matplotlib/seaborn** (visualisation), and **Jupyter Notebooks** (interactive exploration). For next steps, Kaggle's beginner competitions (house prices, Titanic) give you real data and a community to learn from."
+    },
+    {
+      "type": "quiz",
+      "question": "A data scientist builds a churn-prediction model. Before splitting the data, she computes the average account balance across the entire dataset and adds it as a feature. What problem does this introduce?",
+      "options": [
+        "Overfitting — the model memorises training examples.",
+        "Data leakage — test-set information indirectly influences the model.",
+        "Class imbalance — the feature skews the class distribution.",
+        "Underfitting — a single average does not capture enough information."
+      ],
+      "answerIndex": 1,
+      "explanation": "Computing statistics across the full dataset before the train/test split lets information from the test set leak into training features. The model has effectively \"peeked\" at test data, so its measured performance will be optimistic and will fall apart in production. Always split first, then compute any statistics using only the training portion. The algorithms you've studied — linear regression, logistic regression, decision trees, k-NN — all slot into Stages 4 and 5. The surrounding stages are what turn a toy experiment into something that actually works in the real world."
+    }
+  ],
+  "keyTakeaways": [
+    "The ML workflow has seven stages — problem definition, data cleaning, splitting, model selection, training, evaluation, and deployment/monitoring. The algorithm is just one piece.",
+    "Always split your data before any feature engineering to prevent data leakage — information sneaking from the test set into training will make performance look artificially good.",
+    "Pick the simplest model first. Earn the right to use a complex one by benchmarking against a simple baseline.",
+    "Choose your evaluation metric carefully — accuracy alone is misleading on imbalanced datasets; also check precision, recall, or MAE depending on your problem.",
+    "Deployment is not the finish line — models drift over time as the world changes, so monitoring and periodic retraining are part of the job."
+  ],
+  "exercise": {
+    "prompt": "Write a function `evaluate(y_true, y_pred)` that takes two lists of 0/1 labels and returns a dictionary with four keys: `\"accuracy\"`, `\"precision\"`, `\"recall\"`, and `\"f1\"`. The F1 score is the harmonic mean of precision and recall: `2 * precision * recall / (precision + recall)`. Handle the edge case where precision + recall is 0 by returning 0.0 for F1. Test your function on the sample data provided.",
+    "starterCode": "def evaluate(y_true, y_pred):\n    # Your code here\n    return {}  # TODO: replace with a dict containing accuracy, precision, recall, f1\n\n# Test it\ny_true = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1]\ny_pred = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0]\nresult = evaluate(y_true, y_pred)\nfor metric, value in result.items():\n    print(f\"{metric}: {value:.3f}\")",
+    "hint": "Count true positives (tp), false positives (fp), false negatives (fn), and true negatives (tn) by comparing each pair in zip(y_true, y_pred). Then: accuracy = (tp + tn) / total, precision = tp / (tp + fp), recall = tp / (tp + fn). Guard each division against a zero denominator.",
+    "solution": "def evaluate(y_true, y_pred):\n    tp = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\n    tn = sum(t == 0 and p == 0 for t, p in zip(y_true, y_pred))\n    fp = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\n    fn = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\n    total     = len(y_true)\n    accuracy  = (tp + tn) / total\n    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0\n    recall    = tp / (tp + fn) if (tp + fn) > 0 else 0.0\n    f1 = (2 * precision * recall / (precision + recall)\n          if (precision + recall) > 0 else 0.0)\n    return {\"accuracy\": accuracy, \"precision\": precision,\n            \"recall\": recall, \"f1\": f1}\n\ny_true = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1]\ny_pred = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0]\nresult = evaluate(y_true, y_pred)\nfor metric, value in result.items():\n    print(f\"{metric}: {value:.3f}\")"
+  }
+}

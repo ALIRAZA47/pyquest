@@ -93,7 +93,7 @@
   ],
   "exercise": {
     "prompt": "Write a generator function called `squares(n)` that yields the square of every integer from 1 up to and including `n`. Then use a `for` loop to print each result. For example, `squares(5)` should produce 1, 4, 9, 16, 25.",
-    "starterCode": "def squares(n):\n    # your code here\n    pass\n\nfor s in squares(5):\n    print(s)",
+    "starterCode": "def squares(n):\n    # your code here\n    yield 0  # TODO: replace this with the real logic\n\nfor s in squares(5):\n    print(s)",
     "hint": "Loop from 1 to n inside the generator. For each number `i`, yield `i * i`.",
     "solution": "def squares(n):\n    for i in range(1, n + 1):\n        yield i * i\n\nfor s in squares(5):\n    print(s)"
   }

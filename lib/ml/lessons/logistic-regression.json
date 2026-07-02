@@ -1,0 +1,128 @@
+{
+  "slug": "logistic-regression",
+  "title": "Logistic Regression",
+  "category": "Supervised Learning",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Discover how logistic regression turns any number into a probability — and makes yes/no decisions with surprising elegance.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine your email inbox. Every second, new messages arrive — and your email provider must decide: **spam or not spam?** It can't just eyeball each one. It needs a fast, reliable rule that outputs a clear yes or no.\n\nThis is a **classification problem** — predicting which *category* something belongs to. Logistic regression is one of the oldest and most trusted tools for exactly this job. Despite its confusing name (it says \"regression\" but it does *classification*), it's everywhere: detecting fraudulent credit card transactions, predicting whether a patient has a disease, deciding whether a review is positive or negative."
+    },
+    {
+      "type": "heading",
+      "text": "Why Not Just Use Linear Regression?"
+    },
+    {
+      "type": "text",
+      "md": "You might wonder: we already have linear regression for making predictions — why not use that?\n\nLinear regression predicts a **continuous number**: house price, temperature, salary. But for classification, we need a **probability** — a number between 0 and 1 — where 0 means \"definitely not spam\" and 1 means \"definitely spam\".\n\nLinear regression can output 2.7, or -0.5, or 1000. Those are meaningless as probabilities. We need something that **squashes** any number into the 0–1 range. That's where the sigmoid function comes in."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Volume Knob Analogy",
+      "md": "Think of the sigmoid function like a special volume knob. No matter how hard you crank it — to the left (negative infinity) or to the right (positive infinity) — the output never goes below 0 or above 1. It always settles smoothly somewhere in between. Turn it a little to the right: maybe 0.6. Turn it way to the right: approaches 0.99, but never quite 1."
+    },
+    {
+      "type": "heading",
+      "text": "The Sigmoid Function — Heart of Logistic Regression"
+    },
+    {
+      "type": "text",
+      "md": "The sigmoid function takes *any* real number `z` and outputs a value between 0 and 1:\n\n```\nsigmoid(z) = 1 / (1 + e^(-z))\n```\n\nLet's unpack that in plain English:\n- `e` is Euler's number, roughly 2.718 (a mathematical constant that shows up constantly in nature and math).\n- `e^(-z)` means \"e raised to the power of negative z\".\n- When `z` is a **large positive** number, `e^(-z)` is nearly zero, so the whole thing approaches `1 / (1 + 0) = 1`.\n- When `z` is a **large negative** number, `e^(-z)` becomes huge, so the output approaches `1 / (very large number) ≈ 0`.\n- When `z = 0`, the output is exactly `1 / (1 + 1) = 0.5` — perfectly on the fence.\n\nThis S-shaped curve is the sigmoid's signature. It maps the entire number line into a tidy probability."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef sigmoid(z):\n    return 1 / (1 + math.exp(-z))\n\n# Try a few values\nfor z in [-5, -1, 0, 1, 5]:\n    print(f\"sigmoid({z:3}) = {sigmoid(z):.4f}\")",
+      "output": "sigmoid( -5) = 0.0067\nsigmoid( -1) = 0.2689\nsigmoid(  0) = 0.5000\nsigmoid(  1) = 0.7311\nsigmoid(  5) = 0.9933",
+      "caption": "The sigmoid squashes any number into a probability. Notice how z=0 gives exactly 0.5 — the tipping point."
+    },
+    {
+      "type": "heading",
+      "text": "From Raw Score to Prediction"
+    },
+    {
+      "type": "text",
+      "md": "So how does logistic regression actually make a prediction?\n\n**Step 1 — Compute a raw score.**  Just like linear regression, we take our input features (say, the number of exclamation marks and the presence of the word \"FREE\" in an email), multiply each by a learned weight, and add them up:\n\n```\nz = w1 * feature1 + w2 * feature2 + bias\n```\n\n**Step 2 — Squeeze through sigmoid.**  Pass that raw score `z` through `sigmoid(z)` to get a probability `p` between 0 and 1.\n\n**Step 3 — Apply the decision boundary.**  If `p >= 0.5`, predict class **1** (spam). If `p < 0.5`, predict class **0** (not spam).\n\nThe model learns the weights during training so that spam emails produce high `z` values (→ high probability → predicted spam) and normal emails produce low `z` values."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The Decision Boundary",
+      "md": "The **decision boundary** is the dividing line at probability = 0.5. Anything above: class 1. Anything below: class 0. Since sigmoid(0) = 0.5, the boundary occurs exactly where the raw score `z = 0`. You can think of the model as drawing a line (or curve) through your data and labeling each side."
+    },
+    {
+      "type": "heading",
+      "text": "A Mini Example From Scratch"
+    },
+    {
+      "type": "text",
+      "md": "Let's pretend we've already trained a spam detector. It learned these weights:\n- `w1 = 0.8` (weight for number of exclamation marks)\n- `w2 = 1.5` (weight for whether \"FREE\" appears: 1 = yes, 0 = no)\n- `bias = -1.0`\n\nNow let's classify two emails."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef sigmoid(z):\n    return 1 / (1 + math.exp(-z))\n\ndef predict(exclamations, has_free, w1=0.8, w2=1.5, bias=-1.0):\n    z = w1 * exclamations + w2 * has_free + bias\n    prob = sigmoid(z)\n    label = 1 if prob >= 0.5 else 0\n    return prob, label\n\n# Email A: 3 exclamation marks, contains FREE\nprob_a, label_a = predict(exclamations=3, has_free=1)\nprint(f\"Email A -> prob={prob_a:.3f}, prediction={'SPAM' if label_a else 'NOT SPAM'}\")\n\n# Email B: 0 exclamation marks, no FREE\nprob_b, label_b = predict(exclamations=0, has_free=0)\nprint(f\"Email B -> prob={prob_b:.3f}, prediction={'SPAM' if label_b else 'NOT SPAM'}\")",
+      "output": "Email A -> prob=0.953, prediction=SPAM\nEmail B -> prob=0.269, prediction=NOT SPAM",
+      "caption": "Email A screams spam (95.3% probability). Email B looks clean (only 26.9% chance of spam)."
+    },
+    {
+      "type": "heading",
+      "text": "How the Model Learns the Weights"
+    },
+    {
+      "type": "text",
+      "md": "We glossed over one thing: where do the weights come from? During **training**, the model sees thousands of labeled examples (spam/not spam). It starts with random weights, makes predictions, checks how wrong it is using a **loss function** (called log-loss or binary cross-entropy), and nudges the weights in the direction that reduces the error. This iterative nudging is called **gradient descent**.\n\nThe loss function is specifically designed to heavily penalize confident wrong answers — if the model says 99% spam for a normal email, the penalty is huge. This trains the model to be well-calibrated.\n\nIn practice, you'd use **scikit-learn's** `LogisticRegression` class which handles all this automatically. But now you know what's happening underneath."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"Logistic Regression\" is a Classifier, Not a Regressor",
+      "md": "The name is historically misleading. The word \"regression\" refers to the internal math (the linear combination of features), not the output type. Logistic regression **outputs a class label** — it's a classification algorithm through and through. Don't let the name fool you into thinking it predicts continuous values like house prices."
+    },
+    {
+      "type": "heading",
+      "text": "Real-World Uses"
+    },
+    {
+      "type": "text",
+      "md": "Logistic regression is surprisingly powerful for a simple algorithm:\n\n- **Spam detection** — is this email spam or not?\n- **Medical diagnosis** — does this patient have diabetes? (based on blood sugar, age, BMI)\n- **Credit risk** — will this loan applicant default?\n- **Sentiment analysis** — is this review positive or negative?\n- **Click prediction** — will a user click this ad?\n\nIt's often the **first algorithm** practitioners try on a new binary classification problem — it's fast to train, easy to interpret (high weight = feature matters a lot), and gives calibrated probabilities, not just labels."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When to Reach for Logistic Regression",
+      "md": "Use logistic regression when:\n- You need a **probability**, not just a class label.\n- You want to understand **which features matter** (interpretability).\n- You have a **binary outcome** (yes/no, spam/not spam, 0/1).\n- Your dataset is **not huge** and you want fast training.\n\nIf your decision boundary is highly non-linear (e.g., images, complex patterns), you'll likely need more powerful models like neural networks — but logistic regression remains a rock-solid baseline."
+    },
+    {
+      "type": "quiz",
+      "question": "You pass z = 0 into the sigmoid function. What is the output, and what prediction does logistic regression make?",
+      "options": [
+        "Output is 0, prediction is class 0 (negative class)",
+        "Output is 0.5, prediction is class 1 (positive class) since 0.5 >= 0.5",
+        "Output is 1, prediction is class 1 (positive class)",
+        "Output is 0.5, the model is confused and outputs nothing"
+      ],
+      "answerIndex": 1,
+      "explanation": "sigmoid(0) = 1 / (1 + e^0) = 1 / 2 = 0.5. Since 0.5 >= 0.5, the model predicts class 1. This is exactly the decision boundary — the tipping point between the two classes."
+    },
+    {
+      "type": "text",
+      "md": "You now understand the core idea behind logistic regression: compute a linear score, squeeze it through the sigmoid into a probability, and classify based on whether that probability clears the 0.5 threshold. Simple, elegant, and still widely used decades after its invention."
+    }
+  ],
+  "keyTakeaways": [
+    "Logistic regression is a *classification* algorithm despite its name — it predicts categories (spam/not spam), not continuous numbers.",
+    "The sigmoid function transforms any real number into a probability between 0 and 1, giving the model its characteristic S-shaped output.",
+    "The decision boundary sits at probability 0.5 (equivalently, raw score z = 0): above → class 1, below → class 0.",
+    "The model learns feature weights during training via gradient descent, minimizing a log-loss that punishes confident wrong predictions.",
+    "When you need interpretable probabilities for a binary outcome, logistic regression is often the best first algorithm to try."
+  ],
+  "exercise": {
+    "prompt": "Complete the `logistic_predict` function below. Given a list of feature values and a corresponding list of weights, compute the raw score `z` (sum of each feature multiplied by its weight, plus the bias), pass it through the sigmoid, and return both the probability and the predicted class label (1 if probability >= 0.5, else 0).\n\nTest it with:\n- features=[2.0, 1.0], weights=[0.5, -1.0], bias=0.0  → should predict class 0\n- features=[3.0, 0.0], weights=[1.2, -0.5], bias=-0.5  → should predict class 1",
+    "starterCode": "import math\n\ndef sigmoid(z):\n    return 1 / (1 + math.exp(-z))\n\ndef logistic_predict(features, weights, bias):\n    # Step 1: compute raw score z\n    # z = sum of (feature * weight) for each pair, plus bias\n    z = 0\n    # YOUR CODE HERE\n\n    # Step 2: pass z through sigmoid to get probability\n    prob = 0.0  # TODO: replace with sigmoid(z)\n\n    # Step 3: predict class 1 if prob >= 0.5, else class 0\n    label = 0  # TODO: replace with 1 if prob >= 0.5 else 0\n\n    return prob, label\n\n# Test cases\nprob1, label1 = logistic_predict([2.0, 1.0], [0.5, -1.0], bias=0.0)\nprint(f\"Test 1: prob={prob1:.3f}, class={label1}\")\n\nprob2, label2 = logistic_predict([3.0, 0.0], [1.2, -0.5], bias=-0.5)\nprint(f\"Test 2: prob={prob2:.3f}, class={label2}\")",
+    "hint": "Use `zip(features, weights)` to pair each feature with its weight, then multiply and accumulate into `z`. Don't forget to add the bias at the end before calling sigmoid.",
+    "solution": "import math\n\ndef sigmoid(z):\n    return 1 / (1 + math.exp(-z))\n\ndef logistic_predict(features, weights, bias):\n    # Step 1: compute raw score z\n    z = sum(f * w for f, w in zip(features, weights)) + bias\n\n    # Step 2: pass z through sigmoid\n    prob = sigmoid(z)\n\n    # Step 3: classify\n    label = 1 if prob >= 0.5 else 0\n\n    return prob, label\n\n# Test cases\nprob1, label1 = logistic_predict([2.0, 1.0], [0.5, -1.0], bias=0.0)\nprint(f\"Test 1: prob={prob1:.3f}, class={label1}\")\n# z = 2.0*0.5 + 1.0*(-1.0) + 0.0 = 0.0, sigmoid(0) = 0.5 -> class 1\n\nprob2, label2 = logistic_predict([3.0, 0.0], [1.2, -0.5], bias=-0.5)\nprint(f\"Test 2: prob={prob2:.3f}, class={label2}\")\n# z = 3.0*1.2 + 0.0*(-0.5) + (-0.5) = 3.1, sigmoid(3.1) ~ 0.957 -> class 1"
+  }
+}

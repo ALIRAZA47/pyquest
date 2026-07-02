@@ -88,3 +88,24 @@ generate({
       ? "missing challenges array"
       : null,
 });
+
+const lessonValidate = (p) =>
+  !p || typeof p !== "object" || !Array.isArray(p.blocks)
+    ? "missing blocks array"
+    : null;
+
+generate({
+  dir: path.join(root, "lib", "ml", "lessons"),
+  outFile: path.join(root, "lib", "ml", "generated-lessons.ts"),
+  exportName: "RAW_ML_LESSONS",
+  idPrefix: "ML_",
+  validate: lessonValidate,
+});
+
+generate({
+  dir: path.join(root, "lib", "ai", "lessons"),
+  outFile: path.join(root, "lib", "ai", "generated-lessons.ts"),
+  exportName: "RAW_AI_LESSONS",
+  idPrefix: "AI_",
+  validate: lessonValidate,
+});

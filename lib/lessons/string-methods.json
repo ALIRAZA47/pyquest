@@ -175,7 +175,7 @@
   ],
   "exercise": {
     "prompt": "You have received a messy list of email addresses as a single string: `\"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"`. Your task: split it on the comma, then clean each email by stripping whitespace and converting to lowercase. Print each cleaned email on its own line.",
-    "starterCode": "raw = \"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"\n\n# Split on comma first\nemails = raw.split(\",\")\n\n# Loop through and clean each one\nfor email in emails:\n    cleaned = ???\n    print(cleaned)",
+    "starterCode": "raw = \"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"\n\n# Split on comma first\nemails = raw.split(\",\")\n\n# Loop through and clean each one\nfor email in emails:\n    cleaned = email  # TODO: chain .strip() and .lower() to clean the email\n    print(cleaned)\n",
     "hint": "Chain .strip() and .lower() on each email inside the loop.",
     "solution": "raw = \"  Alice@Example.COM , bob@GMAIL.COM,  CHARLIE@outlook.com  \"\n\nemails = raw.split(\",\")\n\nfor email in emails:\n    cleaned = email.strip().lower()\n    print(cleaned)"
   }

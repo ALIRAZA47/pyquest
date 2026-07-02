@@ -140,7 +140,7 @@
   ],
   "exercise": {
     "prompt": "Create three variables: your name (a string), your age (a number), and whether you like pizza (True or False). Then print a sentence using all three, like: \"Hi, I'm Alex, I'm 25 years old, and it's True that I like pizza.\"",
-    "starterCode": "# Create your variables here\nmy_name = \nmy_age = \nlikes_pizza = \n\n# Print the sentence\nprint(\"Hi, I'm\", my_name, \"...\") ",
+    "starterCode": "# Create your variables here\nmy_name = \"\"  # TODO: replace with your name as a string\nmy_age = 0  # TODO: replace with your age as a number\nlikes_pizza = False  # TODO: replace with True or False\n\n# Print the sentence\nprint(\"Hi, I'm\", my_name, \"...\")",
     "hint": "Set each variable to an appropriate value on its own line, then build your print statement using commas to join the pieces together.",
     "solution": "my_name = \"Alex\"\nmy_age = 25\nlikes_pizza = True\n\nprint(\"Hi, I'm\", my_name + \", I'm\", my_age, \"years old, and it's\", likes_pizza, \"that I like pizza.\")"
   }

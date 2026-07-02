@@ -2,17 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getLesson } from "@/lib/content";
+import { courseFor } from "@/lib/courses";
 import { ThemeToggle } from "./ThemeToggle";
 import { openCommandPalette } from "./CommandPalette";
 import { MenuIcon, ChevronRight, SearchIcon } from "./Icons";
 
-export function Topbar({ onMenu }: { onMenu: () => void }) {
+export function Topbar({
+  onMenu,
+  courseId = "python",
+}: {
+  onMenu: () => void;
+  courseId?: string;
+}) {
   const pathname = usePathname();
-  const slug = pathname?.startsWith("/learn/")
-    ? pathname.replace("/learn/", "")
+  const info = courseFor(courseId);
+  const base = info.base;
+  const slug = pathname?.startsWith(base + "/")
+    ? pathname.slice(base.length + 1)
     : "";
-  const lesson = slug ? getLesson(slug) : undefined;
+  const lesson = slug ? info.course.getLesson(slug) : undefined;
 
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-surface/70 px-4 backdrop-blur-xl sm:px-6 print:hidden">
@@ -26,8 +34,8 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       </button>
 
       <nav className="flex min-w-0 items-center gap-1.5 text-sm text-muted">
-        <Link href="/learn" className="shrink-0 font-medium hover:text-accent">
-          Course
+        <Link href={base} className="shrink-0 font-medium hover:text-accent">
+          {info.name}
         </Link>
         {lesson && (
           <>
@@ -58,7 +66,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           href="/"
           className="hidden rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-accent sm:block"
         >
-          Home
+          Courses
         </Link>
         <ThemeToggle />
       </div>

@@ -157,7 +157,7 @@
   ],
   "exercise": {
     "prompt": "Write a function called `make_tag` that takes a `content` string and an optional `tag` parameter that defaults to `\"p\"`. It should return an HTML-style string wrapping the content in the tag, like `<p>Hello</p>`. Call it at least three times: once with just content, once overriding the tag positionally, and once overriding the tag as a keyword argument.",
-    "starterCode": "def make_tag(content, tag=???):\n    # return the wrapped string\n    pass\n\nprint(make_tag(\"Hello\"))\nprint(make_tag(\"World\", \"h1\"))\nprint(make_tag(\"Click me\", tag=\"a\"))",
+    "starterCode": "def make_tag(content, tag=\"p\"):  # TODO: add the default value for tag\n    # return the wrapped string\n    pass\n\nprint(make_tag(\"Hello\"))\nprint(make_tag(\"World\", \"h1\"))\nprint(make_tag(\"Click me\", tag=\"a\"))",
     "hint": "Use an f-string like `f\"<{tag}>{content}</{tag}>\"` to build the result.",
     "solution": "def make_tag(content, tag=\"p\"):\n    return f\"<{tag}>{content}</{tag}>\"\n\nprint(make_tag(\"Hello\"))              # <p>Hello</p>\nprint(make_tag(\"World\", \"h1\"))        # <h1>World</h1>\nprint(make_tag(\"Click me\", tag=\"a\"))  # <a>Click me</a>"
   }

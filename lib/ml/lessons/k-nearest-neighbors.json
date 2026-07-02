@@ -1,0 +1,122 @@
+{
+  "slug": "k-nearest-neighbors",
+  "title": "k-Nearest Neighbors",
+  "category": "Supervised Learning",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Classify anything by asking its neighbors — learn how k-NN works by computing distances and taking a majority vote, all from scratch.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you just moved to a new city and you're deciding where to eat dinner. You don't know the area, so you look around: the three nearest restaurants all have long lines of happy customers. \"If the locals nearby love it, I probably will too.\" That gut feeling — **judge something by what surrounds it** — is the entire idea behind k-Nearest Neighbors.\n\nk-NN is one of the most intuitive algorithms in all of machine learning. It classifies a new data point by looking at the *k* closest labeled points in the training set and letting them vote. Whoever gets the most votes wins. No equations to solve, no mysterious training phase — just memory and a measuring tape."
+    },
+    {
+      "type": "heading",
+      "text": "The Core Idea: Majority Vote Among Neighbors"
+    },
+    {
+      "type": "text",
+      "md": "Here is k-NN in three sentences:\n\n1. **Store** all your labeled training examples — every point keeps its label.\n2. When a **new, unlabeled point** arrives, measure its distance to every stored point.\n3. Look at the **k closest** ones and predict whichever label appears most often.\n\nThat's it. There is no model, no weights, no optimization loop. k-NN is sometimes called a **lazy learner** because it does zero work at training time — all the work happens at prediction time."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Neighborhood Election",
+      "md": "Think of each labeled training point as a house with a political sign in the yard — red or blue. When a stranger arrives at an unknown address, they look at the *k* nearest houses. If 3 out of 5 nearby houses are red, the newcomer is classified as red.\n\nIncrease *k* and you consider a wider neighborhood — opinions become more stable but may blur boundaries. Decrease *k* and you zoom in tight — opinions are razor-sharp but one noisy neighbor can swing the vote."
+    },
+    {
+      "type": "heading",
+      "text": "Measuring Distance: The Euclidean Formula"
+    },
+    {
+      "type": "text",
+      "md": "Before we can find the *nearest* neighbors, we need to define **nearness**. The most common choice is **Euclidean distance** — the straight-line distance you'd measure with a ruler.\n\nFor two points `A = (x1, y1)` and `B = (x2, y2)`, the formula is:\n\n```\ndistance = sqrt( (x2 - x1)² + (y2 - y1)² )\n```\n\nIn plain words: subtract each coordinate, square the difference (so negatives become positive), add them up, then take the square root to get back to real-world units. It's just the Pythagorean theorem — the distance formula from geometry class."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef euclidean_distance(a, b):\n    \"\"\"Distance between two points (tuples of any length).\"\"\"\n    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))\n\nprint(euclidean_distance((1, 2), (4, 6)))  # classic 3-4-5 triangle\nprint(euclidean_distance((0, 0), (1, 1)))",
+      "output": "5.0\n1.4142135623730951",
+      "caption": "A clean Euclidean distance helper — works for 2D, 3D, or any number of features."
+    },
+    {
+      "type": "heading",
+      "text": "Building k-NN from Scratch"
+    },
+    {
+      "type": "text",
+      "md": "Let's build a complete k-NN classifier in pure Python — no external libraries. We'll classify fruits based on two features: **sweetness** (1–10) and **crunchiness** (1–10). Each fruit in our training set is labeled `\"apple\"` or `\"orange\"`."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\n# Training data: (sweetness, crunchiness, label)\ntraining = [\n    (7, 9, \"apple\"),\n    (6, 8, \"apple\"),\n    (8, 7, \"apple\"),\n    (9, 2, \"orange\"),\n    (8, 3, \"orange\"),\n    (7, 1, \"orange\"),\n]\n\ndef euclidean_distance(a, b):\n    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))\n\ndef knn_predict(query, data, k=3):\n    # Step 1: compute distance from query to every training point\n    distances = []\n    for *features, label in data:\n        d = euclidean_distance(query, features)\n        distances.append((d, label))\n\n    # Step 2: sort by distance, keep the k closest\n    distances.sort(key=lambda x: x[0])\n    neighbors = distances[:k]\n\n    # Step 3: majority vote\n    votes = {}\n    for _, label in neighbors:\n        votes[label] = votes.get(label, 0) + 1\n\n    return max(votes, key=votes.get), neighbors\n\n# Classify a mystery fruit: sweetness=7, crunchiness=8\nprediction, neighbors = knn_predict((7, 8), training, k=3)\nprint(\"Prediction:\", prediction)\nprint(\"Nearest neighbors:\")\nfor dist, label in neighbors:\n    print(f\"  {label}  (distance: {dist:.2f})\")",
+      "output": "Prediction: apple\nNearest neighbors:\n  apple  (distance: 1.00)\n  apple  (distance: 1.41)\n  apple  (distance: 2.24)",
+      "caption": "Under the hood: sort by distance, slice the top k, tally votes. That's the whole algorithm."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The Interactive Visualizer",
+      "md": "The animation on this page lets you click to place a new point and watch the circles expand outward until they touch k neighbors. Try dragging k up and down to see how the decision boundary changes — it's the fastest way to build intuition for why k matters."
+    },
+    {
+      "type": "heading",
+      "text": "The Effect of k: Small vs Large"
+    },
+    {
+      "type": "text",
+      "md": "The choice of **k** is the most important decision in k-NN:\n\n- **Small k (e.g., k=1):** The model listens only to the single nearest neighbor. It draws very jagged, irregular boundaries. One mislabeled or noisy training point can flip a prediction. The model has **high variance** — it wiggles a lot.\n- **Large k (e.g., k=20):** The model considers a wide vote. Boundaries become smooth and stable. But if k is too large, it starts ignoring real local patterns and can **underfit** — it just predicts the most common class everywhere.\n- **Sweet spot:** Try odd values (to avoid ties) in the middle — often somewhere between 3 and 15. Use cross-validation to tune it."
+    },
+    {
+      "type": "code",
+      "code": "# Same data, different k — watch the prediction flip or hold\nfor k in [1, 3, 5]:\n    pred, nbrs = knn_predict((8, 4), training, k=k)\n    labels = [lbl for _, lbl in nbrs]\n    print(f\"k={k}: neighbors={labels}  -> predicted: {pred}\")",
+      "output": "k=1: neighbors=['orange']  -> predicted: orange\nk=3: neighbors=['orange', 'orange', 'apple']  -> predicted: orange\nk=5: neighbors=['orange', 'orange', 'apple', 'apple', 'apple']  -> predicted: apple",
+      "caption": "The same query point gets a different label as k grows. More neighbors = a wider view of the neighborhood."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Feature Scaling is Critical",
+      "md": "If one feature is measured in kilometers and another in millimeters, the large-scale feature will **dominate** the distance calculation and drown out the small-scale one. Always **normalize or standardize** your features before using k-NN so that each dimension contributes fairly to the distance. This is the #1 mistake beginners make with k-NN."
+    },
+    {
+      "type": "heading",
+      "text": "Why 'Lazy' Is Actually a Superpower (and a Weakness)"
+    },
+    {
+      "type": "text",
+      "md": "**Lazy learning** means k-NN skips the training phase entirely — it just stores the data. This has real advantages:\n\n- **Instant updates:** Add new training examples any time. The model is always current.\n- **No assumptions:** k-NN doesn't assume the data is linear, normally distributed, or any particular shape. It adapts to whatever structure the data has.\n- **Works out of the box** on surprisingly complex decision boundaries.\n\nBut there's a cost:\n\n- **Slow at prediction time:** You must compute distances to *every* training point for every new query. With millions of points, this gets expensive. (Libraries like scikit-learn use clever data structures like KD-trees to speed this up.)\n- **Memory hungry:** The entire training set must live in memory."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "k-NN in the Real World",
+      "md": "k-NN powers recommendation systems (\"customers who bought items similar to yours also bought...\"), image recognition, anomaly detection, and medical diagnosis. In scikit-learn, it's just `from sklearn.neighbors import KNeighborsClassifier` — but now you know exactly what's happening inside that one line."
+    },
+    {
+      "type": "quiz",
+      "question": "You train a k-NN classifier with k=1 and get perfect accuracy on the training data, but poor accuracy on new test data. What is most likely happening?",
+      "options": [
+        "The Euclidean distance formula has a bug.",
+        "k=1 is overfitting — the model memorizes every training point instead of learning general patterns.",
+        "k-NN never works well without feature scaling.",
+        "The model needs more training time to converge."
+      ],
+      "answerIndex": 1,
+      "explanation": "With k=1, each training point votes only for itself, so training accuracy is always 100% — the model simply memorizes. But memorizing isn't learning. On unseen data, small variations cause wrong predictions. This is classic overfitting. Increasing k smooths the decision boundary and usually improves generalization. k-NN also has no 'training time' to converge — it's a lazy learner!"
+    }
+  ],
+  "keyTakeaways": [
+    "k-NN classifies a new point by finding the k closest training examples and taking a majority vote — no math beyond counting and distance.",
+    "Euclidean distance is the measuring tape: subtract coordinates, square, sum, square-root.",
+    "Small k = high variance (noisy, jagged boundaries); large k = high bias (smooth but possibly wrong). Tune k with cross-validation.",
+    "k-NN is a lazy learner: zero training time, but prediction scans the whole dataset — great for small data, slow for huge datasets.",
+    "Always normalize your features before using k-NN, or a single large-scale feature will dominate all distance calculations."
+  ],
+  "exercise": {
+    "prompt": "You have a small dataset of animals described by two features: **weight (kg)** and **speed (km/h)**. Each animal is labeled `\"predator\"` or `\"prey\"`.\n\nComplete the `knn_classify` function below so that it:\n1. Computes the Euclidean distance from the `query` point to every point in `data`.\n2. Sorts the results and picks the `k` nearest neighbors.\n3. Returns the majority-vote label.\n\nThen call it to classify a mystery animal with weight=15 and speed=40, using k=3.",
+    "starterCode": "import math\n\ndata = [\n    (5,  60, \"prey\"),\n    (3,  70, \"prey\"),\n    (8,  50, \"prey\"),\n    (80, 30, \"predator\"),\n    (60, 25, \"predator\"),\n    (90, 20, \"predator\"),\n]\n\ndef knn_classify(query, data, k=3):\n    # 1. Compute distances\n    distances = []\n    for row in data:\n        features = row[:-1]   # all but last element\n        label    = row[-1]\n        # YOUR CODE: compute euclidean distance and append (dist, label)\n        pass\n\n    # 2. Sort and pick top k\n    # YOUR CODE\n\n    # 3. Majority vote and return the winning label\n    # YOUR CODE\n    pass\n\nresult = knn_classify((15, 40), data, k=3)\nprint(\"Classification:\", result)",
+    "hint": "Use `math.sqrt(sum((a - b)**2 for a, b in zip(query, features)))` for the distance. After sorting `distances` by the first element, slice `[:k]` to get the nearest neighbors, then count labels with a dictionary.",
+    "solution": "import math\n\ndata = [\n    (5,  60, \"prey\"),\n    (3,  70, \"prey\"),\n    (8,  50, \"prey\"),\n    (80, 30, \"predator\"),\n    (60, 25, \"predator\"),\n    (90, 20, \"predator\"),\n]\n\ndef knn_classify(query, data, k=3):\n    # 1. Compute distances\n    distances = []\n    for row in data:\n        features = row[:-1]\n        label    = row[-1]\n        dist = math.sqrt(sum((a - b) ** 2 for a, b in zip(query, features)))\n        distances.append((dist, label))\n\n    # 2. Sort by distance, keep k nearest\n    distances.sort(key=lambda x: x[0])\n    neighbors = distances[:k]\n\n    # 3. Majority vote\n    votes = {}\n    for _, label in neighbors:\n        votes[label] = votes.get(label, 0) + 1\n    return max(votes, key=votes.get)\n\nresult = knn_classify((15, 40), data, k=3)\nprint(\"Classification:\", result)  # prey"
+  }
+}

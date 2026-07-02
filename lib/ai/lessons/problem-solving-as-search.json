@@ -1,0 +1,98 @@
+{
+  "slug": "problem-solving-as-search",
+  "title": "Problem Solving as Search",
+  "category": "Search & Problem Solving",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how AI turns messy real-world problems into a crisp map of states and actions, then navigates that map to find a solution.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're lost in a foreign city. No phone, no map, no shared language with the locals. What do you do? You start where you are, look at what streets are available, pick one, walk a bit, and check whether you've arrived somewhere recognizable. If not, you backtrack and try another street — repeating until you find your hotel.\n\nCongratulations — you just ran a **search algorithm**. Whether the problem is a maze, a chess position, a GPS route, or scheduling deliveries, a huge portion of AI boils down to exactly this idea: *explore possible situations until you find the one you want.* This lesson unpacks that idea, names its parts, and builds a working implementation from scratch."
+    },
+    {
+      "type": "heading",
+      "text": "The Four Ingredients of Any Search Problem"
+    },
+    {
+      "type": "text",
+      "md": "To turn any problem into a search problem, you need exactly four things:\n\n- **States** — every distinct situation the world can be in. In a maze, a state is your current cell. In the 8-puzzle, a state is a tile arrangement. In route planning, a state is a city.\n- **Initial state** — where you start.\n- **Goal test** — a check that answers *\"did we make it?\"* It can be a single target state or a general condition (e.g., tiles in sorted order).\n- **Actions (transitions)** — the moves available from any given state (move N/S/E/W, slide a tile, drive to an adjacent city).\n\nOnce you have these four pieces, every problem looks like a **graph**: nodes are states, edges are actions. Solving the problem means finding a path from the initial state to any state that passes the goal test."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The State Space is a Subway Map of Possibilities",
+      "md": "Picture a giant subway map where every station is a possible situation the world can be in, and every rail line is an action that moves you from one situation to another.\n\nYou start at one station (the initial state) and want to reach a particular station (the goal). A search algorithm is simply a strategy for deciding which line to take next — without necessarily knowing the full map in advance."
+    },
+    {
+      "type": "heading",
+      "text": "The Search Tree and the Frontier"
+    },
+    {
+      "type": "text",
+      "md": "When an AI explores a state space it grows a **search tree** on the fly. The root is the initial state. Each time the agent *expands* a node it generates child nodes — one for each available action — and those children join a waiting list called the **frontier** (or *open list*).\n\nThe algorithm picks a node from the frontier, checks whether it is the goal, and if not, expands it again. This continues until a goal is found or the frontier empties (no solution exists).\n\n**Different strategies for choosing the next node give completely different algorithms.** Pick the oldest node (a queue) and you get Breadth-First Search. Pick the cheapest-cost node and you get Uniform-Cost Search. Add a distance estimate and you get A\\*. Same skeleton — different choice.\n\nNote that the **state space** (the full graph) exists regardless of exploration, while the **search tree** is what the algorithm actually builds. A state can appear on multiple tree branches via different paths — which is exactly why we need a `visited` set to avoid revisiting states and spiralling into infinite loops."
+    },
+    {
+      "type": "code",
+      "code": "# A small state space: city -> list of reachable cities\ngraph = {\n    \"A\": [\"B\", \"C\"],\n    \"B\": [\"A\", \"D\", \"E\"],\n    \"C\": [\"A\", \"F\"],\n    \"D\": [\"B\"],\n    \"E\": [\"B\", \"F\"],\n    \"F\": [\"C\", \"E\"],\n}\n\nprint(\"From B you can reach:\", graph[\"B\"])\nprint(\"From C you can reach:\", graph[\"C\"])",
+      "output": "From B you can reach: ['A', 'D', 'E']\nFrom C you can reach: ['A', 'F']",
+      "caption": "The simplest state space: a Python dict. Keys are states; values are the states reachable by one action."
+    },
+    {
+      "type": "heading",
+      "text": "Breadth-First Search from Scratch"
+    },
+    {
+      "type": "code",
+      "code": "from collections import deque\n\ndef bfs(graph, start, goal):\n    frontier = deque([[start]])  # queue of paths\n    visited  = set()\n\n    while frontier:\n        path = frontier.popleft()    # oldest path first\n        node = path[-1]              # current state\n\n        if node == goal:\n            return path\n\n        if node in visited:\n            continue\n        visited.add(node)\n\n        for neighbor in graph[node]:\n            frontier.append(path + [neighbor])\n\n    return None\n\nresult = bfs(graph, \"A\", \"F\")\nprint(\"Shortest path:\", result)",
+      "output": "Shortest path: ['A', 'C', 'F']",
+      "caption": "BFS explores A's neighbors (B, C) first, then their neighbors (D, E, F) — finding A→C→F before the longer A→B→E→F. The `visited` set is essential: without it, BFS would cycle A→B→A→B→... forever."
+    },
+    {
+      "type": "heading",
+      "text": "Real-World Examples and the Bigger Picture"
+    },
+    {
+      "type": "text",
+      "md": "The search framework is surprisingly general:\n\n- **Maze navigation** — states are grid cells, actions are move N/S/E/W, goal is the exit. BFS finds the route with fewest steps.\n- **8-puzzle** — states are tile arrangements (362,880 possible), actions are sliding a tile, goal is sorted order. Uninformed search struggles here; A\\* shines.\n- **Route planning** — states are road intersections, actions are driving a road segment, goal is the destination. Real GPS apps use A\\* with straight-line distance as the heuristic.\n\nThe real power of this framework is that it **separates problem definition from solution method**. You describe your world — states, actions, start, goal — and swap in any search algorithm without touching the problem definition. Real libraries like Python's `networkx` or full AI toolkits build on exactly this abstraction."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Uninformed vs. Informed Search",
+      "md": "BFS is **uninformed** (blind) — it has no clue which direction the goal lies. **Informed search** algorithms like A\\* add a *heuristic*: an estimate of how far the current state is from the goal. This lets the algorithm skip huge chunks of the state space and find solutions dramatically faster. That's the next big topic in this series."
+    },
+    {
+      "type": "quiz",
+      "question": "In BFS, what data structure is used for the frontier, and what key property does this give the algorithm?",
+      "options": [
+        "A stack (last in, first out) — it always finds the deepest solution first.",
+        "A queue (first in, first out) — it finds the shortest path in terms of number of steps.",
+        "A priority queue sorted by cost — it finds the cheapest-cost path.",
+        "A random sample — it explores states in arbitrary order."
+      ],
+      "answerIndex": 1,
+      "explanation": "BFS uses a queue, processing states in the order they were discovered. It finishes all states at depth 1 before depth 2, depth 2 before depth 3, and so on. The first time it reaches the goal it must have taken the fewest possible steps. A stack gives Depth-First Search; a cost-priority queue gives Uniform-Cost Search."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Don't Confuse the Search Tree with the State Space",
+      "md": "The **state space** is the full graph of all possible states — it exists whether or not you explore it. The **search tree** is the record the algorithm builds as it runs, tracing every path attempted.\n\nA single state can appear on *many* branches of the search tree (reached via different routes). This is why the `visited` set is non-negotiable: without it you'd re-expand the same state again and again, spiralling into an infinite loop. Modern systems — including game-playing AIs like AlphaGo — keep this exact distinction in mind, using learned heuristics to prune the frontier rather than blindly re-exploring."
+    }
+  ],
+  "keyTakeaways": [
+    "Any problem becomes a search problem once you define states, an initial state, a goal test, and actions.",
+    "The state space is the full graph of all situations; the search tree is what the algorithm builds as it explores.",
+    "The frontier is the key data structure — its type (queue, stack, priority queue) determines the search strategy.",
+    "A visited set prevents infinite loops by ensuring each state is expanded at most once.",
+    "Uninformed search (BFS, DFS) explores blindly; informed search (A*) uses a heuristic to head toward the goal much faster."
+  ],
+  "exercise": {
+    "prompt": "A delivery robot is on a 4x4 grid. Its position is a tuple (row, col) where (0,0) is the top-left corner. It can move up, down, left, or right, but cannot leave the grid or step on a wall.\n\nWalls are at: (1,1), (1,2), (2,1).\nStart: (0,0). Goal: (3,3).\n\nComplete the BFS function so it finds and prints the shortest path from start to goal.",
+    "starterCode": "from collections import deque\n\nROWS, COLS = 4, 4\nwalls = {(1,1), (1,2), (2,1)}\nstart = (0, 0)\ngoal  = (3, 3)\n\ndef bfs_grid(start, goal):\n    frontier = deque([[start]])\n    visited  = set([start])\n\n    while frontier:\n        path = frontier.popleft()\n        node = path[-1]\n\n        if node == goal:\n            return path\n\n        r, c = node\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:  # up, down, left, right\n            nr, nc = r + dr, c + dc\n            neighbor = (nr, nc)\n            # TODO: check bounds, walls, and visited; if OK add to frontier\n            pass\n\n    return None\n\npath = bfs_grid(start, goal)\nif path:\n    print(f\"Shortest path ({len(path)-1} moves):\")\n    for cell in path:\n        print(\" \", cell)\nelse:\n    print(\"No path found.\")",
+    "hint": "Inside the loop, add an if-statement with four conditions joined by `and`: the row is in range 0..ROWS-1, the column is in range 0..COLS-1, the neighbor is not in `walls`, and the neighbor is not in `visited`. If all pass, add the neighbor to `visited` and append `path + [neighbor]` to the frontier.",
+    "solution": "from collections import deque\n\nROWS, COLS = 4, 4\nwalls = {(1,1), (1,2), (2,1)}\nstart = (0, 0)\ngoal  = (3, 3)\n\ndef bfs_grid(start, goal):\n    frontier = deque([[start]])\n    visited  = set([start])\n\n    while frontier:\n        path = frontier.popleft()\n        node = path[-1]\n\n        if node == goal:\n            return path\n\n        r, c = node\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n            nr, nc = r + dr, c + dc\n            neighbor = (nr, nc)\n            if (0 <= nr < ROWS and\n                0 <= nc < COLS and\n                neighbor not in walls and\n                neighbor not in visited):\n                visited.add(neighbor)\n                frontier.append(path + [neighbor])\n\n    return None\n\npath = bfs_grid(start, goal)\nif path:\n    print(f\"Shortest path ({len(path)-1} moves):\")\n    for cell in path:\n        print(\" \", cell)\nelse:\n    print(\"No path found.\")"
+  }
+}

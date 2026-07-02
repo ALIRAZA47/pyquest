@@ -4,8 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { getNavSections } from "@/lib/content";
-import { TOTAL_LESSONS } from "@/lib/curriculum";
+import { courseFor } from "@/lib/courses";
 import { useProgress } from "./ProgressContext";
 import { Glyph, categoryGlyph, rankGlyph } from "./glyphs";
 import {
@@ -16,45 +15,70 @@ import {
   FlameIcon,
 } from "./Icons";
 
-const SECTIONS = getNavSections();
+interface QuickLink {
+  href: string;
+  icon: string;
+  label: string;
+}
+
+const QUICK_LINKS: Record<string, QuickLink[]> = {
+  python: [
+    { href: "/learn/playground", icon: "flask", label: "Play" },
+    { href: "/learn/projects", icon: "puzzle", label: "Build" },
+    { href: "/learn/review", icon: "loop", label: "Review" },
+    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+  ],
+  ml: [
+    { href: "/", icon: "compass", label: "Courses" },
+    { href: "/learn/playground", icon: "flask", label: "Play" },
+    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+  ],
+  ai: [
+    { href: "/", icon: "compass", label: "Courses" },
+    { href: "/learn/playground", icon: "flask", label: "Play" },
+    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+  ],
+};
 
 export function Sidebar({
   mobileOpen,
   onClose,
+  courseId = "python",
 }: {
   mobileOpen: boolean;
   onClose: () => void;
+  courseId?: string;
 }) {
   const pathname = usePathname();
-  const {
-    isComplete,
-    count,
-    level,
-    rankName,
-    levelFraction,
-    xp,
-    streak,
-  } = useProgress();
+  const info = courseFor(courseId);
+  const base = info.base;
+  const { isComplete, level, rankName, levelFraction, xp, streak } = useProgress();
   const [query, setQuery] = useState("");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
-  const activeSlug = pathname?.startsWith("/learn/")
-    ? pathname.replace("/learn/", "")
+  const sections = useMemo(() => info.course.getNavSections(), [info]);
+  const activeSlug = pathname?.startsWith(base + "/")
+    ? pathname.slice(base.length + 1)
     : "";
+
+  const courseDone = info.course.allSlugs.filter((s) => isComplete(s)).length;
+  const quickLinks = QUICK_LINKS[courseId] ?? QUICK_LINKS.python;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return SECTIONS;
-    return SECTIONS.map((s) => ({
-      ...s,
-      lessons: s.lessons.filter(
-        (l) =>
-          l.title.toLowerCase().includes(q) ||
-          l.summary.toLowerCase().includes(q) ||
-          s.name.toLowerCase().includes(q)
-      ),
-    })).filter((s) => s.lessons.length > 0);
-  }, [query]);
+    if (!q) return sections;
+    return sections
+      .map((s) => ({
+        ...s,
+        lessons: s.lessons.filter(
+          (l) =>
+            l.title.toLowerCase().includes(q) ||
+            l.summary.toLowerCase().includes(q) ||
+            s.name.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((s) => s.lessons.length > 0);
+  }, [query, sections]);
 
   const content = (
     <div className="flex h-full flex-col">
@@ -68,8 +92,9 @@ export function Sidebar({
             <span className="text-gradient">PyQuest</span>
           </span>
         </Link>
-        <span className="ml-1 rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-faint">
-          Python 101
+        <span className="ml-1 flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-faint">
+          <Glyph name={info.glyph} className="h-3 w-3" />
+          {info.name}
         </span>
         <button
           type="button"
@@ -112,7 +137,7 @@ export function Sidebar({
             <div className="mt-1 flex justify-between text-[10px] text-faint">
               <span>{xp} XP</span>
               <span>
-                {count}/{TOTAL_LESSONS} lessons
+                {courseDone}/{info.course.totalLessons} in {info.name}
               </span>
             </div>
           </div>
@@ -120,17 +145,16 @@ export function Sidebar({
       </Link>
 
       {/* Quick links */}
-      <div className="mx-4 mb-2 grid grid-cols-4 gap-1.5">
-        {[
-          { href: "/learn/playground", icon: "flask", label: "Play" },
-          { href: "/learn/projects", icon: "puzzle", label: "Build" },
-          { href: "/learn/review", icon: "loop", label: "Review" },
-          { href: "/learn/profile", icon: "trophy", label: "Stats" },
-        ].map((q) => {
+      <div
+        className={`mx-4 mb-2 grid gap-1.5 ${
+          quickLinks.length === 4 ? "grid-cols-4" : "grid-cols-3"
+        }`}
+      >
+        {quickLinks.map((q) => {
           const active = pathname === q.href;
           return (
             <Link
-              key={q.href}
+              key={q.href + q.label}
               href={q.href}
               onClick={onClose}
               className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-[10px] font-semibold transition-colors ${
@@ -164,7 +188,7 @@ export function Sidebar({
             No lessons match “{query}”.
           </p>
         )}
-        {filtered.map((section, si) => {
+        {filtered.map((section) => {
           const isCollapsed = collapsed[section.name] && !query;
           const doneInSection = section.lessons.filter((l) =>
             isComplete(l.slug)
@@ -210,7 +234,7 @@ export function Sidebar({
                       return (
                         <li key={lesson.slug}>
                           <Link
-                            href={`/learn/${lesson.slug}`}
+                            href={`${base}/${lesson.slug}`}
                             onClick={onClose}
                             className={`group relative flex items-center gap-2.5 rounded-lg py-1.5 pl-3 pr-2 text-sm transition-colors ${
                               active
@@ -252,12 +276,10 @@ export function Sidebar({
 
   return (
     <>
-      {/* Desktop */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[300px] border-r border-border bg-surface/60 backdrop-blur-xl lg:block print:hidden">
         {content}
       </aside>
 
-      {/* Mobile drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>

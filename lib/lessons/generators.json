@@ -159,7 +159,7 @@
   ],
   "exercise": {
     "prompt": "Write a generator function called fibonacci() that yields Fibonacci numbers indefinitely (0, 1, 1, 2, 3, 5, 8, 13, ...). Then use it to print the first 10 Fibonacci numbers.",
-    "starterCode": "def fibonacci():\n    # your code here — use yield!\n    pass\n\ngen = fibonacci()\nfor _ in range(10):\n    print(next(gen))",
+    "starterCode": "def fibonacci():\n    # TODO: yield the Fibonacci sequence: 0, 1, 1, 2, 3, 5, ...\n    n = 0\n    while True:\n        yield n  # placeholder: always yields 0 — replace with real Fibonacci logic\n\ngen = fibonacci()\nfor _ in range(10):\n    print(next(gen))\n",
     "hint": "Keep track of two variables, a and b, representing the current and next number. Yield a, then update both: a, b = b, a + b.",
     "solution": "def fibonacci():\n    a, b = 0, 1\n    while True:\n        yield a\n        a, b = b, a + b\n\ngen = fibonacci()\nfor _ in range(10):\n    print(next(gen))"
   }

@@ -1,0 +1,98 @@
+{
+  "slug": "linear-regression",
+  "title": "Linear Regression",
+  "category": "Supervised Learning",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how machines draw the best-fit line through data to predict numbers — from house prices to tomorrow's temperature.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're a real-estate agent. You know a 1,000 sq ft home sold for $200k, a 1,500 sq ft home sold for $280k, and a 2,000 sq ft home sold for $350k. A client asks: *\"What should I list my 1,750 sq ft home for?\"*\n\nYour instinct — drawing a mental trend line through past observations and reading off a new prediction — is exactly what **linear regression** does, but with mathematical precision. It's one of the most widely used algorithms in all of machine learning."
+    },
+    {
+      "type": "heading",
+      "text": "The Line: y = w * x + b"
+    },
+    {
+      "type": "text",
+      "md": "Linear regression finds the straight line that best summarizes the relationship between an input (`x`) and an output (`y`):\n\n```\ny = w * x + b\n```\n\n- **`w`** (weight / slope) — how steeply the line rises. \"For every extra 100 sq ft, add $14k.\"\n- **`b`** (bias / intercept) — the baseline value when `x = 0`.\n\nDuring **training**, the algorithm figures out the right `w` and `b` from your data. At **prediction** time, you just plug in a new `x` and get `y`."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a Sliding Ruler",
+      "md": "Picture holding a ruler over a scatter plot of dots. You can **tilt** it (change `w`) and **slide it up or down** (change `b`). Linear regression finds the exact tilt and position where the ruler is closest to *all* the dots simultaneously — not just a few."
+    },
+    {
+      "type": "heading",
+      "text": "What Makes a Line 'Best'? Residuals and MSE"
+    },
+    {
+      "type": "text",
+      "md": "For any line we draw, most points won't sit exactly on it. The gap between an actual value and a prediction is called a **residual**:\n\n```\nresidual = actual_y - predicted_y\n```\n\nTo measure how well our line fits *all* points, we square each residual (making all errors positive and penalizing big mistakes more) then average them — this is **Mean Squared Error (MSE)**:\n\n```\nMSE = average of (actual - predicted)^2\n```\n\nA **lower MSE = better fit**. The best line is the one that minimizes MSE. Squaring matters because without it, positive and negative errors would cancel out — a prediction that's +10 off and one that's -10 off would *average to zero error*, which sounds perfect but clearly isn't."
+    },
+    {
+      "type": "heading",
+      "text": "Computing Predictions and MSE From Scratch"
+    },
+    {
+      "type": "code",
+      "code": "# Tiny dataset: house size (100s sqft) vs price ($1000s)\nxs = [10, 15, 20, 25, 30]\nys = [200, 280, 350, 410, 480]\n\n# Try a candidate line: price = 14 * size + 60\nw, b = 14, 60\n\npredictions = [w * x + b for x in xs]\nresiduals   = [a - p for a, p in zip(ys, predictions)]\nsquared_err = [r ** 2 for r in residuals]\nmse         = sum(squared_err) / len(squared_err)\n\nfor i in range(len(xs)):\n    print(f\"size={xs[i]}, actual={ys[i]}, pred={predictions[i]}, residual={residuals[i]}\")\nprint(f\"\\nMSE for w={w}, b={b}: {mse:.1f}\")",
+      "output": "size=10, actual=200, pred=200, residual=0\nsize=15, actual=280, pred=270, residual=10\nsize=20, actual=350, pred=340, residual=10\nsize=25, actual=410, pred=410, residual=0\nsize=30, actual=480, pred=480, residual=0\n\nMSE for w=14, b=60: 40.0",
+      "caption": "Computing predictions and MSE for a candidate line — no libraries, just plain Python."
+    },
+    {
+      "type": "heading",
+      "text": "Finding the Optimal Line"
+    },
+    {
+      "type": "code",
+      "code": "xs = [10, 15, 20, 25, 30]\nys = [200, 280, 350, 410, 480]\nn  = len(xs)\n\nx_mean = sum(xs) / n\ny_mean = sum(ys) / n\n\nnumerator   = sum((xs[i] - x_mean) * (ys[i] - y_mean) for i in range(n))\ndenominator = sum((xs[i] - x_mean) ** 2 for i in range(n))\n\nw = numerator / denominator\nb = y_mean - w * x_mean\n\nprint(f\"Best slope  w = {w:.2f}\")\nprint(f\"Best intercept b = {b:.2f}\")\nprint(f\"Predict size=17.5: ${w * 17.5 + b:.1f}k\")",
+      "output": "Best slope  w = 14.00\nBest intercept b = 60.00\nPredict size=17.5: $305.0k",
+      "caption": "There is a direct closed-form formula: slope w = sum((x-x_mean)*(y-y_mean)) / sum((x-x_mean)^2), intercept b = y_mean - w*x_mean. It captures 'how much does y rise when x rises?' and finds the optimal w and b in a single pass."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Try the Interactive Visualizer",
+      "md": "The visualizer on this page lets you drag the slope and intercept sliders yourself. Watch the residual lines (shown in red) shrink and the MSE counter drop in real time as you approach the best-fit line. Try to beat the algorithm!"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Gotcha: Linear Regression Can't Capture Curves",
+      "md": "Linear regression always draws a **straight line**. If your data curves (e.g., tree growth that accelerates then plateaus), the line will be a poor fit no matter what `w` and `b` you pick. Also, avoid extrapolating far outside your training data — the line keeps going forever mathematically, but real relationships don't always follow suit. Always **plot your data first** before assuming a line is appropriate."
+    },
+    {
+      "type": "quiz",
+      "question": "A linear regression model is trained and finds w=5 and b=10. What does it predict for x=8?",
+      "options": [
+        "40",
+        "50",
+        "53",
+        "58"
+      ],
+      "answerIndex": 1,
+      "explanation": "prediction = w * x + b = 5 * 8 + 10 = 40 + 10 = 50. The slope multiplies the input, then the intercept is added. This is the complete linear regression prediction formula!"
+    },
+    {
+      "type": "text",
+      "md": "**In the real world**, linear regression is prized for being **fast, transparent, and often surprisingly effective**. You can read the slope directly — \"every extra year of experience adds $5,000 to salary\" — no black box needed.\n\nLibraries like `scikit-learn` handle multi-feature data, normalization, and large datasets in just a few lines:\n\n```python\nfrom sklearn.linear_model import LinearRegression\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)   # finds best w and b for you\nprint(model.predict([[17.5]]))\n```\n\nBut now you know exactly what `.fit()` does under the hood: it finds the `w` and `b` that minimize MSE — just like the code you ran above."
+    }
+  ],
+  "keyTakeaways": [
+    "Linear regression fits a straight line y = w*x + b through training data to predict a continuous number.",
+    "The 'best' line is the one that minimizes Mean Squared Error (MSE) — the average of all squared residuals.",
+    "Squaring errors ensures big mistakes are penalized more, and positive and negative errors don't cancel out.",
+    "Once w and b are learned, prediction is instant: just one multiply and one add.",
+    "Linear regression only works well when the true relationship is roughly linear — always plot your data first."
+  ],
+  "exercise": {
+    "prompt": "You have a small dataset of study hours and exam scores. Your tasks:\n1. Complete `predict_all` to return a list of `w*x + b` predictions for each x.\n2. Complete `mse` to compute the mean squared error between actuals and predictions.\n3. Try changing `w` and `b` to get a lower MSE — see if you can beat the starter values!",
+    "starterCode": "hours  = [1, 2, 3, 4, 5]\nscores = [52, 60, 70, 78, 88]\n\ndef predict_all(xs, w, b):\n    # TODO: return [w * x + b for each x in xs]\n    pass\n\ndef mse(actuals, predictions):\n    # TODO: return mean of (actual - predicted)^2\n    pass\n\nw, b = 9, 43\npreds = predict_all(hours, w, b)\nprint(\"Predictions:\", preds)\nprint(\"MSE:\", mse(scores, preds))",
+    "hint": "For predict_all, use a list comprehension: [w * x + b for x in xs]. For mse, compute [(a - p)**2 for a, p in zip(actuals, predictions)] then take the average with sum(...) / len(...).",
+    "solution": "hours  = [1, 2, 3, 4, 5]\nscores = [52, 60, 70, 78, 88]\n\ndef predict_all(xs, w, b):\n    return [w * x + b for x in xs]\n\ndef mse(actuals, predictions):\n    errors = [(a - p) ** 2 for a, p in zip(actuals, predictions)]\n    return sum(errors) / len(errors)\n\nw, b = 9, 43\npreds = predict_all(hours, w, b)\nprint(\"Predictions:\", preds)\nprint(f\"MSE (w={w}, b={b}):\", mse(scores, preds))\n\n# Try a better fit\nw2, b2 = 9.2, 42\npreds2 = predict_all(hours, w2, b2)\nprint(f\"\\nBetter? w={w2}, b={b2}\")\nprint(\"Predictions:\", preds2)\nprint(f\"MSE (w={w2}, b={b2}):\", mse(scores, preds2))"
+  }
+}

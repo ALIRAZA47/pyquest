@@ -1,0 +1,8 @@
+User logged in at 09:00
+User logged out at 10:30
+User logged in at 09:00
+User logged out at 10:30
+User logged in at 09:00
+User logged out at 10:30
+User logged in at 09:00
+User logged out at 10:30

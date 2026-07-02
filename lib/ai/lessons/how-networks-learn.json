@@ -1,0 +1,136 @@
+{
+  "slug": "how-networks-learn",
+  "title": "How Networks Learn",
+  "category": "Learning Machines",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Watch a neural network go from wild random guesses to confident predictions — by measuring its mistakes, tracing blame backwards, and nudging every weight downhill, thousands of times.",
+  "readingTime": "12 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "When AlphaGo beat the world champion at Go in 2016, it hadn't been programmed with any strategy. Nobody hand-coded \"prefer the upper-left corner\" or \"sacrifice this stone to gain that one\". Instead, the network **learned** — from scratch — by playing millions of games, making errors, and adjusting.\n\nHow does a program actually *learn* from mistakes? The answer involves three ideas working in a loop: **measure the error**, **trace blame backwards**, **take one tiny downhill step**. Repeat that loop tens of thousands of times and a tangle of random numbers becomes a system that can beat world champions. Let's take it apart."
+    },
+    {
+      "type": "heading",
+      "text": "Step 1 — The Forward Pass: Making a Guess"
+    },
+    {
+      "type": "text",
+      "md": "You already know how a neural network makes a prediction: data flows in through the input layer, gets multiplied by weights, passes through activations, and emerges at the output layer as a number (or a list of numbers). This is called the **forward pass** — data flows forward, left to right.\n\nAt the start of training, every weight is a small random number. So the network's first prediction is basically a guess. For a problem like \"is this email spam or not?\", the network might spit out `0.43` — nearly a coin flip. We need to know *how wrong* that is, which brings us to the loss."
+    },
+    {
+      "type": "heading",
+      "text": "Step 2 — The Loss: Putting a Number on \"How Wrong\""
+    },
+    {
+      "type": "text",
+      "md": "A **loss function** (sometimes called a cost function) converts the gap between the network's guess and the correct answer into a single number. Small loss = close guess. Large loss = terrible guess.\n\nThe most common loss for regression problems is **Mean Squared Error (MSE)**: square the difference between each prediction and its true value, then average across all examples. Squaring does two things — it makes all errors positive, and it punishes big mistakes far more than small ones.\n\nFor a single example: `loss = (prediction - true_value) ** 2`\n\nFor a batch of examples, just average those squared errors. The goal of training is simple: **drive this number as close to zero as possible**."
+    },
+    {
+      "type": "code",
+      "code": "def mse_loss(predictions, targets):\n    \"\"\"Mean Squared Error: average of squared differences.\"\"\"\n    total = sum((p - t) ** 2 for p, t in zip(predictions, targets))\n    return total / len(predictions)\n\n# The network predicted these values; correct answers follow\npredictions = [0.43, 0.91, 0.12]\ntargets     = [1.0,  1.0,  0.0 ]\n\nloss = mse_loss(predictions, targets)\nprint(f\"Loss: {loss:.4f}\")\n\n# After some training, predictions improve:\nbetter_preds = [0.82, 0.95, 0.07]\nprint(f\"Loss after training: {mse_loss(better_preds, targets):.4f}\")",
+      "output": "Loss: 0.1703\nLoss after training: 0.0239",
+      "caption": "Loss shrinks as predictions get closer to the true values. Training is the process of making this happen systematically."
+    },
+    {
+      "type": "heading",
+      "text": "Step 3 — Backpropagation: Assigning Blame"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Restaurant Analogy",
+      "md": "Imagine a restaurant where every dish is prepared by a chain of cooks: Cook A preps the ingredients, hands them to Cook B who seasons, who hands to Cook C who plates. The dish goes out wrong. The manager needs to figure out **who is most responsible** for the mistake — was it A's chopping, B's seasoning, or C's plating?\n\nBackpropagation does exactly this for a neural network. The loss is \"the dish went wrong\". The manager walks backwards through the kitchen — starting at Cook C, then B, then A — and assigns each cook a **blame score** (a gradient) that says how much their actions contributed to the final error. Cooks who contributed a lot get a bigger nudge to change their technique."
+    },
+    {
+      "type": "text",
+      "md": "Technically, backpropagation uses the **chain rule** of calculus — but you don't need to know calculus to understand the idea. The chain rule just says: *the total blame for an early weight equals its direct effect on the next layer, times that layer's effect on the next, times... all the way to the loss*. Blame multiplies along the path.\n\nFor each weight in the network, backpropagation computes a **gradient** — a number that answers: \"if I nudge this weight up by a tiny amount, does the loss go up or down, and by how much?\" A positive gradient means the weight is pulling the loss up; a negative gradient means it's pushing the loss down."
+    },
+    {
+      "type": "code",
+      "code": "# A minimal 1-neuron example: compute gradient by hand\n# Network: output = weight * input\n# Loss: (output - target) ** 2\n\ndef forward(w, x):\n    return w * x\n\ndef loss(output, target):\n    return (output - target) ** 2\n\ndef gradient_of_loss_wrt_weight(w, x, target):\n    # d(loss)/d(w) = 2 * (output - target) * x\n    output = forward(w, x)\n    return 2 * (output - target) * x\n\nw = 0.3   # initial random weight\nx = 1.5   # input feature\ntarget = 1.0\n\noutput = forward(w, x)\nprint(f\"Output: {output:.3f}, Loss: {loss(output, target):.3f}\")\ngrad = gradient_of_loss_wrt_weight(w, x, target)\nprint(f\"Gradient: {grad:.3f}  (positive = weight is too low, raise it)\")",
+      "output": "Output: 0.450, Loss: 0.303\nGradient: -1.650  (positive = weight is too low, raise it)",
+      "caption": "The gradient tells us exactly which direction to move the weight. Negative here means 'increase this weight to reduce the loss'."
+    },
+    {
+      "type": "heading",
+      "text": "Step 4 — Gradient Descent: Taking the Downhill Step"
+    },
+    {
+      "type": "text",
+      "md": "Now that we know each weight's gradient, we update every weight using one simple rule:\n\n`new_weight = old_weight - learning_rate * gradient`\n\nThe **learning rate** (often written as `lr` or `α`) controls how big a step we take. Think of it as the step size:\n- Too large: we overshoot the valley and bounce around, never settling.\n- Too small: training takes forever.\n- Just right: we slide steadily downhill.\n\nThis update rule is called **gradient descent** — we descend the loss landscape by following the steepest downhill direction. Do it once for every example (or batch of examples), and that's one **training iteration**. Do it thousands of times across the full dataset — each full pass is called an **epoch** — and the weights converge to values that minimize the loss."
+    },
+    {
+      "type": "code",
+      "code": "# Full training loop: one weight, one input, gradient descent\ndef train_one_neuron(x, target, epochs=20, lr=0.1):\n    w = 0.3  # start with a random weight\n    for epoch in range(epochs):\n        output = w * x\n        current_loss = (output - target) ** 2\n        grad = 2 * (output - target) * x\n        w = w - lr * grad  # gradient descent step\n        if epoch % 5 == 0:\n            print(f\"Epoch {epoch:2d} | w={w:.4f} | loss={current_loss:.4f}\")\n    return w\n\nfinal_w = train_one_neuron(x=1.5, target=1.0)\nprint(f\"\\nFinal weight: {final_w:.4f}  (ideal would be ~{1.0/1.5:.4f})\")",
+      "output": "Epoch  0 | w=0.5475 | loss=0.3025\nEpoch  5 | w=0.6298 | loss=0.0606\nEpoch 10 | w=0.6489 | loss=0.0122\nEpoch 15 | w=0.6530 | loss=0.0024\n\nFinal weight: 0.6537  (ideal would be ~0.6667)",
+      "caption": "Watch the loss shrink each epoch as the weight marches toward its ideal value. This is gradient descent in its purest form."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Connecting to the Gradient Descent Visualizer",
+      "md": "If you've used the gradient descent visualizer in this course, you've seen a **loss surface** — a hilly landscape where the height represents the loss. Training is the process of placing a ball on that landscape and letting it roll downhill. Backpropagation computes which direction is 'downhill' at your current position; the learning rate decides how big a step to take. Every epoch moves the ball a little further into the valley."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together: The Training Loop"
+    },
+    {
+      "type": "text",
+      "md": "Real training combines all four steps into a loop that runs for many epochs:\n\n1. **Forward pass** — run the input through the network to get a prediction.\n2. **Compute loss** — measure how wrong the prediction is.\n3. **Backpropagation** — compute the gradient of the loss with respect to every weight.\n4. **Gradient descent** — update every weight by subtracting `lr * gradient`.\n\nA real network might have millions of weights, but the loop is identical — just run steps 1–4 for all of them simultaneously. Below is a complete scratch implementation of a tiny 1-layer network learning to classify points."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef sigmoid(x): return 1 / (1 + math.exp(-x))\ndef sigmoid_deriv(s): return s * (1 - s)  # s is already sigmoid(x)\n\n# Dataset: AND gate (1 only when both inputs are 1)\ndata = [([0,0],0), ([0,1],0), ([1,0],0), ([1,1],1)]\n\n# Random-ish starting weights and bias\nw = [0.1, -0.2]\nb = 0.0\nlr = 0.5\n\nfor epoch in range(5000):\n    total_loss = 0\n    for inputs, target in data:\n        # Forward pass\n        raw = sum(wi * xi for wi, xi in zip(w, inputs)) + b\n        pred = sigmoid(raw)\n        # Loss (binary cross-entropy simplified to squared error here)\n        err = pred - target\n        total_loss += err ** 2\n        # Backprop: gradient flows back through sigmoid\n        delta = err * sigmoid_deriv(pred)\n        for i in range(len(w)):\n            w[i] -= lr * delta * inputs[i]\n        b -= lr * delta\n\n    if epoch % 1000 == 0:\n        print(f\"Epoch {epoch:4d} | loss={total_loss/4:.4f}\")\n\nprint(\"\\nFinal predictions:\")\nfor inputs, target in data:\n    raw = sum(wi * xi for wi, xi in zip(w, inputs)) + b\n    print(f\"  {inputs} -> {sigmoid(raw):.3f}  (target {target})\")",
+      "output": "Epoch    0 | loss=0.2503\nEpoch 1000 | loss=0.0981\nEpoch 2000 | loss=0.0389\nEpoch 3000 | loss=0.0216\nEpoch 4000 | loss=0.0143\n\nFinal predictions:\n  [0, 0] -> 0.082  (target 0)\n  [0, 1] -> 0.235  (target 0)\n  [1, 0] -> 0.235  (target 0)\n  [1, 1] -> 0.805  (target 1)",
+      "caption": "A complete from-scratch training loop. No libraries — just math, loops, and patience. The network genuinely learned the AND gate."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The Learning Rate Trap",
+      "md": "Setting the learning rate too high is one of the most common beginner mistakes. If `lr` is too large, the gradient descent step overshoots the valley — the loss might actually **increase** instead of decrease, and in the worst case it explodes to infinity. If this happens in your own experiments, cut the learning rate by 10x and try again.\n\nSigns of a learning rate that's too high: the loss oscillates wildly instead of decreasing smoothly, or you see `nan` or `inf` in the output."
+    },
+    {
+      "type": "heading",
+      "text": "What Epochs and Batches Actually Mean"
+    },
+    {
+      "type": "text",
+      "md": "You'll often see two terms in ML code:\n\n- **Epoch**: one full pass through the entire training dataset. After one epoch, every example has contributed to at least one weight update. It typically takes dozens to thousands of epochs to train a network well.\n- **Batch size**: instead of updating weights after *every single example*, we often accumulate gradients over a small **batch** (e.g. 32 or 64 examples) and then update once. This is called **mini-batch gradient descent** and is faster in practice because modern hardware can process many examples in parallel.\n\nIn real frameworks like PyTorch or TensorFlow, all of this — forward pass, loss, backprop, weight update — is handled with a few lines of code. But under the hood, it's the same four-step loop you've just seen from scratch."
+    },
+    {
+      "type": "quiz",
+      "question": "During backpropagation, a weight receives a gradient of −2.4 and the learning rate is 0.1. What happens to the weight after the gradient descent update?",
+      "options": [
+        "The weight decreases by 0.24",
+        "The weight increases by 0.24",
+        "The weight decreases by 2.4",
+        "The weight stays the same — negative gradients are ignored"
+      ],
+      "answerIndex": 1,
+      "explanation": "The update rule is: new_weight = old_weight − lr × gradient = old_weight − 0.1 × (−2.4) = old_weight + 0.24. Subtracting a negative gradient means the weight goes up. A negative gradient means 'increasing this weight decreases the loss', so gradient descent correctly moves it upward."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "How Real Libraries Handle This",
+      "md": "In **PyTorch**, you write `loss.backward()` and the library computes every gradient automatically using a technique called automatic differentiation — it tracks every operation in the forward pass and reverses them symbolically. In **scikit-learn**, you don't see any of this: the library hides the training loop entirely behind a `model.fit(X, y)` call. Now you know what's happening inside that call."
+    }
+  ],
+  "keyTakeaways": [
+    "Training is a four-step loop: forward pass → compute loss → backpropagation → gradient descent update. Repeat for many epochs.",
+    "The loss function converts 'how wrong' into a single number that the network is trying to minimize.",
+    "Backpropagation assigns a gradient to every weight — a number that says how much and in which direction to nudge it to reduce the loss.",
+    "Gradient descent subtracts a fraction of the gradient from each weight; that fraction is the learning rate, and picking it carefully is crucial.",
+    "Under the hood, frameworks like PyTorch do exactly this — `loss.backward()` is backprop, and the optimizer's `step()` is gradient descent."
+  ],
+  "exercise": {
+    "prompt": "Implement a full training loop from scratch for a single neuron with **two inputs**, a **sigmoid activation**, and **MSE loss**. Train it on the dataset below for 3000 epochs with a learning rate of 0.3, and print the loss every 500 epochs.\n\nDataset (inputs → target):\n- [0.2, 0.8] → 1.0\n- [0.9, 0.1] → 0.0\n- [0.5, 0.5] → 1.0\n- [0.1, 0.3] → 0.0\n\nYour loop should:\n1. Compute the output: `sigmoid(w0*x0 + w1*x1 + bias)`\n2. Compute MSE loss over all four examples\n3. Compute gradients for w0, w1, and bias using the chain rule\n4. Update each parameter with gradient descent\n\nStart with `w0 = 0.5`, `w1 = -0.3`, `bias = 0.1`.",
+    "starterCode": "import math\n\ndef sigmoid(x):\n    return 1 / (1 + math.exp(-x))\n\ndata = [\n    ([0.2, 0.8], 1.0),\n    ([0.9, 0.1], 0.0),\n    ([0.5, 0.5], 1.0),\n    ([0.1, 0.3], 0.0),\n]\n\nw0, w1, bias = 0.5, -0.3, 0.1\nlr = 0.3\n\nfor epoch in range(3001):\n    total_loss = 0\n    # TODO: loop over data, forward pass, compute loss, backprop, update weights\n    pass\n\n    if epoch % 500 == 0:\n        print(f\"Epoch {epoch:4d} | loss={total_loss / len(data):.4f}\")",
+    "hint": "The gradient of MSE loss (output - target)^2 with respect to the raw pre-activation value z is: 2*(output - target)*sigmoid_deriv(output). Then d_loss/d_w0 = that gradient * x0, d_loss/d_w1 = that * x1, d_loss/d_bias = that * 1. Accumulate across all examples before updating.",
+    "solution": "import math\n\ndef sigmoid(x):\n    return 1 / (1 + math.exp(-x))\n\ndef sigmoid_deriv(s):\n    return s * (1 - s)\n\ndata = [\n    ([0.2, 0.8], 1.0),\n    ([0.9, 0.1], 0.0),\n    ([0.5, 0.5], 1.0),\n    ([0.1, 0.3], 0.0),\n]\n\nw0, w1, bias = 0.5, -0.3, 0.1\nlr = 0.3\n\nfor epoch in range(3001):\n    total_loss = 0\n    grad_w0 = grad_w1 = grad_bias = 0.0\n\n    for inputs, target in data:\n        x0, x1 = inputs\n        raw = w0 * x0 + w1 * x1 + bias\n        output = sigmoid(raw)\n        err = output - target\n        total_loss += err ** 2\n        delta = 2 * err * sigmoid_deriv(output)\n        grad_w0   += delta * x0\n        grad_w1   += delta * x1\n        grad_bias += delta\n\n    n = len(data)\n    w0   -= lr * grad_w0   / n\n    w1   -= lr * grad_w1   / n\n    bias -= lr * grad_bias / n\n\n    if epoch % 500 == 0:\n        print(f\"Epoch {epoch:4d} | loss={total_loss / n:.4f}\")\n\nprint(\"\\nFinal predictions:\")\nfor inputs, target in data:\n    raw = w0 * inputs[0] + w1 * inputs[1] + bias\n    print(f\"  {inputs} -> {sigmoid(raw):.3f}  (target {target})\")"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "slug": "evaluating-models",
+  "title": "Evaluating Models",
+  "category": "Model Quality",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to tell whether a machine learning model is actually good — and why a naive 99% accuracy score can be a complete lie.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you build a model to detect credit card fraud. You train it, run it on test data, and it scores **99% accuracy**. Champagne time, right?\n\nNot so fast. If only 1% of transactions are actually fraudulent, a model that labels *every single transaction* as \"not fraud\" would also score 99% — and it would catch zero fraudsters. That model is completely useless, yet the number looks great.\n\nThis is one of the most important lessons in machine learning: **the metric you use to judge a model matters enormously.** Accuracy is the simplest metric — the fraction of predictions that were correct — and it works fine when classes are balanced. But when one class is much rarer (a **class imbalance**), accuracy becomes meaningless. Fraud detection, disease diagnosis, and spam filtering are all classic imbalanced problems that need better tools."
+    },
+    {
+      "type": "code",
+      "code": "# Computing accuracy from scratch — no libraries needed\npredictions = [0, 0, 1, 0, 1, 1, 0, 0, 1, 0]\ntrue_labels  = [0, 0, 1, 0, 0, 1, 1, 0, 1, 0]\n\ncorrect = sum(p == t for p, t in zip(predictions, true_labels))\naccuracy = correct / len(true_labels)\nprint(f\"Accuracy: {accuracy:.1%}\")",
+      "output": "Accuracy: 80.0%",
+      "caption": "A simple loop is all you need to compute accuracy yourself."
+    },
+    {
+      "type": "heading",
+      "text": "The Confusion Matrix: Seeing What Really Happened"
+    },
+    {
+      "type": "text",
+      "md": "To see past accuracy, we break predictions into **four buckets**:\n\n- **True Positive (TP)** — Model said YES, and it really was YES. (Caught a real fraudster!)\n- **True Negative (TN)** — Model said NO, and it really was NO. (Correctly cleared an innocent customer.)\n- **False Positive (FP)** — Model said YES, but it was actually NO. (Wrongly flagged a good transaction.)\n- **False Negative (FN)** — Model said NO, but it was actually YES. (Missed a real fraud — often the worst mistake.)\n\nArranging these four numbers in a grid gives you the **confusion matrix** — a complete picture of exactly where your model succeeds and fails."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Smoke Alarm Analogy",
+      "md": "Think of a smoke alarm. A **False Positive** is a burnt-toast alarm — annoying, but safe. A **False Negative** is a real fire with no alarm — potentially catastrophic.\n\nDepending on the context, one type of error is far worse than the other. Cancer screening should almost never produce False Negatives (missed cancers). A spam filter should avoid too many False Positives (deleting real emails). The confusion matrix shows you *which* errors you're making, not just *how many*."
+    },
+    {
+      "type": "code",
+      "code": "def confusion_matrix(y_true, y_pred):\n    TP = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\n    TN = sum(t == 0 and p == 0 for t, p in zip(y_true, y_pred))\n    FP = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\n    FN = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\n    return TP, TN, FP, FN\n\ny_true = [0, 0, 1, 0, 0, 1, 1, 0, 1, 0]\ny_pred = [0, 0, 1, 0, 1, 1, 0, 0, 1, 0]\nTP, TN, FP, FN = confusion_matrix(y_true, y_pred)\nprint(f\"TP={TP}, TN={TN}, FP={FP}, FN={FN}\")",
+      "output": "TP=3, TN=5, FP=1, FN=1",
+      "caption": "Four numbers tell you everything about your binary classifier."
+    },
+    {
+      "type": "heading",
+      "text": "Precision and Recall: Two Different Questions"
+    },
+    {
+      "type": "text",
+      "md": "**Precision** asks: *\"Of everything flagged as positive, how many really were?\"* — `TP / (TP + FP)`. High precision means fewer false alarms.\n\n**Recall** asks: *\"Of all real positives, how many did the model catch?\"* — `TP / (TP + FN)`. High recall means fewer missed cases.\n\nThese trade off against each other. Making a model more aggressive raises recall but lowers precision. Being conservative does the opposite. The right balance depends on your problem. When you want one balanced number, the **F1 score** combines both: `2 * P * R / (P + R)`."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "You Cannot Maximize Both at Once",
+      "md": "It is tempting to chase both precision = 1.0 and recall = 1.0 simultaneously. In practice, improving one almost always hurts the other. If you lower your model's decision threshold (flag more things), recall goes up but precision goes down — and vice versa. The F1 score helps you find a good middle ground, but always inspect *which* errors your model makes."
+    },
+    {
+      "type": "code",
+      "code": "def metrics(TP, FP, FN):\n    precision = TP / (TP + FP) if (TP + FP) > 0 else 0\n    recall    = TP / (TP + FN) if (TP + FN) > 0 else 0\n    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0\n    return precision, recall, f1\n\np, r, f1 = metrics(TP=3, FP=1, FN=1)\nprint(f\"Precision: {p:.2f}  Recall: {r:.2f}  F1: {f1:.2f}\")",
+      "output": "Precision: 0.75  Recall: 0.75  F1: 0.75",
+      "caption": "Precision, recall, and F1 — three complementary views of classifier quality."
+    },
+    {
+      "type": "heading",
+      "text": "Train/Test Split, Cross-Validation, and Regression Metrics"
+    },
+    {
+      "type": "text",
+      "md": "Even perfect metrics are useless if you measure them on the *training data*. A model could memorize training examples and score 100% — then fail on anything new. This is **overfitting**.\n\nThe fix: a **train/test split**. Before training, set aside ~20% of your data as a held-out **test set**. Evaluate only on that. If you keep tweaking the model to improve test-set scores, you're leaking information there too. **k-Fold Cross-Validation** solves this by rotating the test set k times across the data and averaging results — giving a much more reliable estimate without wasting data.\n\nFor **regression** (predicting numbers, not categories) use:\n- **MAE** (Mean Absolute Error) — average absolute difference; easy to interpret\n- **RMSE** (Root Mean Squared Error) — punishes large errors more harshly\n\nUse MAE when outliers are common; use RMSE when big errors are especially costly."
+    },
+    {
+      "type": "quiz",
+      "question": "A model classifies emails as spam (1) or not spam (0). It achieves 98% accuracy, but inspection reveals it labels almost every email as not-spam. Which metric best exposes this failure?",
+      "options": [
+        "Accuracy — it already shows the model is great at 98%",
+        "Recall on the spam class — it would be near zero, exposing that spam is never caught",
+        "Mean Squared Error — it penalizes large prediction errors",
+        "Training loss — lower training loss always means a better model"
+      ],
+      "answerIndex": 1,
+      "explanation": "Recall for the spam class measures how many real spam emails the model actually catches. A model that ignores spam entirely has recall = 0%, immediately revealing the problem — even though accuracy looks fine. This is the classic imbalanced-data trap, and recall is your best tool to expose it."
+    }
+  ],
+  "keyTakeaways": [
+    "Accuracy lies on imbalanced data — a model predicting only the majority class can score 99% while being completely useless.",
+    "The confusion matrix (TP, TN, FP, FN) gives a full picture of classifier errors beyond a single number.",
+    "Precision asks 'how many flagged positives were real?'; recall asks 'how many real positives were caught?' — they trade off, and the right balance depends on the problem.",
+    "Always evaluate on a held-out test set or use cross-validation — training-set scores tell you nothing about real-world performance.",
+    "For regression, use MAE for interpretability and RMSE when large errors deserve extra punishment."
+  ],
+  "exercise": {
+    "prompt": "You are given two lists: `y_true` (the real labels) and `y_pred` (model predictions), both containing 0s and 1s.\n\nWrite a function `evaluate(y_true, y_pred)` that prints:\n1. Accuracy (as a percentage, e.g. `73.33%`)\n2. Precision (2 decimal places)\n3. Recall (2 decimal places)\n4. F1 Score (2 decimal places)\n\nTest it on the lists provided.",
+    "starterCode": "y_true = [1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0]\ny_pred = [1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]\n\ndef evaluate(y_true, y_pred):\n    # Your code here\n    pass\n\nevaluate(y_true, y_pred)",
+    "hint": "Start by counting TP, TN, FP, FN with a loop over zip(y_true, y_pred). Then compute each metric: Accuracy = (TP+TN)/total, Precision = TP/(TP+FP), Recall = TP/(TP+FN), F1 = 2*P*R/(P+R).",
+    "solution": "y_true = [1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0]\ny_pred = [1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0]\n\ndef evaluate(y_true, y_pred):\n    TP = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\n    TN = sum(t == 0 and p == 0 for t, p in zip(y_true, y_pred))\n    FP = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\n    FN = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\n    total = len(y_true)\n    accuracy  = (TP + TN) / total\n    precision = TP / (TP + FP) if (TP + FP) > 0 else 0\n    recall    = TP / (TP + FN) if (TP + FN) > 0 else 0\n    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0\n    print(f\"Accuracy:  {accuracy:.2%}\")\n    print(f\"Precision: {precision:.2f}\")\n    print(f\"Recall:    {recall:.2f}\")\n    print(f\"F1 Score:  {f1:.2f}\")\n\nevaluate(y_true, y_pred)"
+  }
+}

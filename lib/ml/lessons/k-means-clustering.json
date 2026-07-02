@@ -1,0 +1,98 @@
+{
+  "slug": "k-means-clustering",
+  "title": "k-Means Clustering",
+  "category": "Unsupervised Learning",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how k-Means groups unlabeled data into clusters by repeatedly assigning points to their nearest centroid and moving centroids to the center of their group.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're a biologist who has just measured the petal length and width of 150 flowers — but nobody told you which species they belong to. You look at the scatter of points on your graph and notice they seem to clump into a few groups. Can an algorithm find those groups automatically, *without any labels*?\n\nThat's exactly what **k-Means Clustering** does. It's one of the most popular algorithms in all of machine learning, used everywhere from customer segmentation and image compression to anomaly detection and genetics. And unlike the supervised methods you may have seen before, k-Means works with **unlabeled data** — it discovers structure on its own."
+    },
+    {
+      "type": "heading",
+      "text": "Supervised vs. Unsupervised Learning"
+    },
+    {
+      "type": "text",
+      "md": "In **supervised learning**, every training example has a label — you know the right answer and you train the model to predict it. In **unsupervised learning**, there are no labels. The algorithm finds patterns in raw data by itself.\n\nClustering is the most common form of unsupervised learning. The goal: divide data points into **clusters** so that points inside the same cluster are more similar to each other than to points in other clusters. k-Means is the classic algorithm for this — and it's surprisingly simple once you see the loop."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Sorting a Bag of Mixed Candy",
+      "md": "Picture tipping a big bag of mixed candy onto a table. You don't have instructions — you just start sorting by similarity: gummy bears in one pile, hard candies in another, chocolates in a third. You keep adjusting the piles until everything feels right. k-Means does the same thing with numbers, using *distance* as its measure of similarity."
+    },
+    {
+      "type": "heading",
+      "text": "The k-Means Algorithm, Step by Step"
+    },
+    {
+      "type": "text",
+      "md": "The algorithm revolves around special points called **centroids** — one per cluster. A centroid is the center point of a cluster. Here's the full loop:\n\n1. **Choose k** — decide how many clusters you want.\n2. **Initialize** — place k centroids at random positions (or pick k random data points).\n3. **Assign** — for every data point, find the centroid that is *closest* to it and assign the point to that cluster.\n4. **Move** — for each cluster, compute the **mean** (average position) of all its points. Move the centroid there.\n5. **Repeat** steps 3 and 4 until the centroids stop moving.\n\nk-Means uses **Euclidean distance** — the straight-line distance between two points. For points (x1, y1) and (x2, y2), that's `sqrt((x2-x1)**2 + (y2-y1)**2)`. The algorithm works in any number of dimensions, not just 2D. The animated visualizer on this page shows you the centroids moving with each iteration — it really clicks once you watch it happen."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef distance(p1, p2):\n    return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))\n\ndef assign_clusters(points, centroids):\n    assignments = []\n    for point in points:\n        dists = [distance(point, c) for c in centroids]\n        assignments.append(dists.index(min(dists)))\n    return assignments\n\ndef move_centroids(points, assignments, k):\n    new_centroids = []\n    for cid in range(k):\n        pts = [p for p, a in zip(points, assignments) if a == cid]\n        dims = len(pts[0])\n        mean = tuple(sum(p[d] for p in pts) / len(pts) for d in range(dims))\n        new_centroids.append(mean)\n    return new_centroids\n\npoints    = [(1, 1), (1.5, 2), (3, 4), (5, 7), (3.5, 5), (4.5, 5)]\ncentroids = [(1, 1), (5, 5)]\n\nassigned = assign_clusters(points, centroids)\nprint(\"Assignments:\", assigned)\n\nnew_c = move_centroids(points, assigned, k=2)\nfor i, c in enumerate(new_c):\n    print(f\"New centroid {i}: ({c[0]:.2f}, {c[1]:.2f})\")",
+      "output": "Assignments: [0, 0, 0, 1, 1, 1]\nNew centroid 0: (1.83, 2.33)\nNew centroid 1: (4.33, 5.67)",
+      "caption": "One full round: assign each point to the nearest centroid, then move the centroid to the mean of its points."
+    },
+    {
+      "type": "heading",
+      "text": "The Full Loop"
+    },
+    {
+      "type": "code",
+      "code": "def kmeans(points, k, max_iters=10):\n    centroids = points[:k]  # pick first k points as starting centroids\n    for i in range(max_iters):\n        assignments   = assign_clusters(points, centroids)\n        new_centroids = move_centroids(points, assignments, k)\n        if new_centroids == centroids:\n            print(f\"Converged after {i + 1} iteration(s).\")\n            break\n        centroids = new_centroids\n    return assignments, centroids\n\nassignments, final_c = kmeans(points, k=2)\nprint(\"Final assignments:\", assignments)\nfor i, c in enumerate(final_c):\n    print(f\"Final centroid {i}: ({c[0]:.2f}, {c[1]:.2f})\")",
+      "output": "Converged after 2 iteration(s).\nFinal assignments: [0, 0, 0, 1, 1, 1]\nFinal centroid 0: (1.83, 2.33)\nFinal centroid 1: (4.33, 5.67)",
+      "caption": "The complete k-Means loop: assign, move, repeat until nothing changes."
+    },
+    {
+      "type": "heading",
+      "text": "Choosing k: The Elbow Method"
+    },
+    {
+      "type": "text",
+      "md": "k-Means requires you to choose k *before* running. But how do you know the right number of clusters?\n\nThe **elbow method**: run k-Means for k = 1, 2, 3, … and each time measure the **within-cluster sum of squared distances** (WCSS) — how far each point is from its centroid, squared, then summed. As k increases, WCSS always shrinks (more clusters = closer centers). But at some point the improvement drops sharply, creating an *elbow* in the plot. That elbow is usually the best k.\n\nIn practice, **scikit-learn**'s `sklearn.cluster.KMeans` handles all of this, but knowing the from-scratch mechanics means you'll never treat it as a black box."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "k-Means Can Get Stuck in Bad Solutions",
+      "md": "Because initial centroids are placed randomly, k-Means can converge to a **local optimum** — clusters that look okay but aren't the global best. The fix: run k-Means multiple times with different random starts and keep the best result. Scikit-learn does this automatically (`n_init=10` by default). The **k-Means++** initialization strategy also helps by spreading starting centroids out deliberately, giving the algorithm a smarter head start."
+    },
+    {
+      "type": "quiz",
+      "question": "After the assignment step, what does k-Means do to update each centroid?",
+      "options": [
+        "It moves the centroid one step toward the nearest data point.",
+        "It replaces the centroid with the data point farthest from all others.",
+        "It computes the mean position of all points assigned to that cluster and places the centroid there.",
+        "It randomly picks a new position for the centroid."
+      ],
+      "answerIndex": 2,
+      "explanation": "The centroid update computes the arithmetic mean — the average of every coordinate — of all points in that cluster, then moves the centroid to that average position. This is literally why the algorithm is called k-*Means*."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When to Use k-Means (and When Not To)",
+      "md": "k-Means works great when clusters are **roughly spherical and similarly sized**. It struggles with elongated, nested, or very differently sized clusters. For those cases, **DBSCAN** (density-based) or **Gaussian Mixture Models** are better choices. Always visualize your data first when you can!"
+    }
+  ],
+  "keyTakeaways": [
+    "k-Means is an unsupervised algorithm — it finds structure in unlabeled data by grouping points into k clusters.",
+    "The algorithm loops: assign each point to the nearest centroid, then move each centroid to the mean of its assigned points, until nothing changes.",
+    "Distance is Euclidean (straight-line), and the algorithm works in any number of dimensions.",
+    "The elbow method helps pick k by finding where adding more clusters stops giving big WCSS improvements.",
+    "Random initialization can trap k-Means in suboptimal solutions; run it multiple times or use k-Means++ initialization."
+  ],
+  "exercise": {
+    "prompt": "Complete the `wcss` function below. It should compute the **within-cluster sum of squared distances** — for every point, calculate its squared distance to its assigned centroid and add it to the total. Run it on the provided data and print the result.",
+    "starterCode": "points      = [(1, 1), (1.5, 2), (3, 4), (5, 7), (3.5, 5), (4.5, 5)]\nassignments = [0, 0, 0, 1, 1, 1]\ncentroids   = [(1.83, 2.33), (4.33, 5.67)]\n\ndef wcss(points, assignments, centroids):\n    total = 0\n    for point, cluster_id in zip(points, assignments):\n        centroid = centroids[cluster_id]\n        # TODO: compute the squared distance from point to centroid and add to total\n        pass\n    return total\n\nresult = wcss(points, assignments, centroids)\nprint(f\"WCSS = {result:.4f}\")",
+    "hint": "Squared Euclidean distance from point p to centroid c is: sum((a - b)**2 for a, b in zip(p, c)). No square root — we want the *squared* distance.",
+    "solution": "points      = [(1, 1), (1.5, 2), (3, 4), (5, 7), (3.5, 5), (4.5, 5)]\nassignments = [0, 0, 0, 1, 1, 1]\ncentroids   = [(1.83, 2.33), (4.33, 5.67)]\n\ndef wcss(points, assignments, centroids):\n    total = 0\n    for point, cluster_id in zip(points, assignments):\n        centroid = centroids[cluster_id]\n        squared_dist = sum((a - b) ** 2 for a, b in zip(point, centroid))\n        total += squared_dist\n    return total\n\nresult = wcss(points, assignments, centroids)\nprint(f\"WCSS = {result:.4f}\")"
+  }
+}

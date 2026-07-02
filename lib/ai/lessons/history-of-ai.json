@@ -1,0 +1,96 @@
+{
+  "slug": "history-of-ai",
+  "title": "A Short History of AI",
+  "category": "AI Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Travel through 70 years of AI history — from a single thought experiment in 1950 to the large language models reshaping the world today.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every technology has an origin story, but few are as dramatic as artificial intelligence. In 1997, a chess computer humiliated the reigning world champion. In 2016, a program mastered a game so complex that experts thought it would take decades longer. And by the early 2020s, machines were writing poetry, explaining science, and generating art indistinguishable from a human's work.\n\nHow did we get here? The answer is a wild ride of bold dreams, crushing failures, and unlikely comebacks — and understanding it helps you see *why* AI works the way it does today."
+    },
+    {
+      "type": "heading",
+      "text": "The Spark: Turing (1950) and Dartmouth (1956)"
+    },
+    {
+      "type": "text",
+      "md": "The story begins with a thought experiment. In **1950**, British mathematician Alan Turing asked: *\"Can machines think?\"* He proposed a practical test — if you type messages to both a human and a machine without being able to see either, and you cannot reliably tell them apart, the machine deserves to be called intelligent. The **Turing Test** gave researchers a concrete goal.\n\nSix years later, a summer workshop at **Dartmouth College** (1956) gave the field its name: **Artificial Intelligence**. Organizers like John McCarthy and Marvin Minsky believed human-level AI might arrive within a decade. The mood was electric — and wildly over-optimistic."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Imitation Game",
+      "md": "Think of the Turing Test like a costume party where everyone is masked. You judge contestants purely by conversation. If the machine's costume is convincing enough that you can't tell it from a real person, it has passed. The test is about *behavior*, not consciousness."
+    },
+    {
+      "type": "heading",
+      "text": "Symbolic AI, Expert Systems, and Two AI Winters"
+    },
+    {
+      "type": "text",
+      "md": "Early AI researchers believed intelligence was about **symbols and rules**. If you could write down all the rules a doctor uses to diagnose a disease, you could build a program that diagnosed patients. These \"**expert systems**\" worked well in narrow domains — MYCIN (1970s) matched junior doctors at diagnosing bacterial infections — but writing rules for the full messiness of the real world proved impossible.\n\nTwice, funding dried up almost completely. The **First AI Winter** (mid-1970s) arrived when early promises failed to materialize. A brief thaw in the 1980s ended in a **Second AI Winter** (~1987–1993) when commercial expert systems proved too expensive and brittle to maintain. The winters taught a hard lesson: AI needs three ingredients — **the right algorithms, enough data, and sufficient computing power**. Miss any one and progress stalls."
+    },
+    {
+      "type": "code",
+      "code": "# A tiny expert system: simplified cold vs flu diagnosis\ndef diagnose(fever, muscle_aches, runny_nose):\n    score = 0\n    if fever > 38.5:  score += 2  # high fever -> flu\n    if muscle_aches:  score += 2  # body aches -> flu\n    if runny_nose:    score += 1  # runny nose -> cold\n    return \"Likely Flu\" if score >= 3 else \"Likely Cold\"\n\nprint(diagnose(fever=39.1, muscle_aches=True,  runny_nose=False))\nprint(diagnose(fever=37.2, muscle_aches=False, runny_nose=True))",
+      "output": "Likely Flu\nLikely Cold",
+      "caption": "Expert systems encode human knowledge as explicit if/then rules — transparent, but they break the moment reality strays outside the rulebook."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "The Hype Cycle Trap",
+      "md": "Both AI winters were caused by over-promising and under-delivering. Researchers announced breakthroughs that couldn't scale to messy real-world problems. This pattern has repeated — knowing it exists is useful armor against believing every AI headline."
+    },
+    {
+      "type": "heading",
+      "text": "The Comeback: Machine Learning and Narrow Wins"
+    },
+    {
+      "type": "text",
+      "md": "Progress continued in narrow domains. In **1997**, IBM's **Deep Blue** defeated world chess champion Garry Kasparov by brute-force searching ~200 million positions per second. Impressive — but completely useless outside chess.\n\nMeanwhile, **machine learning** was quietly maturing. Instead of hand-writing rules, ML algorithms *learn patterns from data*. Feed a system thousands of labeled spam and non-spam emails, and it figures out the filtering rules on its own. By the 2000s, techniques like Support Vector Machines and Random Forests were solving real problems in medicine, finance, and speech recognition.\n\nThen in **2016**, DeepMind's **AlphaGo** shocked the world by defeating Go champion Lee Sedol 4-1. Go has more board positions than atoms in the observable universe — experts predicted machines couldn't crack it until 2027. AlphaGo combined deep neural networks with **reinforcement learning**: it played millions of games against itself, discovering strategies no human had ever conceived."
+    },
+    {
+      "type": "heading",
+      "text": "2012: The Deep Learning Earthquake"
+    },
+    {
+      "type": "text",
+      "md": "The single biggest turning point came at the **ImageNet** image-recognition contest in 2012. For years, the best programs had error rates around 25-26%. Then Geoffrey Hinton's team submitted **AlexNet** — a deep neural network — and cut the error rate to 15.3%. The runner-up wasn't close.\n\nDeep neural networks learn in layers: early layers detect edges, middle layers detect shapes, and deeper layers recognize complex objects. Three things made 2012 the breakthrough moment:\n- **Big data**: ImageNet had over a million labeled photographs.\n- **GPUs**: Graphics cards (built for video games) trained neural nets ~50x faster than CPUs.\n- **Algorithms**: Decades of quiet refinements to training techniques finally paid off.\n\nThis contest result kicked off the modern AI boom. The 2017 **Transformer** architecture then unlocked **large language models (LLMs)** — trained on vast amounts of raw text, capable of writing, reasoning, translating, and debugging code. AI history is, at its core, a story about **patience and compounding progress**. The recipe — data, compute, algorithms — hasn't changed. What changed is that we finally have all three at sufficient scale to produce genuinely astonishing results."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"AI is new\" — a common misconception",
+      "md": "Many people assume AI is a product of the 2020s. In reality, core ideas are 70+ years old. Neural networks were theorized in 1943, backpropagation was popularized in 1986, and the Turing Test dates to 1950. What changed recently is **scale** — more data, faster hardware, and refined training recipes finally made those old ideas work at a useful level."
+    },
+    {
+      "type": "quiz",
+      "question": "What three factors came together around 2012 to ignite the modern deep learning revolution?",
+      "options": [
+        "Better programming languages, cheaper laptops, and the internet",
+        "Large labeled datasets, powerful GPUs, and improved neural network algorithms",
+        "Expert systems, symbolic logic, and rule-based programming",
+        "The Turing Test, the Dartmouth workshop, and IBM's Deep Blue"
+      ],
+      "answerIndex": 1,
+      "explanation": "The 2012 breakthrough needed all three ingredients at once: massive labeled data (ImageNet), GPU hardware that could train neural nets at speed, and decades of algorithmic improvements. Miss any one and the revolution stalls — which is exactly why earlier attempts didn't catch fire."
+    }
+  ],
+  "keyTakeaways": [
+    "Alan Turing's 1950 thought experiment and the 1956 Dartmouth workshop gave AI its name and first goals.",
+    "Symbolic AI (expert systems) worked in narrow domains but broke down when faced with the messiness of the real world.",
+    "Two AI winters taught the field that hype without results leads to funding cuts — real progress must be earned.",
+    "The 2012 ImageNet moment showed that big data + GPUs + deep neural networks was a breakthrough combination.",
+    "Modern AI is powered by three compounding forces: exponentially more data, faster hardware, and better algorithms."
+  ],
+  "exercise": {
+    "prompt": "Build a tiny timeline explorer. You are given a list of AI milestones as (year, event) tuples. Write a function `milestones_in_range(events, start, end)` that returns all milestones whose year falls within [start, end] inclusive, sorted by year. Then print each result formatted as `YEAR: event`.",
+    "starterCode": "milestones = [\n    (1950, \"Turing publishes 'Computing Machinery and Intelligence'\"),\n    (1956, \"Dartmouth workshop coins 'Artificial Intelligence'\"),\n    (1966, \"ELIZA chatbot created at MIT\"),\n    (1997, \"Deep Blue defeats Kasparov at chess\"),\n    (2012, \"AlexNet wins ImageNet, igniting deep learning\"),\n    (2016, \"AlphaGo defeats Lee Sedol at Go\"),\n    (2022, \"ChatGPT launches and reaches 100M users in 60 days\"),\n]\n\ndef milestones_in_range(events, start, end):\n    # Your code here\n    return []  # TODO: replace with filtered, sorted list of (year, event) tuples\n\nresults = milestones_in_range(milestones, 1990, 2016)\nfor year, event in results:\n    print(f\"{year}: {event}\")",
+    "hint": "Use a list comprehension to filter tuples where `start <= year <= end`, then sort with `sorted()` using the year as the key (key=lambda x: x[0]).",
+    "solution": "milestones = [\n    (1950, \"Turing publishes 'Computing Machinery and Intelligence'\"),\n    (1956, \"Dartmouth workshop coins 'Artificial Intelligence'\"),\n    (1966, \"ELIZA chatbot created at MIT\"),\n    (1997, \"Deep Blue defeats Kasparov at chess\"),\n    (2012, \"AlexNet wins ImageNet, igniting deep learning\"),\n    (2016, \"AlphaGo defeats Lee Sedol at Go\"),\n    (2022, \"ChatGPT launches and reaches 100M users in 60 days\"),\n]\n\ndef milestones_in_range(events, start, end):\n    filtered = [(year, event) for year, event in events if start <= year <= end]\n    return sorted(filtered, key=lambda x: x[0])\n\nresults = milestones_in_range(milestones, 1990, 2016)\nfor year, event in results:\n    print(f\"{year}: {event}\")\n\n# Output:\n# 1997: Deep Blue defeats Kasparov at chess\n# 2012: AlexNet wins ImageNet, igniting deep learning\n# 2016: AlphaGo defeats Lee Sedol at Go"
+  }
+}

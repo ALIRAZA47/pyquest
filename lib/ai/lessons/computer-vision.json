@@ -1,0 +1,94 @@
+{
+  "slug": "computer-vision",
+  "title": "Computer Vision",
+  "category": "Modern AI",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Discover how machines really 'see': images are just grids of numbers, and a clever sliding filter called a convolution teaches computers to spot edges, shapes, and faces from raw pixels.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Your phone unlocks when it sees your face. A self-driving car stops at a red light. A hospital AI spots a tumour on an X-ray before a radiologist does. All of these feel like magic — but they all start with the same humble question: **how does a computer even look at an image?**\n\nThe surprising answer is that computers don't see pictures the way you do. They see a **grid of plain numbers**. Once you understand that, the entire field of computer vision starts to click."
+    },
+    {
+      "type": "heading",
+      "text": "Images Are Just Numbers"
+    },
+    {
+      "type": "text",
+      "md": "Every digital image is a rectangle of tiny coloured squares called **pixels**. Each pixel is stored as one or more numbers:\n\n- A **greyscale** image stores one number per pixel — brightness from `0` (black) to `255` (white).\n- A **colour** image stores three numbers per pixel — one each for Red, Green, and Blue (the RGB channels).\n\nSo a tiny 4×4 greyscale image is literally a 4×4 grid of integers. A selfie, an MRI scan, a satellite photo — all the same idea, just much bigger."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Mosaic Tile Analogy",
+      "md": "Imagine a mosaic made of thousands of tiny coloured tiles. Stand far away and you see a portrait. Get very close and each tile is just a blob of colour — it means nothing on its own. A computer always sees the individual tiles (pixel numbers). Its challenge is to figure out the big picture **from those raw numbers alone**."
+    },
+    {
+      "type": "heading",
+      "text": "The Key Operation: Convolution"
+    },
+    {
+      "type": "text",
+      "md": "The core trick of modern computer vision is called **convolution**. The idea is beautifully simple.\n\nImagine a small magnifying square — say 3×3 pixels — called a **kernel** (or filter). You slide this little square across the image, one step at a time. At each position you:\n\n1. Line up the kernel's 9 numbers with the 9 pixels underneath it.\n2. **Multiply** each kernel number by the pixel beneath it.\n3. **Sum** all 9 products into a single number.\n4. Write that number into an output grid at the same position.\n\nThat's convolution: slide, multiply, sum, move on. The output grid is called a **feature map** — it lights up wherever the kernel's pattern matches something in the image.\n\nDifferent kernels detect different features. An **edge-detection kernel** has positive numbers on one side and negative on the other — where brightness changes sharply the values don't cancel, so the output is high. A **blur kernel** averages nearby pixels equally. In early computer vision, engineers hand-designed these kernels. The breakthrough of **Convolutional Neural Networks (CNNs)** is that the network learns the best kernels **automatically** from training data."
+    },
+    {
+      "type": "code",
+      "code": "# A tiny pure-Python convolution — no libraries needed!\n\nimage = [\n    [10, 10, 10, 80, 80],\n    [10, 10, 10, 80, 80],\n    [10, 10, 10, 80, 80],\n    [10, 10, 10, 80, 80],\n    [10, 10, 10, 80, 80],\n]\n\n# Vertical edge detector: negative left, zero middle, positive right\nkernel = [\n    [-1, 0, 1],\n    [-1, 0, 1],\n    [-1, 0, 1],\n]\n\ndef convolve(image, kernel):\n    rows, cols, k = len(image), len(image[0]), len(kernel)\n    output = []\n    for r in range(rows - k + 1):\n        row_out = []\n        for c in range(cols - k + 1):\n            total = sum(\n                image[r + kr][c + kc] * kernel[kr][kc]\n                for kr in range(k) for kc in range(k)\n            )\n            row_out.append(total)\n        output.append(row_out)\n    return output\n\nresult = convolve(image, kernel)\nfor row in result:\n    print(row)",
+      "output": "[0, 210, 210]\n[0, 210, 210]\n[0, 210, 210]",
+      "caption": "The kernel outputs 0 where the image is flat, and 210 where brightness jumps — it found the vertical edge!"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Reading the Output",
+      "md": "Column 0 is all zeros — the kernel saw uniform dark pixels and the left-minus-right computation cancelled out. Columns 1 and 2 output 210 — that's exactly where dark meets bright. The kernel **lit up** at the edge. In a real CNN this high-activation region tells the next layer: \"there is an edge here.\""
+    },
+    {
+      "type": "heading",
+      "text": "Stacking Layers: From Edges to Objects"
+    },
+    {
+      "type": "text",
+      "md": "A single convolution layer is useful, but the real power of CNNs comes from **stacking multiple layers**:\n\n- **Layer 1** learns to detect low-level features: edges, corners, colour gradients.\n- **Layer 2** sees combinations of edges — textures and simple shapes like curves.\n- **Layer 3+** see combinations of shapes — parts like eyes, wheels, or letters.\n- **Final layers** combine everything into a prediction: \"this is a cat\", \"this is a stop sign\".\n\nThe network never needs anyone to explain what an eye is. If enough cat photos are in the training data, it discovers that eyes are a useful intermediate feature on its own. This **hierarchical feature learning** is why deep networks are so powerful.\n\nA typical CNN architecture looks like this: **Conv → ReLU activation → Pooling** (repeat several times) → **Flatten → Fully Connected → Prediction**. Libraries like **PyTorch** and **TensorFlow** let you build this in a few lines — but now you know what those lines are actually doing. This same building block — a kernel sliding over a grid of numbers — powers face recognition, self-driving cars, medical imaging AI, accessibility apps that describe scenes aloud, and checkout-free stores."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Misconception: The Network 'Sees' Like You Do",
+      "md": "A CNN doesn't perceive images the way humans do — it only knows numbers. This matters:\n\n- **Adversarial examples**: change just a few pixel values and a network that correctly classifies a cat may suddenly call it guacamole, with high confidence.\n- **Dataset bias**: a CNN trained mainly on certain demographics may perform poorly on others it rarely saw during training.\n\nAlways remember: **the network learns what the data shows it, nothing more.**"
+    },
+    {
+      "type": "quiz",
+      "question": "After a convolution with an edge-detection kernel, a region in the output feature map has a value close to zero. What does that most likely mean?",
+      "options": [
+        "The kernel found a very strong edge at that location.",
+        "The pixel values in that region are changing rapidly.",
+        "The pixel values in that region are fairly uniform (no edge present).",
+        "The kernel was too small to process that region."
+      ],
+      "answerIndex": 2,
+      "explanation": "An edge-detection kernel has positive weights on one side and negative weights on the other. When pixel values are uniform, the positive and negative contributions cancel each other out, producing a sum near zero. A high output value signals a sharp brightness change — an edge."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Going Further",
+      "md": "Modern architectures push beyond classic CNNs:\n- **ResNets** add 'skip connections' so very deep networks (100+ layers) can still train reliably.\n- **Vision Transformers (ViTs)** split images into patches and use attention mechanisms instead of convolutions.\n- **CLIP** learns from image-text pairs so it can match photos to natural-language descriptions.\n\nBut every one of them still begins with the same insight: an image is a grid of numbers, and patterns can be found by sliding the right filter across them."
+    }
+  ],
+  "keyTakeaways": [
+    "An image is just a grid of numbers (pixel values) — computers never see 'pictures', only arrays of integers.",
+    "Convolution slides a small kernel (filter) over the image, multiplying and summing at each position to produce a feature map that highlights specific patterns like edges.",
+    "Different kernels detect different features; CNNs learn the best kernels automatically from training data rather than requiring hand-design.",
+    "Stacking convolutional layers builds up a hierarchy: edges to textures to shapes to objects, allowing networks to recognise complex things from raw pixels.",
+    "CNNs see only statistical patterns in numbers — they can be fooled by tiny pixel changes and reflect biases present in their training data."
+  ],
+  "exercise": {
+    "prompt": "Write a function `apply_blur(image, kernel)` that applies a 3×3 blur kernel to a given 2D list of pixel values. A blur kernel averages each pixel with its neighbours — all nine weights equal 1/9. Return the feature map as a 2D list of floats rounded to 2 decimal places.\n\nTest it on the 5×5 image provided and print each row of the result.",
+    "starterCode": "image = [\n    [0,   0,   0,   0,   0],\n    [0, 255, 255, 255,   0],\n    [0, 255, 255, 255,   0],\n    [0, 255, 255, 255,   0],\n    [0,   0,   0,   0,   0],\n]\n\nblur_kernel = [\n    [1/9, 1/9, 1/9],\n    [1/9, 1/9, 1/9],\n    [1/9, 1/9, 1/9],\n]\n\ndef apply_blur(image, kernel):\n    # TODO: slide the 3x3 kernel over the image and return the feature map\n    return []  # TODO: replace with your computed 2D list of floats\n\nresult = apply_blur(image, blur_kernel)\nfor row in result:\n    print(row)",
+    "hint": "Use two nested loops to move the kernel's top-left corner from row 0 to row (len(image)-3) and col 0 to col (len(image[0])-3). At each position, use two more nested loops (or a generator) to multiply each kernel value by the matching pixel and accumulate the total. Round each value with round(total, 2).",
+    "solution": "image = [\n    [0,   0,   0,   0,   0],\n    [0, 255, 255, 255,   0],\n    [0, 255, 255, 255,   0],\n    [0, 255, 255, 255,   0],\n    [0,   0,   0,   0,   0],\n]\n\nblur_kernel = [\n    [1/9, 1/9, 1/9],\n    [1/9, 1/9, 1/9],\n    [1/9, 1/9, 1/9],\n]\n\ndef apply_blur(image, kernel):\n    rows = len(image)\n    cols = len(image[0])\n    k = len(kernel)\n    output = []\n    for r in range(rows - k + 1):\n        row_out = []\n        for c in range(cols - k + 1):\n            total = sum(\n                image[r + kr][c + kc] * kernel[kr][kc]\n                for kr in range(k) for kc in range(k)\n            )\n            row_out.append(round(total, 2))\n        output.append(row_out)\n    return output\n\nresult = apply_blur(image, blur_kernel)\nfor row in result:\n    print(row)"
+  }
+}

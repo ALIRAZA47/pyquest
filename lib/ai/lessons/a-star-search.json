@@ -1,0 +1,98 @@
+{
+  "slug": "a-star-search",
+  "title": "A* Search",
+  "category": "Search & Problem Solving",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Learn how A* search finds the shortest path intelligently by combining real path cost with a heuristic guess — exploring only the most promising routes.",
+  "readingTime": "12 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Your GPS calculates a route from your driveway to a hotel across the country in under a second. The road network has millions of intersections — so how does it avoid checking every single one? The secret is that a smart search doesn't wander blindly. It **looks at where it still needs to go** and uses that guess to decide where to explore next.\n\nThat idea is the heart of **A* search** (pronounced \"A-star\"). It is one of the most elegant algorithms in all of computer science, and it powers everything from GPS navigation to video-game pathfinding to robot motion planning."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem: Finding the Best Path"
+    },
+    {
+      "type": "text",
+      "md": "Imagine a map as a graph: cities are **nodes** and roads are **edges** with a travel **cost** (distance, time, or fuel). We start at node S and want to reach goal node G along the cheapest possible route.\n\nNaive approaches do one of two things badly:\n- **Breadth-First Search (BFS)** ignores costs entirely — it just counts hops, finding the fewest stops rather than the cheapest route.\n- **Dijkstra's algorithm** tracks real costs and always finds the optimal path, but it expands in all directions like a growing bubble — it has no idea which way the goal is.\n\nA* fixes Dijkstra's blindness by adding a **heuristic**: a quick, cheap estimate of how far each node still is from the goal. With that extra hint, A* beelines toward promising territory instead of wasting time going in the wrong direction."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Hiking Analogy",
+      "md": "You're hiking through mountains and need to reach a hut you can see in the distance. Two strategies:\n\n**Dijkstra (no heuristic):** You methodically explore every trail from your current spot, always choosing the lowest total distance travelled so far — even if it heads *away* from the hut.\n\n**A* (with heuristic):** You do the same, BUT you also glance at the hut each time and add your rough straight-line distance to it. Trails heading vaguely toward the hut get priority. You converge on the hut much faster while still guaranteeing the shortest total path."
+    },
+    {
+      "type": "heading",
+      "text": "The Scoring Formula: f = g + h"
+    },
+    {
+      "type": "text",
+      "md": "Every node gets a single score that drives the algorithm's decisions:\n\n- **g(n)** — the *actual* cost of the path found so far from the start to node n. This is the part Dijkstra tracks.\n- **h(n)** — the *heuristic estimate* of the remaining cost from node n to the goal. For grid maps, **Manhattan distance** (steps left/right + steps up/down) works well; for geographic maps, **straight-line distance** is the classic choice.\n- **f(n) = g(n) + h(n)** — the **total estimated cost** of the cheapest solution passing through n.\n\nAt every step, A* expands the node with the **lowest f score**. A heuristic h(n) is **admissible** if it **never overestimates** the true remaining cost — think of it as an optimistic guess. With an admissible heuristic, A* is **guaranteed to find the optimal path**. Straight-line distance is always admissible for road maps because no real route can be shorter than the crow-flies distance.\n\n**Dijkstra is just A* with h = 0.** Set h to zero everywhere and f(n) = g(n) — the two algorithms become identical. The heuristic is the only addition A* makes."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Inadmissible heuristics break the optimality guarantee",
+      "md": "If h(n) *overestimates* the true remaining cost, A* can prematurely rule out the actual optimal path — making it look expensive — and return a suboptimal answer. A heuristic that is tight (close to the true cost) and cheap to compute is the sweet spot. Straight-line distance hits both marks, which is why it's the go-to choice."
+    },
+    {
+      "type": "heading",
+      "text": "A* Step by Step"
+    },
+    {
+      "type": "text",
+      "md": "Here is the algorithm spelled out mechanically:\n\n1. Create an **open set** (nodes to explore), starting with just the start node. Track each node's g score (start = 0, all others = infinity).\n2. Pick the node in the open set with the **lowest f = g + h** score. Call it `current`.\n3. If `current` is the goal, reconstruct the path by following `came_from` pointers back to the start — done.\n4. Otherwise, for each **neighbour** of `current`, compute `tentative_g = g(current) + cost(current, neighbour)`. If `tentative_g` is lower than the neighbour's known g score, update `came_from`, g, and add the neighbour to the open set.\n5. Repeat from step 2. If the open set empties with no solution found, no path exists.\n\nUsing a **min-heap** (Python's `heapq`) to track the open set means \"find lowest f\" costs O(log n) instead of O(n) for a plain list — essential for large graphs."
+    },
+    {
+      "type": "code",
+      "code": "import heapq\n\ndef heuristic(a, b):\n    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Manhattan distance\n\ndef astar(grid, start, goal):\n    rows, cols = len(grid), len(grid[0])\n    open_set = [(0, start)]   # (f_score, node)\n    came_from = {}\n    g = {start: 0}\n\n    while open_set:\n        _, current = heapq.heappop(open_set)\n        if current == goal:\n            path = []\n            while current in came_from:\n                path.append(current)\n                current = came_from[current]\n            path.append(start)\n            return list(reversed(path))\n        r, c = current\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n            nb = (r+dr, c+dc)\n            if 0 <= nb[0] < rows and 0 <= nb[1] < cols and grid[nb[0]][nb[1]] != 1:\n                new_g = g[current] + 1\n                if new_g < g.get(nb, float('inf')):\n                    came_from[nb] = current\n                    g[nb] = new_g\n                    heapq.heappush(open_set, (new_g + heuristic(nb, goal), nb))\n    return None\n\n# 0 = open, 1 = wall\ngrid = [\n    [0, 0, 0, 0, 0],\n    [0, 1, 1, 1, 0],\n    [0, 0, 0, 1, 0],\n    [0, 1, 0, 0, 0],\n    [0, 0, 0, 0, 0],\n]\nprint(astar(grid, (0, 0), (4, 4)))",
+      "output": "[(0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (3, 2), (3, 3), (3, 4), (4, 4)]",
+      "caption": "A* on a 5x5 grid with walls (1). The algorithm navigates around obstacles and returns the shortest passable path."
+    },
+    {
+      "type": "heading",
+      "text": "Heuristic vs No Heuristic: A Live Comparison"
+    },
+    {
+      "type": "code",
+      "code": "import heapq\n\ndef count_explored(grid, start, goal, use_heuristic=True):\n    rows, cols = len(grid), len(grid[0])\n    open_set = [(0, start)]\n    g = {start: 0}\n    explored = 0\n    while open_set:\n        _, current = heapq.heappop(open_set)\n        explored += 1\n        if current == goal:\n            return explored\n        r, c = current\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n            nb = (r+dr, c+dc)\n            if 0 <= nb[0] < rows and 0 <= nb[1] < cols and grid[nb[0]][nb[1]] != 1:\n                new_g = g[current] + 1\n                if new_g < g.get(nb, float('inf')):\n                    g[nb] = new_g\n                    h = (abs(nb[0]-goal[0]) + abs(nb[1]-goal[1])) if use_heuristic else 0\n                    heapq.heappush(open_set, (new_g + h, nb))\n    return explored\n\ngrid = [[0]*10 for _ in range(10)]  # open 10x10, no walls\nprint(\"Dijkstra explored:\", count_explored(grid, (0,0), (9,9), use_heuristic=False))\nprint(\"A* explored:      \", count_explored(grid, (0,0), (9,9), use_heuristic=True))",
+      "output": "Dijkstra explored: 100\nA* explored:       19",
+      "caption": "Same grid, same optimal path, same algorithm — the only difference is h. Dijkstra visits every cell; A* reaches the goal after just 19.\n\nA* is everywhere once you look for it: **GPS navigation** uses A* variants to route across continent-scale networks in milliseconds; **video game NPCs** run A* to navigate maps; **robot arms** plan collision-free motion with it; **puzzle solvers** (8-puzzle, 15-puzzle) use it with a Manhattan-distance heuristic. In production Python, `networkx.astar_path()` provides a battle-tested A* for general graphs — but as you've seen, a working version needs only `heapq`."
+    },
+    {
+      "type": "quiz",
+      "question": "You run A* on a map where your heuristic h(n) sometimes returns values *larger* than the true remaining distance to the goal. What can you conclude?",
+      "options": [
+        "A* will run faster and still find the optimal path.",
+        "A* may find a suboptimal path because the heuristic is not admissible.",
+        "A* will behave exactly like Dijkstra's algorithm.",
+        "A* will fail to find any path at all."
+      ],
+      "answerIndex": 1,
+      "explanation": "A heuristic that overestimates is *inadmissible*. It can cause A* to prematurely mark the true optimal path as expensive and return a suboptimal route instead. Admissibility — never overestimating — is the guarantee that A* finds the optimal path."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The interactive visualizer on this page",
+      "md": "The visualizer lets you draw walls on a grid, place a start and goal, and watch A* expand nodes in real time. Notice how the frontier leans toward the goal rather than flooding outward — that's the heuristic at work. Try switching to Dijkstra mode (h = 0) and compare the two frontiers side by side."
+    }
+  ],
+  "keyTakeaways": [
+    "A* scores every node as f = g + h, where g is the real cost from the start and h is a heuristic estimate of the remaining cost to the goal.",
+    "Expanding the lowest-f node first makes A* explore the most promising routes before wasting time on unlikely ones.",
+    "A heuristic is admissible if it never overestimates — admissibility is the guarantee that A* finds the optimal path.",
+    "Dijkstra's algorithm is just A* with h = 0; the heuristic is the only addition and can be removed gracefully.",
+    "On large graphs, a good heuristic can cut nodes explored from millions to thousands while still guaranteeing optimality."
+  ],
+  "exercise": {
+    "prompt": "Implement the missing `reconstruct_path` function that A* calls when it reaches the goal. It receives a `came_from` dictionary of `{node: parent_node}` pointers and should return the full list of nodes from `start` to `goal`. Run the completed code to print every step of the path through the maze below.\n\nGrid (0 = open, 1 = wall):\n```\n[[0, 1, 0, 0, 0],\n [0, 1, 0, 1, 0],\n [0, 0, 0, 1, 0],\n [0, 1, 1, 1, 0],\n [0, 0, 0, 0, 0]]\n```\nStart: (0, 0)   Goal: (4, 4)",
+    "starterCode": "import heapq\n\ndef heuristic(a, b):\n    return abs(a[0] - b[0]) + abs(a[1] - b[1])\n\ndef reconstruct_path(came_from, start, goal):\n    # TODO: walk came_from pointers from goal back to start,\n    # collect the nodes, and return them in start-to-goal order.\n    pass\n\ndef astar(grid, start, goal):\n    rows, cols = len(grid), len(grid[0])\n    open_set = [(0, start)]\n    came_from = {}\n    g = {start: 0}\n    while open_set:\n        _, current = heapq.heappop(open_set)\n        if current == goal:\n            return reconstruct_path(came_from, start, goal)\n        r, c = current\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n            nb = (r+dr, c+dc)\n            if 0 <= nb[0] < rows and 0 <= nb[1] < cols and grid[nb[0]][nb[1]] != 1:\n                new_g = g[current] + 1\n                if new_g < g.get(nb, float('inf')):\n                    came_from[nb] = current\n                    g[nb] = new_g\n                    heapq.heappush(open_set, (new_g + heuristic(nb, goal), nb))\n    return None\n\ngrid = [\n    [0, 1, 0, 0, 0],\n    [0, 1, 0, 1, 0],\n    [0, 0, 0, 1, 0],\n    [0, 1, 1, 1, 0],\n    [0, 0, 0, 0, 0],\n]\npath = astar(grid, (0, 0), (4, 4))\nif path:\n    for step, node in enumerate(path):\n        print(f\"Step {step}: row {node[0]}, col {node[1]}\")\nelse:\n    print(\"No path found\")",
+    "hint": "In `reconstruct_path`, start at `goal` and keep looking up `came_from[current]` until you reach `start`. Append each node to a list as you walk backwards, then reverse the list before returning it.",
+    "solution": "import heapq\n\ndef heuristic(a, b):\n    return abs(a[0] - b[0]) + abs(a[1] - b[1])\n\ndef reconstruct_path(came_from, start, goal):\n    path = []\n    current = goal\n    while current != start:\n        path.append(current)\n        current = came_from[current]\n    path.append(start)\n    path.reverse()\n    return path\n\ndef astar(grid, start, goal):\n    rows, cols = len(grid), len(grid[0])\n    open_set = [(0, start)]\n    came_from = {}\n    g = {start: 0}\n    while open_set:\n        _, current = heapq.heappop(open_set)\n        if current == goal:\n            return reconstruct_path(came_from, start, goal)\n        r, c = current\n        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:\n            nb = (r+dr, c+dc)\n            if 0 <= nb[0] < rows and 0 <= nb[1] < cols and grid[nb[0]][nb[1]] != 1:\n                new_g = g[current] + 1\n                if new_g < g.get(nb, float('inf')):\n                    came_from[nb] = current\n                    g[nb] = new_g\n                    heapq.heappush(open_set, (new_g + heuristic(nb, goal), nb))\n    return None\n\ngrid = [\n    [0, 1, 0, 0, 0],\n    [0, 1, 0, 1, 0],\n    [0, 0, 0, 1, 0],\n    [0, 1, 1, 1, 0],\n    [0, 0, 0, 0, 0],\n]\npath = astar(grid, (0, 0), (4, 4))\nif path:\n    for step, node in enumerate(path):\n        print(f\"Step {step}: row {node[0]}, col {node[1]}\")\nelse:\n    print(\"No path found\")"
+  }
+}

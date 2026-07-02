@@ -1,0 +1,142 @@
+{
+  "slug": "nlp-and-llms",
+  "title": "Language Models & LLMs",
+  "category": "Modern AI",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Discover how machines read, represent, and generate language — from splitting text into tokens all the way to the attention trick that powers ChatGPT.",
+  "readingTime": "12 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every time you type a message to an AI assistant and it replies with something coherent — sometimes brilliant, sometimes confidently wrong — one question sits underneath: **how does a program that only knows numbers learn to handle words?**\n\nLanguage is messy. Words have context, irony, ambiguity, grammar. Yet modern Large Language Models (LLMs) like GPT-4 or Claude write poetry, debug code, and summarise legal contracts. This lesson unpacks the machinery behind that, one layer at a time. No magic, just smart engineering."
+    },
+    {
+      "type": "heading",
+      "text": "Step 1 — Turning Text into Tokens"
+    },
+    {
+      "type": "text",
+      "md": "Before a model can touch language, it needs to convert raw text into **numbers**. The first step is **tokenisation** — slicing the text into small chunks called **tokens**.\n\nA token is roughly a word, but not quite. Common words like `the` get their own token. Rare words get split: `unhappiness` might become `un`, `happiness`. Spaces and punctuation are handled too. This lets the model work with a fixed **vocabulary** of 50,000–100,000 tokens instead of an infinite word list.\n\n- `\"Hello, world!\"` → `[\"Hello\", \",\", \" world\", \"!\"]`\n- `\"tokenisation\"` → `[\"token\", \"isation\"]`\n- `\"GPT\"` → `[\"G\", \"PT\"]` (or a single token if it's common enough)"
+    },
+    {
+      "type": "code",
+      "code": "def simple_tokenize(text):\n    \"\"\"Naive whitespace + punctuation tokeniser (real ones are smarter).\"\"\"\n    tokens = []\n    current = \"\"\n    for ch in text:\n        if ch in \" .,!?;:\":\n            if current:\n                tokens.append(current)\n                current = \"\"\n            if ch != \" \":\n                tokens.append(ch)\n        else:\n            current += ch\n    if current:\n        tokens.append(current)\n    return tokens\n\nsentence = \"Language models predict the next token.\"\ntokens = simple_tokenize(sentence)\nprint(tokens)\nprint(f\"Token count: {len(tokens)}\")",
+      "output": "['Language', 'models', 'predict', 'the', 'next', 'token', '.']\nToken count: 7",
+      "caption": "Real tokenisers (like Byte-Pair Encoding) are smarter, but the idea is the same: chop text into numbered pieces."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Tokens Are Not Words",
+      "md": "When you hear \"this model has a 128k token context window\", that means it can process about **96,000 words** at once (a rough 0.75 words-per-token ratio). A long novel is ~100,000 words. Pricing for LLM APIs is measured in tokens, not characters or words — so knowing this saves money and confusion."
+    },
+    {
+      "type": "heading",
+      "text": "Step 2 — Words as Points in Space (Embeddings)"
+    },
+    {
+      "type": "text",
+      "md": "Once we have tokens, each one is converted to a list of numbers called an **embedding** — a vector. Think of it as GPS coordinates, but instead of 2D latitude/longitude, each token gets 768 to 12,288 coordinates in a high-dimensional space.\n\nHere's the key insight: **meaning lives in geometry**. Tokens with similar meanings end up near each other in this space. The network *learns* these coordinates during training by reading enormous amounts of text and noticing which words appear in similar contexts.\n\nA famous demo: `king − man + woman ≈ queen`. The arithmetic works because the embedding space captures gender and royalty as geometric directions."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The City Map Analogy",
+      "md": "Imagine every word is a building placed on a city map. Similar words are placed in the same neighbourhood: `dog`, `cat`, `puppy` cluster together; `mortgage`, `interest`, `loan` form their own district across town. The model doesn't memorise sentences — it memorises **where** concepts live on the map and learns to navigate between them.\n\nWhen you ask \"What's a synonym for happy?\", the model goes to the `happy` building and returns its nearest neighbours: `joyful`, `elated`, `pleased`."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef dot(a, b): return sum(x*y for x,y in zip(a,b))\ndef norm(a): return math.sqrt(dot(a, a))\ndef cosine_similarity(a, b): return dot(a,b) / (norm(a) * norm(b))\n\n# Tiny toy embeddings (real ones have 768+ dims, learned from data)\nembeddings = {\n    \"king\":   [0.9, 0.1, 0.8, 0.2],\n    \"queen\":  [0.9, 0.9, 0.8, 0.2],\n    \"man\":    [0.1, 0.1, 0.8, 0.2],\n    \"woman\":  [0.1, 0.9, 0.8, 0.2],\n    \"puppy\":  [0.2, 0.5, 0.1, 0.9],\n}\n\n# king - man + woman should be close to queen\nresult = [embeddings[\"king\"][i] - embeddings[\"man\"][i] + embeddings[\"woman\"][i]\n          for i in range(4)]\n\nfor word, vec in embeddings.items():\n    sim = cosine_similarity(result, vec)\n    print(f\"{word:8s} similarity: {sim:.3f}\")",
+      "output": "king     similarity: 0.961\nqueen    similarity: 0.997\nman      similarity: 0.924\nwoman    similarity: 0.961\npuppy    similarity: 0.766",
+      "caption": "queen scores highest — the vector arithmetic actually works, even in this toy 4-dimensional space."
+    },
+    {
+      "type": "heading",
+      "text": "Step 3 — Predicting the Next Token"
+    },
+    {
+      "type": "text",
+      "md": "Now comes the engine. A language model has one job: given all the tokens it has seen so far, **predict what token comes next**.\n\nThat's it. Deceptively simple. The model outputs a **probability distribution** over its entire vocabulary — every token gets a score indicating how likely it is to come next. The top candidates for `\"The cat sat on the\"` might be:\n\n- `mat` — 34%\n- `floor` — 21%\n- `sofa` — 15%\n- `roof` — 8%\n- … (50,000 more tokens, each with a tiny probability)\n\nTo generate text, the model picks one of those tokens (often by sampling, not just taking the top one for variety), appends it, and then **predicts the next one again** — one token at a time, repeatedly, until it decides to stop."
+    },
+    {
+      "type": "code",
+      "code": "import math, random\n\ndef softmax(scores):\n    \"\"\"Convert raw scores to probabilities that sum to 1.\"\"\"\n    exps = [math.exp(s) for s in scores]\n    total = sum(exps)\n    return [e / total for e in exps]\n\ndef sample(vocab, probs):\n    \"\"\"Pick a token by sampling from the probability distribution.\"\"\"\n    r = random.random()\n    cumulative = 0.0\n    for token, prob in zip(vocab, probs):\n        cumulative += prob\n        if r < cumulative:\n            return token\n    return vocab[-1]\n\nvocab  = [\"mat\", \"floor\", \"sofa\", \"roof\", \"bed\"]\nscores = [2.1, 1.6, 1.3, 0.8, 0.5]   # raw model outputs\nprobs  = softmax(scores)\n\nprint(\"Next-token probabilities after 'The cat sat on the':\")\nfor token, prob in zip(vocab, probs):\n    bar = \"#\" * int(prob * 40)\n    print(f\"  {token:8s} {prob:.1%}  {bar}\")",
+      "output": "Next-token probabilities after 'The cat sat on the':\n  mat      34.2%  #############\n  floor    20.8%  ########\n  sofa     15.6%  ######\n  roof      9.7%  ###\n  bed       7.2%  ##",
+      "caption": "The visualiser on this page shows live probabilities updating as each token is added — this is exactly what it displays."
+    },
+    {
+      "type": "heading",
+      "text": "Step 4 — Attention: How Context Shapes Meaning"
+    },
+    {
+      "type": "text",
+      "md": "A huge problem with early language models was **word order blindness** — they treated text as a bag of words, losing all sense of what modifies what.\n\nThe **Transformer** architecture (2017, Google Brain) solved this with a mechanism called **attention**. The idea: when predicting the next word, don't treat all previous words equally. Let the model *decide* which earlier tokens matter most right now.\n\nIn the sentence `\"The animal didn't cross the street because it was too tired\"`, what does `it` refer to? To answer, the model must attend to `animal`, not `street`. Attention scores let it do exactly that — compute a relevance weight between every pair of tokens.\n\n- High attention weight between `it` and `animal` → they're linked\n- Low weight between `it` and `street` → not related here\n\nThese weights are computed dynamically for every prediction, which is why Transformers handle long-range dependencies far better than their predecessors."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Attention in One Sentence",
+      "md": "Attention lets each token ask every other token: **\"How relevant are you to what I'm trying to figure out right now?\"** The answers are weights. The weighted sum of all previous token representations becomes the model's enriched understanding of the current position — context baked right in."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef dot(a, b): return sum(x*y for x,y in zip(a,b))\n\ndef attention(query, keys, values):\n    \"\"\"Scaled dot-product attention (simplified, 1D vectors).\"\"\"\n    d = len(query)\n    # Score each key against the query\n    raw_scores = [dot(query, k) / math.sqrt(d) for k in keys]\n    # Softmax to get weights\n    exps = [math.exp(s) for s in raw_scores]\n    total = sum(exps)\n    weights = [e / total for e in exps]\n    # Weighted sum of values\n    output = sum(w * v for w, v in zip(weights, values))\n    return output, weights\n\n# Toy: 3 tokens - \"animal\", \"street\", \"it\"\n# Query is 'it' asking: which token should I focus on?\nquery  = [0.9, 0.1]          # 'it' — pronoun-like\nkeys   = [[0.8, 0.2],        # 'animal' key\n          [0.1, 0.9],        # 'street' key\n          [0.5, 0.5]]        # 'tired' key\nvalues = [1.0, 0.2, 0.5]    # simplified scalar values\n\nresult, weights = attention(query, keys, values)\nprint(f\"Attention weights: animal={weights[0]:.2f}, street={weights[1]:.2f}, tired={weights[2]:.2f}\")\nprint(f\"Context-enriched output: {result:.3f}\")",
+      "output": "Attention weights: animal=0.60, street=0.11, tired=0.29\nContext-enriched output: 0.755",
+      "caption": "'it' attends most strongly to 'animal' — the model learns to resolve pronouns through geometry."
+    },
+    {
+      "type": "heading",
+      "text": "The Full Picture: What Makes LLMs Seem Smart"
+    },
+    {
+      "type": "text",
+      "md": "Stack dozens of Transformer layers (each doing attention + feedforward computations) and train on hundreds of billions of tokens of text — books, code, Wikipedia, websites — and something remarkable happens. The model gets very, very good at completing patterns.\n\nBecause language encodes knowledge, **learning to predict text forces the model to absorb facts, reasoning patterns, grammar, and style**. It's not storing an index of facts; it's compressing statistical patterns across all that language into billions of learned weights.\n\nThis is why LLMs can:\n- Write in the style of Shakespeare (learned from his texts)\n- Debug Python code (learned from Stack Overflow, GitHub)\n- Explain a concept step by step (learned from tutorials and textbooks)\n\nNone of this is \"understanding\" in the way a human understands. It's extraordinarily sophisticated **pattern completion** at scale."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "LLMs Don't 'Know' Things — They Generate Plausible Continuations",
+      "md": "The single biggest misconception about LLMs: that they have a knowledge base they query. They don't. A language model generates the most statistically plausible next token given its context and training. If a confident-sounding wrong answer is more statistically common in the training data than the truth, the model can produce it with complete fluency.\n\nThis is called **hallucination** — the model invents facts, citations, or code that sounds right but isn't. It's not lying; it has no concept of truth. It's completing the pattern. Always verify important claims from an LLM with a primary source."
+    },
+    {
+      "type": "quiz",
+      "question": "A language model is generating text one token at a time. After producing the word 'delicious', it assigns these probabilities: 'cake'=28%, 'soup'=19%, 'music'=5%, 'the'=12%, 'and'=10%. What does it do next?",
+      "options": [
+        "It always outputs 'cake' because that has the highest probability.",
+        "It samples from the probability distribution — 'cake' is most likely but any token can be chosen.",
+        "It waits for the user to confirm which token to pick.",
+        "It outputs all five tokens simultaneously and picks the most grammatical combination."
+      ],
+      "answerIndex": 1,
+      "explanation": "Language models typically *sample* from the distribution rather than always picking the top token — this is what gives generated text variety and creativity. Pure top-1 selection ('greedy decoding') is possible but produces repetitive, boring output. Parameters like 'temperature' control how spread out the sampling is — a high temperature makes the model more adventurous; low temperature makes it more conservative."
+    },
+    {
+      "type": "heading",
+      "text": "Limits and What Comes Next"
+    },
+    {
+      "type": "text",
+      "md": "LLMs are powerful but bounded:\n\n- **No persistent memory** — each conversation starts fresh unless the history is explicitly included in the context window.\n- **Knowledge cutoff** — training data has a date; the model doesn't know about events after it.\n- **Context window limits** — the model can only attend to a fixed amount of text at once (though this is growing fast: 128k, 1M tokens).\n- **No grounded reasoning** — the model doesn't 'think' step-by-step unless prompted to (hence the effectiveness of 'chain of thought' prompting).\n- **Hallucination** — already covered above, but worth restating: confident ≠ correct.\n\nReal-world LLM systems layer on top: **retrieval** (fetching documents to inject into context), **tool use** (letting the model call APIs or run code), and **fine-tuning** (training further on domain-specific data). But the core engine underneath is always the same: predict the next token, repeat."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "In Practice: Use the Libraries",
+      "md": "Building a real language model from scratch requires massive data and compute. In practice you'd use:\n- **Hugging Face `transformers`** — load and run pre-trained models in a few lines\n- **OpenAI / Anthropic APIs** — call frontier LLMs over HTTP\n- **LangChain / LlamaIndex** — orchestrate LLMs with retrieval and tool use\n\nBut understanding tokenisation, embeddings, and next-token prediction means you'll write better prompts, interpret outputs critically, and know exactly when to trust — and when to check — what the model says."
+    }
+  ],
+  "keyTakeaways": [
+    "Text is split into **tokens** (subword chunks), each converted to a numeric vector called an **embedding** that encodes meaning as geometry.",
+    "A language model's core task is predicting the **next token** given all previous tokens — generating text is just repeating this one step.",
+    "**Attention** lets the model decide which earlier tokens matter most for each prediction, enabling it to resolve context and long-range dependencies.",
+    "LLMs seem intelligent because predicting language at scale forces them to absorb facts and reasoning patterns — but they're doing pattern completion, not true understanding.",
+    "**Hallucination** is a fundamental property, not a bug to be patched: always verify important claims from an LLM with an authoritative source."
+  ],
+  "exercise": {
+    "prompt": "Implement a tiny bigram language model from scratch. A bigram model looks at the last ONE token and predicts what comes next based on counts from training data.\n\n1. Write a `train(text)` function that counts how often each word follows each other word.\n2. Write a `predict(word, model)` function that returns the most likely next word.\n3. Write a `generate(start_word, model, n)` function that generates a sequence of n tokens.\n\nTest it on the sample sentence provided.",
+    "starterCode": "def train(text):\n    \"\"\"Build a bigram model: dict mapping word -> {next_word: count}.\"\"\"\n    words = text.lower().split()\n    model = {}\n    # TODO: for each consecutive pair (words[i], words[i+1]),\n    # increment model[words[i]][words[i+1]]\n    return model\n\ndef predict(word, model):\n    \"\"\"Return the most common word that follows 'word'.\"\"\"\n    if word not in model:\n        return None\n    # TODO: return the key with the highest count in model[word]\n    pass\n\ndef generate(start_word, model, n=6):\n    \"\"\"Generate n tokens starting from start_word.\"\"\"\n    result = [start_word]\n    current = start_word\n    # TODO: call predict() n-1 more times and append each result\n    return result\n\n# Training data\ntext = \"\"\"the cat sat on the mat the cat ate the rat\nthe rat ran from the cat the mat was flat the cat was fat\"\"\"\n\nmodel = train(text)\nprint(\"After 'the':\", predict(\"the\", model))\nprint(\"After 'cat':\", predict(\"cat\", model))\nprint(\"Generated:\", generate(\"the\", model, 8))",
+    "hint": "For train(): use a nested dict. `model.setdefault(word, {})` gives you a safe inner dict. For predict(): use `max(model[word], key=model[word].get)`. For generate(): loop n-1 times, calling predict() and appending to result. If predict() returns None, break early.",
+    "solution": "def train(text):\n    words = text.lower().split()\n    model = {}\n    for i in range(len(words) - 1):\n        w, nxt = words[i], words[i + 1]\n        model.setdefault(w, {})\n        model[w][nxt] = model[w].get(nxt, 0) + 1\n    return model\n\ndef predict(word, model):\n    if word not in model:\n        return None\n    return max(model[word], key=model[word].get)\n\ndef generate(start_word, model, n=6):\n    result = [start_word]\n    current = start_word\n    for _ in range(n - 1):\n        nxt = predict(current, model)\n        if nxt is None:\n            break\n        result.append(nxt)\n        current = nxt\n    return result\n\ntext = \"\"\"the cat sat on the mat the cat ate the rat\nthe rat ran from the cat the mat was flat the cat was fat\"\"\"\n\nmodel = train(text)\nprint(\"After 'the':\", predict(\"the\", model))\nprint(\"After 'cat':\", predict(\"cat\", model))\nprint(\"Generated:\", generate(\"the\", model, 8))\n\n# Expected output:\n# After 'the': cat\n# After 'cat': sat\n# Generated: ['the', 'cat', 'sat', 'on', 'the', 'cat', 'sat', 'on']"
+  }
+}

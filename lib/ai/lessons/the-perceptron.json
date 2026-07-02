@@ -1,0 +1,98 @@
+{
+  "slug": "the-perceptron",
+  "title": "The Perceptron",
+  "category": "Learning Machines",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Build the original artificial neuron from scratch and watch it learn to separate two classes by nudging its weights after every mistake.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In 1958, psychologist Frank Rosenblatt wired together a machine about the size of a room and called it the **Perceptron**. He claimed it could learn. The press went wild — headlines declared that machines would soon think like humans.\n\nThe device was inspired by a biological neuron: it receives signals from many neighbors, adds them up, and fires if the total is strong enough. Rosenblatt asked: what if we could teach a mathematical version of that cell to classify things? His answer became the bedrock of every neural network that followed."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Voting Jury",
+      "md": "Picture a jury deciding guilty (1) or innocent (0). Each juror casts a vote, but not all votes are equal — the forensics expert counts triple, a confused juror barely counts at all. A **bias** juror always nudges the verdict in one direction, shifting the threshold.\n\nThe perceptron works the same way. Inputs are votes. Weights are how much each vote counts. The bias is that opinionated juror. The **step function** is the verdict: if the weighted total crosses zero, output 1; otherwise output 0."
+    },
+    {
+      "type": "heading",
+      "text": "Anatomy of a Perceptron"
+    },
+    {
+      "type": "text",
+      "md": "A perceptron multiplies each input `x` by a **weight** `w`, sums everything up, then adds a **bias** that shifts the threshold independently of the inputs. This total is the **net input**: `net = (x1*w1) + (x2*w2) + ... + bias`. A **step function** converts it to a crisp decision: **1** if `net >= 0`, else **0**.\n\nWeights and bias start as random guesses. Learning means adjusting them until every training example is classified correctly."
+    },
+    {
+      "type": "code",
+      "code": "def predict(inputs, weights, bias):\n    net = sum(x * w for x, w in zip(inputs, weights)) + bias\n    return 1 if net >= 0 else 0\n\n# Two inputs: tumor size and patient age (0=low, 1=high)\nweights = [0.5, 0.5]\nbias = -0.6\nprint(predict([1, 1], weights, bias))  # large + old  -> 1\nprint(predict([0, 0], weights, bias))  # small + young -> 0\nprint(predict([1, 0], weights, bias))  # large + young -> ?",
+      "output": "1\n0\n0",
+      "caption": "The whole perceptron in two functions. The bias shifts the decision boundary — without it the boundary would always pass through the origin."
+    },
+    {
+      "type": "heading",
+      "text": "The Learning Rule: Nudging Weights Toward Correct"
+    },
+    {
+      "type": "text",
+      "md": "After each prediction, if the perceptron was wrong we **nudge** every weight in the direction that would have produced the correct answer. The nudge size is the **learning rate** (`lr`), typically a small number like 0.1.\n\n```\nerror    = actual_label - predicted_label\nw_new    = w_old + lr * error * input_value\nbias_new = bias_old + lr * error\n```\n\n- Error `+1` (predicted 0, should be 1): weights grow, raising the net sum next time.\n- Error `-1` (predicted 1, should be 0): weights shrink.\n- Error `0` (correct): nothing changes.\n\nOne full pass over all examples is an **epoch**. Repeat until zero errors. The **Perceptron Convergence Theorem** guarantees this will eventually succeed — *if* the classes are linearly separable."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef train(data, labels, lr=0.1, epochs=20):\n    random.seed(42)\n    weights = [random.uniform(-0.5, 0.5) for _ in data[0]]\n    bias = random.uniform(-0.5, 0.5)\n    for epoch in range(epochs):\n        errors = 0\n        for inputs, label in zip(data, labels):\n            net  = sum(x * w for x, w in zip(inputs, weights)) + bias\n            pred = 1 if net >= 0 else 0\n            err  = label - pred\n            if err != 0:\n                errors += 1\n                weights = [w + lr * err * x for w, x in zip(weights, inputs)]\n                bias += lr * err\n        if errors == 0:\n            print(f\"Converged at epoch {epoch + 1}!\")\n            break\n    return weights, bias\n\n# AND gate: output 1 only when BOTH inputs are 1\ndata   = [[0,0],[0,1],[1,0],[1,1]]\nlabels = [  0,    0,    0,    1 ]\nw, b = train(data, labels)\nprint(f\"Weights: {[round(x,3) for x in w]}, Bias: {round(b,3)}\")",
+      "output": "Converged at epoch 4!\nWeights: [0.2, 0.2], Bias: -0.3",
+      "caption": "AND is linearly separable, so the perceptron converges in 4 epochs. With two inputs, the learned weights define a straight line that divides the plane — the visualizer on this page shows it rotating into place."
+    },
+    {
+      "type": "heading",
+      "text": "The Famous Failure: XOR"
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef train(data, labels, lr=0.1, epochs=100):\n    random.seed(7)\n    w = [random.uniform(-0.5, 0.5) for _ in data[0]]\n    b = random.uniform(-0.5, 0.5)\n    for epoch in range(epochs):\n        errs = 0\n        for inp, lbl in zip(data, labels):\n            net  = sum(x * wt for x, wt in zip(inp, w)) + b\n            pred = 1 if net >= 0 else 0\n            e    = lbl - pred\n            if e != 0:\n                errs += 1\n                w = [wt + lr * e * x for wt, x in zip(w, inp)]\n                b += lr * e\n        if errs == 0:\n            return w, b, epoch + 1\n    return w, b, None\n\ndata   = [[0,0],[0,1],[1,0],[1,1]]\nlabels = [  0,    1,    1,    0 ]  # XOR: 1 only when inputs differ\nw, b, conv = train(data, labels)\nprint(\"Converged at epoch:\", conv)\nfor inp, lbl in zip(data, labels):\n    net  = sum(x * wt for x, wt in zip(inp, w)) + b\n    pred = 1 if net >= 0 else 0\n    print(f\"  {inp} -> {pred}  (want {lbl})  {'OK' if pred==lbl else 'WRONG'}\")",
+      "output": "Converged at epoch: None\n  [0, 0] -> 0  (want 0)  OK\n  [0, 1] -> 1  (want 1)  OK\n  [1, 0] -> 0  (want 1)  WRONG\n  [1, 1] -> 1  (want 0)  WRONG",
+      "caption": "In 1969, Minsky and Papert proved a single perceptron cannot learn XOR. Plot the four points: the 1s sit in opposite corners — no straight line can separate them from the 0s. XOR is not linearly separable. This triggered an AI winter; the fix was stacking multiple layers (MLPs) trained with backpropagation."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Misconception: More Epochs Will Fix It",
+      "md": "It's tempting to think \"just run more epochs.\" For linearly separable data, the Perceptron Convergence Theorem guarantees that works. But for data that is **not** linearly separable — like XOR — the weights will flip back and forth forever. More epochs do nothing. The architecture must change, not the training time."
+    },
+    {
+      "type": "quiz",
+      "question": "A perceptron is trained on a dataset. After 1000 epochs it still makes mistakes. What is the most likely reason?",
+      "options": [
+        "The learning rate is too high and needs to be lowered to zero.",
+        "The data is not linearly separable — no single straight line can divide the classes.",
+        "The perceptron has too many weights and needs to be simplified.",
+        "The bias term should be removed so the model can converge."
+      ],
+      "answerIndex": 1,
+      "explanation": "The Perceptron Convergence Theorem guarantees convergence if and only if the data is linearly separable. Persistent failure after many epochs means no straight line exists to separate the classes. The solution is a multi-layer network, not tweaking learning rate or removing bias."
+    },
+    {
+      "type": "heading",
+      "text": "From One Neuron to Deep Learning"
+    },
+    {
+      "type": "text",
+      "md": "The perceptron's DNA is in every modern AI system:\n- **Logistic regression** is a perceptron with a smooth sigmoid instead of a hard step.\n- **A neuron in a deep network** is a perceptron — weighted sum plus bias — with a smooth activation like ReLU.\n- **Backpropagation** generalizes the same weight-update idea to many layers using calculus.\n\nIn practice you'd use `sklearn.linear_model.Perceptron` for simple tasks, or stack millions of perceptron-like neurons in PyTorch or TensorFlow. But every time you do, you're standing on Rosenblatt's 1958 idea — a single artificial neuron that learns from its mistakes."
+    }
+  ],
+  "keyTakeaways": [
+    "A perceptron computes a weighted sum of inputs plus a bias, then applies a step function to output 0 or 1.",
+    "The learning rule: when a prediction is wrong, nudge each weight by (learning_rate * error * input) and update the bias the same way.",
+    "Geometrically, a perceptron draws a straight decision boundary; learning rotates and shifts that line to separate two classes.",
+    "The perceptron is guaranteed to converge only when data is linearly separable — it can never solve XOR.",
+    "Modern deep learning stacks perceptron-like neurons and trains them with backpropagation, a generalization of the same core idea."
+  ],
+  "exercise": {
+    "prompt": "Implement the OR gate using the perceptron learning rule.\n\nThe OR gate outputs 1 if at least one input is 1:\n- [0, 0] -> 0\n- [0, 1] -> 1\n- [1, 0] -> 1\n- [1, 1] -> 1\n\nYour tasks:\n1. Start with weights = [0.0, 0.0] and bias = 0.0.\n2. Use a learning rate of 0.1.\n3. Run up to 20 epochs. After each epoch, print the epoch number, current weights (rounded to 2 decimal places), and bias (rounded to 2 decimal places).\n4. Stop early and print 'Converged!' if an epoch ends with zero errors.\n5. After training, print the prediction for each of the four inputs.",
+    "starterCode": "data   = [[0,0],[0,1],[1,0],[1,1]]\nlabels = [  0,    1,    1,    1 ]\n\nweights = [0.0, 0.0]\nbias    = 0.0\nlr      = 0.1\n\nfor epoch in range(20):\n    errors = 0\n    for inputs, label in zip(data, labels):\n        # TODO: compute net input (weighted sum + bias)\n        # TODO: apply step function -> prediction\n        # TODO: compute error = label - prediction\n        # TODO: if error != 0, update weights and bias\n        pass\n    # TODO: print epoch, rounded weights, rounded bias\n    # TODO: if zero errors, print 'Converged!' and break\n\n# TODO: print final prediction for each input",
+    "hint": "net = x1*w1 + x2*w2 + bias. Step: 1 if net >= 0 else 0. Weight update: w = w + lr * error * x. Bias update: bias = bias + lr * error.",
+    "solution": "data   = [[0,0],[0,1],[1,0],[1,1]]\nlabels = [  0,    1,    1,    1 ]\n\nweights = [0.0, 0.0]\nbias    = 0.0\nlr      = 0.1\n\nfor epoch in range(20):\n    errors = 0\n    for inputs, label in zip(data, labels):\n        net  = sum(x * w for x, w in zip(inputs, weights)) + bias\n        pred = 1 if net >= 0 else 0\n        err  = label - pred\n        if err != 0:\n            errors += 1\n            weights = [w + lr * err * x for w, x in zip(weights, inputs)]\n            bias += lr * err\n    print(f\"Epoch {epoch+1}: weights={[round(w,2) for w in weights]}, bias={round(bias,2)}\")\n    if errors == 0:\n        print(\"Converged!\")\n        break\n\nprint(\"\\nFinal predictions:\")\nfor inputs, label in zip(data, labels):\n    net  = sum(x * w for x, w in zip(inputs, weights)) + bias\n    pred = 1 if net >= 0 else 0\n    print(f\"  {inputs} -> {pred}  (expected {label})\")"
+  }
+}

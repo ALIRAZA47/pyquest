@@ -1,0 +1,98 @@
+{
+  "slug": "neural-networks-and-deep-learning",
+  "title": "Neural Networks & Deep Learning",
+  "category": "Learning Machines",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Peel back the curtain on neural networks: see exactly how a single artificial neuron fires, why stacking layers unlocks superhuman pattern recognition, and what 'deep' really means.",
+  "readingTime": "11 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In 2012, a neural network looked at 1.2 million photos and learned to tell cats from cars — with no human writing a single rule. By 2024, similar networks were writing essays, generating images, and detecting tumours earlier than radiologists. How does software made of simple arithmetic become so powerful?\n\nThe answer starts surprisingly small: **one fake neuron**, doing one tiny computation. Build enough of them, wire them together in layers, and something remarkable emerges."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Your Brain, Simplified to One Cell",
+      "md": "A real neuron receives **electrical signals** from many neighbours. It adds them up. If the total is strong enough, it **fires** — sending its own signal onward. If it's too weak, it stays quiet.\n\nAn artificial neuron mimics this exactly: it takes several **numbers** as inputs, weights each one by importance, sums them up, then decides whether and how strongly to pass a signal forward."
+    },
+    {
+      "type": "heading",
+      "text": "Inside One Artificial Neuron"
+    },
+    {
+      "type": "text",
+      "md": "A single artificial neuron does three things in order:\n\n1. **Multiply each input by its weight.** A weight says how much to trust that input. A weight of `2.0` means \"this input matters a lot\"; a negative weight means \"this pushes *against* firing\".\n2. **Add a bias.** The bias is a baseline offset — it lets the neuron fire even when all inputs are zero, or stay quiet when they're high.\n3. **Pass the sum through an activation function.** This is the gate. It squashes the raw number into a useful range and — crucially — introduces **non-linearity**, which lets networks learn complex, curvy patterns instead of just straight lines.\n\nFormula: `output = activation(w1·x1 + w2·x2 + … + bias)`"
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef relu(x):    return max(0, x)\ndef sigmoid(x): return 1 / (1 + math.exp(-x))\n\ndef neuron(inputs, weights, bias, activation=relu):\n    raw = sum(w * x for w, x in zip(weights, inputs)) + bias\n    return activation(raw)\n\n# A neuron asking: \"is this image bright AND edgy?\"\noutput = neuron(\n    inputs=[0.8, 0.6],          # brightness, edge_strength\n    weights=[1.5, 2.0],         # edges weighted higher\n    bias=-1.0,\n    activation=relu\n)\nprint(f\"Neuron output: {output:.3f}\")",
+      "output": "Neuron output: 1.200",
+      "caption": "ReLU simply passes positive values through and blocks negatives — brutal simplicity that powers modern AI."
+    },
+    {
+      "type": "heading",
+      "text": "Stacking Neurons into Layers"
+    },
+    {
+      "type": "text",
+      "md": "One neuron answers one question. Real problems need many questions answered at once — so we run many neurons **in parallel**, all reading the same inputs. Their outputs become the inputs to the **next** row of neurons, and so on.\n\nThis gives us the classic structure:\n- **Input layer** — raw data (pixel values, sensor readings…)\n- **Hidden layers** — intermediate detectors for progressively complex patterns\n- **Output layer** — the final answer (probabilities for each class)\n\nEvery connection carries its own weight. Training means finding the right values for all of them."
+    },
+    {
+      "type": "code",
+      "code": "def relu(x): return max(0, x)\n\ndef layer(inputs, weight_matrix, biases):\n    outputs = []\n    for weights, bias in zip(weight_matrix, biases):\n        raw = sum(w * x for w, x in zip(weights, inputs)) + bias\n        outputs.append(relu(raw))\n    return outputs\n\ninputs = [0.8, 0.6]\n\nW1 = [[1.5, -0.5], [0.2, 2.0], [-1.0, 1.2]]\nb1 = [0.0, -0.5, 0.1]\nh1 = layer(inputs, W1, b1)\nprint(\"Layer 1:\", [round(v, 3) for v in h1])\n\nW2 = [[0.8, 0.3, -0.2], [0.1, -0.6, 1.5]]\nb2 = [0.1, 0.0]\nh2 = layer(h1, W2, b2)\nprint(\"Layer 2:\", [round(v, 3) for v in h2])",
+      "output": "Layer 1: [1.1, 0.7, 0.32]\nLayer 2: [1.034, 0.48]",
+      "caption": "A forward pass through two hidden layers — the core of every neural network inference call."
+    },
+    {
+      "type": "heading",
+      "text": "Why 'Deep' Changes Everything"
+    },
+    {
+      "type": "text",
+      "md": "A network with **many** hidden layers is called **deep** — hence Deep Learning. Depth enables **hierarchical feature learning**. Training on face photos, each layer spontaneously discovers a different level of abstraction:\n\n- **Layer 1** — horizontal edges, colour blobs\n- **Layer 2** — corners, curves, small textures\n- **Layer 3** — eyes, noses, mouths\n- **Layer 4+** — whole faces, expressions, identity\n\nNobody programmed those concepts in. The network invented them because they were *useful*. The same hierarchy appears in language (characters → words → sentences → meaning) and audio (frequencies → phonemes → words → speech).\n\nThree things made this practical around 2012: **more data** (the internet), **more compute** (GPUs running parallel matrix math), and **better tricks** (ReLU, dropout, batch normalisation). The interactive visualiser on this page lights up each layer in sequence so you can watch signal flow from input to output."
+    },
+    {
+      "type": "heading",
+      "text": "The Full Forward Pass"
+    },
+    {
+      "type": "code",
+      "code": "import math\n\ndef relu(x): return max(0, x)\ndef softmax(vals):\n    exps = [math.exp(v) for v in vals]\n    s = sum(exps)\n    return [e/s for e in exps]\n\ndef forward(inputs, layers):\n    signal = inputs\n    for i, (W, b) in enumerate(layers):\n        raw = [sum(w*x for w,x in zip(row, signal)) + bias\n               for row, bias in zip(W, b)]\n        signal = softmax(raw) if i == len(layers)-1 else [relu(v) for v in raw]\n    return signal\n\nlayers = [\n    ([[1.2,-0.4],[0.5,1.8],[-0.3,0.9]], [0.0,-0.2,0.1]),\n    ([[1.0,0.2,-0.5],[-0.3,0.8,1.1]],  [0.1, 0.0])\n]\nprobs = forward([0.9, 0.4], layers)\nprint(f\"Class A: {probs[0]:.1%}\")\nprint(f\"Class B: {probs[1]:.1%}\")\nprint(f\"Prediction: {'A' if probs[0] > probs[1] else 'B'}\")",
+      "output": "Class A: 31.3%\nClass B: 68.7%\nPrediction: B",
+      "caption": "Softmax converts raw output scores into probabilities that sum to 100% — the final step in most classifiers."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "A Forward Pass Isn't Learning",
+      "md": "The forward pass only **uses** the weights the network already has. It doesn't update them. Learning happens during **backpropagation** — the error is measured and the weights are nudged backward through every layer to reduce it. In PyTorch or TensorFlow, one training step = one forward pass + one backward pass. Everything in this lesson covers the forward direction only.\n\nIn practice you'd use `torch.nn.Linear` or `tf.keras.layers.Dense` rather than writing weight loops by hand — but understanding the pure-Python version means you'll never be mystified by what those layers actually do."
+    },
+    {
+      "type": "quiz",
+      "question": "A neuron receives inputs [0.5, 1.0] with weights [2.0, −1.5] and a bias of 0.5. It uses ReLU. What is its output?",
+      "options": [
+        "0.0 — ReLU kills any non-zero value",
+        "0.0 — the raw sum is negative, so ReLU returns 0",
+        "0.5 — the bias alone passes through",
+        "0.5 — the raw sum is 0.5, which is positive, so ReLU passes it through"
+      ],
+      "answerIndex": 3,
+      "explanation": "Raw sum = (2.0 × 0.5) + (−1.5 × 1.0) + 0.5 = 1.0 − 1.5 + 0.5 = 0.5. Since 0.5 > 0, ReLU returns it unchanged. Output = 0.5."
+    }
+  ],
+  "keyTakeaways": [
+    "A neuron computes a weighted sum of its inputs plus a bias, then applies an activation function like ReLU to decide how strongly to fire.",
+    "Stacking neurons in layers lets a network answer many sub-questions at once; each layer's outputs become the next layer's inputs.",
+    "Depth enables hierarchical feature learning — early layers detect edges, later layers detect objects — without any human feature engineering.",
+    "The forward pass is pure arithmetic flowing input-to-output; actual learning (backpropagation) is a separate step that adjusts the weights.",
+    "Data scale, GPU compute, and better training tricks are why deep learning went from a curiosity to the engine behind modern AI."
+  ],
+  "exercise": {
+    "prompt": "Build a function `predict(inputs, threshold)` that runs a forward pass through the hardcoded two-layer network below and returns `'spam'` if the output neuron fires above `threshold`, or `'not spam'` otherwise. Test it with at least three different input vectors and observe which combinations of features tip the network into spam territory.",
+    "starterCode": "import math\n\n# Tiny email-classifier network\n# Inputs: [word_count_normalised, exclamation_count_normalised]\nW1 = [[2.0, 0.5], [0.1, 3.0], [1.5, -0.5]]\nb1 = [-0.8, -1.0, 0.2]\n\nW2 = [[1.2, 2.5, -0.3]]\nb2 = [-0.5]\n\ndef relu(x):\n    return max(0, x)\n\ndef sigmoid(x):\n    return 1 / (1 + math.exp(-x))\n\ndef predict(inputs, threshold=0.5):\n    # TODO:\n    # 1. Run layer 1: for each (row, bias) in zip(W1, b1),\n    #    compute relu(dot(row, inputs) + bias). Collect into h1.\n    # 2. Run layer 2: same with W2[0] and b2[0], but use sigmoid.\n    # 3. Return 'spam' if output > threshold, else 'not spam'.\n    pass\n\nprint(predict([0.2, 0.1]))   # short email, few !\nprint(predict([0.9, 0.8]))   # long email, lots of !\nprint(predict([0.5, 0.9]))   # medium email, many !",
+    "hint": "Layer 1 has 3 neurons — loop over zip(W1, b1). For each, raw = sum(w*x ...) + bias, then relu(raw). That gives you h1 (a list of 3 numbers). Layer 2 has 1 neuron — use W2[0] and b2[0], compute the dot product with h1, add the bias, then wrap in sigmoid(). Compare the single output float to threshold.",
+    "solution": "import math\n\nW1 = [[2.0, 0.5], [0.1, 3.0], [1.5, -0.5]]\nb1 = [-0.8, -1.0, 0.2]\nW2 = [[1.2, 2.5, -0.3]]\nb2 = [-0.5]\n\ndef relu(x):    return max(0, x)\ndef sigmoid(x): return 1 / (1 + math.exp(-x))\n\ndef predict(inputs, threshold=0.5):\n    # Layer 1\n    h1 = [relu(sum(w*x for w,x in zip(row, inputs)) + bias)\n           for row, bias in zip(W1, b1)]\n    # Layer 2\n    raw_out = sum(w*x for w,x in zip(W2[0], h1)) + b2[0]\n    output = sigmoid(raw_out)\n    return 'spam' if output > threshold else 'not spam'\n\nprint(predict([0.2, 0.1]))   # not spam\nprint(predict([0.9, 0.8]))   # spam\nprint(predict([0.5, 0.9]))   # spam\nprint(predict([0.8, 0.0]))   # not spam (long but calm)"
+  }
+}

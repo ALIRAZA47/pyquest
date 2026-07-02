@@ -526,6 +526,44 @@ export const GLYPHS: Record<string, (p: P) => JSX.Element> = {
       <path d="M8.5 8.5 4 12l4.5 3.5M15.5 8.5 20 12l-4.5 3.5M13 5l-2 14" />
     </S>
   ),
+  chart: (p) => (
+    <S {...p}>
+      <path d="M4 4v16h16" />
+      <rect x="7" y="12" width="3" height="5" rx="0.5" />
+      <rect x="11.5" y="8" width="3" height="9" rx="0.5" />
+      <rect x="16" y="5" width="3" height="12" rx="0.5" />
+    </S>
+  ),
+  scatter: (p) => (
+    <S {...p}>
+      <path d="M4 4v16h16" />
+      {dot(8, 15, 1.1)}
+      {dot(11, 11, 1.1)}
+      {dot(10, 16, 1.1)}
+      {dot(15, 9, 1.1)}
+      {dot(17, 12, 1.1)}
+      {dot(14, 14, 1.1)}
+    </S>
+  ),
+  network: (p) => (
+    <S {...p}>
+      <path d="M5 12 12 7M5 12 12 17M12 7 19 12M12 17 19 12" />
+      {dot(5, 12, 1.6)}
+      {dot(12, 7, 1.6)}
+      {dot(12, 17, 1.6)}
+      {dot(19, 12, 1.6)}
+    </S>
+  ),
+  robot: (p) => (
+    <S {...p}>
+      <rect x="5" y="7" width="14" height="12" rx="3" />
+      <path d="M12 4v3M9.5 4.5v.01" />
+      {dot(12, 4, 1)}
+      {dot(9.5, 12.5, 1.3)}
+      {dot(14.5, 12.5, 1.3)}
+      <path d="M9.5 16h5M3.5 11v3M20.5 11v3" />
+    </S>
+  ),
 };
 
 export type GlyphName = keyof typeof GLYPHS;
@@ -555,6 +593,19 @@ export const CATEGORY_ICON: Record<string, string> = {
   "Advanced Python": "cpu",
   "Writing Pythonic Code": "wand",
   "Where To Go Next": "compass",
+  // Machine Learning
+  "ML Foundations": "chart",
+  "Supervised Learning": "target",
+  "Unsupervised Learning": "scatter",
+  "Model Quality": "scale",
+  "Neural Networks": "network",
+  "Putting It Together": "rocket",
+  // Artificial Intelligence
+  "AI Foundations": "robot",
+  "Search & Problem Solving": "compass",
+  "Games & Adversarial Search": "branch",
+  "Learning Machines": "network",
+  "Modern AI": "wand",
 };
 
 export const RANK_ICON: Record<string, string> = {
@@ -651,6 +702,35 @@ export const LESSON_ICON: Record<string, string> = {
   "regular-expressions": "search",
   "popular-libraries": "globe",
   "your-next-steps": "gradcap",
+  // Machine Learning
+  "what-is-ml": "chart",
+  "types-of-ml": "layers",
+  "data-and-features": "hash",
+  "linear-regression": "scatter",
+  "gradient-descent": "chart",
+  "logistic-regression": "toggle",
+  "k-nearest-neighbors": "scatter",
+  "decision-trees": "branch",
+  "k-means-clustering": "scatter",
+  "overfitting-underfitting": "scale",
+  "evaluating-models": "target",
+  "neural-networks-basics": "network",
+  "ml-in-practice": "rocket",
+  // Artificial Intelligence
+  "what-is-ai": "robot",
+  "intelligent-agents": "robot",
+  "history-of-ai": "book",
+  "problem-solving-as-search": "search",
+  "bfs-and-dfs": "branch",
+  "a-star-search": "compass",
+  minimax: "branch",
+  "alpha-beta-pruning": "scissors",
+  "neural-networks-and-deep-learning": "network",
+  "the-perceptron": "network",
+  "how-networks-learn": "chart",
+  "nlp-and-llms": "comment",
+  "computer-vision": "target",
+  "ai-ethics-and-future": "shield",
 };
 
 export function categoryGlyph(name: string): string {

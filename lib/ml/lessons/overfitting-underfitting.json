@@ -1,0 +1,98 @@
+{
+  "slug": "overfitting-underfitting",
+  "title": "Overfitting & Underfitting",
+  "category": "Model Quality",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Discover why a model that aces its practice tests can still fail the real exam — and how to find the sweet spot that actually generalizes.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Picture a student cramming for a history exam. One student barely studied — they only remember \"wars happen and things change\", so they get nearly everything wrong (**underfitting**). Another memorized every question from last year's practice paper, word for word. They ace the practice test, but the real exam asks things slightly differently and they're lost (**overfitting**). The best student learned the *actual patterns* — causes, key players, consequences — and can answer questions they've never seen before. That's the goal of every machine learning model: **generalization**."
+    },
+    {
+      "type": "heading",
+      "text": "Two Ways a Model Can Fail"
+    },
+    {
+      "type": "text",
+      "md": "When we train a model, we want it to learn the *underlying pattern* — not just the specific examples it was shown. There are two opposite failure modes:\n\n- **Underfitting (high bias)** — the model is too simple. It misses real patterns that exist in the data. Think of describing a curvy mountain road using only a perfectly straight line. No matter how much data you give it, a too-simple model can't represent the real structure.\n- **Overfitting (high variance)** — the model is too complex. It learns the training data *too well*, including all the random noise and quirks that won't appear again in new data. Change a few training points and the model changes dramatically.\n\nBoth failures hurt real-world usefulness. The sweet spot in between — **low bias and low variance** — is called **good generalization**. The tension between these goals is the **bias-variance tradeoff**, one of the most fundamental ideas in machine learning."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Tailor Analogy",
+      "md": "An **underfitter** makes one coat in a single \"medium\" size — it fits nobody well. An **overfitter** measures every wrinkle on one specific customer and makes a coat that fits only that person perfectly. A **good tailor** captures the handful of measurements that matter for any customer — shoulders, chest, waist, length. Not too few, not too many."
+    },
+    {
+      "type": "heading",
+      "text": "The Training Error vs. Test Error Curve"
+    },
+    {
+      "type": "text",
+      "md": "Here is the most important chart in all of model evaluation. As model **complexity increases**:\n\n- **Training error** always goes down. A complex enough model can memorize anything.\n- **Test error** (data the model never saw) follows a **U-shape**: starts high (underfitting), drops to a sweet spot, then rises again (overfitting).\n\nThe gap between training error and test error is the **generalization gap**. When that gap is large, your model has memorized rather than learned."
+    },
+    {
+      "type": "code",
+      "code": "# Simulating the classic training vs. test error pattern\ncomplexity = [1,   2,    3,    4,    5,    6,    7,    8]\ntrain_err  = [4.8, 1.2,  0.6,  0.3,  0.15, 0.08, 0.04, 0.01]\ntest_err   = [5.1, 1.4,  1.0,  1.1,  1.3,  1.8,  2.5,  4.2]\n\nprint(f\"{'Complexity':<12} {'Train Err':<12} {'Test Err':<12} {'Gap':<10} {'Status'}\")\nprint(\"-\" * 60)\nfor c, tr, te in zip(complexity, train_err, test_err):\n    gap = te - tr\n    if c <= 2:\n        status = \"Underfitting\"\n    elif 2 < c <= 4:\n        status = \"Sweet spot!\"\n    else:\n        status = \"Overfitting\"\n    print(f\"{c:<12} {tr:<12.2f} {te:<12.2f} {gap:<10.2f} {status}\")\n",
+      "output": "Complexity   Train Err    Test Err     Gap        Status\n------------------------------------------------------------\n1            4.80         5.10         0.30       Underfitting\n2            1.20         1.40         0.20       Underfitting\n3            0.60         1.00         0.40       Sweet spot!\n4            0.30         1.10         0.80       Sweet spot!\n5            0.15         1.30         1.15       Overfitting\n6            0.08         1.80         1.72       Overfitting\n7            0.04         2.50         2.46       Overfitting\n8            0.01         4.20         4.19       Overfitting",
+      "caption": "Training error keeps falling as complexity grows. Test error has a sweet spot around complexity 3-4, then rises as the model starts memorizing noise."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "A Perfect Training Score Is a Red Flag",
+      "md": "If your model scores **100% on training data**, do not celebrate — be suspicious. Real data always has noise. A model that fits it perfectly has fit the *noise*, not the *signal*. The honest score is always on data the model has never seen. Training accuracy alone tells you almost nothing."
+    },
+    {
+      "type": "heading",
+      "text": "How to Fix Each Problem"
+    },
+    {
+      "type": "text",
+      "md": "**Fighting underfitting (model too simple):**\n- Use a more expressive model (deeper tree, higher polynomial degree, neural network)\n- Engineer better or more informative features\n- Train longer if the algorithm is iterative\n\n**Fighting overfitting (model too complex):**\n- **Get more training data** — the single most effective fix; more data makes noise harder to memorize\n- **Simplify the model** — fewer parameters, shallower tree, lower polynomial degree\n- **Regularization** — add a penalty to the loss function for large model weights (L1 / L2), discouraging wildly complex behavior\n- **Cross-validation** — rotate which held-out chunk is the test set and average the scores for a more reliable picture of true performance\n- **Dropout** (neural networks) — randomly disable neurons during training so no single path gets over-relied on"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Cross-Validation in One Line",
+      "md": "Instead of one fixed train/test split, **k-fold cross-validation** divides your data into k chunks (say 5), trains on 4 and tests on the remaining 1, repeats 5 times, and averages the scores. In scikit-learn: `cross_val_score(model, X, y, cv=5)`. The averaged score is far more trustworthy than any single split because it tests the model against every part of your data."
+    },
+    {
+      "type": "heading",
+      "text": "Seeing It in Code: An Honest Train/Test Split"
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef train_test_split(data, test_fraction=0.2, seed=42):\n    random.seed(seed)\n    shuffled = data[:]\n    random.shuffle(shuffled)\n    split = int(len(shuffled) * (1 - test_fraction))\n    return shuffled[:split], shuffled[split:]\n\ndef mean_squared_error(actuals, preds):\n    return sum((a - p)**2 for a, p in zip(actuals, preds)) / len(actuals)\n\n# Noisy quadratic data — true pattern is y = x^2\nrandom.seed(7)\ndataset = [(x, x**2 + random.gauss(0, 4)) for x in range(1, 25)]\ntrain, test = train_test_split(dataset, test_fraction=0.25)\n\n# Most underfit model: predict the training mean for everyone\nmean_y = sum(y for _, y in train) / len(train)\ntrain_mse = mean_squared_error([y for _, y in train], [mean_y]*len(train))\ntest_mse  = mean_squared_error([y for _, y in test],  [mean_y]*len(test))\n\nprint(f\"Training points: {len(train)}, Test points: {len(test)}\")\nprint(f\"Constant-prediction train MSE: {train_mse:.1f}\")\nprint(f\"Constant-prediction test  MSE: {test_mse:.1f}\")\nprint(f\"Generalization gap:            {test_mse - train_mse:.1f}\")\n",
+      "output": "Training points: 18, Test points: 6\nConstant-prediction train MSE: 30543.4\nConstant-prediction test  MSE: 35184.6\nGeneralization gap:            4641.2",
+      "caption": "A constant prediction is maximally underfit — both errors are high. Even here a gap exists, and that gap grows dramatically when a complex model memorizes noise."
+    },
+    {
+      "type": "quiz",
+      "question": "A model scores 97% accuracy on training data but only 59% on test data. What is most likely happening, and what is the best first fix to try?",
+      "options": [
+        "Underfitting — the model needs more complexity or features",
+        "Overfitting — try getting more training data or simplifying the model",
+        "The model is performing well — 97% accuracy is excellent",
+        "The test set must be corrupted or mislabeled"
+      ],
+      "answerIndex": 1,
+      "explanation": "A large gap (97% train vs 59% test) is the hallmark of overfitting — the model memorized training noise rather than learning a generalizable pattern. The best first fixes are: more training data (hardest for a model to memorize when there's lots of it), a simpler model, or regularization. Underfitting would show both train and test accuracy being low, with a small gap between them."
+    }
+  ],
+  "keyTakeaways": [
+    "Underfitting (high bias) means the model is too simple — it misses real patterns even in training data.",
+    "Overfitting (high variance) means the model memorized training noise — it fails on new data despite a high training score.",
+    "The generalization gap (test error minus training error) is your most honest signal: a large gap means overfitting.",
+    "More data, simpler models, and regularization are the primary tools for fighting overfitting.",
+    "Always evaluate on held-out data the model never saw during training — training accuracy alone tells you almost nothing."
+  ],
+  "exercise": {
+    "prompt": "Implement two model functions and an evaluation harness. Write `fit_constant(train)` that returns the mean y of the training set (the most underfit model possible). Write `fit_linear(train)` that fits y = a*x + b using the least-squares formula. Write `evaluate(dataset, model_fn, label)` that splits 80/20, fits the model on train, predicts on both train and test, and prints train MSE, test MSE, and the gap. Run both models on a dataset where y = 2*x + 3 + noise and observe how the linear model dramatically reduces both errors and the gap.",
+    "starterCode": "import random\nrandom.seed(42)\n\n# True relationship: y = 2x + 3, with noise\ndataset = [(x, 2*x + 3 + random.gauss(0, 2)) for x in range(1, 31)]\n\ndef mean_squared_error(actuals, predictions):\n    # Return average squared difference\n    pass\n\ndef fit_constant(train):\n    # Return the mean y as the constant prediction\n    pass\n\ndef fit_linear(train):\n    # Least squares: a = (n*sum(xy) - sum_x*sum_y) / (n*sum_xx - sum_x^2)\n    #                b = (sum_y - a*sum_x) / n\n    # Return (a, b)\n    pass\n\ndef evaluate(dataset, model_fn, label):\n    split = int(len(dataset) * 0.8)\n    train, test = dataset[:split], dataset[split:]\n    # Fit, predict, compute MSEs, print results\n    pass\n\nevaluate(dataset, fit_constant, \"Constant model (underfit)\")\nevaluate(dataset, fit_linear,   \"Linear model   (good fit)\")\n",
+    "hint": "For fit_constant: return sum(y for _, y in train) / len(train). For fit_linear: collect n, sum_x, sum_y, sum_xy, sum_xx from the train list, then apply the formula in the comment. In evaluate, check if params is a tuple to decide whether to use a*x+b or just the constant.",
+    "solution": "import random\nrandom.seed(42)\n\ndataset = [(x, 2*x + 3 + random.gauss(0, 2)) for x in range(1, 31)]\n\ndef mean_squared_error(actuals, predictions):\n    return sum((a - p)**2 for a, p in zip(actuals, predictions)) / len(actuals)\n\ndef fit_constant(train):\n    return sum(y for _, y in train) / len(train)\n\ndef fit_linear(train):\n    n = len(train)\n    sum_x  = sum(x for x, _ in train)\n    sum_y  = sum(y for _, y in train)\n    sum_xy = sum(x * y for x, y in train)\n    sum_xx = sum(x * x for x, _ in train)\n    a = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x ** 2)\n    b = (sum_y - a * sum_x) / n\n    return (a, b)\n\ndef evaluate(dataset, model_fn, label):\n    split = int(len(dataset) * 0.8)\n    train, test = dataset[:split], dataset[split:]\n    params = model_fn(train)\n    if isinstance(params, tuple):\n        a, b = params\n        predict = lambda x: a * x + b\n    else:\n        predict = lambda x: params\n    train_mse = mean_squared_error(\n        [y for _, y in train], [predict(x) for x, _ in train]\n    )\n    test_mse = mean_squared_error(\n        [y for _, y in test], [predict(x) for x, _ in test]\n    )\n    print(f\"{label}:\")\n    print(f\"  Train MSE: {train_mse:.2f}\")\n    print(f\"  Test  MSE: {test_mse:.2f}\")\n    print(f\"  Gap:       {test_mse - train_mse:.2f}\")\n    print()\n\nevaluate(dataset, fit_constant, \"Constant model (underfit)\")\nevaluate(dataset, fit_linear,   \"Linear model   (good fit)\")\n"
+  }
+}

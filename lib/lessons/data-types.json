@@ -177,7 +177,7 @@
   ],
   "exercise": {
     "prompt": "Create one variable for each of the following types: int, float, str, bool, list, and dict. Then print the type of each variable using type(). Try to pick values that mean something to you — your age, a favourite food, etc.",
-    "starterCode": "# Create your variables here\nage = \nheight = \nname = \nis_student = \nhobbies = \nprofile = \n\n# Now print the type of each one\n",
+    "starterCode": "# Create your variables here\nage = 0  # TODO: replace with an int (whole number, e.g. your age)\nheight = 0.0  # TODO: replace with a float (decimal number, e.g. your height)\nname = \"\"  # TODO: replace with a str (text in quotes, e.g. your name)\nis_student = False  # TODO: replace with a bool (True or False)\nhobbies = []  # TODO: replace with a list (e.g. [\"reading\", \"gaming\"])\nprofile = {}  # TODO: replace with a dict (e.g. {\"city\": \"London\"})\n\n# Now print the type of each one\nprint(type(age))\nprint(type(height))\nprint(type(name))\nprint(type(is_student))\nprint(type(hobbies))\nprint(type(profile))\n",
     "hint": "Remember: ints have no decimal, floats do. Strings need quotes. Bool is True or False. Lists use [], dicts use {} with colons.",
     "solution": "age = 25\nheight = 5.9\nname = \"Jordan\"\nis_student = True\nhobbies = [\"reading\", \"cycling\", \"cooking\"]\nprofile = {\"city\": \"London\", \"language\": \"Python\"}\n\nprint(type(age))\nprint(type(height))\nprint(type(name))\nprint(type(is_student))\nprint(type(hobbies))\nprint(type(profile))"
   }

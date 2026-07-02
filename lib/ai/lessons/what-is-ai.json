@@ -1,0 +1,92 @@
+{
+  "slug": "what-is-ai",
+  "title": "What is Artificial Intelligence?",
+  "category": "AI Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover what AI really means, how it differs from plain programming, and where Machine Learning and Deep Learning fit in.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Your phone unlocks when it sees your face. A spam filter quietly moves junk mail out of your inbox. A navigation app reroutes you around traffic in real time. None of these were programmed with an exhaustive list of rules — instead, they **learned** from examples, adapted, and made decisions on their own. That's Artificial Intelligence at work.\n\n**Artificial Intelligence** is a broad term for getting computers to do things that normally require human-level thinking: recognising objects, understanding language, making decisions, and learning from experience."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Recipe vs. the Chef",
+      "md": "Traditional programming is like handing someone a **recipe**: follow these exact steps in this exact order. AI is more like training a **chef**: show them thousands of dishes, let them experiment, and eventually they develop intuition — they can improvise a new dish even if they've never seen that exact combination of ingredients before."
+    },
+    {
+      "type": "heading",
+      "text": "Two Big Approaches to AI"
+    },
+    {
+      "type": "text",
+      "md": "Researchers have tried two very different strategies:\n\n- **Symbolic / Rule-based AI** — Experts write explicit rules: `if email contains \"win a prize\" then mark as spam`. Works well in narrow, well-defined domains but breaks down when the real world is messy and full of exceptions.\n- **Learning-from-data AI** — Feed the system thousands of labelled examples and let it *discover* the patterns itself. This is **Machine Learning**, and it powers almost everything exciting in AI today.\n\nThe code below shows why rule-based systems are fragile:"
+    },
+    {
+      "type": "code",
+      "code": "def is_spam_rules(email):\n    bad = [\"win a prize\", \"click here now\", \"free money\"]\n    return any(phrase in email.lower() for phrase in bad)\n\nprint(is_spam_rules(\"You've won a prize!\"))   # True\nprint(is_spam_rules(\"Meeting at 3pm today\"))  # False\nprint(is_spam_rules(\"Y0u've w0n a pr1ze!\"))   # False -- oops!",
+      "output": "True\nFalse\nFalse",
+      "caption": "Change one letter and the rule-based filter is fooled. A learning system would catch the pattern."
+    },
+    {
+      "type": "heading",
+      "text": "AI, Machine Learning, and Deep Learning — How They Nest"
+    },
+    {
+      "type": "text",
+      "md": "These three terms get mixed up constantly. Think of them as **nested circles**:\n\n- **AI** — the broadest goal: making machines act intelligently.\n- **Machine Learning (ML)** — a specific method inside AI: algorithms that improve by learning from data, without being explicitly told the rules.\n- **Deep Learning (DL)** — a specific kind of ML using large neural networks with many layers (\"deep\" refers to those layers).\n\nAll Deep Learning is ML. All ML is AI. But not all AI is ML, and not all ML is Deep Learning."
+    },
+    {
+      "type": "heading",
+      "text": "Narrow AI vs. General AI — and How Learning Works"
+    },
+    {
+      "type": "text",
+      "md": "Every AI system that exists today is **Narrow AI** — extremely good at *one specific task*, helpless outside it. The image classifier that beats doctors at spotting tumours cannot play chess. **General AI (AGI)** — a machine that reasons across *any* domain like a human — does not yet exist.\n\nNarrow AI routinely outperforms humans within its specialty (AlphaFold cracked a 50-year biology puzzle), but it works by finding statistical patterns, not true understanding. A learning algorithm does this in three steps:\n1. **Look at labelled examples** — input → correct answer pairs.\n2. **Predict, then measure the error** — how wrong was the guess?\n3. **Adjust internal \"weights\" to reduce the error** — repeat thousands of times.\n\nThe snippet below learns the Celsius-to-Fahrenheit formula purely from data — no formula given:"
+    },
+    {
+      "type": "code",
+      "code": "data = [(0, 32), (100, 212), (25, 77), (37, 98.6)]\nweight, bias = 1.0, 0.0   # bad initial guesses\nlr = 0.0001               # adjustment step size\n\nfor _ in range(5000):\n    for c, f in data:\n        err = (weight * c + bias) - f\n        weight -= lr * err * c\n        bias   -= lr * err\n\nprint(f\"Learned weight: {weight:.4f}  (true: 1.8)\")\nprint(f\"Learned bias:   {bias:.4f}  (true: 32.0)\")\nprint(f\"Predict 100C -> {weight*100+bias:.1f}F\")",
+      "output": "Learned weight: 1.8000  (true: 1.8)\nLearned bias:   32.0000  (true: 32.0)\nPredict 100C -> 212.0F",
+      "caption": "Four data points, 5000 tiny adjustments, and it figured out the formula by itself."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "AI Is Not Magic — and Not Always Right",
+      "md": "A common misconception is that AI \"understands\" things the way humans do. It doesn't. It finds **statistical patterns** in training data. If the data is biased, the AI will be biased. If you ask it something far outside what it was trained on, it can fail badly — and often *confidently*. AI is a powerful tool, not an oracle."
+    },
+    {
+      "type": "quiz",
+      "question": "A company builds an AI that diagnoses skin cancer from photos with 95% accuracy, but it cannot answer any other kind of question. Which term best describes this system?",
+      "options": [
+        "General AI (AGI), because it outperforms most humans at this task",
+        "Narrow AI, because it excels at one specific task but cannot generalise beyond it",
+        "Deep Learning, because all medical AI uses neural networks",
+        "Symbolic AI, because it follows expert-written rules"
+      ],
+      "answerIndex": 1,
+      "explanation": "This is a textbook example of Narrow AI — highly capable within one domain (skin cancer diagnosis from images) but completely unable to do anything outside that task. 'General AI' would mean reasoning across any domain, which this system cannot do. Whether it uses deep learning or symbolic rules is a separate question about *how* it works, not *what kind* of AI it is."
+    },
+    {
+      "type": "text",
+      "md": "AI is already woven into your daily life: spam filters, recommendation engines, voice assistants, navigation apps, face unlock, autocomplete. Each uses a different flavour of AI, all narrowly specialised for one job. In the lessons ahead you'll zoom in on the details — how models actually train, what a neural network really looks like inside, and how to stop a model from just memorising instead of truly learning."
+    }
+  ],
+  "keyTakeaways": [
+    "AI means getting computers to handle tasks that normally need human-level reasoning — perceiving, deciding, and learning.",
+    "Narrow AI (today's reality) is brilliant at one specific job but helpless outside it; General AI (human-level flexibility) does not yet exist.",
+    "AI, Machine Learning, and Deep Learning are nested circles — DL is a subset of ML, which is a subset of AI. They are not synonyms.",
+    "The rule-based approach writes logic by hand; the learning-from-data approach lets algorithms discover patterns in examples automatically.",
+    "AI finds statistical patterns — it does not truly 'understand', and biased or out-of-distribution data can make it fail badly."
+  ],
+  "exercise": {
+    "prompt": "Write two classifier functions. First, `can_fly_rules(animal)`: a rule-based classifier that returns `True` or `False` by looking up the animal name in a dictionary you define. Second, `simple_ml_classify(features)`: a feature-based classifier that takes a list `[has_wings, is_light]` (each 0 or 1) and returns `True` only when **all** features are 1. Test both on at least two animals and two feature lists.",
+    "starterCode": "# 1. Rule-based classifier\ndef can_fly_rules(animal):\n    known = {}  # fill this in!\n    return known.get(animal.lower(), False)\n\n# 2. Feature-based classifier\ndef simple_ml_classify(features):\n    # Return True only if every feature equals 1\n    pass\n\n# Test your functions\nprint(can_fly_rules(\"eagle\"))        # should be True\nprint(can_fly_rules(\"dog\"))          # should be False\nprint(simple_ml_classify([1, 1]))    # should be True\nprint(simple_ml_classify([1, 0]))    # should be False",
+    "hint": "For can_fly_rules, store animals in a dict like {\"eagle\": True, \"dog\": False}. For simple_ml_classify, use Python's built-in all() function: all(f == 1 for f in features).",
+    "solution": "# 1. Rule-based classifier\ndef can_fly_rules(animal):\n    known = {\n        \"eagle\": True,\n        \"sparrow\": True,\n        \"bat\": True,\n        \"dog\": False,\n        \"cat\": False,\n        \"penguin\": False,\n    }\n    return known.get(animal.lower(), False)\n\n# 2. Feature-based classifier\ndef simple_ml_classify(features):\n    return all(f == 1 for f in features)\n\nprint(can_fly_rules(\"eagle\"))         # True\nprint(can_fly_rules(\"dog\"))           # False\nprint(can_fly_rules(\"unicorn\"))       # False (unknown -> default)\nprint(simple_ml_classify([1, 1]))     # True\nprint(simple_ml_classify([1, 0]))     # False\nprint(simple_ml_classify([0, 1]))     # False"
+  }
+}

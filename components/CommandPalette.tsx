@@ -48,7 +48,10 @@ export function CommandPalette() {
 
   const actions: Item[] = useMemo(
     () => [
-      { kind: "action", label: "Course dashboard", icon: "compass", run: () => go("/learn") },
+      { kind: "action", label: "All courses", sublabel: "Python · ML · AI", icon: "compass", run: () => go("/") },
+      { kind: "action", label: "Python 101", icon: "snake", run: () => go("/learn") },
+      { kind: "action", label: "Machine Learning", sublabel: "Animated algorithms", icon: "chart", run: () => go("/ml") },
+      { kind: "action", label: "Artificial Intelligence", sublabel: "Search, games & neural nets", icon: "robot", run: () => go("/ai") },
       { kind: "action", label: "Playground", sublabel: "Run Python live", icon: "flask", run: () => go("/learn/playground") },
       { kind: "action", label: "Practice", sublabel: "Review past lessons", icon: "loop", run: () => go("/learn/review") },
       { kind: "action", label: "Projects", sublabel: "Capstone builds", icon: "puzzle", run: () => go("/learn/projects") },
@@ -72,9 +75,9 @@ export function CommandPalette() {
     const results = searchLessons(query, 8).map<Item>((r) => ({
       kind: "lesson",
       label: r.title,
-      sublabel: r.snippet || r.summary,
+      sublabel: `${r.courseName} · ${r.snippet || r.summary}`,
       icon: lessonGlyph(r.slug),
-      run: () => go(`/learn/${r.slug}`),
+      run: () => go(`${r.base}/${r.slug}`),
     }));
     // also allow matching an action by label
     const q = query.toLowerCase();

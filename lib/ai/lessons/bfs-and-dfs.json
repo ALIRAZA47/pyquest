@@ -1,0 +1,100 @@
+{
+  "slug": "bfs-and-dfs",
+  "title": "Breadth-First & Depth-First Search",
+  "category": "Search & Problem Solving",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how BFS and DFS explore graphs step by step, why one finds the shortest path and the other uses barely any memory, and build both from scratch in pure Python.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're lost in a maze. One strategy: explore every corridor one step at a time, fanning outward like ripples in a pond. Another: pick a corridor and charge down it as far as it goes before trying anything else. These two instincts — **spread wide** vs. **dive deep** — are exactly what **Breadth-First Search (BFS)** and **Depth-First Search (DFS)** do. They power Google Maps routing, social-network friend suggestions, game AI, and web crawlers.\n\nBoth algorithms operate on a **graph** — nodes (places) connected by edges (paths between them). In Python, a graph is just a dictionary where each key maps to a list of neighbours. The goal: start at one node, find all others (or a specific target). The difference between BFS and DFS is entirely in **which node you visit next**."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Queue vs. a Stack of Books",
+      "md": "Both algorithms share the same skeleton: a **frontier** (nodes you plan to visit), a **visited set** (nodes already seen), and a **loop**. The loop pulls one node off the frontier, processes it, and adds its unvisited neighbours.\n\n**BFS uses a queue (FIFO).** Like a checkout line: the person who arrived first leaves first. You always process the *oldest* task — finishing every node at distance 1 before moving to distance 2. A perfect ripple.\n\n**DFS uses a stack (LIFO).** Like a pile of books: you grab the *top* one. The newest task is processed immediately, dragging you deeper and deeper down one branch before you ever backtrack."
+    },
+    {
+      "type": "heading",
+      "text": "BFS: Rippling Outward"
+    },
+    {
+      "type": "code",
+      "code": "from collections import deque\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [], 'E': [], 'F': []\n}\n\ndef bfs(graph, start):\n    visited = set([start])\n    queue = deque([start])  # FIFO: oldest node dequeued first\n    order = []\n    while queue:\n        node = queue.popleft()\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                visited.add(nb)\n                queue.append(nb)\n    return order\n\nprint(bfs(graph, 'A'))",
+      "output": "['A', 'B', 'C', 'D', 'E', 'F']",
+      "caption": "BFS visits A first, then B and C (distance 1), then D, E, F (distance 2) — level by level. The interactive visualiser on this page shows the frontier expanding as a growing ring."
+    },
+    {
+      "type": "heading",
+      "text": "DFS: Diving Deep"
+    },
+    {
+      "type": "code",
+      "code": "graph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [], 'E': [], 'F': []\n}\n\ndef dfs(graph, start):\n    visited = set([start])\n    stack = [start]       # LIFO: newest node popped first\n    order = []\n    while stack:\n        node = stack.pop()\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                visited.add(nb)\n                stack.append(nb)\n    return order\n\nprint(dfs(graph, 'A'))",
+      "output": "['A', 'C', 'F', 'B', 'E', 'D']",
+      "caption": "One change — swap popleft() for pop() and deque for a plain list — transforms BFS into DFS. Now it plunges down the C branch (C → F) completely before backtracking to B."
+    },
+    {
+      "type": "text",
+      "md": "**BFS finds the shortest path.** Because BFS finishes every node at distance *k* before moving to *k+1*, the **first time** it reaches a target it has taken the fewest possible steps. Track this with a `parent` dictionary that records how you arrived at each node. When the goal is found, walk backwards through `parent` to reconstruct the full path. In a **weighted** graph (edges with different costs) you'd use Dijkstra's algorithm instead — but for unweighted graphs, BFS gives you the shortest path for free."
+    },
+    {
+      "type": "code",
+      "code": "from collections import deque\n\ngraph = {\n    'A': ['B', 'C'], 'B': ['D', 'E'],\n    'C': ['F'],      'D': [], 'E': [], 'F': []\n}\n\ndef bfs_path(graph, start, goal):\n    parent = {start: None}\n    queue = deque([start])\n    while queue:\n        node = queue.popleft()\n        if node == goal:\n            path, n = [], goal\n            while n is not None:\n                path.append(n)\n                n = parent[n]\n            return list(reversed(path))\n        for nb in graph[node]:\n            if nb not in parent:\n                parent[nb] = node\n                queue.append(nb)\n    return None\n\nprint(bfs_path(graph, 'A', 'F'))",
+      "output": "['A', 'C', 'F']",
+      "caption": "The parent dictionary lets us reconstruct the shortest path by walking backwards from the goal to the start."
+    },
+    {
+      "type": "heading",
+      "text": "Trade-offs: When to Use Which"
+    },
+    {
+      "type": "text",
+      "md": "| | BFS | DFS |\n|---|---|---|\n| **Frontier** | Queue (FIFO) | Stack (LIFO) |\n| **Explores** | Level by level | Deep branch first |\n| **Shortest path?** | Yes (unweighted) | Not guaranteed |\n| **Memory use** | High — holds whole frontier | Low — only current path |\n| **Best for** | Shortest-path, guaranteed answer | Cycle detection, topological sort, deep mazes |\n\n**BFS** is *complete* (always finds a solution if one exists) and *optimal* (shortest path first), but the frontier can balloon in wide graphs — in a social network, millions of people sit just 1 hop away. **DFS** is memory-lean since it only keeps the path to the current node, but it can chase a very long wrong branch and never guarantees the optimal solution."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always track visited nodes!",
+      "md": "Forgetting the `visited` set is the most common BFS/DFS bug. In a graph with cycles (A → B → A → B → ...) you'll loop forever. Both algorithms need the visited set to ensure each node is processed at most once. Build the habit even when you think your graph is a tree — cycle protection costs almost nothing."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Real libraries in production",
+      "md": "In production code, **NetworkX** (`pip install networkx`) provides `nx.bfs_edges()`, `nx.dfs_edges()`, and `nx.shortest_path()`. Building from scratch here reveals the mechanics — in real projects, reach for the library."
+    },
+    {
+      "type": "quiz",
+      "question": "You're building a 'six degrees of separation' feature that finds the shortest friendship chain between two users. Which algorithm should you use, and why?",
+      "options": [
+        "DFS, because it's memory-efficient and will eventually find the path",
+        "BFS, because it explores level by level and guarantees the fewest hops",
+        "Either — they both find shortest paths in unweighted graphs",
+        "DFS, because it reaches deep nodes faster"
+      ],
+      "answerIndex": 1,
+      "explanation": "BFS guarantees the shortest path in an unweighted graph because it exhausts all nodes at distance k before visiting any at k+1. The first time BFS touches the target user it has taken the minimum number of friendship hops. DFS does NOT guarantee shortest paths — it might find a 5-hop chain when a 2-hop one exists, because it dives deep before exploring nearby options."
+    },
+    {
+      "type": "text",
+      "md": "You now have the full picture. Both BFS and DFS use a frontier, a visited set, and a loop. **Swap a queue for a stack** and you transform the entire search strategy — from ripple to dive. This one-data-structure insight reappears in AI planning, compiler design, game-tree search, and network analysis. Master these two algorithms and you've built the foundation for nearly every path-finding and exploration problem you'll encounter."
+    }
+  ],
+  "keyTakeaways": [
+    "BFS uses a queue (FIFO) to explore level by level, guaranteeing the shortest path in an unweighted graph.",
+    "DFS uses a stack (LIFO) to dive deep first — memory-efficient but does not guarantee the shortest path.",
+    "Both algorithms share the same skeleton: a frontier, a visited set, and a loop. The only difference is the data structure.",
+    "Always maintain a visited set to prevent infinite loops in graphs with cycles.",
+    "Use BFS when you need the shortest path; use DFS when memory is tight or you need to explore deep structure."
+  ],
+  "exercise": {
+    "prompt": "A dungeon is represented as a dictionary where each room name maps to a list of adjacent rooms. Write a function `find_exit(dungeon, start, exit_room)` that uses BFS to find the shortest path from `start` to `exit_room`. Return the path as a list of room names, or an empty list if no path exists.\n\nExpected outputs:\n- `find_exit(dungeon, 'Entrance', 'Exit')` → `['Entrance', 'Hall', 'Garden', 'Exit']`\n- `find_exit(dungeon, 'Entrance', 'Treasure')` → `['Entrance', 'Hall', 'Armory', 'Treasure']`\n- `find_exit(dungeon, 'Crypt', 'Exit')` → `['Crypt', 'Entrance', 'Hall', 'Garden', 'Exit']`",
+    "starterCode": "from collections import deque\n\ndef find_exit(dungeon, start, exit_room):\n    # Your BFS here!\n    # Hint: use a parent dict to reconstruct the path\n    pass\n\ndungeon = {\n    'Entrance': ['Hall', 'Crypt'],\n    'Hall':     ['Entrance', 'Armory', 'Garden'],\n    'Crypt':    ['Entrance'],\n    'Armory':   ['Hall', 'Treasure'],\n    'Garden':   ['Hall', 'Exit'],\n    'Treasure': ['Armory'],\n    'Exit':     ['Garden']\n}\n\nprint(find_exit(dungeon, 'Entrance', 'Exit'))\nprint(find_exit(dungeon, 'Entrance', 'Treasure'))\nprint(find_exit(dungeon, 'Crypt', 'Exit'))",
+    "hint": "Use a dictionary called `parent` that maps each node to the node you came from. Start with `parent = {start: None}`. When you reach `exit_room`, walk back through `parent` to build the path, then reverse it.",
+    "solution": "from collections import deque\n\ndef find_exit(dungeon, start, exit_room):\n    if start == exit_room:\n        return [start]\n    parent = {start: None}\n    queue = deque([start])\n    while queue:\n        room = queue.popleft()\n        for neighbour in dungeon.get(room, []):\n            if neighbour not in parent:\n                parent[neighbour] = room\n                if neighbour == exit_room:\n                    path, node = [], exit_room\n                    while node is not None:\n                        path.append(node)\n                        node = parent[node]\n                    return list(reversed(path))\n                queue.append(neighbour)\n    return []\n\ndungeon = {\n    'Entrance': ['Hall', 'Crypt'],\n    'Hall':     ['Entrance', 'Armory', 'Garden'],\n    'Crypt':    ['Entrance'],\n    'Armory':   ['Hall', 'Treasure'],\n    'Garden':   ['Hall', 'Exit'],\n    'Treasure': ['Armory'],\n    'Exit':     ['Garden']\n}\n\nprint(find_exit(dungeon, 'Entrance', 'Exit'))      # ['Entrance', 'Hall', 'Garden', 'Exit']\nprint(find_exit(dungeon, 'Entrance', 'Treasure'))  # ['Entrance', 'Hall', 'Armory', 'Treasure']\nprint(find_exit(dungeon, 'Crypt', 'Exit'))         # ['Crypt', 'Entrance', 'Hall', 'Garden', 'Exit']"
+  }
+}

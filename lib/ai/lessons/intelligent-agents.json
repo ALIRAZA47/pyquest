@@ -1,0 +1,96 @@
+{
+  "slug": "intelligent-agents",
+  "title": "Intelligent Agents",
+  "category": "AI Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover how AI systems perceive the world, decide what to do, and act — all through a surprisingly simple loop that powers everything from thermostats to game-playing bots.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Your phone's GPS app is watching. Every few seconds it checks your location, looks at the road ahead, and decides whether to say \"turn left\" or \"recalculate route\". It never stops — perceive, decide, act, repeat. That rhythm is the heartbeat of almost every AI system ever built.\n\nAI researchers gave this idea a name: the **intelligent agent**. An agent is anything that *perceives* its environment and *acts* on it to achieve a goal. The concept is beautifully general — it describes a chess-playing program, a self-driving car, a spam filter, and even a humble thermostat. Once you see the world through the agent lens, AI stops feeling like magic and starts feeling like engineering."
+    },
+    {
+      "type": "heading",
+      "text": "Sensors, Actuators, and the Agent Function"
+    },
+    {
+      "type": "text",
+      "md": "Every agent connects to the world in two directions:\n\n- **Sensors** — the inputs. How the agent *perceives* its environment. A robot's camera, a thermostat's thermometer, a spam filter's incoming email.\n- **Actuators** — the outputs. How the agent *acts*. A robot's wheels, a thermostat's heating coil, a spam filter's \"move to spam\" button.\n\nEverything in between — the brain that maps what the agent sees to what it does — is the **agent function**. That is the part we design when we build AI."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a Thermostat",
+      "md": "A thermostat is the world's simplest intelligent agent. Its **sensor** is a thermometer. Its **actuator** is the furnace switch. Its **goal** is to keep the room at 70°F.\n\nIts entire agent function fits in one sentence: *\"If temperature < 70, turn on the furnace; otherwise, turn it off.\"*\n\nThat's it — and yet it's genuinely intelligent behavior. Real AI agents follow the same pattern, just with vastly richer sensors, actuators, and decision functions."
+    },
+    {
+      "type": "heading",
+      "text": "The Percept-Action Loop"
+    },
+    {
+      "type": "text",
+      "md": "Agents don't act once and walk away. They run a continuous **percept-action loop**:\n\n1. **Perceive** — read the current state of the environment. This snapshot is called a **percept**.\n2. **Decide** — run the percept through the agent function to choose an action.\n3. **Act** — execute the action, which changes the environment.\n4. **Repeat** — go back to step 1.\n\nHere is the thermostat running this loop in pure Python:"
+    },
+    {
+      "type": "code",
+      "code": "def thermostat_agent(temperature, target=70):\n    if temperature < target:\n        return \"turn_on_heat\"\n    else:\n        return \"turn_off_heat\"\n\n# Simulate several ticks of the percept-action loop\nreadings = [65, 68, 70, 72, 69]\nfor temp in readings:\n    action = thermostat_agent(temp)\n    print(f\"Percept: {temp}F  ->  Action: {action}\")",
+      "output": "Percept: 65F  ->  Action: turn_on_heat\nPercept: 68F  ->  Action: turn_on_heat\nPercept: 70F  ->  Action: turn_off_heat\nPercept: 72F  ->  Action: turn_off_heat\nPercept: 69F  ->  Action: turn_on_heat",
+      "caption": "The agent function maps each percept directly to an action. Simple, but genuinely intelligent."
+    },
+    {
+      "type": "heading",
+      "text": "Rationality and the Performance Measure"
+    },
+    {
+      "type": "text",
+      "md": "What makes an agent *intelligent* rather than just reactive? **Rationality**. A rational agent always chooses the action expected to **maximize its performance measure** — a score that captures how well it achieves its goal. For the thermostat: \"minutes the room stays within 2°F of target\". For a chess bot: \"did we win?\"\n\nRationality does NOT mean the agent knows the future or is always right. It means the agent makes the *best possible choice given what it currently knows*. Designing AI is largely about designing good performance measures and giving the agent enough information to optimize them."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Rational Does Not Mean Omniscient",
+      "md": "A common mistake is thinking a \"rational\" agent must always succeed or must know everything. Neither is true.\n\nImagine picking a restaurant based on great reviews — rational! But if it's closed that night, your rational choice still led to a bad outcome. Rationality is about the **quality of the decision process**, not the outcome.\n\nAI agents are the same: rational means doing the best you can with available information."
+    },
+    {
+      "type": "code",
+      "code": "def vacuum_agent(location, status):\n    \"\"\"\n    location: 'A' or 'B'\n    status: 'dirty' or 'clean'\n    \"\"\"\n    if status == \"dirty\":\n        return \"suck\"\n    elif location == \"A\":\n        return \"move_right\"\n    else:\n        return \"move_left\"\n\npercepts = [(\"A\", \"dirty\"), (\"A\", \"clean\"), (\"B\", \"dirty\"), (\"B\", \"clean\")]\nfor loc, stat in percepts:\n    print(f\"Room {loc} is {stat:6s}  ->  {vacuum_agent(loc, stat)}\")",
+      "output": "Room A is dirty   ->  suck\nRoom A is clean   ->  move_right\nRoom B is dirty   ->  suck\nRoom B is clean   ->  move_left",
+      "caption": "A richer example — the vacuum robot. Two inputs (location + dirt status), three possible actions. A complete two-room policy in 10 lines."
+    },
+    {
+      "type": "heading",
+      "text": "What Kind of World? Environment Properties"
+    },
+    {
+      "type": "text",
+      "md": "The type of environment shapes how complex the agent needs to be:\n\n- **Observable vs. Partially Observable** — Can the agent see the *full* state of the world? A chess board is fully observable. A poker game is partially observable — you can't see your opponent's cards. Partial observability forces the agent to remember past percepts and build an internal model of what it can't see.\n\n- **Deterministic vs. Stochastic** — Does every action have a guaranteed outcome? A thermostat is deterministic. A self-driving car is stochastic — brakes usually work, but ice may cause surprises.\n\nOur thermostat and vacuum robot use **hand-coded rules** — every `if/else` was written by a human. These are **simple reflex agents**: they react to the current percept with no memory and no learning. Real AI systems go further. A **learning agent** observes how well its actions work and *updates its own agent function* to improve over time — that is exactly where machine learning enters. But the percept-action loop never changes. Whether the agent is a thermostat or a language model, it is always doing the same thing: perceiving and acting to maximize a goal."
+    },
+    {
+      "type": "quiz",
+      "question": "A spam filter reads incoming emails and either moves them to spam or leaves them in the inbox. It is designed to maximize the number of correctly sorted emails. Which part of this system is the agent's \"performance measure\"?",
+      "options": [
+        "The email inbox itself",
+        "The number of correctly sorted emails",
+        "The rule that checks for suspicious keywords",
+        "The spam folder"
+      ],
+      "answerIndex": 1,
+      "explanation": "The performance measure is the score that defines success — what the agent is trying to maximize. Here, that's correctly sorted emails. The inbox is the environment, the keyword rule is part of the agent function, and the spam folder is where the actuator sends bad mail. Good AI design always starts by clearly defining the performance measure, because that is what makes a rational agent choose good actions."
+    }
+  ],
+  "keyTakeaways": [
+    "An intelligent agent perceives its environment through sensors and acts through actuators in a continuous percept-action loop.",
+    "The agent function maps each percept to an action — this is the 'brain' you design when building AI.",
+    "A rational agent picks the action expected to maximize its performance measure given available information — it doesn't need to be omniscient.",
+    "Environment properties like observability and determinism determine how complex an agent needs to be.",
+    "All AI systems — from thermostats to neural networks — share the same fundamental agent framework; the sophistication is in the agent function."
+  ],
+  "exercise": {
+    "prompt": "Build a simple game-playing agent for a number guessing game. The agent is trying to guess a secret number between 1 and 100. Each round it receives a percept: `'too_low'`, `'too_high'`, or `'correct'`. It should use a **binary search strategy** — always guessing the midpoint of its remaining range — to find the number in the fewest guesses.\n\nImplement the agent and simulate it finding the secret number **73**. Print each percept and action (guess) until the agent succeeds.",
+    "starterCode": "def get_percept(guess, secret):\n    \"\"\"Simulates the environment responding to the agent's guess.\"\"\"\n    if guess < secret:\n        return 'too_low'\n    elif guess > secret:\n        return 'too_high'\n    else:\n        return 'correct'\n\ndef guessing_agent(low, high):\n    \"\"\"Agent function: returns the best guess given the current search range.\"\"\"\n    # TODO: return the midpoint of low and high\n    pass\n\nsecret = 73\nlow, high = 1, 100\nstep = 1\n\n# TODO: run the percept-action loop\n# Each step: call guessing_agent, get the percept, update low/high\n# Stop when percept == 'correct'\n# Print: Step 1: Guessed 50 -> too_low",
+    "hint": "The midpoint is `(low + high) // 2`. When percept is `'too_low'`, set `low = guess + 1`. When `'too_high'`, set `high = guess - 1`. Use a `while` loop that stops when percept is `'correct'`.",
+    "solution": "def get_percept(guess, secret):\n    if guess < secret:\n        return 'too_low'\n    elif guess > secret:\n        return 'too_high'\n    else:\n        return 'correct'\n\ndef guessing_agent(low, high):\n    return (low + high) // 2\n\nsecret = 73\nlow, high = 1, 100\npercept = None\nstep = 1\n\nwhile percept != 'correct':\n    guess = guessing_agent(low, high)\n    percept = get_percept(guess, secret)\n    print(f\"Step {step}: Guessed {guess} -> {percept}\")\n    if percept == 'too_low':\n        low = guess + 1\n    elif percept == 'too_high':\n        high = guess - 1\n    step += 1\n\nprint(f\"Found {secret} in {step - 1} guesses!\")"
+  }
+}

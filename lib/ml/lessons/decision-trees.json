@@ -1,0 +1,96 @@
+{
+  "slug": "decision-trees",
+  "title": "Decision Trees",
+  "category": "Supervised Learning",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how machines make decisions by asking a series of yes/no questions — and why the right questions make all the difference.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every doctor, detective, and loan officer has a secret weapon: a mental checklist of questions they work through to reach a decision. \"Is the patient over 60? Does she have chest pain? Is her blood pressure above 140?\" Each answer narrows the possibilities until a conclusion clicks into place.\n\nA **decision tree** teaches a computer to do the same thing. It learns a flowchart of yes/no questions from your data — and uses that flowchart to classify new examples or predict values. Decision trees power spam filters, medical diagnosis tools, and credit scoring systems, and they are the foundation of some of the most powerful ML algorithms in existence."
+    },
+    {
+      "type": "heading",
+      "text": "Nodes, Branches, and Leaves"
+    },
+    {
+      "type": "text",
+      "md": "A decision tree has three kinds of parts:\n\n- **Root node** — the very first question asked (the most important one)\n- **Internal nodes** — follow-up questions that split the data further\n- **Leaf nodes** — the endpoints where a final prediction is made, no more questions needed\n\nEach node asks one question about one feature: \"Is age > 30?\" or \"Is income < $50k?\". Each answer sends you down a branch — left for *yes*, right for *no* — until you land on a leaf that says \"Approved\" or \"Denied\". Under the hood, a trained tree is literally just nested `if`/`else` statements:"
+    },
+    {
+      "type": "code",
+      "code": "def predict(age, likes_music):\n    if age >= 18:\n        if likes_music:\n            return \"Will buy\"\n        else:\n            return \"Won't buy\"\n    else:\n        return \"Won't buy\"  # under 18, no ticket\n\nprint(predict(25, True))   # adult who likes music\nprint(predict(25, False))  # adult who doesn't like music\nprint(predict(15, True))   # teen who likes music",
+      "output": "Will buy\nWon't buy\nWon't buy",
+      "caption": "A hand-written decision tree. Real ML trees are the same idea — just learned from data automatically."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Twenty Questions — but Smarter",
+      "md": "Think of the childhood game *Twenty Questions*. A great player picks questions that eliminate *as many possibilities as possible* with each answer. \"Is it bigger than a bread box?\" beats \"Is it a golden retriever?\" because the first question halves the search space.\n\nA decision tree algorithm plays Twenty Questions on your dataset — automatically finding the question at each step that eliminates the most confusion."
+    },
+    {
+      "type": "heading",
+      "text": "Choosing the Best Split: Gini Impurity"
+    },
+    {
+      "type": "text",
+      "md": "At every node, the tree tries every possible question on every feature and picks the one that creates the **purest** groups. **Purity** means: after the split, each group should contain mostly one class.\n\nThe most common measure is **Gini Impurity**. In plain English: *\"If I randomly pick two examples from this bucket, how often would they be different classes?\"*\n\n- All examples the same class → Gini = **0** (perfectly pure)\n- Half one class, half another → Gini = **0.5** (maximally impure)\n\nThe algorithm picks whichever split produces the lowest weighted-average Gini across both child groups."
+    },
+    {
+      "type": "code",
+      "code": "def gini(labels):\n    total = len(labels)\n    if total == 0:\n        return 0\n    counts = {}\n    for label in labels:\n        counts[label] = counts.get(label, 0) + 1\n    return 1 - sum((c / total) ** 2 for c in counts.values())\n\nprint(gini([\"spam\", \"spam\", \"spam\", \"spam\"]))  # pure\nprint(gini([\"spam\", \"ham\", \"spam\", \"ham\"]))   # impure\nprint(gini([\"spam\", \"ham\", \"ham\", \"ham\"]))    # mostly pure",
+      "output": "0.0\n0.5\n0.375",
+      "caption": "Lower Gini = purer group. The tree always searches for the split that drives Gini closest to zero."
+    },
+    {
+      "type": "heading",
+      "text": "How the Algorithm Builds the Tree"
+    },
+    {
+      "type": "text",
+      "md": "The building process is elegantly recursive — it applies the same logic over and over at each node:\n\n1. **Start** with all training examples at the root.\n2. **Try every feature and every possible threshold** (\"age > 18?\", \"age > 25?\", \"income > 40k?\", ...).\n3. **Compute the weighted Gini** of the two groups each split would create.\n4. **Pick the split with the lowest weighted Gini** — this is the best question.\n5. **Recurse**: repeat the whole process on each child group independently.\n6. **Stop** when a group is pure, too small, or you've hit a maximum depth.\n\nThe result is a tree that separates the training data — which brings us to an important danger."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Deep Trees Memorize, Not Generalize",
+      "md": "If you let a tree grow without limits, it will **memorize the training data perfectly** — including noise and flukes. This is **overfitting**.\n\nImagine memorizing every specific question on a practice exam rather than understanding the subject. You'd ace the practice test but bomb the real one.\n\nThe fix: **limit the tree's depth** (e.g., `max_depth=5`) or **prune** branches that don't improve accuracy on a held-out validation set. Shallow trees also have a bonus: you can actually print them out and explain every decision to a human."
+    },
+    {
+      "type": "heading",
+      "text": "Teaser: Random Forests"
+    },
+    {
+      "type": "text",
+      "md": "One tree can be fragile — a small change in the data might produce a very different tree. The solution? **Grow many trees and let them vote.**\n\nA **Random Forest** trains hundreds of decision trees, each on a random subset of the data and a random subset of the features. When predicting, every tree casts a vote and the majority wins. The result is dramatically more accurate and robust than any single tree.\n\nReal-world tools like **scikit-learn** make this one line: `RandomForestClassifier(n_estimators=100)`. But under the hood, it's still just decision trees — exactly what you've learned here. Decision trees also shine when you need a **model you can explain** to non-technical stakeholders, when your data has **mixed feature types** (numbers, categories, booleans), or when you just want a **quick baseline** before trying something fancier."
+    },
+    {
+      "type": "quiz",
+      "question": "A decision tree node splits 10 examples into Group A (8 spam, 2 ham) and Group B (1 spam, 9 ham). Compared to the original mixed group of 10 spam and 10 ham, this split is:",
+      "options": [
+        "Worse — the groups are still mixed",
+        "Better — both groups are now more pure than the original",
+        "The same — purity hasn't changed",
+        "Only better if we use information gain, not Gini"
+      ],
+      "answerIndex": 1,
+      "explanation": "The original group had 10 spam and 10 ham — maximally impure (Gini = 0.5). After the split, Group A is mostly spam (Gini ≈ 0.32) and Group B is mostly ham (Gini ≈ 0.18). Both groups are purer than what we started with, so this is a good split. The algorithm would choose it if no other split produces even purer groups."
+    }
+  ],
+  "keyTakeaways": [
+    "A decision tree is a flowchart of yes/no questions — nodes ask questions, branches carry answers, leaves make predictions.",
+    "The best split at each node is the question that creates the purest groups, measured by Gini impurity or information gain.",
+    "Deep trees overfit by memorizing training data; limit depth or prune to make the tree generalize to new examples.",
+    "A Random Forest trains many trees on random subsets and combines their votes for much better accuracy and robustness.",
+    "Under the hood, a decision tree is just nested if/else logic — straightforward, explainable, and surprisingly powerful."
+  ],
+  "exercise": {
+    "prompt": "Implement `gini_split_score(left, right)` that takes two lists of class labels (the two groups after a split) and returns the **weighted Gini impurity** of the split — the average Gini of the two groups, weighted by their sizes.\n\nFor example, if `left` has 3 examples and `right` has 3 examples:\n`weighted_gini = (3/6) * gini(left) + (3/6) * gini(right)`\n\nThen compare two candidate splits and print which one is better.",
+    "starterCode": "def gini(labels):\n    total = len(labels)\n    if total == 0:\n        return 0\n    counts = {}\n    for label in labels:\n        counts[label] = counts.get(label, 0) + 1\n    return 1 - sum((c / total) ** 2 for c in counts.values())\n\ndef gini_split_score(left, right):\n    # Your code here\n    # Compute the weighted average Gini of the two groups\n    pass\n\n# Split A: age > 30\nleft_A  = [\"buy\", \"buy\", \"buy\", \"no\"]\nright_A = [\"no\", \"no\", \"buy\"]\n\n# Split B: income > 50k\nleft_B  = [\"buy\", \"no\", \"buy\", \"no\"]\nright_B = [\"buy\", \"buy\", \"no\"]\n\nprint(\"Split A score:\", gini_split_score(left_A, right_A))\nprint(\"Split B score:\", gini_split_score(left_B, right_B))\n",
+    "hint": "Weighted Gini = (len(left) / total) * gini(left) + (len(right) / total) * gini(right), where total = len(left) + len(right). Lower score = better split.",
+    "solution": "def gini(labels):\n    total = len(labels)\n    if total == 0:\n        return 0\n    counts = {}\n    for label in labels:\n        counts[label] = counts.get(label, 0) + 1\n    return 1 - sum((c / total) ** 2 for c in counts.values())\n\ndef gini_split_score(left, right):\n    total = len(left) + len(right)\n    if total == 0:\n        return 0\n    weight_left  = len(left)  / total\n    weight_right = len(right) / total\n    return weight_left * gini(left) + weight_right * gini(right)\n\n# Split A: age > 30\nleft_A  = [\"buy\", \"buy\", \"buy\", \"no\"]\nright_A = [\"no\", \"no\", \"buy\"]\n\n# Split B: income > 50k\nleft_B  = [\"buy\", \"no\", \"buy\", \"no\"]\nright_B = [\"buy\", \"buy\", \"no\"]\n\nscore_A = gini_split_score(left_A, right_A)\nscore_B = gini_split_score(left_B, right_B)\n\nprint(\"Split A score:\", round(score_A, 4))\nprint(\"Split B score:\", round(score_B, 4))\n\nif score_A < score_B:\n    print(\"Split A is better (lower Gini = purer groups)\")\nelse:\n    print(\"Split B is better (lower Gini = purer groups)\")\n"
+  }
+}

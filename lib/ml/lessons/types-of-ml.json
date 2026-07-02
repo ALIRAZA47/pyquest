@@ -1,0 +1,98 @@
+{
+  "slug": "types-of-ml",
+  "title": "Types of Machine Learning",
+  "category": "ML Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover the three core families of machine learning — supervised, unsupervised, and reinforcement learning — and learn which to reach for when.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every app that recommends a song, detects spam, or plays chess at a superhuman level is powered by machine learning. But not all ML systems learn the same way. Just as humans learn differently — sometimes from a teacher giving feedback, sometimes by exploring on their own, sometimes through trial and error — machines have three distinct learning styles too.\n\nHere is the core idea in one sentence each:\n- **Supervised Learning** — learn from *labeled* examples to predict something new.\n- **Unsupervised Learning** — find hidden *structure* in data when you have no labels at all.\n- **Reinforcement Learning** — learn by *trial and error*, earning rewards for good moves."
+    },
+    {
+      "type": "heading",
+      "text": "Supervised Learning: Learning from Examples"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Flashcard Analogy",
+      "md": "Imagine studying for a test using flashcards. Each card has a question on the front (the *input*) and the answer on the back (the *label*). After seeing thousands of cards, you start to notice patterns and can answer *new* questions you have never seen before. That is exactly what supervised learning does — every training example is a `(input, label)` pair, and the model learns to map inputs to the correct label.\n\nSupervised learning has two flavors: **regression** predicts a *number* (e.g., house price), while **classification** predicts a *category* (e.g., spam vs. not-spam)."
+    },
+    {
+      "type": "code",
+      "code": "# Regression from scratch: predict house price from size\n# Data: (size in 100 sqft, price in $1000s)\npoints = [(10, 200), (15, 280), (20, 350)]\n\nn = len(points)\nsum_x  = sum(x for x, y in points)\nsum_y  = sum(y for x, y in points)\nsum_xy = sum(x * y for x, y in points)\nsum_xx = sum(x * x for x, y in points)\n\nslope     = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x ** 2)\nintercept = (sum_y - slope * sum_x) / n\n\nprint(f\"Best-fit line: price = {slope}*size + {intercept}\")\nprint(f\"Predicted price for size 18: ${slope * 18 + intercept:.0f}k\")",
+      "output": "Best-fit line: price = 15.0*size + 50.0\nPredicted price for size 18: $320k",
+      "caption": "Linear regression — the model finds a best-fit line through the training data and uses it to predict new values."
+    },
+    {
+      "type": "code",
+      "code": "import math\n\n# Classification from scratch: K-Nearest Neighbors\n# Training: (color_score 0=yellow/1=orange/2=red, weight_g, label)\ntraining = [\n    (0, 150, \"banana\"), (0, 140, \"banana\"),\n    (1, 180, \"orange\"), (1, 190, \"orange\"),\n    (2, 80,  \"apple\"),  (2, 90,  \"apple\"),\n]\n\ndef knn_predict(point, k=3):\n    dist = lambda t: math.sqrt((point[0]-t[0])**2 + (point[1]-t[1])**2)\n    ranked = sorted(training, key=dist)\n    votes = [label for _, _, label in ranked[:k]]\n    return max(set(votes), key=votes.count)\n\nprint(knn_predict((1, 185)))  # orange-ish, 185g\nprint(knn_predict((2, 85)))   # red-ish, 85g",
+      "output": "orange\napple",
+      "caption": "K-Nearest Neighbors — classify by majority vote among the K closest training examples."
+    },
+    {
+      "type": "heading",
+      "text": "Unsupervised Learning: Finding Hidden Structure"
+    },
+    {
+      "type": "text",
+      "md": "Unsupervised learning has **no labels at all**. The algorithm receives only raw inputs and must discover patterns on its own. The most common task is **clustering** — grouping similar data points together.\n\n**K-Means clustering** works in four elegant steps:\n1. Randomly place K \"centroids\" (imaginary cluster centers) in the data.\n2. Assign every point to its nearest centroid.\n3. Move each centroid to the *average* position of all its assigned points.\n4. Repeat steps 2–3 until the centroids stop moving.\n\nReal-world uses: customer segmentation, grouping news articles by topic, and compressing images."
+    },
+    {
+      "type": "code",
+      "code": "# K-Means from scratch (1D for clarity)\ndata = [1, 1.5, 2, 8, 8.5, 9, 25, 26, 27]\ncentroids = [1.0, 10.0, 20.0]   # K=3 initial guesses\n\nfor _ in range(10):\n    clusters = [[] for _ in centroids]\n    for x in data:\n        nearest = min(range(len(centroids)), key=lambda i: abs(x - centroids[i]))\n        clusters[nearest].append(x)\n    new_c = [sum(c)/len(c) for c in clusters if c]\n    if new_c == centroids:\n        break\n    centroids = new_c\n\nfor i, c in enumerate(clusters):\n    print(f\"Cluster {i+1} (center={centroids[i]:.1f}): {c}\")",
+      "output": "Cluster 1 (center=1.5): [1, 1.5, 2]\nCluster 2 (center=8.5): [8, 8.5, 9]\nCluster 3 (center=26.0): [25, 26, 27]",
+      "caption": "K-Means discovers three natural groups with no labels — just the raw numbers."
+    },
+    {
+      "type": "heading",
+      "text": "Reinforcement Learning: Learning by Doing"
+    },
+    {
+      "type": "text",
+      "md": "Reinforcement Learning (RL) is different from both families above — there is no fixed dataset at all. Instead, an **agent** takes *actions* in an *environment* and receives *rewards* (or penalties) based on the outcomes.\n\nThink of learning to ride a bike: nobody gives you a labeled dataset of \"good balances\". You just try, fall (negative reward), adjust, and eventually stay upright. The core RL loop is:\n`observe state → choose action → receive reward → update policy → repeat`\n\nFamous RL examples:\n- **Game bots** — AlphaGo and OpenAI Five beat world champions purely through self-play.\n- **Robotics** — robot arms learn to grasp objects by trial and error.\n- **Recommendation systems** — a newsfeed learns which stories keep you engaged."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Common Misconception: \"More Data = Supervised Learning\"",
+      "md": "It is tempting to think that if you have a huge dataset, you should use supervised learning. But the key question is: **do your data points have labels?** A million customer transactions with *no* category tags calls for unsupervised clustering, not supervised classification. Always ask — *\"Do I already have the correct answers for my training examples?\"* — before choosing your approach."
+    },
+    {
+      "type": "heading",
+      "text": "When to Use Which?"
+    },
+    {
+      "type": "text",
+      "md": "Here is a quick decision guide:\n\n| Situation | Best fit |\n|---|---|\n| Labeled data; predict a continuous number | Supervised — Regression |\n| Labeled data; predict a category | Supervised — Classification |\n| No labels; discover natural groupings | Unsupervised — Clustering |\n| Agent must learn a strategy through interaction | Reinforcement Learning |\n\nMost beginners start with supervised learning because labeled datasets are easiest to reason about. Unsupervised learning shines for exploration when labeling is expensive. Reinforcement learning is powerful but complex — reserve it for sequential decision problems like games and robotics.\n\n**Real libraries:** **scikit-learn** covers supervised and unsupervised learning with clean one-liners. **Gymnasium** and **Stable Baselines3** are the go-to tools for RL."
+    },
+    {
+      "type": "quiz",
+      "question": "A music app wants to group its 10 million users into listener \"personas\" based on their listening habits — no one has manually tagged any users into categories. Which type of ML fits best?",
+      "options": [
+        "Supervised regression, because you are predicting a continuous listening score",
+        "Supervised classification, because the output is a discrete persona label",
+        "Unsupervised clustering, because there are no pre-existing labels to train from",
+        "Reinforcement learning, because the app needs to react to user clicks"
+      ],
+      "answerIndex": 2,
+      "explanation": "The key clue is \"no one has manually tagged users\" — there are no labels. That rules out supervised learning. The goal is to discover natural groupings in the raw data, which is exactly what unsupervised clustering (e.g. K-Means) is designed for."
+    }
+  ],
+  "keyTakeaways": [
+    "Supervised learning trains on (input, label) pairs to predict labels for new inputs — regression for numbers, classification for categories.",
+    "Unsupervised learning finds hidden structure (like clusters) when no labels exist.",
+    "Reinforcement learning trains an agent to maximize rewards through trial and error — no static dataset required.",
+    "The first question for any ML problem: do I have labels? That single question steers you toward supervised vs. unsupervised.",
+    "Simple from-scratch implementations (linear regression, KNN, K-Means) reveal exactly how these algorithms work under the hood."
+  ],
+  "exercise": {
+    "prompt": "Implement a tiny **1-Nearest Neighbor classifier** from scratch. Given a list of labeled training points `[(x, label), ...]` and a new input value `x_new`, find the single training point closest to `x_new` (using absolute difference) and return its label.\n\nThen use your function to classify the mystery values `4.0` and `14.0` given the training data below.",
+    "starterCode": "# Training data: (value, label)\ntraining = [\n    (1.0, \"low\"),\n    (2.5, \"low\"),\n    (10.0, \"high\"),\n    (12.0, \"high\"),\n]\n\ndef predict_1nn(x_new, training):\n    # TODO: find the training point closest to x_new\n    # and return its label\n    pass\n\nprint(predict_1nn(4.0, training))   # should be \"low\"\nprint(predict_1nn(14.0, training))  # should be \"high\"",
+    "hint": "Use the built-in `min()` function with a `key` argument. The key should compute `abs(x_new - x)` for each training point `(x, label)`.",
+    "solution": "training = [\n    (1.0, \"low\"),\n    (2.5, \"low\"),\n    (10.0, \"high\"),\n    (12.0, \"high\"),\n]\n\ndef predict_1nn(x_new, training):\n    nearest_x, nearest_label = min(training, key=lambda point: abs(x_new - point[0]))\n    return nearest_label\n\nprint(predict_1nn(4.0, training))   # low\nprint(predict_1nn(14.0, training))  # high"
+  }
+}

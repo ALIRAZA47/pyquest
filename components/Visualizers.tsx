@@ -3,6 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, PlayIcon, CloseIcon } from "./Icons";
+import {
+  GradientDescentViz,
+  LinearRegressionViz,
+  SigmoidViz,
+  KNNViz,
+  KMeansViz,
+  OverfittingViz,
+  DecisionTreeViz,
+  NeuralNetViz,
+} from "./viz-ml";
+import {
+  PathfindingViz,
+  MinimaxViz,
+  PerceptronViz,
+  NextTokenViz,
+} from "./viz-ai";
 
 // ============================================================
 // String slicing — s[start:stop:step] with live index labels
@@ -448,6 +464,90 @@ const VISUALIZERS: Record<
     title: "Call-stack stepper",
     subtitle: "Watch the calls stack up, then unwind as each one returns.",
     node: RecursionStepper,
+  },
+
+  // ---- Machine Learning ----
+  "linear-regression": {
+    title: "Fit the line",
+    subtitle: "Gradient descent rotates the line to the best fit — watch the error shrink.",
+    node: LinearRegressionViz,
+  },
+  "gradient-descent": {
+    title: "Roll downhill",
+    subtitle: "Step down the loss curve to the minimum — try different learning rates.",
+    node: GradientDescentViz,
+  },
+  "logistic-regression": {
+    title: "The sigmoid",
+    subtitle: "Turn any number into a probability and classify at the 0.5 threshold.",
+    node: SigmoidViz,
+  },
+  "k-nearest-neighbors": {
+    title: "Nearest neighbors",
+    subtitle: "Move the new point and see how its k neighbors vote on its class.",
+    node: KNNViz,
+  },
+  "k-means-clustering": {
+    title: "Clustering in motion",
+    subtitle: "Assign, move, repeat — watch centroids settle into clusters.",
+    node: KMeansViz,
+  },
+  "overfitting-underfitting": {
+    title: "Complexity dial",
+    subtitle: "Slide from too-simple to too-complex and find the sweet spot.",
+    node: OverfittingViz,
+  },
+  "decision-trees": {
+    title: "Splitting the space",
+    subtitle: "Watch yes/no questions carve the data into pure regions.",
+    node: DecisionTreeViz,
+  },
+  "neural-networks-basics": {
+    title: "Forward pass",
+    subtitle: "Watch activations flow layer by layer to a prediction.",
+    node: NeuralNetViz,
+  },
+
+  // ---- Artificial Intelligence ----
+  "bfs-and-dfs": {
+    title: "Search the maze",
+    subtitle: "Watch BFS and DFS explore the grid to reach the goal.",
+    node: PathfindingViz,
+  },
+  "a-star-search": {
+    title: "A* pathfinding",
+    subtitle: "See how a heuristic makes A* beeline for the goal vs. blind search.",
+    node: PathfindingViz,
+  },
+  minimax: {
+    title: "Game tree",
+    subtitle: "Watch scores propagate up as MAX and MIN take turns choosing.",
+    node: MinimaxViz,
+  },
+  "alpha-beta-pruning": {
+    title: "Game tree",
+    subtitle: "The same minimax tree — the values MAX and MIN reason about.",
+    node: MinimaxViz,
+  },
+  "the-perceptron": {
+    title: "Learning a boundary",
+    subtitle: "The line rotates each pass until it separates the two classes.",
+    node: PerceptronViz,
+  },
+  "neural-networks-and-deep-learning": {
+    title: "Forward pass",
+    subtitle: "Watch activations flow layer by layer to a prediction.",
+    node: NeuralNetViz,
+  },
+  "how-networks-learn": {
+    title: "Roll downhill",
+    subtitle: "Training is gradient descent — step down the loss to reduce error.",
+    node: GradientDescentViz,
+  },
+  "nlp-and-llms": {
+    title: "Predict the next token",
+    subtitle: "Pick tokens from the probabilities and watch a sentence form.",
+    node: NextTokenViz,
   },
 };
 

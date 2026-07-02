@@ -142,7 +142,7 @@
   ],
   "exercise": {
     "prompt": "Write a function called `circle_stats` that takes a radius (a number) and returns TWO values: the circumference and the area of the circle. Use the formulas: circumference = 2 * 3.14159 * radius and area = 3.14159 * radius * radius. Then call the function with a radius of 5 and print both results.",
-    "starterCode": "def circle_stats(radius):\n    # your code here\n    pass\n\ncircumference, area = circle_stats(5)\nprint(f\"Circumference: {circumference}\")\nprint(f\"Area: {area}\")",
+    "starterCode": "def circle_stats(radius):\n    # your code here\n    return (0, 0)  # TODO: replace with the real circumference and area\n\ncircumference, area = circle_stats(5)\nprint(f\"Circumference: {circumference}\")\nprint(f\"Area: {area}\")",
     "hint": "Calculate each value on its own line, then put them both after return separated by a comma: return circumference, area",
     "solution": "def circle_stats(radius):\n    circumference = 2 * 3.14159 * radius\n    area = 3.14159 * radius * radius\n    return circumference, area\n\ncircumference, area = circle_stats(5)\nprint(f\"Circumference: {circumference}\")\nprint(f\"Area: {area}\")"
   }

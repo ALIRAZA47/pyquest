@@ -1,0 +1,94 @@
+{
+  "slug": "minimax",
+  "title": "Minimax: Game Playing",
+  "category": "Games & Adversarial Search",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "See how AI plays perfect two-player games by thinking ahead, assuming both sides play their best moves every turn.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In 1997, IBM's Deep Blue defeated world chess champion Garry Kasparov. In 2016, DeepMind's AlphaGo beat the Go world champion. Both systems — despite operating on very different scales — share the same foundational idea: **look ahead, consider what your opponent will do, and pick the move that's best even if the opponent plays perfectly**.\n\nThat idea has a name: **Minimax**. It's one of the most elegant algorithms in all of computer science, and you can understand it completely from scratch. We'll build one today — no external libraries, just Python and logic."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Two Generals, One Map",
+      "md": "Imagine two generals studying a map before battle. **General MAX** wants to reach the highest ground. **General MIN** wants to push MAX to the lowest ground. Each general moves in turn and always picks their best option. Minimax is exactly this: you are MAX, your opponent is MIN, and the \"map\" is a tree of every possible future position in the game."
+    },
+    {
+      "type": "heading",
+      "text": "Game Trees and Leaf Scores"
+    },
+    {
+      "type": "text",
+      "md": "Every game can be drawn as a **tree**. The root is the current board. Each branch is a legal move. Each node is a resulting position. **Leaf nodes** are terminal positions — someone won, lost, or the game ended in a draw.\n\nWe assign a **score** to each leaf: `+1` if MAX wins, `-1` if MIN wins, `0` for a draw. The algorithm's job is to propagate these scores back up to the root so we know which move is truly best.\n\nThe propagation rule is simple:\n- At a **MAX node** (your turn) — take the **highest** child value.\n- At a **MIN node** (opponent's turn) — take the **lowest** child value.\n\nApply this recursively all the way up and you get the guaranteed best outcome from the current position."
+    },
+    {
+      "type": "code",
+      "code": "def minimax(node, is_maximizing):\n    # Base case: leaf node is just a number\n    if isinstance(node, int):\n        return node\n\n    if is_maximizing:\n        best = -999\n        for child in node:\n            val = minimax(child, False)  # opponent moves next\n            best = max(best, val)\n        return best\n    else:\n        best = 999\n        for child in node:\n            val = minimax(child, True)   # our turn next\n            best = min(best, val)\n        return best\n\n# Tree: root is MAX, children are MIN nodes, leaves are ints\ntree = [[3, 5], [2, 9], [0, 7]]\n# MIN will pick 3 from [3,5], 2 from [2,9], 0 from [0,7]\n# MAX then picks 3 from {3, 2, 0}\nprint(\"Root value:\", minimax(tree, True))",
+      "output": "Root value: 3",
+      "caption": "MIN always picks the lowest child (killing the 5, 9, and 7), then MAX picks the best of what's left."
+    },
+    {
+      "type": "heading",
+      "text": "Picking the Best Move and a Real Game"
+    },
+    {
+      "type": "text",
+      "md": "Knowing the root's value is useful, but we also need the **index** of the move that leads to it. We run minimax on each child (switching to MIN's turn) and pick the one with the highest result. Below we also plug minimax into a real tic-tac-toe position — the board is a 9-element list, `'X'` is MAX, `'O'` is MIN:"
+    },
+    {
+      "type": "code",
+      "code": "WINS = [(0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6)]\n\ndef winner(b):\n    for a,i,c in WINS:\n        if b[a] and b[a]==b[i]==b[c]: return b[a]\n    return None\n\ndef minimax_ttt(b, is_max):\n    w = winner(b)\n    if w == 'X': return  1\n    if w == 'O': return -1\n    if None not in b: return 0\n    moves = [i for i,v in enumerate(b) if v is None]\n    if is_max:\n        best = -2\n        for m in moves:\n            b[m]='X'; best=max(best, minimax_ttt(b,False)); b[m]=None\n        return best\n    else:\n        best = 2\n        for m in moves:\n            b[m]='O'; best=min(best, minimax_ttt(b,True)); b[m]=None\n        return best\n\n# X is one move away from winning via the diagonal 0->4->8\nboard = ['X','O',None, None,'X',None, 'O',None,None]\nbest_val, best_idx = -2, None\nfor i,v in enumerate(board):\n    if v is None:\n        board[i]='X'\n        val = minimax_ttt(board, False)\n        board[i]=None\n        if val > best_val: best_val,best_idx = val,i\nprint(f\"X plays square {best_idx} — value: {best_val}\")",
+      "output": "X plays square 8 — value: 1",
+      "caption": "Square 8 completes the 0→4→8 diagonal. Minimax sees all futures and picks the win."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"Optimal\" Means Assuming the Opponent Is Perfect Too",
+      "md": "Minimax guarantees the best outcome **if** the opponent plays optimally. If a human opponent blunders, minimax still responds perfectly to whatever they actually do — but the score it reported assumed a perfect foe. This is a strength, not a weakness: you get a floor guarantee, not just an average-case result."
+    },
+    {
+      "type": "heading",
+      "text": "Why Big Games Need Extra Tricks"
+    },
+    {
+      "type": "text",
+      "md": "Minimax is complete and correct, but it visits every node in the tree. With a branching factor `b` and depth `d`, that's roughly `b^d` nodes — exponential growth.\n\n| Game | Avg. branching | Practical depth | Approx. nodes |\n|---|---|---|---|\n| Tic-tac-toe | ~4 | 9 (full) | ~255,000 |\n| Chess | ~30 | 6 | ~700 million |\n| Go | ~250 | — | intractable |\n\nReal engines add **alpha-beta pruning** (skip branches that can't beat what we've already found) and **evaluation functions** (score non-terminal positions so we can stop early). AlphaGo replaced the evaluation function with a neural network — but the tree search idea remains."
+    },
+    {
+      "type": "quiz",
+      "question": "It is MIN's turn. The three child nodes have values 7, 2, and 9. What value does MIN return?",
+      "options": [
+        "9 — MIN picks the highest value",
+        "2 — MIN picks the lowest value to hurt MAX",
+        "7 — MIN picks the middle value to be safe",
+        "18 — MIN sums all children"
+      ],
+      "answerIndex": 1,
+      "explanation": "MIN always returns the **lowest** child value, because MIN is trying to minimize MAX's score. So MIN returns 2, forcing the worst outcome for MAX from this node."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "In Practice: Use scikit-learn for ML, but Know Your Foundations",
+      "md": "Libraries like `python-chess` or custom game engines wrap minimax for you. But understanding the algorithm from scratch means you can debug strange behavior, tune search depth, write a custom evaluator, or extend to alpha-beta pruning — skills that matter the moment the off-the-shelf tool doesn't fit."
+    }
+  ],
+  "keyTakeaways": [
+    "Minimax models two-player zero-sum games as trees: MAX tries to score high, MIN tries to score low, and each assumes the other plays perfectly.",
+    "Values are assigned at leaf nodes (win/loss/draw) and propagated upward by alternating max and min at each level.",
+    "The algorithm guarantees the best possible outcome against a perfect opponent — a floor, not a ceiling.",
+    "Minimax is exponentially expensive; real engines add alpha-beta pruning and evaluation functions to stay practical.",
+    "From tic-tac-toe to AlphaZero, minimax and its descendants power almost every game-playing AI ever built."
+  ],
+  "exercise": {
+    "prompt": "Implement a `minimax` function that works on an abstract game tree of nested lists and integers. Then use it to find the best move (index) for the MAX player from a root node whose children are `[[3, 5], [2, 9], [0, 7]]`. At the root it is MAX's turn; at depth 1 it is MIN's turn; leaves are integers. Print both the minimax value of the root and the index of the best child.",
+    "starterCode": "def minimax(node, is_maximizing):\n    # TODO: if node is an int, return it (base case)\n    # TODO: if is_maximizing, return max of children's minimax values\n    # TODO: otherwise, return min of children's minimax values\n    return 0  # TODO: replace this placeholder with your implementation\n\ntree = [[3, 5], [2, 9], [0, 7]]\n\n# Find root value\nroot_value = minimax(tree, True)\nprint(\"Root value:\", root_value)\n\n# Find best move index for MAX\nbest_idx = None\nbest_val = -999\nfor i, child in enumerate(tree):\n    val = minimax(child, False)  # MIN moves next\n    if val > best_val:\n        best_val = val\n        best_idx = i\nprint(\"Best move index:\", best_idx)",
+    "hint": "The base case is when `node` is an `int` — just return it directly. For inner nodes, loop over `node` (treating it as a list of children), call `minimax` recursively on each child with the flipped `is_maximizing` flag, and accumulate with `max()` or `min()` depending on whose turn it is.",
+    "solution": "def minimax(node, is_maximizing):\n    if isinstance(node, int):       # leaf: return the score\n        return node\n    if is_maximizing:\n        best = -999\n        for child in node:\n            val = minimax(child, False)\n            if val > best:\n                best = val\n        return best\n    else:\n        best = 999\n        for child in node:\n            val = minimax(child, True)\n            if val < best:\n                best = val\n        return best\n\ntree = [[3, 5], [2, 9], [0, 7]]\n# MIN picks 3 from [3,5], 2 from [2,9], 0 from [0,7]\n# MAX then picks 3 from {3, 2, 0}\nroot_value = minimax(tree, True)\nprint(\"Root value:\", root_value)       # 3\n\nbest_idx = None\nbest_val = -999\nfor i, child in enumerate(tree):\n    val = minimax(child, False)\n    if val > best_val:\n        best_val = val\n        best_idx = i\nprint(\"Best move index:\", best_idx)    # 0"
+  }
+}

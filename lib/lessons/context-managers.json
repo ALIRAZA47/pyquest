@@ -148,7 +148,7 @@
   ],
   "exercise": {
     "prompt": "Write a context manager called `suppress_errors` using `@contextmanager` that silently catches and prints any exception that occurs inside the `with` block, instead of letting it crash the program. After handling the error, execution should continue normally after the `with` block.\n\nExample usage:\n```\nwith suppress_errors():\n    print(1 / 0)  # ZeroDivisionError — should be caught and printed\nprint(\"Program continues here\")\n```",
-    "starterCode": "from contextlib import contextmanager\n\n@contextmanager\ndef suppress_errors():\n    # Your code here\n    pass\n\nwith suppress_errors():\n    print(1 / 0)\nprint(\"Program continues here\")",
+    "starterCode": "from contextlib import contextmanager\n\n@contextmanager\ndef suppress_errors():\n    try:\n        yield\n    except Exception as e:\n        # TODO: print a friendly message about the error `e`\n        pass\n\nwith suppress_errors():\n    print(1 / 0)   # normally a crash — your context manager should swallow it\nprint(\"Program continues here\")\n",
     "hint": "Inside the @contextmanager function, wrap the `yield` in a `try/except Exception as e:` block. In the except branch, print the error. Catching the exception here and not re-raising it is what makes the program continue.",
     "solution": "from contextlib import contextmanager\n\n@contextmanager\ndef suppress_errors():\n    try:\n        yield\n    except Exception as e:\n        print(f\"Suppressed error: {e}\")\n\nwith suppress_errors():\n    print(1 / 0)\nprint(\"Program continues here\")"
   }

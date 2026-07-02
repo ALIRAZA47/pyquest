@@ -110,12 +110,14 @@ export function LessonRenderer({
   next,
   index,
   total,
+  base = "/learn",
 }: {
   lesson: Lesson;
   prev?: LessonMeta;
   next?: LessonMeta;
   index: number;
   total: number;
+  base?: string;
 }) {
   const { isComplete, toggle, markComplete, celebrate } = useProgress();
   const done = isComplete(lesson.slug);
@@ -287,7 +289,7 @@ export function LessonRenderer({
         <nav className="grid gap-3 sm:grid-cols-2">
           {prev ? (
             <Link
-              href={`/learn/${prev.slug}`}
+              href={`${base}/${prev.slug}`}
               className="group flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-accent/50 hover:shadow-soft"
             >
               <ArrowLeft className="h-5 w-5 shrink-0 text-faint transition-transform group-hover:-translate-x-1 group-hover:text-accent" />
@@ -307,7 +309,7 @@ export function LessonRenderer({
           )}
           {next ? (
             <Link
-              href={`/learn/${next.slug}`}
+              href={`${base}/${next.slug}`}
               className="group flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-right transition-all hover:border-accent/50 hover:shadow-soft sm:justify-end"
             >
               <span className="min-w-0">
@@ -324,7 +326,7 @@ export function LessonRenderer({
             </Link>
           ) : (
             <Link
-              href="/learn"
+              href={base}
               className="group flex items-center justify-end gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-4 text-right transition-all hover:bg-accent/15"
             >
               <span>

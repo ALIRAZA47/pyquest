@@ -1,44 +1,54 @@
-import { getAllLessons } from "./content";
+import { COURSE_LIST } from "./courses";
 
-// A lightweight, dependency-free full-content search over all lessons.
-// The index is built once at module load (63 lessons is tiny).
+// Lightweight full-content search across ALL courses (Python, ML, AI).
+// The index is built once at module load.
 
 interface Indexed {
   slug: string;
   title: string;
   category: string;
   summary: string;
-  text: string; // lowercased searchable body
+  base: string;
+  courseName: string;
+  text: string;
 }
 
-function blockText(): Indexed[] {
-  return getAllLessons().map((l) => {
-    const parts: string[] = [l.summary];
-    for (const b of l.blocks) {
-      if (b.type === "text") parts.push(b.md);
-      else if (b.type === "heading") parts.push(b.text);
-      else if (b.type === "callout") parts.push(b.title, b.md);
-      else if (b.type === "code") parts.push(b.caption ?? "", b.code);
-      else if (b.type === "quiz") parts.push(b.question);
+function buildIndex(): Indexed[] {
+  const docs: Indexed[] = [];
+  for (const c of COURSE_LIST) {
+    for (const l of c.course.getAllLessons()) {
+      const parts: string[] = [l.summary];
+      for (const b of l.blocks) {
+        if (b.type === "text") parts.push(b.md);
+        else if (b.type === "heading") parts.push(b.text);
+        else if (b.type === "callout") parts.push(b.title, b.md);
+        else if (b.type === "code") parts.push(b.caption ?? "", b.code);
+        else if (b.type === "quiz") parts.push(b.question);
+      }
+      parts.push(...l.keyTakeaways);
+      docs.push({
+        slug: l.slug,
+        title: l.title,
+        category: l.category,
+        summary: l.summary,
+        base: c.base,
+        courseName: c.name,
+        text: parts.join("  \n  ").toLowerCase(),
+      });
     }
-    parts.push(...l.keyTakeaways);
-    return {
-      slug: l.slug,
-      title: l.title,
-      category: l.category,
-      summary: l.summary,
-      text: parts.join("  \n  ").toLowerCase(),
-    };
-  });
+  }
+  return docs;
 }
 
-const INDEX = blockText();
+const INDEX = buildIndex();
 
 export interface SearchResult {
   slug: string;
   title: string;
   category: string;
   summary: string;
+  base: string;
+  courseName: string;
   snippet?: string;
 }
 
@@ -73,7 +83,7 @@ export function searchLessons(query: string, limit = 8): SearchResult[] {
         if (!snippet) snippet = makeSnippet(doc.text, idx, t.length);
       }
     }
-    if (title.includes(q)) score += 10; // full-phrase title bonus
+    if (title.includes(q)) score += 10;
     if (title.startsWith(q)) score += 6;
 
     return { doc, score, snippet };
@@ -87,6 +97,8 @@ export function searchLessons(query: string, limit = 8): SearchResult[] {
     title: x.doc.title,
     category: x.doc.category,
     summary: x.doc.summary,
+    base: x.doc.base,
+    courseName: x.doc.courseName,
     snippet: x.snippet,
   }));
 }

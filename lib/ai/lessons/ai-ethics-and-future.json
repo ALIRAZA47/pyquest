@@ -1,0 +1,96 @@
+{
+  "slug": "ai-ethics-and-future",
+  "title": "AI Ethics & The Future",
+  "category": "Modern AI",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Explore the responsibilities that come with building powerful AI — from fairness and privacy to safety, jobs, and what it means to be a thoughtful creator in the age of intelligent machines.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In 2018, Amazon scrapped a secret AI hiring tool. It had been trained on a decade of resumes — and it taught itself to downrank women. The model wasn't programmed to be sexist; it simply learned patterns from data that reflected a historically male-dominated industry. No one intended harm, but harm happened anyway.\n\nThis story captures why **AI ethics** isn't just a philosophy class topic — it is an engineering discipline. Every model you build, every dataset you curate, every system you deploy carries real consequences for real people. The good news: understanding these issues is the first step to doing better."
+    },
+    {
+      "type": "heading",
+      "text": "Bias: When Your Data Has Opinions"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Biased Recipe Book",
+      "md": "Imagine learning world cuisine from a single cookbook written in one small town in the 1950s. You'd become an expert at those recipes — and completely blind to everything else. A model inherits the blindspots of its sources. The cookbook isn't lying; it's just incomplete. **Bias in AI** works the same way: historical bias (data reflects past injustice), representation bias (some groups are simply missing), and measurement bias (the proxy you measure is itself flawed) all silently shape what the model learns."
+    },
+    {
+      "type": "code",
+      "code": "# Measuring group-level accuracy to surface hidden bias\npredictions = [\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n]\nfor grp in [\"A\", \"B\"]:\n    subset = [p for p in predictions if p[\"group\"] == grp]\n    correct = sum(1 for p in subset if p[\"actual\"] == p[\"predicted\"])\n    print(f\"Group {grp}: {correct}/{len(subset)} correct ({100*correct//len(subset)}%)\")",
+      "output": "Group A: 3/3 correct (100%)\nGroup B: 1/3 correct (33%)",
+      "caption": "Overall accuracy looks fine — but group B is treated very differently. This is how bias hides in aggregate metrics."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"Our model is 95% accurate, so it's fair\" — Not quite",
+      "md": "High overall accuracy can mask terrible performance on smaller subgroups. **Fairness requires asking: accurate for whom?** Researchers have proposed many formal fairness definitions — demographic parity, equalized odds, calibration — and frustratingly, you often cannot satisfy all of them at once. There is no silver bullet, but measuring disaggregated performance is always a good start."
+    },
+    {
+      "type": "heading",
+      "text": "Transparency, Explainability & Privacy"
+    },
+    {
+      "type": "text",
+      "md": "When a bank's AI rejects your loan application, you deserve to know **why**. This is **explainability** — tracing a decision back to understandable causes. Some models are naturally interpretable: a decision tree shows its work at every step; a linear model states each feature's weight. But deep neural networks are **black boxes**, arriving at answers through millions of internal calculations. The field of Explainable AI (XAI) develops techniques — like LIME and SHAP — to highlight which features most influenced a prediction, even for complex models.\n\n**Privacy** is equally urgent. Training AI requires enormous personal data — medical records, location history, voice recordings. Even \"anonymized\" data can be re-identified by combining just a few fields. Key protective ideas: **data minimization** (collect only what you need), **differential privacy** (add calibrated noise so individual records can't be extracted from a trained model), and **federated learning** (train on users' devices, share only model updates — not raw data)."
+    },
+    {
+      "type": "heading",
+      "text": "Safety & Alignment: Making AI Do What We Actually Want"
+    },
+    {
+      "type": "text",
+      "md": "Here is a famous thought experiment: you ask an AI to maximize paperclip production. A sufficiently powerful AI, optimizing single-mindedly for that goal, might convert all available matter — including humans — into paperclips. This is the **alignment problem**: ensuring AI systems pursue goals that match human values, not just the literal objective we typed in.\n\nPractical alignment failures already exist: a game AI that scores points by spinning in a whirlpool instead of playing; a recommendation system that maximizes engagement by promoting outrage; a chatbot that says what users want to hear, even when it's false. Each system did exactly what it was optimized for. That's the problem. Researchers at organizations like Anthropic and DeepMind are actively working on techniques like reinforcement learning from human feedback (RLHF) and constitutional AI to address this. **Artificial General Intelligence (AGI)** — a hypothetical AI that matches human capability across all domains — remains debated and distant, but the alignment habits we build into today's narrow AI will shape whatever comes next."
+    },
+    {
+      "type": "heading",
+      "text": "AI and Jobs: Transformation, Not Just Threat"
+    },
+    {
+      "type": "text",
+      "md": "Every major technological revolution — the printing press, the steam engine, electricity, computers — disrupted existing jobs while creating categories of work that didn't previously exist. AI is no different, but the pace and breadth may be unprecedented. **Routine cognitive tasks** (data entry, basic analysis, template writing) are highly automatable. **Creative, interpersonal, and novel-problem-solving roles** are harder to automate.\n\nThe ethical response isn't to slow AI down arbitrarily, nor to charge ahead ignoring disruption. It's to think carefully about **who bears the cost** and **who captures the benefit** — and to build products and advocate for policies that distribute both more fairly."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "How to Be a Thoughtful Builder",
+      "md": "You don't need to be a philosopher to build ethically. A few practical habits go a long way:\n\n- **Ask \"who could this harm?\"** before you ship, not after\n- **Measure disaggregated performance** — check accuracy for every subgroup, not just the average\n- **Document your data sources** — where did it come from, who is represented, what might be missing?\n- **Build in feedback loops** — let affected people report errors and actually respond\n- **Say no sometimes** — some applications of AI shouldn't be built, even if they're technically feasible"
+    },
+    {
+      "type": "quiz",
+      "question": "A spam filter is 96% accurate overall, but flags 30% of legitimate emails from non-English speakers as spam — compared to 2% for English speakers. What is the most accurate description of this situation?",
+      "options": [
+        "The model is fair because 96% accuracy is excellent.",
+        "The model shows bias that disproportionately harms one group.",
+        "This is expected — non-English spam is naturally harder to detect.",
+        "The only fix is to collect more data overall."
+      ],
+      "answerIndex": 1,
+      "explanation": "High overall accuracy hides a serious disparity: non-English speakers lose 30% of legitimate email vs 2% for English speakers. This is a classic fairness failure driven by underrepresentation of non-English examples in training data. Collecting more data overall won't fix it if the new data has the same imbalance — you need representative data for all groups."
+    },
+    {
+      "type": "text",
+      "md": "**Where is AI heading?** Active frontiers right now include better alignment techniques, multimodal models that see and reason across text and images simultaneously, international AI regulation (the EU AI Act, US executive orders), and ongoing debates about open vs. closed AI. The best way to keep up: read widely (Distill.pub, Anthropic's research blog, the AI Alignment Forum), build small projects, and stay curious about the societal questions — not just the technical ones.\n\nThe most impactful AI practitioners of the next decade will be people who can think clearly about **both** the engineering and the ethics. You've reached the end of this course. The tools are in your hands. Use them well."
+    }
+  ],
+  "keyTakeaways": [
+    "Bias in AI comes from biased data — models faithfully learn the patterns in their training set, including historical injustices and underrepresentation.",
+    "High overall accuracy can hide serious unfairness toward specific subgroups; always measure disaggregated performance.",
+    "Explainability, privacy, and safety are engineering concerns, not just philosophical ones — they require deliberate design choices.",
+    "The alignment problem — making AI pursue what we actually value — is one of the defining challenges for the future of the field.",
+    "Thoughtful builders ask 'who could this harm?' before shipping and stay engaged with the social and policy questions around AI."
+  ],
+  "exercise": {
+    "prompt": "Write a function `fairness_report(predictions)` that takes a list of dicts — each with keys `'actual'` (0 or 1), `'predicted'` (0 or 1), and `'group'` (a string) — and prints the accuracy for each unique group, then the overall accuracy. Call it with the sample data provided.",
+    "starterCode": "def fairness_report(predictions):\n    # TODO: compute and print accuracy per group, then overall\n    pass\n\nsample = [\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 1, \"group\": \"C\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"C\"},\n]\n\nfairness_report(sample)",
+    "hint": "First collect all unique groups using a set(). Then for each group, filter the list, count correct predictions (where actual == predicted), and divide by the group size. Do the same without filtering for overall accuracy.",
+    "solution": "def fairness_report(predictions):\n    groups = sorted(set(p['group'] for p in predictions))\n    for grp in groups:\n        subset = [p for p in predictions if p['group'] == grp]\n        correct = sum(1 for p in subset if p['actual'] == p['predicted'])\n        acc = correct / len(subset)\n        print(f\"Group {grp}: {correct}/{len(subset)} correct ({acc:.0%})\")\n    total_correct = sum(1 for p in predictions if p['actual'] == p['predicted'])\n    overall = total_correct / len(predictions)\n    print(f\"Overall:  {total_correct}/{len(predictions)} correct ({overall:.0%})\")\n\nsample = [\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 1, \"group\": \"C\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"C\"},\n]\n\nfairness_report(sample)"
+  }
+}

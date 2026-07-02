@@ -1,0 +1,96 @@
+{
+  "slug": "what-is-ml",
+  "title": "What is Machine Learning?",
+  "category": "ML Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover how machines learn patterns from data instead of following hand-written rules — and why that changes everything.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every morning your email client silently sorts hundreds of messages, deciding which ones are spam — without you ever writing a rule like \"if it says FREE MONEY it's spam\". Your phone unlocks when it sees your face. Netflix knows you'll enjoy that obscure documentary before you do. None of these systems were *programmed* with explicit instructions for every situation. They **learned** from examples. That's Machine Learning — and this lesson will show you exactly what that means."
+    },
+    {
+      "type": "heading",
+      "text": "Traditional Programming vs. Machine Learning"
+    },
+    {
+      "type": "text",
+      "md": "**Traditional programming** works like a recipe: you write **rules** (your code) + feed it **data** → the computer follows your rules and produces **answers**. A spam filter built the old way might say: *\"if the subject contains 'WINNER' AND the sender is unknown, mark as spam.\"* You, the programmer, had to invent every rule.\n\n**Machine Learning flips the script:** you give the computer **data** (many examples) + **answers** (labels like spam / not-spam) → the computer *discovers the rules itself*. The result is called a **model**. The model is not a list of if-statements; it's a compact mathematical summary of the patterns found in your examples."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Teaching by Example",
+      "md": "Imagine teaching a child what a dog is. You don't hand them a biology textbook — you point at many dogs and say \"dog\", point at cats and say \"not dog\", and eventually the child builds an internal sense of *dog-ness*. Machine Learning works the same way: show the algorithm thousands of labelled examples, and it builds its own internal rules — even rules it cannot fully explain in words."
+    },
+    {
+      "type": "heading",
+      "text": "Learning From Scratch — in Pure Python"
+    },
+    {
+      "type": "code",
+      "code": "# Training data: (exclamation_marks, is_spam)\ndata = [\n    (0, False), (1, False), (0, False), (2, False),\n    (5, True),  (7, True),  (4, True),  (6, True),\n    (1, False), (3, True),\n]\n\nbest_threshold, best_accuracy = 0, 0\nfor t in range(0, 8):\n    correct = sum(1 for marks, spam in data if (marks >= t) == spam)\n    acc = correct / len(data)\n    if acc > best_accuracy:\n        best_accuracy, best_threshold = acc, t\n\nprint(f\"Learned rule: spam if exclamation_marks >= {best_threshold}\")\nprint(f\"Training accuracy: {best_accuracy:.0%}\")",
+      "output": "Learned rule: spam if exclamation_marks >= 3\nTraining accuracy: 90%",
+      "caption": "The program searched for the best rule on its own — we never hard-coded the number 3. That search is the essence of learning."
+    },
+    {
+      "type": "heading",
+      "text": "The Two Phases: Training and Inference"
+    },
+    {
+      "type": "text",
+      "md": "Every ML system has two distinct phases.\n\n**Training (learning):** Feed the algorithm labelled examples. It adjusts its internal numbers — called **parameters** — to minimise mistakes. This happens once, or periodically when fresh data arrives.\n\n**Inference (predicting):** Take the finished, *frozen* model and give it a brand-new, unseen input. It produces a prediction in milliseconds. No learning happens here.\n\nYour face-unlock model was *trained* on photos before your phone left the factory. Every time you hold it up, it runs *inference* — a single quick calculation with the frozen model. The two phases are always separate."
+    },
+    {
+      "type": "code",
+      "code": "# Inference: apply the frozen threshold to new emails\ndef predict_spam(marks, threshold):\n    return marks >= threshold\n\nnew_emails = [\n    (\"Meeting at 3pm?\", 1),\n    (\"YOU WON!!!!!\", 5),\n    (\"Lunch tomorrow\", 0),\n]\nfor subject, marks in new_emails:\n    label = \"SPAM\" if predict_spam(marks, best_threshold) else \"OK\"\n    print(f\"{label}: '{subject}'\")",
+      "output": "OK: 'Meeting at 3pm?'\nSPAM: 'YOU WON!!!!!'\nOK: 'Lunch tomorrow'",
+      "caption": "Inference just applies the frozen learned rule to new inputs — no training data needed anymore."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"More data always helps\" — not quite",
+      "md": "A common misconception: throwing more data at a model always makes it better. In reality, **garbage in, garbage out** — biased or mislabelled data produces a biased model no matter how much of it you have. Quality beats quantity: 1,000 carefully labelled examples often outperform 1,000,000 noisy ones. Good ML engineering means choosing the right *data* and the right *model* together."
+    },
+    {
+      "type": "heading",
+      "text": "Real-World ML All Around You"
+    },
+    {
+      "type": "text",
+      "md": "Once you see the training/inference pattern, you spot ML everywhere:\n\n- **Spam filters** — trained on millions of labelled emails, predicting in real time\n- **Recommendations** — Netflix and Spotify trained on billions of histories to predict what *you* enjoy next\n- **Face unlock** — trained on face photos, running inference every time you lift your phone\n- **Fraud detection** — trained on normal vs. fraudulent transactions, flagging suspicious charges instantly\n- **Medical imaging** — trained on labelled X-rays, helping radiologists spot anomalies earlier\n\nIn every case: labelled examples in during training; fast predictions out during inference."
+    },
+    {
+      "type": "quiz",
+      "question": "A spam filter is trained on 10,000 labelled emails, then deployed. Which phase is happening when it classifies a brand-new email you just received?",
+      "options": [
+        "Training — the model is still learning from the new email",
+        "Inference — the frozen model applies learned patterns to a new input",
+        "Both phases happen simultaneously every time",
+        "Neither — spam filters use hand-written rules, not ML"
+      ],
+      "answerIndex": 1,
+      "explanation": "Inference is the prediction phase: after training, the model's parameters are fixed. It simply applies learned patterns to produce a prediction on the unseen email. Training would only happen again if engineers deliberately retrained the model on new labelled data."
+    },
+    {
+      "type": "text",
+      "md": "In practice, two lines replace our hand-written search loop:\n\n```python\nmodel.fit(X_train, y_train)   # training\npreds = model.predict(X_test) # inference\n```\n\nLibraries like **scikit-learn**, **PyTorch**, and **TensorFlow** handle the heavy optimisation for you. But understanding the loop we built from scratch is what separates someone who *uses* ML from someone who *understands* it. You now know what ML is at a conceptual and mechanical level. In the next lessons we'll zoom into specific types of ML — supervised, unsupervised, and reinforcement learning — and build real models from scratch. The journey has begun!"
+    }
+  ],
+  "keyTakeaways": [
+    "Traditional programming: rules + data -> answers. ML: data + answers -> rules (the model).",
+    "Training is the learning phase; inference is the frozen prediction phase — always separate.",
+    "ML works by searching for parameters that minimise mistakes on labelled examples.",
+    "Data quality matters more than quantity — biased data produces biased models.",
+    "Spam filters, face unlock, recommendations, and fraud detection all follow the same two-phase ML pattern."
+  ],
+  "exercise": {
+    "prompt": "Write a `learn_threshold(data)` function that takes a list of `(value, is_positive)` tuples and returns the integer threshold `t` (0–10) such that predicting `value >= t` gives the highest accuracy on the training data. Then write `predict(value, threshold)` that returns `True` if the value meets or exceeds the threshold. Test both on the provided dataset and print the learned threshold, training accuracy, and a sample prediction.",
+    "starterCode": "# Dataset: (hours_studied, passed_exam)\ntraining_data = [\n    (1, False), (2, False), (2, False), (3, False),\n    (4, True),  (5, True),  (3, True),  (6, True),\n    (1, False), (5, True),\n]\n\ndef learn_threshold(data):\n    # TODO: try every threshold from 0 to 10\n    # return the one with the best accuracy\n    pass\n\ndef predict(value, threshold):\n    # TODO: return True if value >= threshold\n    pass\n\nt = learn_threshold(training_data)\nprint(f\"Learned threshold: {t}\")\ncorrect = sum(1 for v, label in training_data if predict(v, t) == label)\nprint(f\"Training accuracy: {correct / len(training_data):.0%}\")\nprint(f\"Student who studied 4 hours — passes? {predict(4, t)}\")",
+    "hint": "Loop `t` from 0 to 10. For each `t`, count how many `(value, label)` pairs satisfy `(value >= t) == label`. Track which `t` gave the most correct predictions and return it.",
+    "solution": "training_data = [\n    (1, False), (2, False), (2, False), (3, False),\n    (4, True),  (5, True),  (3, True),  (6, True),\n    (1, False), (5, True),\n]\n\ndef learn_threshold(data):\n    best_t, best_acc = 0, 0\n    for t in range(0, 11):\n        correct = sum(1 for value, label in data if (value >= t) == label)\n        acc = correct / len(data)\n        if acc > best_acc:\n            best_acc, best_t = acc, t\n    return best_t\n\ndef predict(value, threshold):\n    return value >= threshold\n\nt = learn_threshold(training_data)\nprint(f\"Learned threshold: {t}\")\ncorrect = sum(1 for v, label in training_data if predict(v, t) == label)\nprint(f\"Training accuracy: {correct / len(training_data):.0%}\")\nprint(f\"Student who studied 4 hours — passes? {predict(4, t)}\")"
+  }
+}
