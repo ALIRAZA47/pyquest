@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import { ProgressProvider } from "@/components/ProgressContext";
 import { ConfettiHost } from "@/components/ConfettiHost";
 import { Toaster } from "@/components/Toaster";
+import { CommandPalette } from "@/components/CommandPalette";
+import { KeyboardNav } from "@/components/KeyboardNav";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +19,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <Toaster />
         <ConfettiHost />
+        <CommandPalette />
+        <KeyboardNav />
       </ProgressProvider>
     </ThemeProvider>
   );

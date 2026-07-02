@@ -3,12 +3,14 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tokenizePython } from "@/lib/highlight";
+import { PyRunner } from "./PyRunner";
 import { CopyIcon, CheckIcon, PlayIcon } from "./Icons";
 
 interface CodeBlockProps {
   code: string;
   output?: string;
   caption?: string;
+  runnable?: boolean;
 }
 
 function Highlighted({ code }: { code: string }) {
@@ -28,11 +30,27 @@ function Highlighted({ code }: { code: string }) {
   );
 }
 
-export function CodeBlock({ code, output, caption }: CodeBlockProps) {
+export function CodeBlock({ code, output, caption, runnable }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [ran, setRan] = useState(false);
+  const [live, setLive] = useState(false);
   const trimmed = code.replace(/\n+$/, "");
   const lineCount = trimmed.split("\n").length;
+
+  if (live) {
+    return (
+      <div className="my-6">
+        <PyRunner initialCode={trimmed} caption={caption || "python"} minRows={lineCount} />
+        <button
+          type="button"
+          onClick={() => setLive(false)}
+          className="mt-1 text-xs font-medium text-faint transition-colors hover:text-accent"
+        >
+          ← Back to example
+        </button>
+      </div>
+    );
+  }
 
   const copy = async () => {
     try {
@@ -57,6 +75,16 @@ export function CodeBlock({ code, output, caption }: CodeBlockProps) {
           {caption || "python"}
         </span>
         <div className="ml-auto flex items-center gap-1.5">
+          {runnable && (
+            <button
+              type="button"
+              onClick={() => setLive(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent/15"
+            >
+              <PlayIcon className="h-3 w-3" />
+              Edit &amp; run
+            </button>
+          )}
           {output !== undefined && (
             <button
               type="button"
@@ -64,7 +92,7 @@ export function CodeBlock({ code, output, caption }: CodeBlockProps) {
               className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:border-accent/50 hover:text-accent"
             >
               <PlayIcon className="h-3 w-3" />
-              {ran ? "Hide" : "Run"}
+              {ran ? "Hide" : "Output"}
             </button>
           )}
           <button

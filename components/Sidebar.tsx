@@ -120,11 +120,12 @@ export function Sidebar({
       </Link>
 
       {/* Quick links */}
-      <div className="mx-4 mb-2 grid grid-cols-3 gap-1.5">
+      <div className="mx-4 mb-2 grid grid-cols-4 gap-1.5">
         {[
-          { href: "/learn/playground", icon: "flask", label: "Playground" },
-          { href: "/learn/review", icon: "loop", label: "Practice" },
-          { href: "/learn/profile", icon: "trophy", label: "Badges" },
+          { href: "/learn/playground", icon: "flask", label: "Play" },
+          { href: "/learn/projects", icon: "puzzle", label: "Build" },
+          { href: "/learn/review", icon: "loop", label: "Review" },
+          { href: "/learn/profile", icon: "trophy", label: "Stats" },
         ].map((q) => {
           const active = pathname === q.href;
           return (
@@ -252,7 +253,7 @@ export function Sidebar({
   return (
     <>
       {/* Desktop */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[300px] border-r border-border bg-surface/60 backdrop-blur-xl lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[300px] border-r border-border bg-surface/60 backdrop-blur-xl lg:block print:hidden">
         {content}
       </aside>
 

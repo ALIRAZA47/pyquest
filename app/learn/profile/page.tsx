@@ -165,6 +165,13 @@ export default function ProfilePage() {
           <Glyph name="loop" className="h-4 w-4" />
           Practice past lessons
         </Link>
+        <Link
+          href="/learn/certificate"
+          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-5 py-3 font-semibold text-fg transition-colors hover:border-accent/50"
+        >
+          <Glyph name="gradcap" className="h-4 w-4" />
+          Certificate
+        </Link>
       </div>
     </div>
   );

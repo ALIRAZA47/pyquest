@@ -10,6 +10,8 @@ import { Quiz } from "./Quiz";
 import { Exercise } from "./Exercise";
 import { Slides } from "./Slides";
 import { Challenges } from "./Challenges";
+import { LessonToc } from "./LessonToc";
+import { LessonVisualizer } from "./Visualizers";
 import { Markdown } from "./Markdown";
 import { useProgress } from "./ProgressContext";
 import { Glyph, lessonGlyph } from "./glyphs";
@@ -45,13 +47,23 @@ function BlockView({
       );
     case "heading":
       return (
-        <h2 className="group mt-10 scroll-mt-24 text-xl font-bold tracking-tight text-fg sm:text-2xl">
+        <h2
+          id={`h-${index}`}
+          className="group mt-10 scroll-mt-24 text-xl font-bold tracking-tight text-fg sm:text-2xl"
+        >
           <span className="mr-2 text-accent/70">#</span>
           {block.text}
         </h2>
       );
     case "code":
-      return <CodeBlock code={block.code} output={block.output} caption={block.caption} />;
+      return (
+        <CodeBlock
+          code={block.code}
+          output={block.output}
+          caption={block.caption}
+          runnable
+        />
+      );
     case "callout":
       return <Callout variant={block.variant} title={block.title} md={block.md} />;
     case "quiz":
@@ -115,6 +127,10 @@ export function LessonRenderer({
     }
   };
 
+  const headings = lesson.blocks
+    .map((b, i) => (b.type === "heading" ? { id: `h-${i}`, text: b.text } : null))
+    .filter((h): h is { id: string; text: string } => h !== null);
+
   // Show the walkthrough deck right after the opening paragraph (index 0 when
   // it's a text block), or before all blocks otherwise.
   const deckAfter = lesson.blocks[0]?.type === "text" ? 0 : -1;
@@ -126,6 +142,7 @@ export function LessonRenderer({
 
   return (
     <article className="mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
+      <LessonToc headings={headings} />
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: 14 }}
@@ -243,6 +260,9 @@ export function LessonRenderer({
           </ul>
         </section>
       )}
+
+      {/* Interactive concept visualizer (only for supported lessons) */}
+      <LessonVisualizer slug={lesson.slug} />
 
       {/* Interactive challenges */}
       {lesson.challenges && lesson.challenges.length > 0 && (

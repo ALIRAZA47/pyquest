@@ -16,7 +16,7 @@ export default function LearnLayout({
     <div className="min-h-screen">
       <ReadingProgress />
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
-      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[300px]">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[300px] print:pl-0">
         <Topbar onMenu={() => setMobileOpen(true)} />
         <main className="flex-1">{children}</main>
       </div>

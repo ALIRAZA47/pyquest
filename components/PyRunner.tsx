@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { runPython, isPyodideReady } from "@/lib/pyodide";
-import { PlayIcon, CheckIcon } from "./Icons";
+import { explainError } from "@/lib/pyerrors";
+import { PlayIcon } from "./Icons";
+import { LightbulbIcon, WarningIcon } from "./Icons";
 
 interface PyRunnerProps {
   initialCode: string;
@@ -148,15 +150,38 @@ export function PyRunner({
                 </p>
               )}
               {(status === "done" || status === "error") && (
-                <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-[13px] leading-relaxed">
-                  {output && <span className="text-fg/85">{output}</span>}
-                  {error && <span className="text-rose-400">{error}</span>}
-                  {!output && !error && (
-                    <span className="text-faint">
-                      (ran with no output — try adding a print)
-                    </span>
-                  )}
-                </pre>
+                <>
+                  <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-[13px] leading-relaxed">
+                    {output && <span className="text-fg/85">{output}</span>}
+                    {error && <span className="text-rose-400">{error}</span>}
+                    {!output && !error && (
+                      <span className="text-faint">
+                        (ran with no output — try adding a print)
+                      </span>
+                    )}
+                  </pre>
+                  {error &&
+                    (() => {
+                      const friendly = explainError(error);
+                      if (!friendly) return null;
+                      return (
+                        <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.07] p-3.5 text-sm">
+                          <div className="flex items-center gap-2 font-semibold text-amber-500">
+                            <WarningIcon className="h-4 w-4" />
+                            {friendly.title}
+                            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 font-mono text-[10px]">
+                              {friendly.type}
+                            </span>
+                          </div>
+                          <p className="mt-1.5 text-muted">{friendly.explanation}</p>
+                          <p className="mt-2 flex items-start gap-1.5 text-fg/90">
+                            <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                            <span>{friendly.tip}</span>
+                          </p>
+                        </div>
+                      );
+                    })()}
+                </>
               )}
             </div>
           </motion.div>
