@@ -1,0 +1,49 @@
+{
+  "slug": "return-values",
+  "slides": [
+    {
+      "emoji": "↩️",
+      "title": "Functions Can Hand Things Back",
+      "body": "Built-in functions like `len()` and `round()` don't just *do* something — they **give you a result** you can use. The `return` statement is how any function sends data back to the caller.",
+      "tip": "Think of a vending machine: you press a button and it hands back a snack you can actually keep."
+    },
+    {
+      "emoji": "📦",
+      "title": "Using return to Send a Value",
+      "body": "Write `return` followed by a value and Python exits the function immediately, handing that value back. You can store it in a variable and use it anywhere.",
+      "code": "def add(a, b):\n    return a + b\n\ntotal = add(3, 5)\nprint(total)",
+      "output": "8",
+      "tip": "The returned value is yours to store, pass on, or do maths with."
+    },
+    {
+      "emoji": "🖨️",
+      "title": "return vs. print — Not the Same!",
+      "body": "`print` shows a value on screen and then it's **gone**. `return` hands the value back so your code can actually **use** it. A function with only `print` secretly returns `None`.",
+      "code": "def double_print(x):\n    print(x * 2)\n\na = double_print(4)\nprint(a)",
+      "output": "8\nNone",
+      "tip": "If you try to do maths on the result of a print-only function, you'll get a TypeError."
+    },
+    {
+      "emoji": "🚪",
+      "title": "Exit Early with return",
+      "body": "`return` can appear anywhere in a function — the moment Python hits it, the function stops. This **early return** lets you handle edge cases cleanly without deep nesting.",
+      "code": "def is_adult(age):\n    if age < 18:\n        return False\n    return True\n\nprint(is_adult(15))\nprint(is_adult(21))",
+      "output": "False\nTrue",
+      "tip": "Handle special cases first and return early — the main logic stays unindented and easy to read."
+    },
+    {
+      "emoji": "🎁",
+      "title": "Return Two Values at Once",
+      "body": "Separate values with a comma after `return` and Python packs them into a tuple. **Unpack** them into separate variables on the left side of `=` in one clean line.",
+      "code": "def min_max(nums):\n    return min(nums), max(nums)\n\nlo, hi = min_max([4, 1, 9, 2, 7])\nprint(lo, hi)",
+      "output": "1 9",
+      "tip": "You can also keep the result as a single tuple: result = min_max(nums)."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got the Power to Return!",
+      "body": "`return` transforms a function from a one-way action into a **two-way conversation** — it does work and sends the answer back. No `return`? Python quietly hands back `None`.",
+      "tip": "Rule of thumb: if you want to use the result later, return it. If you only want to display it, print it."
+    }
+  ]
+}

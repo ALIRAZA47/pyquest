@@ -1,0 +1,49 @@
+{
+  "slug": "regular-expressions",
+  "slides": [
+    {
+      "emoji": "🔍",
+      "title": "Find Patterns in Any Text",
+      "body": "A **regular expression** (regex) is a tiny pattern language that describes what text to look for. Instead of dozens of `if`-statements, one pattern can find emails, phone numbers, or prices in a single line.",
+      "tip": "Python's built-in `re` module is all you need — no install required."
+    },
+    {
+      "emoji": "📦",
+      "title": "Import re and Start Searching",
+      "body": "Use `re.search(pattern, text)` to find the first match anywhere in a string. It returns a **Match object** if found, or `None` if not.",
+      "code": "import re\n\ntext = \"My email is hello@example.com\"\nresult = re.search(r\"hello\", text)\nprint(result.group())",
+      "output": "hello",
+      "tip": "Always write patterns as raw strings `r\"...\"` so backslashes pass through to regex unchanged."
+    },
+    {
+      "emoji": "🔣",
+      "title": "Metacharacters = Pattern Power",
+      "body": "Special symbols let you describe **types** of characters, not just specific ones. `\\d` matches any digit, `\\w` matches any word character, and `+` means \"one or more\".",
+      "code": "import re\n\ntext = \"I have 3 cats and 12 dogs\"\nprint(re.findall(r\"\\d+\", text))",
+      "output": "['3', '12']",
+      "tip": "`findall` returns a list of **all** matches — perfect for grabbing every number, word, or email at once."
+    },
+    {
+      "emoji": "✂️",
+      "title": "Four Functions Cover Everything",
+      "body": "`re.search` finds the first match, `re.findall` collects all matches, `re.sub` replaces matches, and `re.match` checks if the string **starts** with the pattern.",
+      "code": "import re\n\ntext = \"Prices: $10, $250, $3\"\ncensored = re.sub(r\"\\$\\d+\", \"???\", text)\nprint(censored)",
+      "output": "Prices: ???, ???, ???",
+      "tip": "Use `re.search` (not `re.match`) when the pattern could appear anywhere in the text."
+    },
+    {
+      "emoji": "🎯",
+      "title": "Groups Let You Extract Pieces",
+      "body": "Wrap part of a pattern in `()` to **capture** that piece separately. Call `.group(1)`, `.group(2)`, etc. to pull out each captured chunk.",
+      "code": "import re\n\nmatch = re.search(r\"(\\w+)@([\\w.]+)\", \"hi billing@company.org\")\nprint(match.group(1))\nprint(match.group(2))",
+      "output": "billing\ncompany.org",
+      "tip": "Always guard with `if match:` before calling `.group()` — `re.search` returns `None` when nothing is found."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Know Regex Now!",
+      "body": "You can import `re`, write raw-string patterns using metacharacters like `\\d` and `\\w`, and use `search`, `findall`, `sub`, and groups to slice and dice any text. For simple lookups, plain `str` methods are still cleaner — save regex for genuinely complex patterns.",
+      "tip": "Regex can't parse HTML or JSON — use `BeautifulSoup` or `json.loads()` for those."
+    }
+  ]
+}

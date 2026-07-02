@@ -1,0 +1,45 @@
+{
+  "slug": "comments",
+  "slides": [
+    {
+      "emoji": "💭",
+      "title": "Notes Inside Your Code",
+      "body": "A **comment** is a message you leave in your code for humans to read. Python ignores it completely — it's just there to explain what's going on and *why*.",
+      "tip": "Future-you will thank present-you for every comment you write."
+    },
+    {
+      "emoji": "#️⃣",
+      "title": "Start with a `#` Sign",
+      "body": "Put `#` anywhere on a line and everything after it becomes a comment. Works on its own line, or tacked on at the end of code.",
+      "code": "# This is a full-line comment\nprint(\"Hello!\")  # This is an inline comment",
+      "output": "Hello!"
+    },
+    {
+      "emoji": "🧾",
+      "title": "Comment the WHY, Not the WHAT",
+      "body": "The code already shows *what* happens. A great comment explains **why** you made a choice — the reasoning a future reader can't guess from the code alone.",
+      "code": "# BAD: just repeats the code\nx = x + 1  # add 1 to x\n\n# GOOD: explains the reason\nx = x + 1  # skip index 0 — it's always a placeholder",
+      "tip": "If the comment just restates the line in English, delete it."
+    },
+    {
+      "emoji": "🔇",
+      "title": "Disable Code Temporarily",
+      "body": "Add `#` to the front of any line to \"comment it out\" — Python skips it. Handy when testing, without having to delete anything.",
+      "code": "name = \"Alice\"\nprint(\"Hello, \" + name)\n# print(\"Goodbye, \" + name)  # disabled for now",
+      "output": "Hello, Alice"
+    },
+    {
+      "emoji": "📋",
+      "title": "Docstrings Document Functions",
+      "body": "Triple quotes `\"\"\"like this\"\"\"` right inside a function create a **docstring** — the standard way to describe what a function does. Even `help()` can display it.",
+      "code": "def greet(name):\n    \"\"\"Return a friendly greeting for the given name.\"\"\"\n    return \"Hello, \" + name + \"!\"",
+      "tip": "Use `#` for quick notes anywhere; use `\"\"\"docstrings\"\"\"` to describe functions."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You're a Commenting Pro!",
+      "body": "Comments cost nothing and save hours. Write them for the **why**, keep them short, and use docstrings for functions — your future self (and teammates) will be grateful.",
+      "tip": "Clean up old commented-out code once you're sure you don't need it anymore."
+    }
+  ]
+}

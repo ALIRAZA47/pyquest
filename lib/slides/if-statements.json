@@ -1,0 +1,41 @@
+{
+  "slug": "if-statements",
+  "slides": [
+    {
+      "emoji": "🚦",
+      "title": "Code That Makes Decisions",
+      "body": "Every useful program needs to choose: show an error or a success? Let the user in or not? **`if` statements** are how Python picks a path — they are the heartbeat of all program logic.",
+      "tip": "if / elif / else is used in almost every real program ever written."
+    },
+    {
+      "emoji": "🚪",
+      "title": "Your First if Statement",
+      "body": "Write `if condition:` with a **colon**, then indent the code you want to run. Python only enters that block when the condition is `True`.",
+      "code": "temperature = 35\n\nif temperature > 30:\n    print(\"It's hot outside!\")",
+      "output": "It's hot outside!",
+      "tip": "The 4-space indent is not optional — it tells Python which lines belong inside the if."
+    },
+    {
+      "emoji": "↔️",
+      "title": "else: the Fallback Branch",
+      "body": "Add `else:` to run a **different** block when the condition is `False`. Exactly one of the two branches always runs.",
+      "code": "age = 16\n\nif age >= 18:\n    print(\"You can vote!\")\nelse:\n    print(\"You cannot vote yet.\")",
+      "output": "You cannot vote yet.",
+      "tip": "else never has a condition — it's the catch-all at the end."
+    },
+    {
+      "emoji": "🪜",
+      "title": "elif: Check More Options",
+      "body": "Need more than two paths? Use **`elif`** (\"else if\") to test extra conditions. Python checks them **top to bottom** and stops at the first `True` one.",
+      "code": "grade = 75\n\nif grade >= 90:\n    print(\"A\")\nelif grade >= 80:\n    print(\"B\")\nelif grade >= 70:\n    print(\"C\")\nelse:\n    print(\"Below C\")",
+      "output": "C",
+      "tip": "Order matters — put the most specific (highest) conditions first."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got if / elif / else!",
+      "body": "You can now give Python a brain: ask a question with `if`, add a fallback with `else`, and handle extra cases with `elif`. Programs that make decisions are programs that actually *do* things.",
+      "tip": "Bonus: `label = \"Win\" if score >= 100 else \"Try again\"` squeezes a simple if/else into one line."
+    }
+  ]
+}

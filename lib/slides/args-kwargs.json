@@ -1,0 +1,41 @@
+{
+  "slug": "args-kwargs",
+  "slides": [
+    {
+      "emoji": "🎒",
+      "title": "Functions That Take Anything",
+      "body": "What if you want a function that works with **2 arguments today and 10 tomorrow**? `*args` and `**kwargs` let your functions accept as many inputs as needed — no rewriting required.",
+      "tip": "These are not special keywords — the magic is in the * and ** symbols, not the names 'args' or 'kwargs'."
+    },
+    {
+      "emoji": "📦",
+      "title": "*args Packs Extras into a Tuple",
+      "body": "Prefix a parameter with `*` and Python bundles every extra positional argument into a **tuple** inside your function.",
+      "code": "def add_all(*args):\n    total = 0\n    for n in args:\n        total += n\n    return total\n\nprint(add_all(1, 2, 3))",
+      "output": "6",
+      "tip": "args is always a tuple — immutable and ordered, just like the values you passed in."
+    },
+    {
+      "emoji": "🗂️",
+      "title": "**kwargs Packs Extras into a Dict",
+      "body": "Prefix a parameter with `**` and Python collects every extra **keyword argument** into a dictionary — keys are the names, values are the values.",
+      "code": "def show_profile(**kwargs):\n    for key, value in kwargs.items():\n        print(f\"{key}: {value}\")\n\nshow_profile(name=\"Alice\", city=\"London\")",
+      "output": "name: Alice\ncity: London",
+      "tip": "kwargs is a plain dict — you can loop over it, look things up, or pass it around like any other dict."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Mixing Them — Order Is Everything",
+      "body": "You can combine all four kinds of parameters, but Python requires a **strict order**: regular params → `*args` → keyword-only → `**kwargs`.",
+      "code": "def order(place, *dishes, tip=0, **extras):\n    print(place, dishes, tip, extras)\n\norder(\"Cafe\", \"Pizza\", \"Salad\", tip=10, seat=\"window\")",
+      "output": "Cafe ('Pizza', 'Salad') 10 {'seat': 'window'}",
+      "tip": "Putting **kwargs before *args causes a SyntaxError — Python is strict about this."
+    },
+    {
+      "emoji": "🚀",
+      "title": "You've Got Flexible Functions!",
+      "body": "With `*args` and `**kwargs` you can write functions that handle **any number of inputs** — positional or named. The same tools also let you **unpack** lists and dicts into any function call with `*` and `**`.",
+      "tip": "Next time you see *args or **kwargs in someone else's code, you'll know exactly what's happening."
+    }
+  ]
+}

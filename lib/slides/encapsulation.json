@@ -1,0 +1,47 @@
+{
+  "slug": "encapsulation",
+  "slides": [
+    {
+      "emoji": "🔒",
+      "title": "Your Data, Your Rules",
+      "body": "**Encapsulation** means bundling data and the methods that use it into one unit — and deciding what the outside world is allowed to touch. Think of a vending machine: customers press buttons, they don't reach inside.",
+      "tip": "Encapsulation is one of the four pillars of object-oriented programming."
+    },
+    {
+      "emoji": "🏦",
+      "title": "Bundle Data With Methods",
+      "body": "A class already groups data and behavior together. Here a `BankAccount` keeps its `balance` alongside `deposit()` — they travel as one tidy package.",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\nacc = BankAccount(\"Alice\", 100)\nacc.deposit(50)\nprint(acc.balance)",
+      "output": "150"
+    },
+    {
+      "emoji": "🔑",
+      "title": "Public, Protected, Private",
+      "body": "Python uses **naming conventions** to signal access level — no special keyword needed. One underscore means *\"handle with care\"*; two underscores triggers **name mangling** so outside access fails.",
+      "code": "class Employee:\n    def __init__(self, name, salary):\n        self.name = name          # public\n        self._department = \"Eng\"  # protected\n        self.__salary = salary    # private\n\nemp = Employee(\"Bob\", 80000)\nprint(emp.name)\nprint(emp._department)\n# emp.__salary  → AttributeError!",
+      "output": "Bob\nEng",
+      "tip": "Python trusts you — underscores are a social contract, not a hard lock."
+    },
+    {
+      "emoji": "🛡️",
+      "title": "Protect Rules With Methods",
+      "body": "Hiding data lets you **enforce invariants** — rules that must always hold. Route all changes through a method and validate there, in one place.",
+      "code": "def withdraw(self, amount):\n    if amount > self.__balance:\n        raise ValueError(\"Not enough funds\")\n    self.__balance -= amount",
+      "tip": "If `balance` were public, anyone could write `acc.balance = -999` and break your rule."
+    },
+    {
+      "emoji": "✨",
+      "title": "Clean Access With @property",
+      "body": "The `@property` decorator lets you expose a private value **as if it were a plain attribute**, while secretly running validation or computation behind the scenes.",
+      "code": "class Temperature:\n    def __init__(self, c):\n        self.__c = c\n\n    @property\n    def celsius(self):\n        return self.__c\n\n    @celsius.setter\n    def celsius(self, value):\n        if value < -273.15:\n            raise ValueError(\"Below absolute zero!\")\n        self.__c = value\n\nt = Temperature(25)\nprint(t.celsius)\nt.celsius = 100\nprint(t.celsius)",
+      "output": "25\n100",
+      "tip": "Callers write `t.celsius = 100` — they never know a method is running underneath."
+    },
+    {
+      "emoji": "🎯",
+      "title": "You've Got Encapsulation!",
+      "body": "You now know how to **bundle data with methods**, use `_` and `__` naming conventions for access control, and add `@property` for clean, validated attribute access. Your objects are safe, organized, and easy to use.",
+      "tip": "Start public, then add `@property` when you need validation — callers never notice the difference."
+    }
+  ]
+}

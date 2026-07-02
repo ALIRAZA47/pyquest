@@ -1,0 +1,49 @@
+{
+  "slug": "tuples",
+  "slides": [
+    {
+      "emoji": "📦",
+      "title": "Tuples: Sealed Boxes of Data",
+      "body": "A **tuple** is an ordered collection of values — like a list, but **locked**. Once you create it, the contents can never change.",
+      "tip": "Immutability is a feature: it guarantees the data stays exactly as you left it."
+    },
+    {
+      "emoji": "🛠️",
+      "title": "Creating a Tuple",
+      "body": "Wrap values in **parentheses** `()` separated by commas. The parentheses are optional — the commas are what make it a tuple.",
+      "code": "coordinates = (40.7128, -74.0060)\nrgb = 255, 128, 0\nprint(type(rgb))",
+      "output": "<class 'tuple'>",
+      "tip": "Single-element tuple needs a trailing comma: `(42,)` — otherwise `(42)` is just the number 42."
+    },
+    {
+      "emoji": "📬",
+      "title": "Access & Unpack Elements",
+      "body": "Index a tuple with `[]` just like a list. Even better, **unpack** all values into separate variables in one clean line.",
+      "code": "color = (255, 128, 0)\nr, g, b = color\nprint(r, g, b)",
+      "output": "255 128 0",
+      "tip": "Unpacking is one of Python's most satisfying tricks — one line, zero mess."
+    },
+    {
+      "emoji": "🔒",
+      "title": "Tuples Are Immutable",
+      "body": "Try to change a value inside a tuple and Python raises a `TypeError`. This isn't a bug — it's the whole point.",
+      "code": "point = (3, 7)\npoint[0] = 10",
+      "output": "TypeError: 'tuple' object does not support item assignment",
+      "tip": "Use a list when data must change; use a tuple when data must stay fixed."
+    },
+    {
+      "emoji": "↩️",
+      "title": "Return Multiple Values Easily",
+      "body": "Functions can only `return` one thing — make that one thing a **tuple** to send back several results at once.",
+      "code": "def min_max(nums):\n    return min(nums), max(nums)\n\nlo, hi = min_max([61, 88, 100])\nprint(lo, hi)",
+      "output": "61 100",
+      "tip": "Tuple unpacking at the call site keeps the code clean and readable."
+    },
+    {
+      "emoji": "🎓",
+      "title": "You've Got Tuples!",
+      "body": "Tuples are **ordered**, **immutable**, and **unpackable**. Reach for them when data is fixed — coordinates, colors, dates, or multiple return values.",
+      "tip": "Bonus superpower: tuples can be dictionary keys; lists cannot — because tuples are hashable."
+    }
+  ]
+}

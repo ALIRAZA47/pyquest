@@ -8,6 +8,7 @@ import { CodeBlock } from "./CodeBlock";
 import { Callout } from "./Callout";
 import { Quiz } from "./Quiz";
 import { Exercise } from "./Exercise";
+import { Slides } from "./Slides";
 import { Markdown } from "./Markdown";
 import { useProgress } from "./ProgressContext";
 import {
@@ -56,6 +57,27 @@ function BlockView({ block }: { block: Block }) {
   }
 }
 
+function WalkthroughDeck({ slides }: { slides: NonNullable<Lesson["slides"]> }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div className="mt-8 flex items-center gap-2">
+        <span className="text-lg">👀</span>
+        <h2 className="text-lg font-bold tracking-tight text-fg">
+          See it in action
+        </h2>
+        <span className="hidden text-sm text-faint sm:inline">
+          — step through the idea, then dive into the details below.
+        </span>
+      </div>
+      <Slides slides={slides} />
+    </motion.div>
+  );
+}
+
 export function LessonRenderer({
   lesson,
   prev,
@@ -71,6 +93,10 @@ export function LessonRenderer({
 }) {
   const { isComplete, toggle, markComplete } = useProgress();
   const done = isComplete(lesson.slug);
+
+  // Show the walkthrough deck right after the opening paragraph (index 0 when
+  // it's a text block), or before all blocks otherwise.
+  const deckAfter = lesson.blocks[0]?.type === "text" ? 0 : -1;
 
   // Reset scroll on lesson change.
   useEffect(() => {
@@ -138,21 +164,31 @@ export function LessonRenderer({
 
       <div className="my-8 h-px bg-gradient-to-r from-border via-border to-transparent" />
 
+      {/* Interactive walkthrough — placed before the deep-dive content when
+          there's no leading paragraph, otherwise right after the intro. */}
+      {lesson.slides && lesson.slides.length > 0 && deckAfter === -1 && (
+        <WalkthroughDeck slides={lesson.slides} />
+      )}
+
       {/* Blocks */}
       <div>
         {lesson.blocks.map((block, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: Math.min(i * 0.045, 0.4),
-              ease: [0.16, 1, 0.3, 1],
-            }}
-          >
-            <BlockView block={block} />
-          </motion.div>
+          <div key={i}>
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.4,
+                delay: Math.min(i * 0.045, 0.4),
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <BlockView block={block} />
+            </motion.div>
+            {lesson.slides &&
+              lesson.slides.length > 0 &&
+              i === deckAfter && <WalkthroughDeck slides={lesson.slides} />}
+          </div>
         ))}
       </div>
 

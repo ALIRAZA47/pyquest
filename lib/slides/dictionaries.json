@@ -1,0 +1,49 @@
+{
+  "slug": "dictionaries",
+  "slides": [
+    {
+      "emoji": "🗂️",
+      "title": "Data with Labels, Not Positions",
+      "body": "A **dictionary** stores information as `key: value` pairs. Instead of remembering *position 0*, you look things up by a meaningful **name** — just like a real dictionary.",
+      "tip": "Dictionaries are Python's go-to structure for any data that has labels — settings, profiles, scores, and more."
+    },
+    {
+      "emoji": "📋",
+      "title": "Create Your First Dictionary",
+      "body": "Wrap `key: value` pairs in `{}`, separated by commas. Keys are usually strings; values can be anything.",
+      "code": "person = {\n    \"name\": \"Amara\",\n    \"age\": 28,\n    \"city\": \"Lagos\"\n}\nprint(person[\"name\"])",
+      "output": "Amara",
+      "tip": "Use square brackets `d[key]` to read a value — like indexing, but with a name instead of a number."
+    },
+    {
+      "emoji": "🛡️",
+      "title": "Safe Lookups with `.get()`",
+      "body": "Accessing a key that does not exist raises a `KeyError`. Use `.get(key, default)` to return a fallback value instead of crashing.",
+      "code": "person = {\"name\": \"Amara\", \"age\": 28}\nprint(person.get(\"email\", \"No email on file\"))",
+      "output": "No email on file",
+      "tip": "When you are not sure a key exists, `.get()` is always the safer choice."
+    },
+    {
+      "emoji": "✏️",
+      "title": "Add, Update, and Remove",
+      "body": "Assign `d[key] = value` to **add** a new entry or **overwrite** an existing one. Use `del d[key]` to permanently remove it.",
+      "code": "scores = {\"Alice\": 90, \"Bob\": 75}\nscores[\"Charlie\"] = 88\nscores[\"Bob\"] = 82\ndel scores[\"Alice\"]\nprint(scores)",
+      "output": "{'Bob': 82, 'Charlie': 88}",
+      "tip": "Same syntax for adding and updating — Python handles both automatically."
+    },
+    {
+      "emoji": "🔁",
+      "title": "Loop with `.items()`",
+      "body": "Use `.items()` to loop over every key-value pair at once. It hands you both pieces together on each iteration.",
+      "code": "prices = {\"coffee\": 3.50, \"tea\": 2.00}\nfor item, price in prices.items():\n    print(f\"{item}: ${price:.2f}\")",
+      "output": "coffee: $3.50\ntea: $2.00",
+      "tip": "Also useful: `.keys()` for keys only, `.values()` for values only."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got Dictionaries!",
+      "body": "You can now create, read, update, delete, and loop over dictionaries — the most powerful built-in data structure in Python. Nested dicts and dict comprehensions are your next power-ups.",
+      "tip": "Keys must be immutable (strings, numbers, tuples) and unique. Lists cannot be keys."
+    }
+  ]
+}

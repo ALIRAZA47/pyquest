@@ -1,0 +1,42 @@
+{
+  "slug": "assignment-operators",
+  "slides": [
+    {
+      "emoji": "📝",
+      "title": "Update Variables Without Rewriting Them",
+      "body": "Every program tracks **changing values** — scores, totals, counters. Assignment operators are Python's tools for updating a variable without starting from scratch.",
+      "tip": "You already know = — now meet its whole family of shortcuts."
+    },
+    {
+      "emoji": "📦",
+      "title": "= Puts a Value in a Box",
+      "body": "Think of a variable as a labeled box. `=` is the action of placing something inside it — it means **store this value**, not \"is equal to\".",
+      "code": "score = 0\nname = \"Alex\"\nprint(score)\nprint(name)",
+      "output": "0\nAlex",
+      "tip": "To *check* equality you use == (two equals signs) — completely different!"
+    },
+    {
+      "emoji": "➕",
+      "title": "The Long Way vs. the Shortcut",
+      "body": "`score = score + 5` works, but `score += 5` says the same thing in half the space. These **augmented assignment operators** combine an operation and an assignment into one step.",
+      "code": "score = 10\nscore += 5\nprint(score)",
+      "output": "15",
+      "tip": "Think of += like a tally counter button — press it and the number goes up automatically."
+    },
+    {
+      "emoji": "🧰",
+      "title": "Six More Shortcuts in the Family",
+      "body": "Python has seven augmented operators in total: `+=`, `-=`, `*=`, `/=`, `//=`, `%=`, and `**=`. Each one updates the variable **in place**.",
+      "code": "x = 20\nx -= 4\nprint(x)\nx *= 3\nprint(x)",
+      "output": "16\n48",
+      "tip": "/= always gives a float result; use //= if you want a whole number."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got the Update Power!",
+      "body": "You can now update any variable — numbers, strings, even lists — cleanly and efficiently. Always **initialize** a variable before using `+=` on it, and you're good to go.",
+      "code": "coins = 100\ncoins += 50\ncoins -= 30\ncoins *= 2\nprint(coins)",
+      "output": "240"
+    }
+  ]
+}

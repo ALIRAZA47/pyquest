@@ -1,0 +1,37 @@
+{
+  "slug": "the-init-method",
+  "slides": [
+    {
+      "emoji": "🎬",
+      "title": "Objects That Arrive Ready",
+      "body": "Every time you create an object, Python can **automatically run setup code** for you. That magic happens inside a special method called `__init__`.",
+      "tip": "\"init\" is short for initialise — it sets up the object the moment it is born."
+    },
+    {
+      "emoji": "🐾",
+      "title": "Your First __init__",
+      "body": "Define `__init__` inside a class to give every new object its own data right away. The arguments you pass at creation flow straight into the method.",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\nrex = Dog(\"Rex\", \"Labrador\")\nprint(rex.name)",
+      "output": "Rex"
+    },
+    {
+      "emoji": "🪪",
+      "title": "self = 'This Exact Object'",
+      "body": "`self` is automatically passed by Python and refers to **the specific instance being created**. Writing `self.name = name` pins the value onto that one object — not all dogs, just this one.",
+      "tip": "Always name it `self` — it is a rock-solid Python convention every developer expects."
+    },
+    {
+      "emoji": "🏦",
+      "title": "Each Instance Is Independent",
+      "body": "Every object gets its **own copy** of the attributes. Changing one instance never touches another.",
+      "code": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\na = BankAccount(\"Alice\", 100)\nb = BankAccount(\"Bob\")\nprint(a.balance, b.balance)",
+      "output": "100 0",
+      "tip": "Default values (like `balance=0`) let callers skip optional arguments."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got __init__ Down!",
+      "body": "Python calls `__init__` **automatically** — you never call it yourself. Use `self.x = value` inside it to store data, and every method in the class can read that data through `self`."
+    }
+  ]
+}

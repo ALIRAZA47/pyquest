@@ -1,0 +1,43 @@
+{
+  "slug": "type-conversion",
+  "slides": [
+    {
+      "emoji": "🔄",
+      "title": "Values Have Types — And You Can Switch",
+      "body": "Every value in Python has a **type** — `int`, `str`, `float`, and more. **Type conversion** (casting) lets you change a value from one type to another so Python understands what you really mean.",
+      "tip": "You'll use this constantly — especially when dealing with user input."
+    },
+    {
+      "emoji": "⌨️",
+      "title": "input() Always Returns a String",
+      "body": "`input()` gives you back **text**, even if the user typed a number. That means `\"5\"` and `5` look the same to you, but Python won't let you do math on `\"5\"`.",
+      "code": "age = input(\"How old are you? \")  # user types: 25\nprint(type(age))\nprint(age + 1)",
+      "output": "<class 'str'>\nTypeError: can only concatenate str (not \"int\") to str",
+      "tip": "The fix? Convert the value before using it."
+    },
+    {
+      "emoji": "🔢",
+      "title": "int() and float() Fix User Input",
+      "body": "Wrap `input()` in `int()` to get a whole number, or `float()` if decimals are possible. The conversion happens instantly — no extra step needed.",
+      "code": "age = int(input(\"How old are you? \"))  # user types: 25\nprint(age + 1)\n\nprice = float(input(\"Enter price: \"))  # user types: 9.99\nprint(price * 0.1)",
+      "output": "26\n0.999",
+      "tip": "int() chops off decimals — int(3.9) is 3, not 4."
+    },
+    {
+      "emoji": "💬",
+      "title": "str() Turns Numbers Into Text",
+      "body": "Need to join a number into a sentence? Use `str()` to convert it first — you can't concatenate a number directly onto a string with `+`.",
+      "code": "score = 98\nmessage = \"Your score is \" + str(score) + \" out of 100!\"\nprint(message)",
+      "output": "Your score is 98 out of 100!",
+      "tip": "f-strings skip this step — but str() shows you what's really happening."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You Can Cast Between Any Types",
+      "body": "You now know the core toolkit: `int()`, `float()`, `str()`, and `bool()`. Just remember — converting something nonsensical like `int(\"hello\")` raises a **ValueError**, so make sure the value makes sense first.",
+      "code": "print(bool(0))       # False\nprint(bool(\"hello\")) # True\nprint(int(\"42\"))     # 42",
+      "output": "False\nTrue\n42",
+      "tip": "Type conversion is one of the most-used skills in everyday Python."
+    }
+  ]
+}

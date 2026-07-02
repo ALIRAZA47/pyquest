@@ -1,0 +1,48 @@
+{
+  "slug": "context-managers",
+  "slides": [
+    {
+      "emoji": "🎚️",
+      "title": "Cleanup That Never Gets Skipped",
+      "body": "A **context manager** guarantees that cleanup code runs when you leave a block — even if an error crashes the party. Think of returning a library book: you *always* have to return it, no matter what happened while you were reading.",
+      "tip": "The `with` statement is Python's built-in way to use context managers."
+    },
+    {
+      "emoji": "⚠️",
+      "title": "The Risky Way to Open Files",
+      "body": "Without a context manager, a crash between `open()` and `close()` leaves the file **permanently open** — wasting resources or corrupting data.",
+      "code": "f = open(\"data.txt\", \"w\")\nf.write(\"Hello!\")\n# crash here → f.close() never runs!\nf.close()",
+      "tip": "Unclosed files, sockets, and locks are common real-world bugs."
+    },
+    {
+      "emoji": "🛡️",
+      "title": "`with` Makes It Bulletproof",
+      "body": "Wrap any resource in a `with` block and Python **automatically** calls cleanup when the block exits — crash or no crash.",
+      "code": "with open(\"data.txt\", \"w\") as f:\n    f.write(\"Hello!\")\n# file is closed here — always",
+      "output": "",
+      "tip": "No `try/finally` needed — `with` handles it for you."
+    },
+    {
+      "emoji": "🏗️",
+      "title": "Build Your Own: `__enter__` & `__exit__`",
+      "body": "Any class with `__enter__` (setup) and `__exit__` (teardown) can be a context manager. Here's a reusable **Timer**:",
+      "code": "import time\nclass Timer:\n    def __enter__(self):\n        self.start = time.time()\n        return self\n    def __exit__(self, *args):\n        print(f\"Elapsed: {time.time()-self.start:.3f}s\")\n\nwith Timer():\n    sum(range(1_000_000))",
+      "output": "Elapsed: 0.042s",
+      "tip": "`__exit__` receives exception info — return `True` to suppress, `False` to let it propagate."
+    },
+    {
+      "emoji": "✨",
+      "title": "Shortcut: `@contextmanager`",
+      "body": "No class needed! Use `@contextmanager` from `contextlib` — write a generator, put `yield` where the `with` block runs, and wrap it in `try/finally` for safe teardown.",
+      "code": "from contextlib import contextmanager\n\n@contextmanager\ndef timer():\n    import time; start = time.time()\n    try:\n        yield\n    finally:\n        print(f\"Elapsed: {time.time()-start:.3f}s\")\n\nwith timer():\n    sum(range(1_000_000))",
+      "output": "Elapsed: 0.039s",
+      "tip": "Always use `try/finally` around `yield` — skipping it means errors can bypass your cleanup."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got Context Managers!",
+      "body": "You now know how `with` guarantees cleanup, how `__enter__`/`__exit__` power it under the hood, and how `@contextmanager` lets you write one in just a few lines. Files, locks, DB connections — **context managers keep them all tidy**.",
+      "tip": "Spot a `try/finally` for cleanup? It's probably a great candidate to become a context manager."
+    }
+  ]
+}

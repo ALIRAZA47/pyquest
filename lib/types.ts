@@ -26,6 +26,16 @@ export interface Exercise {
   solution: string;
 }
 
+// A single card in a lesson's interactive walkthrough deck.
+export interface Slide {
+  title: string;
+  body: string; // markdown
+  code?: string;
+  output?: string;
+  tip?: string;
+  emoji?: string;
+}
+
 export interface Lesson {
   slug: string;
   title: string;
@@ -37,6 +47,7 @@ export interface Lesson {
   blocks: Block[];
   keyTakeaways: string[];
   exercise?: Exercise;
+  slides?: Slide[];
 }
 
 export interface CategoryMeta {

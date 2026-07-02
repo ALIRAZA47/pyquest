@@ -1,0 +1,46 @@
+{
+  "slug": "function-arguments",
+  "slides": [
+    {
+      "emoji": "🎛️",
+      "title": "Functions That Adapt",
+      "body": "A function that always does the same thing is useful. A function you can **customize each time you call it** is powerful. That's what **arguments** are for.",
+      "tip": "Think of a function like a coffee machine — you choose the beans, water, and cup size each time you press the button."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Parameters vs Arguments",
+      "body": "A **parameter** is the placeholder variable in `def`. An **argument** is the real value you pass when calling. Same concept, two different moments.",
+      "code": "def greet(name):   # 'name' is the PARAMETER\n    print(\"Hello,\", name)\n\ngreet(\"Alice\")     # 'Alice' is the ARGUMENT",
+      "output": "Hello, Alice"
+    },
+    {
+      "emoji": "📍",
+      "title": "Positional vs Keyword Args",
+      "body": "Pass values **in order** (positional) or **by name** (keyword). Keyword args use `param=value` syntax and let you skip worrying about order.",
+      "code": "def describe_pet(animal, name):\n    print(name, \"is a\", animal)\n\ndescribe_pet(\"dog\", \"Rex\")              # positional\ndescribe_pet(name=\"Luna\", animal=\"rabbit\")  # keyword",
+      "output": "Rex is a dog\nLuna is a rabbit",
+      "tip": "Keyword arguments make code self-documenting — you can see exactly what each value means."
+    },
+    {
+      "emoji": "⚙️",
+      "title": "Default Parameter Values",
+      "body": "Give a parameter a **default value** with `=` in the `def` line. Callers can skip that argument entirely, or override it when they need something different.",
+      "code": "def greet(name, greeting=\"Hello\"):\n    print(greeting + \",\", name + \"!\")\n\ngreet(\"Alice\")               # uses default\ngreet(\"Bob\", greeting=\"Hey\") # overrides it",
+      "output": "Hello, Alice!\nHey, Bob!"
+    },
+    {
+      "emoji": "⚠️",
+      "title": "The Mutable Default Trap",
+      "body": "Never use a **list or dict as a default value** — Python creates it once and shares it across every call. Use `None` instead and create a fresh list inside the function.",
+      "code": "# SAFE pattern\ndef add_item(item, cart=None):\n    if cart is None:\n        cart = []\n    cart.append(item)\n    return cart",
+      "tip": "This is one of Python's sneakiest gotchas — even experienced devs get bitten by it."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got the Controls",
+      "body": "You now know how to pass data into functions using **positional** and **keyword** arguments, set **defaults**, and avoid the mutable default trap. Functions just got a whole lot more flexible.",
+      "tip": "Rule to remember: positional arguments must always come before keyword arguments in a call."
+    }
+  ]
+}

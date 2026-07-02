@@ -1,0 +1,48 @@
+{
+  "slug": "variable-scope",
+  "slides": [
+    {
+      "emoji": "🔭",
+      "title": "Where Can a Variable Be Seen?",
+      "body": "Every variable has a **scope** — the region of code where it exists and can be used. Think of variables like notebooks in different rooms: a notebook in the bedroom can't be read from the kitchen.",
+      "tip": "Scope is why a variable can seem to 'disappear' inside a function."
+    },
+    {
+      "emoji": "📦",
+      "title": "Local Variables Live Inside Functions",
+      "body": "A variable created **inside** a function is **local** — it exists only while the function runs, then vanishes. Code outside the function can't see it at all.",
+      "code": "def make_greeting():\n    message = \"Hello!\"\n    print(message)\n\nmake_greeting()\nprint(message)  # NameError!",
+      "output": "Hello!\nNameError: name 'message' is not defined",
+      "tip": "Local variables are born when the function runs and gone when it ends."
+    },
+    {
+      "emoji": "🌍",
+      "title": "Global Variables Are Visible Everywhere",
+      "body": "A variable created **outside** any function lives in **global** scope. Functions in the same file can **read** it freely — but modifying it is a different story.",
+      "code": "country = \"Canada\"\n\ndef show_country():\n    print(country)  # reading a global is fine\n\nshow_country()",
+      "output": "Canada"
+    },
+    {
+      "emoji": "🔎",
+      "title": "Python Searches by the LEGB Rule",
+      "body": "When Python sees a variable name it searches: **L**ocal → **E**nclosing → **G**lobal → **B**uilt-in. It stops at the first match — or raises a `NameError` if nothing is found.",
+      "code": "x = \"global\"\n\ndef outer():\n    x = \"enclosing\"\n    def inner():\n        print(x)  # finds enclosing first\n    inner()\n\nouter()",
+      "output": "enclosing",
+      "tip": "Built-ins like `print` and `len` are at level B — always available."
+    },
+    {
+      "emoji": "⚠️",
+      "title": "Assigning Inside a Function Makes It Local",
+      "body": "The moment Python sees `score = ...` inside a function, it treats **every** use of `score` in that function as local — even lines *before* the assignment. Use `global score` to modify the top-level variable instead.",
+      "code": "score = 0\n\ndef add_point():\n    global score\n    score = score + 1\n\nadd_point()\nadd_point()\nprint(score)",
+      "output": "2",
+      "tip": "Prefer passing values as arguments and returning results — it keeps code clean."
+    },
+    {
+      "emoji": "🏆",
+      "title": "Keep Data Local, Pass It Explicitly",
+      "body": "You've got scope! Local variables are safe and self-contained; globals can cause sneaky bugs. **Pass data in as arguments, return it back out** — and your functions will be easy to read and test.",
+      "tip": "Default to local scope; reach for `global` only when you truly need to."
+    }
+  ]
+}

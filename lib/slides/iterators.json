@@ -1,0 +1,48 @@
+{
+  "slug": "iterators",
+  "slides": [
+    {
+      "emoji": "🔄",
+      "title": "What Lives Inside a for Loop?",
+      "body": "Every time you write `for x in something`, Python is secretly using an **iterator** behind the scenes. Understanding this unlocks a whole new level of Python.",
+      "tip": "An iterable is the playlist. An iterator is the play button — it tracks where you are."
+    },
+    {
+      "emoji": "🎯",
+      "title": "iter() and next() — The Core Tools",
+      "body": "Use `iter()` to get an iterator from any iterable, then call `next()` to pull out items one at a time. When items run out, you get `StopIteration`.",
+      "code": "numbers = [10, 20, 30]\nit = iter(numbers)\nprint(next(it))\nprint(next(it, \"no more\"))",
+      "output": "10\n20",
+      "tip": "Pass a default to next() as a second argument to avoid a crash when items run out."
+    },
+    {
+      "emoji": "🔍",
+      "title": "The Secret Life of for Loops",
+      "body": "A `for` loop is just `iter()` + repeated `next()` + silently catching `StopIteration`. Python handles all of that for you.",
+      "code": "my_list = [1, 2, 3]\nit = iter(my_list)\nwhile True:\n    try:\n        print(next(it))\n    except StopIteration:\n        break",
+      "output": "1\n2\n3",
+      "tip": "StopIteration is a signal, not an error — for loops catch it quietly and exit."
+    },
+    {
+      "emoji": "🏗️",
+      "title": "Build Your Own Iterator",
+      "body": "Give any class `__iter__` and `__next__` methods and Python's `for` loop — plus `list()`, `sum()`, and more — will work with it automatically.",
+      "code": "class Countdown:\n    def __init__(self, start):\n        self.current = start\n    def __iter__(self): return self\n    def __next__(self):\n        if self.current <= 0: raise StopIteration\n        self.current -= 1\n        return self.current + 1",
+      "tip": "Iterators are one-shot — once exhausted, looping again produces nothing. Create a new instance to restart."
+    },
+    {
+      "emoji": "⚡",
+      "title": "yield: The Easy Shortcut",
+      "body": "A **generator function** using `yield` creates a full iterator automatically — no class needed. It also computes values **one at a time**, so it barely uses memory.",
+      "code": "def countdown(start):\n    while start > 0:\n        yield start\n        start -= 1\n\nfor n in countdown(3):\n    print(n)",
+      "output": "3\n2\n1",
+      "tip": "yield pauses the function and resumes exactly where it left off on the next next() call."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Now Get Iterators!",
+      "body": "You know what really happens inside `for` loops, how to use `iter()` and `next()` directly, how to build custom iterator classes, and how `yield` makes it effortless.",
+      "tip": "Next step: write a generator function called squares(n) that yields 1, 4, 9 … n²."
+    }
+  ]
+}

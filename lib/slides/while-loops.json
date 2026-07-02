@@ -1,0 +1,40 @@
+{
+  "slug": "while-loops",
+  "slides": [
+    {
+      "emoji": "♻️",
+      "title": "Repeat Until You Say Stop",
+      "body": "A `while` loop runs a block of code **over and over** as long as a condition stays `True`. Think of pouring water into a glass — you keep pouring *while* it isn't full.",
+      "tip": "while loops are perfect when you don't know in advance how many times you'll need to repeat."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Your First while Loop",
+      "body": "Set a **counter**, check it in the condition, and **update it** inside the loop. Python re-checks the condition after every pass.",
+      "code": "count = 1\nwhile count <= 3:\n    print(\"Hello!\", count)\n    count += 1",
+      "output": "Hello! 1\nHello! 2\nHello! 3",
+      "tip": "count += 1 is shorthand for count = count + 1."
+    },
+    {
+      "emoji": "⚠️",
+      "title": "The Danger: Infinite Loops",
+      "body": "If the condition **never becomes `False`**, the loop runs forever and freezes your program. Always make sure something inside the loop moves you toward stopping.",
+      "code": "count = 1\nwhile count <= 5:\n    print(count)\n    # Oops — forgot count += 1!",
+      "tip": "Stuck in an infinite loop? Press Ctrl + C to escape."
+    },
+    {
+      "emoji": "🚪",
+      "title": "Exit Early with break",
+      "body": "`break` lets you jump out of a loop immediately — no matter what the condition says. It's the emergency exit inside your loop.",
+      "code": "count = 1\nwhile count <= 10:\n    if count == 4:\n        break\n    print(count)\n    count += 1",
+      "output": "1\n2\n3",
+      "tip": "while True: combined with break is a clean pattern for input validation."
+    },
+    {
+      "emoji": "🎯",
+      "title": "You've Got It!",
+      "body": "`while` loops repeat **until a condition turns `False`**. Remember the three keys: **initialize**, **check**, **update** — and use `break` to exit early when needed.",
+      "tip": "Use for when you know the count; use while when you repeat until something changes."
+    }
+  ]
+}

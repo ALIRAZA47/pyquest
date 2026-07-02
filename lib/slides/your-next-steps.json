@@ -1,0 +1,39 @@
+{
+  "slug": "your-next-steps",
+  "slides": [
+    {
+      "emoji": "🎓",
+      "title": "You Know the Fundamentals!",
+      "body": "Variables, loops, functions, lists, dictionaries — you have learned **the core of Python**. Almost every real-world Python program is built from exactly these pieces.",
+      "tip": "Finishing a course is rare. You should feel proud."
+    },
+    {
+      "emoji": "🔨",
+      "title": "Building Beats Reading",
+      "body": "The fastest way to improve is to **build something real**, even if it is messy. Every bug you fight teaches you more than any tutorial.",
+      "code": "import random\n\nsecret = random.randint(1, 100)\nguess = int(input(\"Guess: \"))\nprint(\"Correct!\" if guess == secret else \"Wrong!\")",
+      "output": "Guess: 42\nWrong!",
+      "tip": "You already know enough to build a guessing game — try it."
+    },
+    {
+      "emoji": "📁",
+      "title": "Track What You Learn",
+      "body": "A simple **learning log** keeps you accountable and shows how far you've come. Write one line a day — it adds up fast.",
+      "code": "with open(\"learning_log.txt\", \"a\") as log:\n    entry = input(\"What did you learn today? \")\n    log.write(entry + \"\\n\")\nprint(\"Logged! Keep going.\")",
+      "output": "What did you learn today? I built the number guessing game!\nLogged! Keep going.",
+      "tip": "Six lines of code, a habit that lasts a lifetime."
+    },
+    {
+      "emoji": "🌍",
+      "title": "Read Code, Join a Community",
+      "body": "Browse **GitHub** to read real projects in topics you care about. Join **r/learnpython** or **Python Discord** — every beginner question is welcome there.",
+      "tip": "Reading other people's code is like reading novels: the more you read, the better your own writing becomes."
+    },
+    {
+      "emoji": "🚀",
+      "title": "Pick One Project — Start Today",
+      "body": "Don't wait until you feel \"ready\" — that feeling never comes on its own. **Start small, finish it**, then build something slightly bigger. That is exactly how every professional did it.",
+      "tip": "30 minutes a day beats a 4-hour session on Saturday. Consistency wins."
+    }
+  ]
+}

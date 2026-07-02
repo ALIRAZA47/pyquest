@@ -1,0 +1,41 @@
+{
+  "slug": "working-with-json",
+  "slides": [
+    {
+      "emoji": "🌐",
+      "title": "JSON: The Web's Common Language",
+      "body": "**JSON** is a simple text format that every programming language understands. It's how Python talks to APIs, saves config files, and shares data with the world.",
+      "tip": "JSON looks almost identical to Python dicts — that's intentional!"
+    },
+    {
+      "emoji": "🔄",
+      "title": "Python Types Map to JSON",
+      "body": "Python and JSON types match up almost perfectly. The key differences: JSON uses `true`/`false` (lowercase) and `null` instead of Python's `True`/`False`/`None`.",
+      "code": "import json\n\njson_str = '{\"name\": \"Alice\", \"active\": true, \"score\": null}'\ndata = json.loads(json_str)\nprint(data[\"active\"], data[\"score\"])",
+      "output": "True None",
+      "tip": "json.loads() = 'load from string' — the s stands for string!"
+    },
+    {
+      "emoji": "📤",
+      "title": "Python → JSON with dumps()",
+      "body": "`json.dumps()` converts a Python dict into a JSON **string**. Pass `indent=2` to make it human-readable instead of a single squashed line.",
+      "code": "import json\n\nuser = {\"name\": \"Bob\", \"score\": 42, \"verified\": False}\nprint(json.dumps(user, indent=2))",
+      "output": "{\n  \"name\": \"Bob\",\n  \"score\": 42,\n  \"verified\": false\n}",
+      "tip": "Notice False became false — Python and JSON differ on booleans."
+    },
+    {
+      "emoji": "💾",
+      "title": "Read & Write JSON Files",
+      "body": "Use `json.load(f)` to read from a file and `json.dump(data, f)` to write to one. No `s` at the end = works with **f**iles, not strings.",
+      "code": "import json\n\nconfig = {\"theme\": \"dark\", \"volume\": 80}\nwith open(\"config.json\", \"w\") as f:\n    json.dump(config, f, indent=2)\n\nwith open(\"config.json\", \"r\") as f:\n    loaded = json.load(f)\nprint(loaded[\"theme\"])",
+      "output": "dark",
+      "tip": "With 's' → strings. Without 's' → files. That's the whole trick."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got JSON!",
+      "body": "Four functions, one simple rule. Use `loads`/`dumps` for strings, `load`/`dump` for files — and you can read APIs, write config files, and share data with any language.",
+      "tip": "Sets and custom objects can't be serialized directly — convert them to lists first."
+    }
+  ]
+}

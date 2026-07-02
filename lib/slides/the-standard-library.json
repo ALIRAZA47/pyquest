@@ -1,0 +1,41 @@
+{
+  "slug": "the-standard-library",
+  "slides": [
+    {
+      "emoji": "🏬",
+      "title": "Python Comes Pre-Stocked",
+      "body": "Python ships with a massive built-in toolkit called the **standard library** — hundreds of ready-to-use modules for math, dates, files, JSON, and more. No installation needed.",
+      "tip": "This is what \"batteries included\" means — Python brings the power, you just plug it in."
+    },
+    {
+      "emoji": "📦",
+      "title": "One Line to Unlock a Module",
+      "body": "Use `import module_name` to load any standard library module. Then access its tools with a dot: `module.function()`.",
+      "code": "import math\n\nprint(math.pi)\nprint(math.sqrt(25))",
+      "output": "3.141592653589793\n5.0",
+      "tip": "You only need to import once per file — Python remembers it for the whole script."
+    },
+    {
+      "emoji": "🎲",
+      "title": "random & datetime Are Your Friends",
+      "body": "`random` picks numbers and makes choices. `datetime` handles dates so you never count days manually.",
+      "code": "import random\nfrom datetime import date\n\nprint(random.randint(1, 6))\nprint(date.today())",
+      "output": "4\n2026-07-02",
+      "tip": "Use `from module import name` when you want to skip typing the module name each time."
+    },
+    {
+      "emoji": "🗂️",
+      "title": "json & collections Save Real Work",
+      "body": "`json` converts between Python dicts and JSON text in one call. `collections.Counter` tallies items instantly — no loops needed.",
+      "code": "from collections import Counter\n\nwords = [\"apple\", \"banana\", \"apple\"]\nprint(Counter(words))",
+      "output": "Counter({'apple': 2, 'banana': 1})",
+      "tip": "Before writing a counting loop yourself, check if Counter already does it."
+    },
+    {
+      "emoji": "🔍",
+      "title": "Always Check stdlib First",
+      "body": "Before reaching for `pip install`, spend 30 seconds checking the standard library. It's free, always available, and works on any Python machine.",
+      "tip": "Run `dir(module)` to see everything a module contains, or search docs.python.org for the full index."
+    }
+  ]
+}

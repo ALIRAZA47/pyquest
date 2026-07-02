@@ -1,0 +1,45 @@
+{
+  "slug": "recursion",
+  "slides": [
+    {
+      "emoji": "🌀",
+      "title": "A Function That Calls Itself",
+      "body": "**Recursion** is when a function calls *itself* to solve a problem. Think of nesting dolls — each one contains a smaller version of the same thing, all the way down to the tiniest doll.",
+      "tip": "Recursion isn't magic — it's just a function calling itself with a simpler input each time."
+    },
+    {
+      "emoji": "🛑",
+      "title": "Two Rules: Stop and Shrink",
+      "body": "Every recursive function needs a **base case** (when to stop) and a **recursive case** (call itself with something smaller). Without the base case, it runs forever.",
+      "code": "def countdown(n):\n    if n <= 0:        # base case\n        print(\"Blast off!\")\n    else:             # recursive case\n        print(n)\n        countdown(n - 1)\n\ncountdown(3)",
+      "output": "3\n2\n1\nBlast off!"
+    },
+    {
+      "emoji": "🔢",
+      "title": "Classic Example: Factorial",
+      "body": "`5!` means `5 × 4 × 3 × 2 × 1`. Notice that `5! = 5 × 4!` — the problem contains a **smaller copy of itself**, making it a perfect fit for recursion.",
+      "code": "def factorial(n):\n    if n <= 1:           # base case\n        return 1\n    return n * factorial(n - 1)  # recursive case\n\nprint(factorial(5))",
+      "output": "120",
+      "tip": "factorial(5) waits for factorial(4), which waits for factorial(3)... then answers bubble back up."
+    },
+    {
+      "emoji": "📚",
+      "title": "The Call Stack Winds & Unwinds",
+      "body": "Python tracks each call on a **call stack**. Calls pile up until the base case is hit, then results bubble back up through each waiting call — like stacked plates being removed one by one.",
+      "code": "# factorial(3) traces like this:\n# factorial(3) -> 3 * factorial(2)\n#   factorial(2) -> 2 * factorial(1)\n#     factorial(1) -> 1  (base case!)\n# unwinds: 2*1=2, then 3*2=6\nprint(factorial(3))",
+      "output": "6"
+    },
+    {
+      "emoji": "⚠️",
+      "title": "Missing Base Case = RecursionError",
+      "body": "If your function never reaches its base case, Python will raise a `RecursionError` after ~**1000 calls**. This safety limit protects your computer from runaway recursion.",
+      "tip": "Always check: does your recursive case actually move *closer* to the base case each time?"
+    },
+    {
+      "emoji": "🎉",
+      "title": "You Get Recursion Now!",
+      "body": "Every recursive function has a **base case** to stop and a **recursive case** to shrink the problem. Use recursion when a problem naturally breaks into smaller copies of itself — like trees, folders, or math sequences.",
+      "tip": "When in doubt, write the base case first — it's the anchor that makes everything else work."
+    }
+  ]
+}

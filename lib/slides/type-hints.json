@@ -1,0 +1,41 @@
+{
+  "slug": "type-hints",
+  "slides": [
+    {
+      "emoji": "🏷️",
+      "title": "Labels for Your Code",
+      "body": "Python lets you write functions without saying what types they expect — which is flexible, but can get confusing fast. **Type hints** are optional labels that say *exactly* what kind of values a function needs and returns.",
+      "tip": "Python never enforces type hints at runtime — they're for you, your editor, and tools like mypy."
+    },
+    {
+      "emoji": "✍️",
+      "title": "Annotating Functions",
+      "body": "Add `: type` after each parameter name, and `-> type` before the colon that closes `def`. That's all there is to the basic syntax.",
+      "code": "def greet(name: str) -> str:\n    return \"Hello, \" + name\n\nprint(greet(\"Alice\"))",
+      "output": "Hello, Alice",
+      "tip": "name: str means 'expect a string here'; -> str means 'this returns a string'."
+    },
+    {
+      "emoji": "📦",
+      "title": "Typed Collections",
+      "body": "A bare `list` hint is okay, but `list[int]` is far more useful — it tells readers (and tools) what's *inside* the list. Same goes for `dict[str, int]`.",
+      "code": "def total(scores: list[int]) -> int:\n    return sum(scores)\n\nprint(total([10, 20, 30]))",
+      "output": "60",
+      "tip": "list[int] syntax works out of the box in Python 3.9+."
+    },
+    {
+      "emoji": "❓",
+      "title": "Values That Might Be Missing",
+      "body": "Use `X | None` when a value could be absent. This is called a **union type** and signals to callers that they need to handle the `None` case.",
+      "code": "def find_user(user_id: int) -> str | None:\n    users = {1: \"Alice\", 2: \"Bob\"}\n    return users.get(user_id)\n\nprint(find_user(1))\nprint(find_user(99))",
+      "output": "Alice\nNone",
+      "tip": "str | None is the modern style (Python 3.10+); older code uses Optional[str] from typing."
+    },
+    {
+      "emoji": "🎯",
+      "title": "Why Bother? Real Benefits",
+      "body": "Type hints give you **better autocomplete**, catch bugs before you run your code (with `mypy`), and make functions self-documenting — the signature alone tells you what goes in and what comes out.",
+      "tip": "Install mypy with `pip install mypy` and run `mypy your_file.py` to spot type mismatches instantly."
+    }
+  ]
+}

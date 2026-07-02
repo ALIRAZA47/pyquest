@@ -1,0 +1,46 @@
+{
+  "slug": "inheritance",
+  "slides": [
+    {
+      "emoji": "🧬",
+      "title": "Stop Rewriting the Same Code",
+      "body": "**Inheritance** lets one class borrow everything from another. Write shared code once in a *parent class*, and every child class gets it for free.",
+      "tip": "The magic phrase: if a Dog **is-a** Animal, Dog should inherit from Animal."
+    },
+    {
+      "emoji": "🏗️",
+      "title": "Build the Parent Class First",
+      "body": "The parent holds everything all animals share — a `name`, an `eat()` method, a `speak()` method. Child classes start from this blueprint.",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f\"{self.name} is eating.\")"
+    },
+    {
+      "emoji": "👶",
+      "title": "Inherit with One Word",
+      "body": "Put the parent name in parentheses: `class Dog(Animal)`. That single line gives `Dog` *all* of `Animal`'s methods — no copy-pasting needed.",
+      "code": "class Dog(Animal):\n    pass  # inherits everything!\n\nfido = Dog(\"Fido\")\nfido.eat()",
+      "output": "Fido is eating.",
+      "tip": "Even with just `pass`, Dog already works because it inherits from Animal."
+    },
+    {
+      "emoji": "🔧",
+      "title": "Override to Customise Behaviour",
+      "body": "Define a method with the **same name** in the child class and Python uses the child's version. Dogs bark; cats meow — each gets its own `speak()`.",
+      "code": "class Dog(Animal):\n    def speak(self):\n        print(f\"{self.name} says: Woof!\")\n\nfido = Dog(\"Fido\")\nfido.speak()",
+      "output": "Fido says: Woof!"
+    },
+    {
+      "emoji": "📞",
+      "title": "Use super() to Call the Parent",
+      "body": "When the child has its own `__init__`, call `super().__init__(...)` first so the parent can do **its** setup. Skipping it means `self.name` never gets set.",
+      "code": "class Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)  # parent sets self.name\n        self.breed = breed\n\nfido = Dog(\"Fido\", \"Labrador\")\nprint(fido.name, fido.breed)",
+      "output": "Fido Labrador",
+      "tip": "Always make super().__init__() the FIRST line of the child's __init__."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got Inheritance!",
+      "body": "One parent, many children — shared code lives in one place, unique behaviour lives in each subclass. **Write less, reuse more, break fewer things.**",
+      "tip": "Next level: use isinstance(fido, Animal) to check the \"is-a\" relationship at runtime."
+    }
+  ]
+}

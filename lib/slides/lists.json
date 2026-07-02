@@ -1,0 +1,48 @@
+{
+  "slug": "lists",
+  "slides": [
+    {
+      "emoji": "📋",
+      "title": "Your First Collection of Things",
+      "body": "A Python **list** is an ordered collection of items you can change anytime. Think of it like a grocery list — you can add, remove, and reorder items whenever you like.",
+      "tip": "Lists are one of the most useful tools in all of Python — you'll use them constantly."
+    },
+    {
+      "emoji": "🧱",
+      "title": "Building a List",
+      "body": "Wrap items in **square brackets** `[]` and separate them with commas. Lists can hold any type — strings, numbers, booleans — even mixed together.",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\nscores = [98, 72, 85]\nprint(fruits)",
+      "output": "['apple', 'banana', 'cherry']"
+    },
+    {
+      "emoji": "🔢",
+      "title": "Indexing Starts at Zero",
+      "body": "Every item has a **position number** called an index. Python counts from `0`, so the first item is `list[0]`. Use **negative indexes** like `-1` to count from the end.",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[0])   # first item\nprint(fruits[-1])  # last item",
+      "output": "apple\ncherry",
+      "tip": "Reaching for index 1 when you want the first item is the #1 beginner mistake."
+    },
+    {
+      "emoji": "🛠️",
+      "title": "Lists are Mutable — Change Them!",
+      "body": "Lists are **mutable**, meaning you can change them after creation. Use `.append()` to add to the end, `.remove()` to delete a value, and assign to an index to replace an item.",
+      "code": "tasks = [\"wash dishes\", \"buy milk\"]\ntasks.append(\"call mom\")\nprint(tasks)\nprint(len(tasks))",
+      "output": "['wash dishes', 'buy milk', 'call mom']\n3",
+      "tip": "Use `len(my_list)` to count items, and `item in my_list` to check if something exists."
+    },
+    {
+      "emoji": "⚠️",
+      "title": "Watch Out: Copying a List",
+      "body": "Writing `b = a` does **not** copy the list — both variables point to the **same** list. To get an independent copy, use `a.copy()` or `a[:]`.",
+      "code": "a = [1, 2, 3]\nb = a.copy()  # real copy\nb.append(99)\nprint(a)  # a is unchanged",
+      "output": "[1, 2, 3]",
+      "tip": "Forgetting .copy() is a classic gotcha that surprises almost every beginner."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got Lists!",
+      "body": "You can now create lists, access items by index, modify them with methods like `.append()` and `.sort()`, loop through them with `for`, and safely copy them. Lists unlock a huge range of real programs.",
+      "tip": "Next up: put lists to work in loops and build your first real data-driven programs."
+    }
+  ]
+}

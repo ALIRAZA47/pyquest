@@ -1,0 +1,46 @@
+{
+  "slug": "reading-writing-files",
+  "slides": [
+    {
+      "emoji": "📄",
+      "title": "Files: Memory That Survives",
+      "body": "Variables vanish the moment a program stops. **Files** let your Python program save data to disk — and read it back anytime.",
+      "tip": "File I/O is how programs keep score, write logs, and store user data between runs."
+    },
+    {
+      "emoji": "🔑",
+      "title": "open() Unlocks Any File",
+      "body": "Pass a **filename** and a **mode** to `open()`. Mode `\"r\"` reads, `\"w\"` writes (erasing first!), and `\"a\"` appends to the end.",
+      "code": "f = open(\"notes.txt\", \"r\")\ncontent = f.read()\nf.close()  # easy to forget!",
+      "tip": "Always specify encoding=\"utf-8\" to keep your code portable across machines."
+    },
+    {
+      "emoji": "🛡️",
+      "title": "with open() — The Safe Way",
+      "body": "A `with` block **automatically closes** the file when the block ends — even if your code crashes halfway through. No `f.close()` needed.",
+      "code": "with open(\"notes.txt\", \"r\", encoding=\"utf-8\") as f:\n    content = f.read()\n\nprint(content)",
+      "output": "Hello from the file!"
+    },
+    {
+      "emoji": "📖",
+      "title": "Reading a File's Contents",
+      "body": "`read()` loads the whole file as one string. To loop line-by-line without loading everything, **iterate directly over the file**.",
+      "code": "with open(\"poem.txt\", \"r\", encoding=\"utf-8\") as f:\n    for line in f:\n        print(line.strip())",
+      "output": "Roses are red,\nViolets are blue,\nPython is great,\nAnd so are you.",
+      "tip": "strip() removes the invisible \\n at the end of each line."
+    },
+    {
+      "emoji": "✏️",
+      "title": "Writing & Appending",
+      "body": "Use `\"w\"` to create or overwrite a file, or `\"a\"` to safely add lines at the end. `write()` saves text — include `\\n` yourself.",
+      "code": "with open(\"log.txt\", \"a\", encoding=\"utf-8\") as f:\n    f.write(\"User logged in\\n\")",
+      "tip": "\"w\" silently erases existing content — use \"a\" when you want to keep what's already there."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got File Power",
+      "body": "You can now read, write, and append files safely using `with open(...)`. Your programs can **remember things** between runs.",
+      "tip": "Next time you need to save data, reach for with open(..., \"w\") to write and with open(..., \"r\") to read it back."
+    }
+  ]
+}

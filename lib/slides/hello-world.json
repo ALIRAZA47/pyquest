@@ -1,0 +1,39 @@
+{
+  "slug": "hello-world",
+  "slides": [
+    {
+      "emoji": "👋",
+      "title": "Your First Python Program",
+      "body": "Every programmer starts here — a tiny program that makes the computer display a message. One line of code, and you're officially a Python programmer.",
+      "tip": "Hello, World! is a tradition going back to the 1970s — you're joining a long line of coders."
+    },
+    {
+      "emoji": "📢",
+      "title": "Meet print()",
+      "body": "`print()` is Python's megaphone — whatever you put inside the parentheses gets displayed on your screen. It's the most-used command you'll ever type.",
+      "code": "print(\"Hello, World!\")",
+      "output": "Hello, World!"
+    },
+    {
+      "emoji": "💬",
+      "title": "Quotes Make It Text",
+      "body": "Wrapping your message in quotes tells Python *this is text, not a command*. In Python, quoted text is called a **string**. Both `'single'` and `\"double\"` quotes work.",
+      "code": "print(\"Hello!\")\nprint('Hello!')",
+      "output": "Hello!\nHello!",
+      "tip": "Forget the quotes and Python panics with a SyntaxError — always wrap your text!"
+    },
+    {
+      "emoji": "🗂️",
+      "title": "Print Multiple Items at Once",
+      "body": "Separate items with a **comma** inside `print()` and Python joins them with a space automatically. Stack multiple `print()` calls to get multiple lines.",
+      "code": "print(\"Hello\", \"World\", \"from Python!\")\nprint(\"I am learning Python.\")",
+      "output": "Hello World from Python!\nI am learning Python."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Did It — You're a Pythonista",
+      "body": "You now know `print()`, **strings**, and how to display text on screen. Every Python expert started with exactly this. The whole language opens up from here.",
+      "tip": "Next up: storing values in variables so your programs can remember things."
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "slug": "input-output",
+  "slides": [
+    {
+      "emoji": "⌨️",
+      "title": "Programs That Talk Back",
+      "body": "Every useful program needs to **show** information and **receive** information. In Python, `print()` and `input()` are the two tools that make your programs feel alive.",
+      "tip": "Think of print() as your program speaking and input() as your program listening."
+    },
+    {
+      "emoji": "🖨️",
+      "title": "print() — Show Anything",
+      "body": "`print()` displays a value on screen and moves to the next line. Pass it text, numbers, or **multiple values separated by commas** — they all work.",
+      "code": "print(\"Hello, world!\")\nprint(\"Your score:\", 95, \"out of\", 100)",
+      "output": "Hello, world!\nYour score: 95 out of 100",
+      "tip": "Python automatically puts a space between comma-separated values."
+    },
+    {
+      "emoji": "🎛️",
+      "title": "sep and end: Fine-Tune Your Output",
+      "body": "Control what goes **between** values with `sep`, and what goes **at the end** of a line with `end`. Both have sensible defaults you can override.",
+      "code": "print(\"2026\", \"07\", \"02\", sep=\"-\")\nprint(\"Loading\", end=\"\")\nprint(\"...\")",
+      "output": "2026-07-02\nLoading...",
+      "tip": "end=\"\" keeps the next print on the same line — great for progress dots."
+    },
+    {
+      "emoji": "🙋",
+      "title": "input() — Ask the User",
+      "body": "`input()` pauses your program, shows a **prompt**, and returns whatever the user types as a string. Always store it in a variable.",
+      "code": "name = input(\"What is your name? \")\nprint(\"Nice to meet you,\", name)",
+      "output": "What is your name? Alice\nNice to meet you, Alice",
+      "tip": "Leave a trailing space inside your prompt string so the cursor isn't crammed against the colon."
+    },
+    {
+      "emoji": "🔢",
+      "title": "input() Always Returns a String",
+      "body": "Even if the user types `42`, Python hands you the **text** `\"42\"`. Wrap `input()` in `int()` or `float()` before doing any maths.",
+      "code": "age = int(input(\"How old are you? \"))\nprint(f\"Next year you will be {age + 1}.\")",
+      "output": "How old are you? 20\nNext year you will be 21.",
+      "tip": "f-strings let you embed variables with {} — much neater than comma-separated print()."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You Can Talk to Your Programs",
+      "body": "You now know how to **display output** with `print()`, **collect input** with `input()`, **convert** it to numbers, and format clean messages with **f-strings**. That's everything you need to build interactive programs.",
+      "tip": "The tip calculator exercise puts all four skills together — give it a go!"
+    }
+  ]
+}

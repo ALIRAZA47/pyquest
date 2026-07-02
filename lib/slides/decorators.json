@@ -1,0 +1,46 @@
+{
+  "slug": "decorators",
+  "slides": [
+    {
+      "emoji": "🎁",
+      "title": "Gift-Wrap Any Function",
+      "body": "A **decorator** adds behavior to a function — logging, timing, validation — without changing a single line of the original. It's a reusable wrapper you snap on with one line.",
+      "tip": "Think of it as gift wrap: the present inside never changes, you just add a new layer around it."
+    },
+    {
+      "emoji": "📦",
+      "title": "Functions Are Values Too",
+      "body": "In Python, **functions are first-class objects** — you can store them in variables and pass them around just like numbers or strings. No call, no run.",
+      "code": "def say_hello():\n    print(\"Hello!\")\n\ngreeter = say_hello   # no () = no call\ngreeter()",
+      "output": "Hello!",
+      "tip": "greeter and say_hello point to the exact same function object."
+    },
+    {
+      "emoji": "🔧",
+      "title": "Build Your First Decorator",
+      "body": "A decorator is a function that **takes a function, wraps it, and returns the wrapper**. The wrapper runs extra code before and after the original.",
+      "code": "def shout(func):\n    def wrapper():\n        print(\">>> Starting...\")\n        func()\n        print(\"<<< Done!\")\n    return wrapper\n\n@shout\ndef greet():\n    print(\"Hi there!\")\n\ngreet()",
+      "output": ">>> Starting...\nHi there!\n<<< Done!"
+    },
+    {
+      "emoji": "🍬",
+      "title": "@ Is Just Syntactic Sugar",
+      "body": "Writing `@my_decorator` above a `def` is **exactly the same** as writing `func = my_decorator(func)` right after it — just cleaner to read.",
+      "code": "# These two are identical:\n@shout\ndef greet(): ...\n\n# same as:\ndef greet(): ...\ngreet = shout(greet)",
+      "tip": "The @ symbol is pure shorthand — Python rewrites it for you before anything runs."
+    },
+    {
+      "emoji": "⚡",
+      "title": "Works on Any Function — Use *args",
+      "body": "Make your wrapper accept `*args, **kwargs` and forward them so your decorator works on **any function**, regardless of its parameters.",
+      "code": "import functools, time\n\ndef timer(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        print(f\"{func.__name__} took {time.time()-start:.4f}s\")\n        return result\n    return wrapper",
+      "tip": "Always return the result — forgetting it makes your function silently return None."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Get Decorators Now!",
+      "body": "You can write a decorator that wraps **any** function with reusable behavior. You'll spot `@staticmethod`, `@property`, `@app.route`, and `@functools.lru_cache` everywhere — all the same pattern you just learned.",
+      "tip": "Always add @functools.wraps(func) inside your wrapper to keep the original function's name and docstring."
+    }
+  ]
+}

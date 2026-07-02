@@ -1,0 +1,41 @@
+{
+  "slug": "closures",
+  "slides": [
+    {
+      "emoji": "🧷",
+      "title": "Functions That Remember",
+      "body": "A **closure** is an inner function that *remembers* variables from its outer function — even after that outer function has finished running. Think of it as a function carrying a little backpack of values wherever it goes.",
+      "tip": "Closures are the secret engine behind decorators and factory functions."
+    },
+    {
+      "emoji": "📦",
+      "title": "Nest a Function, Return It",
+      "body": "Define a function **inside** another function, then `return` it (without calling it). The returned function keeps the outer variables alive.",
+      "code": "def make_greeter(name):\n    def greet():\n        print(f\"Hey, {name}!\")\n    return greet\n\nsay_hi = make_greeter(\"Alice\")\nsay_hi()",
+      "output": "Hey, Alice!",
+      "tip": "Return greet — not greet(). Parentheses call it; no parentheses returns it."
+    },
+    {
+      "emoji": "🏭",
+      "title": "Factory Functions",
+      "body": "Call the outer function with **different arguments** to get back different, pre-configured inner functions — each remembering its own captured value.",
+      "code": "def make_multiplier(n):\n    def multiply(x):\n        return x * n\n    return multiply\n\ndouble = make_multiplier(2)\ntriple = make_multiplier(3)\nprint(double(5))\nprint(triple(5))",
+      "output": "10\n15",
+      "tip": "double and triple are separate closures — each has its own n in its backpack."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Keeping State with nonlocal",
+      "body": "Closures can also **update** captured variables between calls. Use `nonlocal` to tell Python you mean the outer variable, not a new local one.",
+      "code": "def make_counter():\n    count = 0\n    def increment():\n        nonlocal count\n        count += 1\n        return count\n    return increment\n\ncounter = make_counter()\nprint(counter())\nprint(counter())",
+      "output": "1\n2",
+      "tip": "Without nonlocal, count += 1 crashes — Python thinks you want a brand-new local variable."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got Closures!",
+      "body": "A closure = inner function + captured variables from an outer scope. Use them to build **configurable functions**, keep **lightweight state**, and power **decorators** — all without writing a full class.",
+      "tip": "Once closures click, decorators feel obvious: they're just a closure that wraps another function."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "slug": "dunder-methods",
+  "slides": [
+    {
+      "emoji": "✨",
+      "title": "What Are Dunder Methods?",
+      "body": "**Dunder methods** (double-underscore, like `__str__`) are special hooks Python calls automatically when you use built-in operations. Define them on your class and your objects behave just like Python's own built-ins.",
+      "tip": "\"Dunder\" = double underscore — `__like_this__`"
+    },
+    {
+      "emoji": "🖨️",
+      "title": "Make print() Work Your Way",
+      "body": "Without `__str__`, printing your object shows an ugly memory address. Define `__str__` and Python calls it whenever someone does `print(obj)` — it must **return a string**.",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n\nprint(Money(50, 'USD'))",
+      "output": "USD 50.00",
+      "tip": "No __str__? You'd see: <__main__.Money object at 0x10a3f2c40>"
+    },
+    {
+      "emoji": "🔍",
+      "title": "__repr__: The Developer View",
+      "body": "`__repr__` is the **developer-facing** representation — it should look like code you'd write to recreate the object. It also acts as a fallback when `__str__` is not defined.",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n    def __repr__(self):\n        return f\"Money({self.amount!r}, {self.currency!r})\"\n\nprint(repr(Money(50, 'USD')))",
+      "output": "Money(50, 'USD')",
+      "tip": "Rule of thumb: always define __repr__ — it doubles as __str__ when needed"
+    },
+    {
+      "emoji": "➕",
+      "title": "Operator Overloading with __add__",
+      "body": "Define `__add__` and the `+` operator works on your objects. Always **return a new object** — never modify `self` in place.",
+      "code": "class Money:\n    def __init__(self, amount, currency):\n        self.amount = amount\n        self.currency = currency\n    def __str__(self):\n        return f\"{self.currency} {self.amount:.2f}\"\n    def __add__(self, other):\n        return Money(self.amount + other.amount, self.currency)\n\nprint(Money(1000, 'USD') + Money(250, 'USD'))",
+      "output": "USD 1250.00",
+      "tip": "Other operators: __eq__ for ==, __len__ for len(), __lt__ for <"
+    },
+    {
+      "emoji": "🎯",
+      "title": "You've Got the Magic!",
+      "body": "Dunder methods let your classes **plug in to Python's own syntax** — `print()`, `len()`, `+`, `==`, and more. You're not hacking the language; you're using exactly the same hooks the built-ins use.",
+      "tip": "Start with __repr__, add __str__, then layer in operators as you need them"
+    }
+  ]
+}

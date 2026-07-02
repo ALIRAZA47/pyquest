@@ -1,0 +1,49 @@
+{
+  "slug": "booleans-and-none",
+  "slides": [
+    {
+      "emoji": "✅",
+      "title": "Python's Yes/No Answer",
+      "body": "Every program needs to make decisions. Python uses **booleans** — values that are either `True` or `False` — to represent those yes/no answers.",
+      "tip": "Booleans are named after mathematician George Boole, who formalized logic with just two states."
+    },
+    {
+      "emoji": "🔤",
+      "title": "Capital Letters Are Required",
+      "body": "Write `True` and `False` with a **capital first letter** — always. Python is case-sensitive, so `true` or `false` (lowercase) will throw a `NameError`.",
+      "code": "is_raining = True\nis_sunny = False\nprint(type(is_raining))",
+      "output": "<class 'bool'>",
+      "tip": "bool is its own type in Python — just like int or str."
+    },
+    {
+      "emoji": "⚖️",
+      "title": "Comparisons Make Booleans",
+      "body": "You rarely type `True` yourself. Instead, write a **comparison** and Python gives you the boolean result. Use `==`, `!=`, `>`, `<`, `>=`, or `<=`.",
+      "code": "age = 20\nprint(age == 20)\nprint(age > 18)\nprint(age < 18)",
+      "output": "True\nTrue\nFalse",
+      "tip": "`=` stores a value; `==` asks \"are these equal?\" — very different things!"
+    },
+    {
+      "emoji": "👻",
+      "title": "Truthy, Falsy, and None",
+      "body": "Every Python value secretly acts like a boolean. **Falsy** values (`0`, `\"\"`, `[]`, `None`) behave like `False`; everything else is **truthy**. `None` is Python's way of saying \"nothing here at all\".",
+      "code": "print(bool(0))\nprint(bool(\"hi\"))\nprint(bool([]))\nprint(bool(None))",
+      "output": "False\nTrue\nFalse\nFalse",
+      "tip": "Instead of `if len(my_list) > 0:`, just write `if my_list:` — Python does the check for you."
+    },
+    {
+      "emoji": "🔍",
+      "title": "Check None With `is`",
+      "body": "To test whether a variable is `None`, use `is None` — not `== None`. It's the Python convention and is more precise.",
+      "code": "user_input = None\nif user_input is None:\n    print(\"No input yet.\")",
+      "output": "No input yet.",
+      "tip": "There is only one `None` in Python, so `is` is the exact right check."
+    },
+    {
+      "emoji": "🎓",
+      "title": "You've Got Booleans Figured Out",
+      "body": "You now know that `True`/`False` represent yes/no decisions, comparisons produce booleans automatically, every value is truthy or falsy, and `None` signals the absence of a value.",
+      "tip": "Bonus fact: `True` is secretly `1` and `False` is `0` — try `True + True` in the REPL!"
+    }
+  ]
+}

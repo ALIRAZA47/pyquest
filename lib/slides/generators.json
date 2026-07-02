@@ -1,0 +1,48 @@
+{
+  "slug": "generators",
+  "slides": [
+    {
+      "emoji": "🔋",
+      "title": "Values On Demand, Not All At Once",
+      "body": "A **generator** is a function that hands you values **one at a time** — only when you ask. Instead of building a giant list in memory, it lazily produces each item on demand.",
+      "tip": "Think of it like a vending machine: one snack at a time, not the whole machine dumped on your lap."
+    },
+    {
+      "emoji": "⏸️",
+      "title": "`yield` Pauses, Remembers, Resumes",
+      "body": "Replace `return` with `yield` and your function becomes a generator. Every time Python hits `yield`, it **pauses** and hands out that value — then **picks up right where it left off** on the next call.",
+      "code": "def count_up(limit):\n    n = 0\n    while n < limit:\n        yield n\n        n += 1\n\ngen = count_up(3)\nprint(next(gen))\nprint(next(gen))",
+      "output": "0\n1"
+    },
+    {
+      "emoji": "🔁",
+      "title": "`for` Loops Do the Heavy Lifting",
+      "body": "You rarely call `next()` by hand. A **`for` loop** automatically pulls values one at a time until the generator is exhausted — clean and effortless.",
+      "code": "def squares(limit):\n    for n in range(limit):\n        yield n * n\n\nfor value in squares(5):\n    print(value)",
+      "output": "0\n1\n4\n9\n16",
+      "tip": "Only five numbers ever live in memory at once — no matter how big `limit` gets."
+    },
+    {
+      "emoji": "🎯",
+      "title": "Generator Expressions: The Shortcut",
+      "body": "Swap `[]` for `()` on a list comprehension and you get a **generator expression** — same idea, zero upfront memory cost.",
+      "code": "# List: all values built right now\nlist_ver = [x * x for x in range(5)]\n\n# Generator: values built on demand\ngen_ver = (x * x for x in range(5))\nprint(sum(gen_ver))",
+      "output": "30",
+      "tip": "Pass generator expressions directly to `sum()`, `max()`, or `min()` — no list needed."
+    },
+    {
+      "emoji": "♾️",
+      "title": "Generators Can Go On Forever",
+      "body": "Because values are produced lazily, a generator can represent an **infinite sequence** — impossible with a plain list. Just stop asking when you have enough.",
+      "code": "def count_forever(start=0):\n    n = start\n    while True:\n        yield n\n        n += 1\n\ncounter = count_forever(10)\nprint(next(counter))\nprint(next(counter))",
+      "output": "10\n11",
+      "tip": "Never do `list(infinite_generator)` — Python will try to collect endless values and freeze."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Get Generators Now!",
+      "body": "Use `yield` to make a function lazy, loop with `for` to consume it, and reach for generator expressions when you need a compact one-liner. Your programs just got lighter on memory.",
+      "tip": "One gotcha: a generator is exhausted after one full pass — create a fresh one if you need to iterate again."
+    }
+  ]
+}

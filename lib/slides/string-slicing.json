@@ -1,0 +1,49 @@
+{
+  "slug": "string-slicing",
+  "slides": [
+    {
+      "emoji": "✂️",
+      "title": "Pick Any Character from a String",
+      "body": "A string is like a row of numbered seats — every character has a **position**. Use **indexing** to grab one character, or **slicing** to grab a whole chunk.",
+      "tip": "These skills work on lists too — learn once, use everywhere."
+    },
+    {
+      "emoji": "0️⃣",
+      "title": "Positions Start at Zero",
+      "body": "Python numbers positions from **0**, not 1. The first character is `s[0]`, the second is `s[1]`, and so on.",
+      "code": "word = \"Python\"\nprint(word[0])  # first character\nprint(word[2])  # third character",
+      "output": "P\nt",
+      "tip": "Think of it like a building where the ground floor is floor 0."
+    },
+    {
+      "emoji": "⬅️",
+      "title": "Count Backwards with Negatives",
+      "body": "Use **negative indexes** to count from the end. `-1` is always the last character — no need to know the length!",
+      "code": "word = \"Python\"\nprint(word[-1])  # last character\nprint(word[-3])  # third from the end",
+      "output": "n\nh",
+      "tip": "word[-1] is much handier than word[len(word)-1]."
+    },
+    {
+      "emoji": "🔪",
+      "title": "Slicing: Grab a Range",
+      "body": "Use `s[start:stop]` to grab multiple characters at once. Python returns positions `start` up to — but **not including** — `stop`.",
+      "code": "word = \"Python\"\nprint(word[0:3])  # positions 0, 1, 2\nprint(word[:3])   # same — omit start to begin at 0\nprint(word[2:])   # position 2 to the end",
+      "output": "Pyt\nPyt\nthon",
+      "tip": "Omit start or stop and Python fills in the sensible default."
+    },
+    {
+      "emoji": "🔄",
+      "title": "Reverse a String with [::-1]",
+      "body": "Add a **step** as a third value: `s[start:stop:step]`. A step of `-1` walks backwards — making `s[::-1]` the classic way to reverse any string.",
+      "code": "word = \"Python\"\nprint(word[::-1])\nprint(word[::2])   # every other character",
+      "output": "nohtyP\nPto",
+      "tip": "Slices never crash with IndexError — Python just returns what it can."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You Can Slice Anything Now!",
+      "body": "You now know how to grab **any character or chunk** from a string using `s[index]` and `s[start:stop:step]`. The same syntax works on lists — you already have a head start on the next topic!",
+      "tip": "Practice: try sentence[-3:] to grab the last 3 characters of any string."
+    }
+  ]
+}

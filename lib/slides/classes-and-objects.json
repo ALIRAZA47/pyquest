@@ -1,0 +1,39 @@
+{
+  "slug": "classes-and-objects",
+  "slides": [
+    {
+      "emoji": "🏗️",
+      "title": "Build Your Own Data Types",
+      "body": "Python gives you strings, lists, and numbers — but what if you need a **Dog**, a **BankAccount**, or a **Player**? A `class` lets you invent any type you need.",
+      "tip": "Classes bundle data and behavior into one tidy, reusable package."
+    },
+    {
+      "emoji": "🍪",
+      "title": "Blueprint vs. The Real Thing",
+      "body": "A **class** is the cookie cutter — just the shape. An **object** (or *instance*) is an actual cookie stamped from it. Define the class once, create as many objects as you like.",
+      "code": "class Dog:\n    pass\n\nmy_dog = Dog()\nprint(type(my_dog))",
+      "output": "<class '__main__.Dog'>"
+    },
+    {
+      "emoji": "🎛️",
+      "title": "`__init__` Sets Up Each Object",
+      "body": "The special `__init__` method runs automatically the moment you create a new instance. Use it to store each object's data with `self.attribute = value`.",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\ndog1 = Dog(\"Bella\", \"Labrador\")\nprint(dog1.name)",
+      "output": "Bella",
+      "tip": "`self` always refers to the specific object being created or used right now."
+    },
+    {
+      "emoji": "🐾",
+      "title": "Methods Give Objects Actions",
+      "body": "A **method** is a function inside a class. It starts with `self` so it can reach the object's own data. Call it with dot notation: `object.method()`.",
+      "code": "class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        print(f\"{self.name} says: Woof!\")\n\ndog1 = Dog(\"Bella\", \"Labrador\")\ndog1.bark()",
+      "output": "Bella says: Woof!"
+    },
+    {
+      "emoji": "🎉",
+      "title": "You Get It — Now Go Build!",
+      "body": "A **class** is a blueprint. `__init__` sets up each object's data. **Methods** define what it can do. Every instance is independent — change one, the others stay untouched.",
+      "tip": "Classes keep related data and behavior together, making your code easier to read, reuse, and grow."
+    }
+  ]
+}

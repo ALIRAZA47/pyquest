@@ -1,0 +1,39 @@
+{
+  "slug": "virtual-environments",
+  "slides": [
+    {
+      "emoji": "🧪",
+      "title": "Every Project Gets Its Own Sandbox",
+      "body": "Two projects can need **different versions of the same package** — and global installs can only hold one. Virtual environments give each project its own private space so versions never clash.",
+      "tip": "Think of it like phone apps: Instagram and WhatsApp each run in their own sandbox and can never break each other."
+    },
+    {
+      "emoji": "🏗️",
+      "title": "Create It Once",
+      "body": "Python's built-in `venv` tool creates a `.venv` folder inside your project. Run this **once per project** — it only takes a few seconds.",
+      "code": "# Run in your terminal, inside your project folder\npython -m venv .venv",
+      "tip": "The dot in `.venv` makes the folder hidden on macOS/Linux — just a tidy convention."
+    },
+    {
+      "emoji": "⚡",
+      "title": "Activate Before You Install",
+      "body": "Creating the environment isn't enough — you must **activate** it so `pip` knows to install packages inside `.venv`, not globally.",
+      "code": "# macOS / Linux\nsource .venv/bin/activate\n\n# Windows\n.venv\\Scripts\\activate.bat",
+      "tip": "Your prompt will show (.venv) when active — always check for it before running pip."
+    },
+    {
+      "emoji": "📦",
+      "title": "Install and Freeze Your Deps",
+      "body": "With the environment active, `pip install` lands packages inside `.venv` only. Save the exact versions to share with teammates.",
+      "code": "pip install requests\npip freeze > requirements.txt",
+      "output": "# requirements.txt gets created with pinned versions:\n# requests==2.32.3\n# certifi==2024.2.2\n# ...",
+      "tip": "Commit requirements.txt to Git — never commit the .venv folder itself."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got It!",
+      "body": "Create once, activate every session, install freely, freeze before sharing. Virtual environments are a **core professional habit** — every Python developer uses them.",
+      "code": "# The whole workflow in five steps\npython -m venv .venv          # 1. create\nsource .venv/bin/activate     # 2. activate\npip install requests          # 3. install\npip freeze > requirements.txt # 4. save deps\ndeactivate                    # 5. done for today"
+    }
+  ]
+}

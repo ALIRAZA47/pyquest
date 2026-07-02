@@ -1,0 +1,46 @@
+{
+  "slug": "exceptions",
+  "slides": [
+    {
+      "emoji": "🧯",
+      "title": "Errors Happen — Don't Crash",
+      "body": "When Python hits a problem it can't solve, it raises an **exception** and your program stops cold. Learning to *catch* exceptions means your program can recover instead of crashing.",
+      "tip": "Every exception has a name — like `ValueError` or `KeyError` — that tells you what went wrong."
+    },
+    {
+      "emoji": "🪤",
+      "title": "try / except: Your Safety Net",
+      "body": "Wrap **risky code** in a `try` block, then handle the failure in `except`. If no error occurs, the `except` block is skipped entirely.",
+      "code": "try:\n    number = int(\"hello\")\nexcept ValueError:\n    print(\"That wasn't a valid number!\")",
+      "output": "That wasn't a valid number!"
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Name the Exception You Expect",
+      "body": "Always catch a **specific** exception type — never use a bare `except:`. Catching everything hides real bugs that you didn't intend to handle.",
+      "code": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero!\")",
+      "output": "Cannot divide by zero!",
+      "tip": "Common ones: `ValueError`, `TypeError`, `KeyError`, `IndexError`, `ZeroDivisionError`, `FileNotFoundError`."
+    },
+    {
+      "emoji": "🔍",
+      "title": "Inspect the Error with `as e`",
+      "body": "Add `as e` to capture the exception object and **see exactly what Python was complaining about** — great for debugging or showing users a helpful message.",
+      "code": "try:\n    value = int(\"abc\")\nexcept ValueError as e:\n    print(\"Caught:\", e)",
+      "output": "Caught: invalid literal for int() with base 10: 'abc'"
+    },
+    {
+      "emoji": "🧹",
+      "title": "else and finally: Full Control",
+      "body": "`else` runs only when **no exception** occurred. `finally` runs **no matter what** — perfect for cleanup like closing files.",
+      "code": "try:\n    n = int(\"42\")\nexcept ValueError:\n    print(\"Not a number.\")\nelse:\n    print(\"Success! Got:\", n)\nfinally:\n    print(\"Always runs.\")",
+      "output": "Success! Got: 42\nAlways runs."
+    },
+    {
+      "emoji": "🎓",
+      "title": "You're Exception-Proof Now",
+      "body": "You can catch errors with `try/except`, name specific exception types, inspect messages with `as e`, and guarantee cleanup with `finally`. Your programs no longer have to crash — they can *recover*.",
+      "tip": "When in doubt, print the error with `as e` so you always know what actually went wrong."
+    }
+  ]
+}

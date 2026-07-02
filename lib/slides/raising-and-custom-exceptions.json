@@ -1,0 +1,41 @@
+{
+  "slug": "raising-and-custom-exceptions",
+  "slides": [
+    {
+      "emoji": "🚨",
+      "title": "You Can Throw Errors Too",
+      "body": "Python raises errors when *it* detects a problem — but you can raise them yourself. This is how you **fail loudly and early**, catching bad input the moment it arrives.",
+      "tip": "Better to crash with a clear message now than to silently produce wrong results later."
+    },
+    {
+      "emoji": "📣",
+      "title": "raise Stops Everything, Right Now",
+      "body": "Use `raise ExceptionType(\"your message\")` to signal a problem instantly. The function stops and the error travels up to whoever called it.",
+      "code": "def set_age(age):\n    if age < 0:\n        raise ValueError(\"Age cannot be negative.\")\n    print(f\"Age set to {age}\")\n\nset_age(-3)",
+      "output": "ValueError: Age cannot be negative.",
+      "tip": "Pick the right built-in: ValueError for bad values, TypeError for wrong types."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Name Your Own Exception Types",
+      "body": "When built-in types are too generic, create a **custom exception** by subclassing `Exception`. One line of `pass` is all you need to get started.",
+      "code": "class InsufficientFundsError(Exception):\n    pass\n\nraise InsufficientFundsError(\"Balance too low.\")",
+      "output": "InsufficientFundsError: Balance too low.",
+      "tip": "Always end custom exception names in Error — e.g. InsufficientFundsError, not InsufficientFunds."
+    },
+    {
+      "emoji": "🎯",
+      "title": "Catch Custom Exceptions by Name",
+      "body": "Callers can `except` your custom exception by its exact class name, making error-handling code **self-documenting** and precise.",
+      "code": "def withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(\n            f\"Cannot withdraw {amount}. Balance: {balance}.\"\n        )\n    return balance - amount\n\ntry:\n    withdraw(50, 200)\nexcept InsufficientFundsError as e:\n    print(f\"Transaction failed: {e}\")",
+      "output": "Transaction failed: Cannot withdraw 200. Balance: 50.",
+      "tip": "A bare raise inside except re-raises the same exception — handy for logging before propagating."
+    },
+    {
+      "emoji": "🌟",
+      "title": "You're Writing Reliable Code Now",
+      "body": "You can **raise** built-in exceptions, create **custom exception classes**, and re-raise errors after logging. Your programs now fail loudly with clear messages instead of silently doing the wrong thing.",
+      "tip": "Never use except: pass — it hides bugs and makes code nearly impossible to debug."
+    }
+  ]
+}

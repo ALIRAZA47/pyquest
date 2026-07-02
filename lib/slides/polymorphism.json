@@ -1,0 +1,43 @@
+{
+  "slug": "polymorphism",
+  "slides": [
+    {
+      "emoji": "🎭",
+      "title": "One Name, Many Behaviors",
+      "body": "**Polymorphism** means different objects can share the same method name, but each responds in its own way. Think of a TV remote — same volume button, different brand, different circuitry underneath.",
+      "tip": "poly = many, morph = form — many forms from one interface"
+    },
+    {
+      "emoji": "🐾",
+      "title": "Same Method, Different Result",
+      "body": "Give `Dog`, `Cat`, and `Duck` a `speak()` method each. Call `speak()` on any of them and you get the *right* sound — no extra logic needed.",
+      "code": "class Dog:\n    def speak(self):\n        return \"Woof!\"\n\nclass Cat:\n    def speak(self):\n        return \"Meow!\"",
+      "output": "# dog.speak() → \"Woof!\"\n# cat.speak() → \"Meow!\"",
+      "tip": "Same method name, totally different behavior — that's the whole idea"
+    },
+    {
+      "emoji": "🔁",
+      "title": "Loop Once, Handle Everything",
+      "body": "Put different objects in a **list** and call the same method in a loop. Python figures out which version to run for each object — you write the loop once.",
+      "code": "animals = [Dog(), Cat(), Duck()]\n\nfor animal in animals:\n    print(animal.speak())",
+      "output": "Woof!\nMeow!\nQuack!",
+      "tip": "One loop handles any number of types — even ones you add later"
+    },
+    {
+      "emoji": "🦆",
+      "title": "Duck Typing: Behavior Over Type",
+      "body": "Python uses **duck typing**: if an object has the method you need, Python calls it — no ID check required. A `Robot` with `speak()` fits right in alongside the animals.",
+      "code": "class Robot:\n    def speak(self):\n        return \"Beep boop!\"\n\nfor c in [Dog(), Cat(), Robot()]:\n    print(c.speak())",
+      "output": "Woof!\nMeow!\nBeep boop!",
+      "tip": "\"If it quacks like a duck, it's a duck\" — Python only cares about the method, not the class"
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Already Use Polymorphism!",
+      "body": "`len()` and `+` work on strings, lists, and numbers — same call, different behavior per type. You've been writing polymorphic code all along!",
+      "code": "print(len(\"hello\"))    # 5\nprint(len([1, 2, 3])) # 3\nprint(\"cat\" + \"fish\") # catfish\nprint(1 + 2)          # 3",
+      "output": "5\n3\ncatfish\n3",
+      "tip": "Polymorphism isn't exotic — it's everywhere in everyday Python"
+    }
+  ]
+}

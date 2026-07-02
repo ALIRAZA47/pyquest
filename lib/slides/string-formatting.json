@@ -1,0 +1,40 @@
+{
+  "slug": "string-formatting",
+  "slides": [
+    {
+      "emoji": "🎨",
+      "title": "Stop Gluing Strings Together",
+      "body": "Concatenating text with `+` gets messy fast. **f-strings** let you drop values right inside a string — clean, readable, no fuss.",
+      "tip": "f-strings are the modern Python way — use them in all new code."
+    },
+    {
+      "emoji": "✉️",
+      "title": "Your First f-string",
+      "body": "Put `f` before the opening quote, then wrap any variable in `{curly braces}`. Python fills it in automatically.",
+      "code": "name = \"Alice\"\nage = 30\nprint(f\"Hello, {name}! You are {age} years old.\")",
+      "output": "Hello, Alice! You are 30 years old.",
+      "tip": "The f prefix is everything — without it, {name} prints literally."
+    },
+    {
+      "emoji": "🧮",
+      "title": "Expressions Go Inside Braces",
+      "body": "The `{}` in an f-string can hold **any expression** — math, method calls, even comparisons. Python evaluates it and inserts the result.",
+      "code": "items = 4\nprice = 2.5\nprint(f\"Total: {items * price}\")\nprint(f\"Uppercase: {'hello'.upper()}\")",
+      "output": "Total: 10.0\nUppercase: HELLO"
+    },
+    {
+      "emoji": "🔢",
+      "title": "Control How Numbers Look",
+      "body": "Add a colon after the variable name to set a **format spec**. `:.2f` gives exactly 2 decimal places; `:,` adds thousands separators.",
+      "code": "price = 9.5\npopulation = 8100000000\nprint(f\"Price: ${price:.2f}\")\nprint(f\"People: {population:,}\")",
+      "output": "Price: $9.50\nPeople: 8,100,000,000",
+      "tip": "Combine them: {:,.2f} gives both commas and 2 decimal places."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got String Formatting!",
+      "body": "f-strings turn messy string-building into clean, expressive one-liners. Add `:.2f` for decimals, `:,` for thousands, `:<10` / `:>10` to align columns — the braces do the rest.",
+      "tip": "If substitution isn't working, you almost certainly forgot the f prefix."
+    }
+  ]
+}

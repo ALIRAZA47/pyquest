@@ -1,0 +1,41 @@
+{
+  "slug": "how-python-works",
+  "slides": [
+    {
+      "emoji": "📖",
+      "title": "Python Reads Like a Recipe",
+      "body": "Python runs your code **top to bottom**, one line at a time — like a chef following a recipe step by step. No skipping ahead, no going back.",
+      "tip": "This simple rule explains most beginner errors before you even run the code."
+    },
+    {
+      "emoji": "⬇️",
+      "title": "Lines Run in Order",
+      "body": "Each `print()` fires in the exact order it appears. Python finishes line 1, then line 2, then line 3.",
+      "code": "print(\"Step 1: Mix\")\nprint(\"Step 2: Bake\")\nprint(\"Step 3: Cool\")",
+      "output": "Step 1: Mix\nStep 2: Bake\nStep 3: Cool",
+      "tip": "Try swapping two lines — the output order changes too."
+    },
+    {
+      "emoji": "🛑",
+      "title": "Errors Stop Everything",
+      "body": "When Python hits a broken line it **stops immediately**. Lines above it already ran; lines below it never will.",
+      "code": "print(\"This runs\")\nprint(oops)\nprint(\"This never runs\")",
+      "output": "This runs\nNameError: name 'oops' is not defined",
+      "tip": "Fix errors from top to bottom — one at a time."
+    },
+    {
+      "emoji": "📋",
+      "title": "Define Before You Use",
+      "body": "Because Python reads top to bottom, you must **define a variable before** the line that uses it — or you get a `NameError`.",
+      "code": "favorite = 7\nprint(\"My number is\", favorite)",
+      "output": "My number is 7",
+      "tip": "Seeing a NameError? Scroll up — the variable probably appears after the line that needs it."
+    },
+    {
+      "emoji": "🚀",
+      "title": "You've Got the Mental Model!",
+      "body": "Python: top to bottom, one line at a time, stops at errors. That single model makes **error messages less scary** and debugging much faster.",
+      "tip": "Next up: writing your first real script and watching Python run it live."
+    }
+  ]
+}

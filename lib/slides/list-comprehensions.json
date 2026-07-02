@@ -1,0 +1,40 @@
+{
+  "slug": "list-comprehensions",
+  "slides": [
+    {
+      "emoji": "⚡",
+      "title": "Build Lists in One Line",
+      "body": "A **list comprehension** turns a multi-line `for` loop into a single, readable expression. It's one of Python's most loved shortcuts.",
+      "tip": "Same result as a loop — just faster to write and often easier to read."
+    },
+    {
+      "emoji": "🔄",
+      "title": "Loop vs. Comprehension",
+      "body": "These two snippets do **exactly the same thing**. The comprehension reads almost like English: *\"give me `n * 2` for each `n` in `numbers`\"*.",
+      "code": "numbers = [1, 2, 3, 4, 5]\ndoubled = [n * 2 for n in numbers]\nprint(doubled)",
+      "output": "[2, 4, 6, 8, 10]",
+      "tip": "Structure: [expression  for  item  in  iterable]"
+    },
+    {
+      "emoji": "🔧",
+      "title": "Transform Anything",
+      "body": "The expression before `for` can be **any valid Python** — call a method, apply math, or format a string.",
+      "code": "words = [\"hello\", \"world\", \"python\"]\nupper = [w.upper() for w in words]\nprint(upper)",
+      "output": "['HELLO', 'WORLD', 'PYTHON']"
+    },
+    {
+      "emoji": "🔍",
+      "title": "Filter with if",
+      "body": "Add `if condition` at the **end** to skip items that don't qualify. Only items where the condition is `True` make it into the new list.",
+      "code": "numbers = [-3, -1, 0, 2, 4, 7]\npositives = [x for x in numbers if x > 0]\nprint(positives)",
+      "output": "[2, 4, 7]",
+      "tip": "You can combine a transform AND a filter: [x * 2 for x in numbers if x > 0]"
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got This!",
+      "body": "List comprehensions follow one simple pattern: `[expression for item in iterable]`. Add `if` to filter, swap brackets for `{}` to get a dict or set comprehension.",
+      "tip": "When a comprehension feels hard to read, a plain for loop is always a valid choice."
+    }
+  ]
+}

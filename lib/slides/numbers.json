@@ -1,0 +1,47 @@
+{
+  "slug": "numbers",
+  "slides": [
+    {
+      "emoji": "🔢",
+      "title": "Python Loves Numbers",
+      "body": "Numbers are everywhere in code — scores, prices, pixels. Python gives you **three built-in number types** so you always have the right tool for the job.",
+      "tip": "You don't need to import anything — int, float, and complex are built right in."
+    },
+    {
+      "emoji": "🧮",
+      "title": "Integers vs. Floats",
+      "body": "`int` is a whole number; `float` has a decimal point. Even `1.0` is a float — **the dot makes all the difference**.",
+      "code": "apples = 5\nprice = 1.99\nprint(type(apples), type(price))",
+      "output": "<class 'int'> <class 'float'>"
+    },
+    {
+      "emoji": "➗",
+      "title": "Three Kinds of Division",
+      "body": "`/` **always** returns a float. Use `//` for whole-number (floor) division, and `%` to grab the remainder.",
+      "code": "a = 17\nb = 5\nprint(a / b)   # float\nprint(a // b)  # int\nprint(a % b)   # remainder",
+      "output": "3.4\n3\n2",
+      "tip": "10 / 2 gives 5.0, not 5 — use // when you need a plain integer."
+    },
+    {
+      "emoji": "⚠️",
+      "title": "The 0.1 + 0.2 Surprise",
+      "body": "Floats are stored in binary, so `0.1 + 0.2` isn't *exactly* `0.3`. Use **`round()`** when displaying decimal results to users.",
+      "code": "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2))",
+      "output": "0.30000000000000004\n0.3",
+      "tip": "This isn't a Python bug — every language that uses binary floating-point has this."
+    },
+    {
+      "emoji": "🛠️",
+      "title": "Handy Tools: abs, round, math",
+      "body": "Python's built-ins `abs()` and `round()` handle everyday needs. For square roots, π, and more, import the **`math`** module.",
+      "code": "import math\nprint(abs(-42))\nprint(round(3.74159, 2))\nprint(math.sqrt(144))",
+      "output": "42\n3.74\n12.0"
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got Numbers Down!",
+      "body": "You now know `int` vs `float`, all the arithmetic operators, the three flavours of division, and how to reach for `math` when you need more power.",
+      "tip": "Write big literals as 1_000_000 — Python ignores the underscores, but your eyes will thank you."
+    }
+  ]
+}

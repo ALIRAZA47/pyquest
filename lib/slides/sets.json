@@ -1,0 +1,42 @@
+{
+  "slug": "sets",
+  "slides": [
+    {
+      "emoji": "🎯",
+      "title": "Sets: No Duplicates Allowed",
+      "body": "A **set** is a collection that keeps only **unique** items — add the same thing twice and Python quietly keeps just one copy. Think of it as a guest list that automatically removes repeated names.",
+      "tip": "Sets are unordered, so Python won't remember what order you added things in."
+    },
+    {
+      "emoji": "🛠️",
+      "title": "Creating a Set",
+      "body": "Use curly braces `{}` with comma-separated values. Python **automatically drops duplicates** for you — no extra code needed.",
+      "code": "colors = {\"red\", \"green\", \"blue\", \"red\"}\nprint(colors)",
+      "output": "{'red', 'green', 'blue'}",
+      "tip": "Empty `{}` creates a **dictionary**, not a set — use `set()` for an empty set."
+    },
+    {
+      "emoji": "⚡",
+      "title": "Fast Membership Checks",
+      "body": "Use `in` to test whether an item is in a set. Sets are **much faster** than lists for this — Python jumps straight to the answer instead of scanning every item.",
+      "code": "allowed = {\"alice\", \"bob\", \"carol\"}\nprint(\"bob\" in allowed)\nprint(\"dave\" in allowed)",
+      "output": "True\nFalse"
+    },
+    {
+      "emoji": "🔵",
+      "title": "Combine Sets Like a Venn Diagram",
+      "body": "Four operators let you merge and compare sets: `|` union, `&` intersection, `-` difference, `^` symmetric difference.",
+      "code": "a = {\"alice\", \"bob\", \"carol\"}\nb = {\"bob\", \"carol\", \"dave\"}\nprint(a & b)\nprint(a - b)",
+      "output": "{'bob', 'carol'}\n{'alice'}",
+      "tip": "`&` gives items in **both** sets; `-` gives items in the left set **only**."
+    },
+    {
+      "emoji": "🧹",
+      "title": "The Classic Deduplication Recipe",
+      "body": "Convert a list to a `set()` to strip duplicates instantly, then back to a sorted list when you need order. This three-step pattern shows up everywhere.",
+      "code": "tags = [\"python\", \"beginner\", \"python\", \"tutorial\"]\nprint(sorted(set(tags)))",
+      "output": "['beginner', 'python', 'tutorial']",
+      "tip": "list → set → sorted list is one of Python's most useful one-liners."
+    }
+  ]
+}

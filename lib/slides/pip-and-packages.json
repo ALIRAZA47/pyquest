@@ -1,0 +1,38 @@
+{
+  "slug": "pip-and-packages",
+  "slides": [
+    {
+      "emoji": "📦",
+      "title": "Python's Giant App Store",
+      "body": "Python comes with a solid standard library, but the real magic is **PyPI** — over 500,000 free packages built by developers worldwide. Need to fetch a web page or crunch data? Someone already wrote it.",
+      "tip": "PyPI stands for Python Package Index and lives at pypi.org."
+    },
+    {
+      "emoji": "⬇️",
+      "title": "Install Anything in One Command",
+      "body": "Run `pip install <package-name>` in your **terminal** and pip downloads and installs the package automatically. It's the install button for Python code.",
+      "code": "# In your terminal (not a Python file):\npip install requests",
+      "output": "Successfully installed requests-2.31.0"
+    },
+    {
+      "emoji": "🌐",
+      "title": "Import and Use It Instantly",
+      "body": "After installing, use `import` just like any built-in module. Here `requests` fetches a live URL with a single function call.",
+      "code": "import requests\n\nresponse = requests.get(\"https://httpbin.org/get\")\nprint(response.status_code)",
+      "output": "200",
+      "tip": "Status code 200 means the request succeeded."
+    },
+    {
+      "emoji": "📋",
+      "title": "Lock Your Dependencies",
+      "body": "Share your project and teammates need the same packages. Run `pip freeze > requirements.txt` to snapshot every package and version, then anyone can restore them with one command.",
+      "code": "# Save dependencies:\npip freeze > requirements.txt\n\n# Restore on another machine:\npip install -r requirements.txt"
+    },
+    {
+      "emoji": "🏖️",
+      "title": "Keep Projects Isolated",
+      "body": "You've got the full toolkit: **install** with `pip`, **import** in your code, and **share** via `requirements.txt`. Use a **virtual environment** (`python -m venv .venv`) so each project keeps its own packages and nothing ever clashes.",
+      "tip": "Virtual environments are the professional standard — set one up for every real project."
+    }
+  ]
+}

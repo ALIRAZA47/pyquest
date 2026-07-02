@@ -1,0 +1,47 @@
+{
+  "slug": "modules-and-imports",
+  "slides": [
+    {
+      "emoji": "📦",
+      "title": "Don't Reinvent the Wheel",
+      "body": "A **module** is a ready-made `.py` file full of useful code. Instead of writing everything yourself, you `import` it and put it straight to work.",
+      "tip": "Python ships with hundreds of built-in modules — they're called the standard library."
+    },
+    {
+      "emoji": "🔧",
+      "title": "import a Whole Toolbox",
+      "body": "Use `import math` to load the whole module. Then reach inside with a **dot** to grab any tool you need.",
+      "code": "import math\n\nprint(math.sqrt(25))\nprint(math.pi)",
+      "output": "5.0\n3.141592653589793"
+    },
+    {
+      "emoji": "🎯",
+      "title": "Grab Just What You Need",
+      "body": "Use `from math import sqrt` to pull in **one specific item** — no prefix required when you call it.",
+      "code": "from math import sqrt, pi\n\nprint(sqrt(49))\nprint(pi)",
+      "output": "7.0\n3.141592653589793",
+      "tip": "Use this style when you only need one or two things from a module."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Give Modules a Nickname",
+      "body": "Long module names? Use `import ... as` to create a **short alias** — this is standard practice with popular libraries.",
+      "code": "import math as m\n\nprint(m.sqrt(16))\nprint(m.ceil(2.1))",
+      "output": "4.0\n3",
+      "tip": "You'll often see numpy as np and pandas as pd in data science code."
+    },
+    {
+      "emoji": "🛡️",
+      "title": "The if __name__ Guard",
+      "body": "Code at the top level of a module runs on **every import**. Wrap test code in `if __name__ == \"__main__\":` so it only runs when you execute the file directly.",
+      "code": "def hello(name):\n    return f\"Hello, {name}!\"\n\nif __name__ == \"__main__\":\n    print(hello(\"World\"))",
+      "output": "Hello, World!",
+      "tip": "When imported, __name__ is the filename; when run directly, it's \"__main__\"."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got the Import Pattern!",
+      "body": "You can now `import` built-in modules, grab specific items with `from ... import`, create short aliases, and protect code with `if __name__ == \"__main__\":`. **Every `.py` file you write is already a module.**"
+    }
+  ]
+}

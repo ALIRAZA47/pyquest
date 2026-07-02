@@ -1,0 +1,46 @@
+{
+  "slug": "the-repl",
+  "slides": [
+    {
+      "emoji": "💬",
+      "title": "Python Talks Back Instantly",
+      "body": "The **REPL** is a live conversation with Python — type something, press Enter, and Python replies right away. No files, no waiting.",
+      "tip": "REPL stands for Read-Eval-Print Loop: it reads your input, runs it, prints the result, and loops."
+    },
+    {
+      "emoji": "⌨️",
+      "title": "The >>> Prompt Is Your Cue",
+      "body": "Type `python` in your terminal (no filename!) and you'll see `>>>`. That's Python saying: **I'm ready, what do you want to know?**",
+      "code": "$ python\n>>>",
+      "tip": "On some machines you need python3 instead of python."
+    },
+    {
+      "emoji": "🧮",
+      "title": "Just Type and Get Answers",
+      "body": "Any expression you type is evaluated **immediately** — no `print()` required. It works with math, text, and more.",
+      "code": ">>> 2 + 2\n4\n>>> \"Hello\" + \" world\"\n'Hello world'",
+      "output": "4\n'Hello world'"
+    },
+    {
+      "emoji": "📦",
+      "title": "Variables Stick Around (For Now)",
+      "body": "You can create variables in the REPL and use them on the next line. They live until you **close the session** — then they're gone.",
+      "code": ">>> name = \"Ada\"\n>>> print(f\"Hello, {name}!\")",
+      "output": "Hello, Ada!",
+      "tip": "Save your work to a .py file if you want to keep it."
+    },
+    {
+      "emoji": "🔍",
+      "title": "Explore with dir() and help()",
+      "body": "`dir(something)` lists everything you can do with it. `help(something)` explains how. Your built-in cheat sheet.",
+      "code": ">>> dir(\"hello\")\n['capitalize', 'upper', 'lower', ...]",
+      "tip": "Forget a method name? Type dir([]) to peek inside any object."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got a Python Playground",
+      "body": "The REPL is your **sandbox for experimenting** — try ideas fast, learn by doing, and save real programs to `.py` files. Type `exit()` when you're done.",
+      "tip": "Great Python developers use the REPL constantly — it's not just for beginners."
+    }
+  ]
+}

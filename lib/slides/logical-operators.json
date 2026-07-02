@@ -1,0 +1,49 @@
+{
+  "slug": "logical-operators",
+  "slides": [
+    {
+      "emoji": "🔗",
+      "title": "Combine Conditions Like a Pro",
+      "body": "Python's **logical operators** — `and`, `or`, and `not` — let you check multiple conditions at once. Think of them as the glue that turns simple true/false checks into smart, real-world rules.",
+      "tip": "These three keywords are the backbone of almost every decision your code will ever make."
+    },
+    {
+      "emoji": "🚪",
+      "title": "`and` — Both Doors Must Open",
+      "body": "`and` is `True` only when **both** sides are `True`. If either side fails, the whole thing is `False`.",
+      "code": "age = 20\nhas_ticket = True\n\nif age >= 18 and has_ticket:\n    print(\"Welcome in!\")",
+      "output": "Welcome in!",
+      "tip": "Think of `and` as a two-lock door — you need both keys."
+    },
+    {
+      "emoji": "🗝️",
+      "title": "`or` Needs Just One Truth",
+      "body": "`or` is `True` if **at least one** side is `True`. Use it when multiple paths lead to the same outcome.",
+      "code": "is_member = False\nis_vip = True\n\nif is_member or is_vip:\n    print(\"Access granted!\")",
+      "output": "Access granted!",
+      "tip": "`or` is like having two keys — either one unlocks the door."
+    },
+    {
+      "emoji": "🔄",
+      "title": "`not` Flips the Value",
+      "body": "`not` turns `True` into `False` and `False` into `True`. Combine it with `and`/`or` to exclude conditions.",
+      "code": "is_banned = False\nis_vip = True\n\nif is_vip and not is_banned:\n    print(\"Come right in!\")",
+      "output": "Come right in!",
+      "tip": "not is_banned reads almost like plain English — that's the goal!"
+    },
+    {
+      "emoji": "⚡",
+      "title": "Watch Out: `or` Is Not a List",
+      "body": "A classic beginner trap: `color == \"red\" or \"blue\"` does **not** check both colors. The string `\"blue\"` is always truthy, so the condition is always `True`.",
+      "code": "color = \"green\"\n\n# WRONG — always True!\nif color == \"red\" or \"blue\":\n    print(\"matched\")\n\n# Correct\nif color == \"red\" or color == \"blue\":\n    print(\"matched\")",
+      "output": "matched",
+      "tip": "Always write the full comparison on both sides of `or`."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got the Logic!",
+      "body": "You now know `and` (both true), `or` (one true), and `not` (flip it). Mix them with parentheses to write clean, readable conditions for any situation.",
+      "tip": "When in doubt, add parentheses — they make complex conditions crystal clear."
+    }
+  ]
+}

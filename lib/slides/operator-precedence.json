@@ -1,0 +1,41 @@
+{
+  "slug": "operator-precedence",
+  "slides": [
+    {
+      "emoji": "🥇",
+      "title": "Python Has a VIP Queue",
+      "body": "When Python sees `2 + 3 * 4`, it doesn't just read left to right — it has **priority rules** that decide which operator goes first. Get this wrong and your math will silently lie to you.",
+      "tip": "These rules are called operator precedence — the same idea as PEMDAS from school math."
+    },
+    {
+      "emoji": "😲",
+      "title": "The Surprising Result",
+      "body": "Multiplication beats addition in priority, so `3 * 4` runs first, then `2` is added. The answer is **14**, not 20.",
+      "code": "result = 2 + 3 * 4\nprint(result)",
+      "output": "14",
+      "tip": "This isn't a bug — it matches standard math rules."
+    },
+    {
+      "emoji": "🏆",
+      "title": "The Precedence Ladder",
+      "body": "Python ranks operators from **highest to lowest priority**: `**` → `* / // %` → `+ -` → comparisons (`==`, `<`, …) → `not` → `and` → `or`. Higher rank goes first.",
+      "code": "print(2 + 3 ** 2)\nprint(10 - 2 * 3)",
+      "output": "11\n4",
+      "tip": "** (exponentiation) is the highest — and the one exception that goes right-to-left."
+    },
+    {
+      "emoji": "🔧",
+      "title": "Parentheses Override Everything",
+      "body": "Wrap anything in `()` and Python evaluates it **first**, no matter what. Parentheses are your clearest, safest tool for controlling order.",
+      "code": "print(2 + 3 * 4)\nprint((2 + 3) * 4)",
+      "output": "14\n20",
+      "tip": "Even when not strictly needed, parentheses make your intent obvious to anyone reading your code."
+    },
+    {
+      "emoji": "✅",
+      "title": "You've Got the Order Down!",
+      "body": "Python always follows the same ladder: **exponentiation → multiply/divide → add/subtract → comparisons → logical**. When in doubt, add `()` — clarity beats cleverness every time.",
+      "tip": "A classic trap: `score1 + score2 + score3 / 3` divides only score3. Fix it: `(score1 + score2 + score3) / 3`."
+    }
+  ]
+}

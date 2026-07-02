@@ -1,0 +1,39 @@
+{
+  "slug": "variables",
+  "slides": [
+    {
+      "emoji": "📦",
+      "title": "Variables: Named Boxes for Data",
+      "body": "A **variable** lets you give a value a name so your program can remember it. Instead of repeating `25` everywhere, just write `age` — and Python knows what you mean.",
+      "tip": "Variables are how programs remember things while they run."
+    },
+    {
+      "emoji": "✏️",
+      "title": "Creating a Variable Is Simple",
+      "body": "Use `=` to assign a value to a name. The name goes on the left, the value on the right — that's it.",
+      "code": "age = 25\nname = \"Alex\"\nprint(name, age)",
+      "output": "Alex 25"
+    },
+    {
+      "emoji": "🔄",
+      "title": "Variables Can Change Anytime",
+      "body": "You can reassign a variable whenever you like. Python just remembers the **latest** value — the old one is gone.",
+      "code": "score = 0\nscore = 50\nscore = score + 10\nprint(score)",
+      "output": "60",
+      "tip": "score = score + 10 reads the current value, adds 10, then saves it back."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Name Them Well",
+      "body": "Names must start with a **letter or underscore** and can't be a Python keyword. Use `snake_case` for multi-word names — it's the Python way.",
+      "code": "user_name = \"Jordan\"\nhigh_score = 100\n# 1st_place = \"gold\"  ← SyntaxError!",
+      "tip": "snake_case means words joined by underscores: first_name, total_items."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got Variables!",
+      "body": "You can now store, name, and update values in Python. Every program you'll ever write uses this — you just learned one of the most fundamental ideas in coding.",
+      "tip": "Remember: = assigns a value. == checks if two values are equal."
+    }
+  ]
+}

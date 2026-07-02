@@ -1,0 +1,47 @@
+{
+  "slug": "string-methods",
+  "slides": [
+    {
+      "emoji": "🛠️",
+      "title": "Strings Have Built-In Tools",
+      "body": "Every string in Python comes with a built-in **toolkit of methods** — helpers you call with a dot. They let you transform, search, and clean text without writing any complex code yourself.",
+      "tip": "A method is just a function that lives on the string: `\"hello\".upper()`"
+    },
+    {
+      "emoji": "🔠",
+      "title": "Change Case in One Call",
+      "body": "Use `.upper()`, `.lower()`, and `.title()` to control capitalization. Perfect for displaying names nicely or comparing text fairly.",
+      "code": "name = \"alice wonder\"\nprint(name.upper())\nprint(name.title())",
+      "output": "ALICE WONDER\nAlice Wonder"
+    },
+    {
+      "emoji": "⚠️",
+      "title": "Methods Return NEW Strings",
+      "body": "Calling a method **never changes the original string** — it hands you back a brand-new one. Always save the result in a variable, or the change is lost.",
+      "code": "word = \"python\"\nword.upper()        # result thrown away!\nprint(word)         # still lowercase\nbig = word.upper()\nprint(big)",
+      "output": "python\nPYTHON",
+      "tip": "Forgetting to save the result is the #1 beginner mistake with string methods."
+    },
+    {
+      "emoji": "✂️",
+      "title": "Clean, Find, Split, Join",
+      "body": "`.strip()` removes extra spaces, `.replace(old, new)` swaps text, `.split()` breaks a string into a list, and `.join()` glues a list back together.",
+      "code": "csv = \"Alice,Bob,Charlie\"\nnames = csv.split(\",\")\nprint(names)\nprint(\" | \".join(names))",
+      "output": "['Alice', 'Bob', 'Charlie']\nAlice | Bob | Charlie"
+    },
+    {
+      "emoji": "⛓️",
+      "title": "Chain Methods for Power Combos",
+      "body": "Because each method returns a new string, you can **chain** them — calling one right after another on a single line to transform text step by step.",
+      "code": "raw = \"  Ali Khan  \"\nusername = raw.strip().lower().replace(\" \", \"_\")\nprint(username)",
+      "output": "ali_khan",
+      "tip": "Read chains left to right: strip first, then lower, then replace."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got the Toolkit!",
+      "body": "String methods are some of the most-used tools in Python. Master `.strip()`, `.lower()`, `.replace()`, `.split()`, and `.join()` and you can handle almost any real-world text challenge.",
+      "tip": "All string methods are non-destructive — the original is always safe."
+    }
+  ]
+}

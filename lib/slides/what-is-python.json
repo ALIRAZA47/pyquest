@@ -1,0 +1,41 @@
+{
+  "slug": "what-is-python",
+  "slides": [
+    {
+      "emoji": "🐍",
+      "title": "Meet Python — Your New Superpower",
+      "body": "Python is a programming language that lets you give instructions to a computer. What makes it special? **It reads almost like plain English** — no cryptic symbols required.",
+      "tip": "Python is named after Monty Python's Flying Circus, not the snake!"
+    },
+    {
+      "emoji": "📖",
+      "title": "Code That Speaks For Itself",
+      "body": "Python was designed so humans — not just computers — can read the code. No semicolons, no curly braces, just clean indented lines that show structure at a glance.",
+      "code": "name = \"Alice\"\nage = 30\n\nif age >= 18:\n    print(name + \" is an adult.\")",
+      "output": "Alice is an adult.",
+      "tip": "Even first-timers can guess what this code does — that is the whole point."
+    },
+    {
+      "emoji": "⚡",
+      "title": "Run It and See — Instantly",
+      "body": "Python is **interpreted**, meaning it runs your code line by line right away. Write a line, run it, see the result — no waiting, no compile step.",
+      "code": "print(\"Hello, World!\")",
+      "output": "Hello, World!",
+      "tip": "Python is case-sensitive: `print` works, but `Print` or `PRINT` will error."
+    },
+    {
+      "emoji": "🌍",
+      "title": "Python Powers the Real World",
+      "body": "Instagram, YouTube, NASA — they all use Python. It handles **web apps, AI, data science, automation, and games**. The language you learn here scales all the way up.",
+      "code": "files = [\"photo1.jpg\", \"photo2.jpg\"]\nfor f in files:\n    print(\"Renaming:\", f)",
+      "output": "Renaming: photo1.jpg\nRenaming: photo2.jpg",
+      "tip": "A few lines of Python can automate tasks that would take hours by hand."
+    },
+    {
+      "emoji": "🏆",
+      "title": "You Picked the Right Language",
+      "body": "Python is the **world's most popular first language** because it rewards you fast. Clean syntax, instant feedback, and a massive community mean you are never stuck for long.",
+      "tip": "Every expert was once a beginner who typed `print(\"Hello, World!\")` for the first time."
+    }
+  ]
+}

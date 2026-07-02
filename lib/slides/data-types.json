@@ -1,0 +1,49 @@
+{
+  "slug": "data-types",
+  "slides": [
+    {
+      "emoji": "🏷️",
+      "title": "Python Labels Everything",
+      "body": "Every value in Python has a **type** — a label that tells Python what kind of thing it is. The right type means Python knows what you can *do* with a value.",
+      "tip": "Think of types as labeled boxes: a BOOKS box and a FRAGILE box get handled very differently."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Numbers: `int` and `float`",
+      "body": "Use **`int`** for whole numbers (counting) and **`float`** for decimals (measuring). Python picks the type automatically based on whether there is a decimal point.",
+      "code": "age = 28        # int\nprice = 9.99    # float\nprint(age, price)",
+      "output": "28 9.99",
+      "tip": "No decimal point → int. Has a decimal point → float."
+    },
+    {
+      "emoji": "📝",
+      "title": "Text and Truth: `str` & `bool`",
+      "body": "A **`str`** holds any text in quotes. A **`bool`** is either `True` or `False` — Python's way of saying yes or no.",
+      "code": "name = \"Ada\"\nis_admin = True\nprint(name, is_admin)",
+      "output": "Ada True",
+      "tip": "Bool values must be capitalized: `True` and `False`, never `true` or `false`."
+    },
+    {
+      "emoji": "📦",
+      "title": "Collections: `list`, `tuple`, `dict`, `set`",
+      "body": "When one value is not enough, use a **collection**. `list` is editable, `tuple` is frozen, `dict` maps keys to values, and `set` holds only unique items.",
+      "code": "fruits = [\"apple\", \"banana\"]  # list\nperson = {\"name\": \"Ada\", \"age\": 36}  # dict\nprint(fruits[0], person[\"name\"])",
+      "output": "apple Ada",
+      "tip": "Square brackets `[]` for lists, curly braces `{}` for dicts and sets, parentheses `()` for tuples."
+    },
+    {
+      "emoji": "🔍",
+      "title": "Ask Python: `type()` Tells All",
+      "body": "Not sure what type a value is? Call **`type()`** on it — Python answers instantly. This is your best friend when debugging.",
+      "code": "print(type(42))\nprint(type(\"hello\"))\nprint(type(True))",
+      "output": "<class 'int'>\n<class 'str'>\n<class 'bool'>",
+      "tip": "Every value in Python is an object — that is why `type()` says `<class '...'>`."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You Know Python's Core Types!",
+      "body": "You have met `int`, `float`, `str`, `bool`, `list`, `tuple`, `dict`, `set`, and `None`. Each is a tool for a different job — and `type()` helps you identify any of them.",
+      "tip": "Mutable types (list, dict, set) can change after creation; immutable ones (int, str, tuple) cannot."
+    }
+  ]
+}

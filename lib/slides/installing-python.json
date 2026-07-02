@@ -1,0 +1,41 @@
+{
+  "slug": "installing-python",
+  "slides": [
+    {
+      "emoji": "⚙️",
+      "title": "Python: Your New Superpower",
+      "body": "Before you can write Python programs, you need **Python installed** on your computer. Think of it like a music player — the code is the song, Python is the player that makes it run.",
+      "tip": "Python is free and works on Windows, macOS, and Linux."
+    },
+    {
+      "emoji": "⬇️",
+      "title": "Download & Install in Minutes",
+      "body": "Grab the latest **Python 3** from [python.org/downloads](https://python.org/downloads). On **Windows**, tick **\"Add Python to PATH\"** on the first install screen — without it, your terminal won't find Python.",
+      "code": "# After installing, open a terminal and type:\npython --version\n# or on macOS / Linux:\npython3 --version",
+      "output": "Python 3.12.3",
+      "tip": "Any version starting with 3 means you're good to go."
+    },
+    {
+      "emoji": "🖊️",
+      "title": "Pick Your Code Editor",
+      "body": "A **code editor** is your workshop for writing code. **VS Code** is free, beginner-friendly, and the most popular choice — just install it and add the Microsoft \"Python\" extension.",
+      "tip": "Think of Python as the engine and VS Code as the dashboard — the engine does the work, the dashboard makes it pleasant."
+    },
+    {
+      "emoji": "🚀",
+      "title": "Run Your First Python File",
+      "body": "Save your code in a file ending in **`.py`**, then run it from the terminal with `python3 filename.py`. That's all it takes.",
+      "code": "# hello.py\nprint(\"Hello, world!\")",
+      "output": "Hello, world!",
+      "tip": "Use `cd` in your terminal to navigate to the folder where your file is saved."
+    },
+    {
+      "emoji": "📦",
+      "title": "pip Comes Free — You're Ready!",
+      "body": "Python bundles **pip**, a tool to install thousands of free libraries written by other developers. You won't need it today, but it's already waiting for you.",
+      "code": "# Confirm pip is available:\npip3 --version",
+      "output": "pip 24.0 from /usr/local/lib/python3.12/site-packages/pip (python 3.12)",
+      "tip": "You now have a full Python environment — install, verify, edit, run. Let's write some code!"
+    }
+  ]
+}

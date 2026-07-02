@@ -1,0 +1,48 @@
+{
+  "slug": "builtin-tools",
+  "slides": [
+    {
+      "emoji": "🧰",
+      "title": "Python's Built-In Power Tools",
+      "body": "Python ships with functions like `enumerate`, `zip`, `map`, and `filter` that make list processing **clean and expressive**. No more manual index juggling — just tell Python *what* you want.",
+      "tip": "Code that says what it does, not how to count, is called \"Pythonic\"."
+    },
+    {
+      "emoji": "🔢",
+      "title": "enumerate() — Index + Value, Free",
+      "body": "Instead of maintaining a counter variable, `enumerate(sequence)` hands you **both the index and the value** in one go.",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor index, fruit in enumerate(fruits, start=1):\n    print(f\"{index}. {fruit}\")",
+      "output": "1. apple\n2. banana\n3. cherry",
+      "tip": "start=1 makes numbered lists feel natural to human readers."
+    },
+    {
+      "emoji": "🤝",
+      "title": "zip() — Pair Two Lists Together",
+      "body": "`zip(a, b)` acts like a jacket zipper — it pairs items from two lists **side by side**, one by one. Perfect for names + scores, keys + values, and more.",
+      "code": "names = [\"Alice\", \"Bob\", \"Carol\"]\nscores = [95, 82, 78]\n\nfor name, score in zip(names, scores):\n    print(f\"{name}: {score}\")",
+      "output": "Alice: 95\nBob: 82\nCarol: 78",
+      "tip": "Gotcha: zip() stops at the shorter list — extra items are silently dropped."
+    },
+    {
+      "emoji": "🔍",
+      "title": "map() and filter() — Transform & Select",
+      "body": "`map(fn, seq)` runs a function on **every item**; `filter(fn, seq)` keeps only items where the function returns `True`. Both are lazy — wrap in `list()` to get results.",
+      "code": "numbers = [1, 2, 3, 4, 5, 6]\n\nevens = list(filter(lambda n: n % 2 == 0, numbers))\nprint(evens)",
+      "output": "[2, 4, 6]",
+      "tip": "List comprehensions often read more clearly: [n for n in numbers if n % 2 == 0]"
+    },
+    {
+      "emoji": "📊",
+      "title": "sorted(), any(), all(), sum() — One-Liners",
+      "body": "`sorted(key=...)` sorts by any property; `sum()`, `min()`, `max()`, `any()`, and `all()` **collapse a whole list into a single answer** — no loop needed.",
+      "code": "scores = [72, 85, 91, 60, 88]\n\nprint(sum(scores))                      # 396\nprint(any(s >= 90 for s in scores))    # True",
+      "output": "396\nTrue"
+    },
+    {
+      "emoji": "🏆",
+      "title": "You've Got the Toolkit!",
+      "body": "These built-ins — `enumerate`, `zip`, `map`, `filter`, `sorted`, `any`, `all`, `sum` — are the vocabulary of **readable Python**. Mix and match them to process data in just a few clean lines.",
+      "tip": "When you reach for a manual counter or a nested loop, ask: is there a built-in for this?"
+    }
+  ]
+}

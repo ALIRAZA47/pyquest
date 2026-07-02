@@ -1,0 +1,46 @@
+{
+  "slug": "lambda-functions",
+  "slides": [
+    {
+      "emoji": "📝",
+      "title": "Functions Without a Name",
+      "body": "A **lambda** is a tiny, one-line function you write right where you need it — no `def`, no name, no ceremony. Think of it as a sticky note instead of a formal memo.",
+      "tip": "Lambdas don't replace regular functions — they're for quick, throwaway logic."
+    },
+    {
+      "emoji": "🔤",
+      "title": "The Syntax in One Line",
+      "body": "The pattern is `lambda parameters: expression`. The expression is **automatically returned** — no `return` keyword needed.",
+      "code": "# Regular function\ndef double(x):\n    return x * 2\n\n# Same thing as a lambda\nlambda x: x * 2",
+      "tip": "Both do exactly the same thing — lambda is just more compact."
+    },
+    {
+      "emoji": "🔀",
+      "title": "Lambdas Shine with sorted()",
+      "body": "The most common use: pass a lambda as the `key=` argument to `sorted()`, `min()`, or `max()` to control **how** items are compared.",
+      "code": "names = [\"Alice\", \"Bob\", \"Charlie\", \"Di\"]\nresult = sorted(names, key=lambda name: len(name))\nprint(result)",
+      "output": "['Di', 'Bob', 'Alice', 'Charlie']",
+      "tip": "The lambda runs on each item and returns the value to sort by."
+    },
+    {
+      "emoji": "🗂️",
+      "title": "map() and filter() Too",
+      "body": "`map()` transforms every item; `filter()` keeps only items where the function returns `True`. Lambdas slot in perfectly as the function argument.",
+      "code": "nums = [1, 2, 3, 4, 5]\nsquared = list(map(lambda n: n ** 2, nums))\nevens = list(filter(lambda n: n % 2 == 0, nums))\nprint(squared)\nprint(evens)",
+      "output": "[1, 4, 9, 16, 25]\n[2, 4]",
+      "tip": "List comprehensions are often even cleaner for these cases."
+    },
+    {
+      "emoji": "🚧",
+      "title": "One Expression — That's the Limit",
+      "body": "A lambda can only hold a **single expression** — no loops, no `if` blocks, no `return`. When logic gets bigger, switch to a regular `def`.",
+      "tip": "If it doesn't fit comfortably on one line, it doesn't belong in a lambda."
+    },
+    {
+      "emoji": "✅",
+      "title": "You've Got Lambda!",
+      "body": "Lambdas are quick, inline functions perfect for `key=` sorting and passing to `map`/`filter`. For anything more complex, `def` is your friend — **readability always wins**.",
+      "tip": "Rule of thumb: unnamed and inline → lambda. Named and reused → def."
+    }
+  ]
+}

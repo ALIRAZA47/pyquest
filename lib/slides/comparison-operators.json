@@ -1,0 +1,49 @@
+{
+  "slug": "comparison-operators",
+  "slides": [
+    {
+      "emoji": "⚖️",
+      "title": "Python Asks Yes-or-No Questions",
+      "body": "A **comparison operator** puts two values side by side and asks a question. The answer is always **`True`** or **`False`** — no maybes.",
+      "tip": "True and False are called booleans — they're the foundation of every decision your program makes."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Six Operators, One Job",
+      "body": "Python has six comparison operators: `==` `!=` `<` `>` `<=` `>=`. Each one sits between two values and returns a boolean.",
+      "code": "print(5 == 5)   # equal to?\nprint(5 != 3)   # not equal?\nprint(4 < 10)   # less than?\nprint(7 > 9)    # greater than?",
+      "output": "True\nTrue\nTrue\nFalse",
+      "tip": "Don't confuse = (assignment) with == (comparison) — one stores, the other asks."
+    },
+    {
+      "emoji": "🌡️",
+      "title": "Numbers Compare Like Math Class",
+      "body": "Integers, floats, or a mix — Python handles them all. Store a comparison result in a variable just like any value.",
+      "code": "temperature = 37.5\nis_fever = temperature > 36.6\nprint(is_fever)",
+      "output": "True",
+      "tip": "5 == 5.0 is True — Python compares values, not types."
+    },
+    {
+      "emoji": "🔡",
+      "title": "Strings Compare Like a Dictionary",
+      "body": "String equality is **case-sensitive**. You can also use `<` and `>` — Python compares strings letter by letter, like alphabetical order.",
+      "code": "print(\"Apple\" == \"apple\")   # capital A matters!\nprint(\"apple\" < \"banana\")   # 'a' before 'b'",
+      "output": "False\nTrue",
+      "tip": "\"cat\" < \"cats\" is True — the shorter word comes first when everything else matches."
+    },
+    {
+      "emoji": "🔗",
+      "title": "Chain Comparisons Like Math",
+      "body": "Python lets you chain comparisons in one line — perfect for checking if a value falls inside a range.",
+      "code": "x = 7\nprint(1 < x < 10)    # between 1 and 10?\nprint(0 <= x <= 5)   # between 0 and 5?",
+      "output": "True\nFalse",
+      "tip": "1 < x < 10 is cleaner than writing x > 1 and x < 10 separately."
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got Comparisons!",
+      "body": "Six operators, always `True` or `False`. You can compare numbers, strings, and even chain them — and you know not to mix up `=` with `==`.",
+      "tip": "Use == to compare values. Use is only with None. You're ready to make decisions in code!"
+    }
+  ]
+}

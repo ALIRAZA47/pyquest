@@ -1,0 +1,40 @@
+{
+  "slug": "defining-functions",
+  "slides": [
+    {
+      "emoji": "🧰",
+      "title": "Write Once, Use Anywhere",
+      "body": "A **function** is a named set of instructions you define once and run whenever you need. It's how you teach Python a brand-new trick — no copy-pasting required.",
+      "tip": "This idea has a name: DRY — Don't Repeat Yourself."
+    },
+    {
+      "emoji": "🔧",
+      "title": "Anatomy of `def`",
+      "body": "Use `def`, a name, parentheses, and a colon — then **indent** the body. Python owns everything indented underneath.",
+      "code": "def greet():\n    print(\"Hello, world!\")\n\ngreet()",
+      "output": "Hello, world!",
+      "tip": "Don't forget the colon `:` — it's the most common beginner slip."
+    },
+    {
+      "emoji": "📬",
+      "title": "Pass Data In with Parameters",
+      "body": "Add **parameters** inside the parentheses so your function can work with different inputs each time it's called.",
+      "code": "def greet(name):\n    print(\"Hello,\", name)\n\ngreet(\"Alice\")\ngreet(\"Bob\")",
+      "output": "Hello, Alice\nHello, Bob",
+      "tip": "Parameter = placeholder in the definition. Argument = real value you pass in."
+    },
+    {
+      "emoji": "📝",
+      "title": "Document It with a Docstring",
+      "body": "Drop a **triple-quoted string** as the very first line of your function to explain what it does — future-you will be grateful.",
+      "code": "def greet(name):\n    \"\"\"Print a friendly greeting.\"\"\"\n    print(\"Hello,\", name)",
+      "tip": "Even one short sentence is enough. Write it in plain English."
+    },
+    {
+      "emoji": "✅",
+      "title": "You've Got Functions!",
+      "body": "You can now define functions with `def`, accept inputs via parameters, and document them with docstrings. Every Python program you'll ever write uses these building blocks.",
+      "tip": "Next up: making functions hand data back using `return`."
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "slug": "for-loops",
+  "slides": [
+    {
+      "emoji": "🔁",
+      "title": "Stop Repeating Yourself",
+      "body": "A **for loop** lets Python do repetitive work for you — visit every item in a collection and do something with it. Write the action once; Python runs it for every item.",
+      "tip": "For loops are one of the most-used tools in all of Python."
+    },
+    {
+      "emoji": "📋",
+      "title": "Your First Loop in Action",
+      "body": "The pattern is `for item in collection:` — Python hands you one item at a time, runs your indented code, then moves to the next.",
+      "code": "fruits = [\"apple\", \"banana\", \"cherry\"]\n\nfor fruit in fruits:\n    print(fruit)",
+      "output": "apple\nbanana\ncherry",
+      "tip": "Name your loop variable descriptively — `fruit` not `x` — so the code reads like English."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Count Numbers with range()",
+      "body": "Use `range()` when you want to loop over a sequence of numbers. `range(5)` gives you `0, 1, 2, 3, 4` — it stops **before** the number you pass in.",
+      "code": "for i in range(1, 6):\n    print(i)",
+      "output": "1\n2\n3\n4\n5",
+      "tip": "range(start, stop) — the stop value is always excluded. Want 1–5? Write range(1, 6)."
+    },
+    {
+      "emoji": "🧮",
+      "title": "Build Results as You Loop",
+      "body": "Start with a zero or an empty list **before** the loop, then add to it on each pass. This **accumulator** pattern unlocks huge power.",
+      "code": "numbers = [3, 7, 2, 9, 4]\ntotal = 0\nfor num in numbers:\n    total = total + num\nprint(\"Sum:\", total)",
+      "output": "Sum: 25",
+      "tip": "Set up your accumulator before the loop starts, not inside it."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Index + Value with enumerate()",
+      "body": "Need to know **where** an item is in the list as well as what it is? `enumerate()` gives you both — no manual counter needed.",
+      "code": "colors = [\"red\", \"green\", \"blue\"]\nfor index, color in enumerate(colors):\n    print(index, color)",
+      "output": "0 red\n1 green\n2 blue",
+      "tip": "enumerate() is cleaner and more Pythonic than range(len(my_list))."
+    },
+    {
+      "emoji": "🎉",
+      "title": "You've Got the Loop Locked In!",
+      "body": "You now know how to loop over **lists**, **strings**, **ranges**, and even grab **indexes** with `enumerate()`. The for loop is your single most powerful everyday Python tool — use it everywhere.",
+      "tip": "When you have a known collection to work through, a for loop is almost always the right choice."
+    }
+  ]
+}

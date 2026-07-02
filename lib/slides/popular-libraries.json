@@ -1,0 +1,39 @@
+{
+  "slug": "popular-libraries",
+  "slides": [
+    {
+      "emoji": "🌍",
+      "title": "Python's Secret Weapon: Libraries",
+      "body": "Python comes with thousands of **free, ready-made libraries** — so you don't have to build everything from scratch. Need to fetch data, draw charts, or train an AI? There's a library for that.",
+      "tip": "Install any library instantly: pip install library-name"
+    },
+    {
+      "emoji": "📊",
+      "title": "Analyse Data With Pandas",
+      "body": "**Pandas** gives you a `DataFrame` — a powerful table with rows and columns, like Excel in Python. Filter, sort, and calculate stats in just a few lines.",
+      "code": "import pandas as pd\n\ndf = pd.DataFrame({\"name\": [\"Alice\", \"Bob\"], \"score\": [88, 95]})\nprint(df[\"score\"].mean())",
+      "output": "91.5"
+    },
+    {
+      "emoji": "🌐",
+      "title": "Talk to the Web With Requests",
+      "body": "**Requests** lets your Python code fetch data from any URL — just like a browser does. Get a JSON response from an API in two lines.",
+      "code": "import requests\n\nresponse = requests.get(\"https://api.github.com\")\nprint(response.status_code)",
+      "output": "200",
+      "tip": "200 means success — you got the data!"
+    },
+    {
+      "emoji": "🔬",
+      "title": "Test Your Code With pytest",
+      "body": "**pytest** automatically finds and runs any function that starts with `test_`, then gives you a clear pass/fail report. Write tests, run one command, sleep soundly.",
+      "code": "def add(a, b):\n    return a + b\n\ndef test_add():\n    assert add(2, 3) == 5",
+      "tip": "Run all tests with: pytest"
+    },
+    {
+      "emoji": "🗺️",
+      "title": "Pick the Right Library",
+      "body": "Every task has a go-to library: **Pandas** for data, **Matplotlib** for charts, **Requests** for APIs, **Flask** for web apps, **scikit-learn** for ML. You now know where to look — the ecosystem is yours to explore.",
+      "tip": "Install only what you need, and use a virtual environment for each project."
+    }
+  ]
+}

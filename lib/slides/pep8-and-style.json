@@ -1,0 +1,44 @@
+{
+  "slug": "pep8-and-style",
+  "slides": [
+    {
+      "emoji": "📏",
+      "title": "Python Has a Style Rulebook",
+      "body": "**PEP 8** is Python's official style guide — a shared set of rules so every Python developer's code looks familiar. Think of it as the grammar handbook for the Python language.",
+      "tip": "PEP stands for Python Enhancement Proposal. PEP 8 (from 2001) is the one that defines style."
+    },
+    {
+      "emoji": "🔢",
+      "title": "Indent with 4 Spaces, Always",
+      "body": "Python uses indentation to define code blocks. PEP 8 says: **4 spaces per level**, every time. Never tabs, never 2 spaces.",
+      "code": "def greet(name):\n    message = \"Hello, \" + name\n    print(message)",
+      "tip": "Set your editor to insert 4 spaces when you press Tab — then you never have to think about it."
+    },
+    {
+      "emoji": "🏷️",
+      "title": "Names Signal What Things Are",
+      "body": "Use `snake_case` for variables and functions, `PascalCase` for classes, and `UPPER_CASE` for constants. The style tells you what you're looking at before you read the name.",
+      "code": "user_name = \"Alice\"\nMAX_RETRIES = 3\n\ndef calculate_total(price):\n    return price\n\nclass ShoppingCart:\n    pass"
+    },
+    {
+      "emoji": "➕",
+      "title": "Give Operators Room to Breathe",
+      "body": "Put **one space on each side** of operators. Cramped code is hard to scan — spaced code reads like math on a whiteboard.",
+      "code": "# Good\nx = 5 + 3\nresult = x * 2 - 1\n\n# Bad\nx=5+3\nresult=x*2-1",
+      "tip": "Exception: no spaces around `=` in keyword arguments — write `print(end=\"\")` not `print(end = \"\")`."
+    },
+    {
+      "emoji": "🤖",
+      "title": "Let Tools Enforce Style for You",
+      "body": "You don't need to memorize every rule. Run **`black`** to auto-format your file instantly, or **`ruff`** to highlight style problems. Most teams run these automatically.",
+      "code": "# In your terminal (not Python):\n# pip install black\n# black my_script.py",
+      "tip": "VS Code and PyCharm can run black automatically every time you save — search for \"format on save\"."
+    },
+    {
+      "emoji": "🤝",
+      "title": "Style is a Team Superpower",
+      "body": "Consistent code means new teammates read it without a guide, code reviews focus on **logic not formatting**, and bugs have fewer places to hide. *Readability counts* — that's the Python Zen.",
+      "tip": "Type `import this` in Python to read the Zen of Python — the philosophy behind PEP 8."
+    }
+  ]
+}

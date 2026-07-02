@@ -1,0 +1,46 @@
+{
+  "slug": "match-statements",
+  "slides": [
+    {
+      "emoji": "🧬",
+      "title": "Route Values Like a Pro",
+      "body": "Python's `match` statement looks at a value and **runs the code for the pattern that fits** — like a coffee shop routing each order to the right station. It's a cleaner alternative to long `if/elif` chains.",
+      "tip": "match requires Python 3.10 or newer — run `python --version` to check."
+    },
+    {
+      "emoji": "🗂️",
+      "title": "Your First match Statement",
+      "body": "Write `match` followed by the value, then `case` branches for each pattern. Python checks **top to bottom** and stops at the first match.",
+      "code": "day = \"Friday\"\n\nmatch day:\n    case \"Monday\":\n        print(\"Start of the work week!\")\n    case \"Friday\":\n        print(\"Almost the weekend!\")\n    case _:\n        print(\"Just another day.\")",
+      "output": "Almost the weekend!"
+    },
+    {
+      "emoji": "🪤",
+      "title": "_ is the Catch-All Wildcard",
+      "body": "`case _:` matches **anything** that didn't match above — exactly like `else` in an `if` chain. Always put it last as your safety net.",
+      "code": "code = 404\n\nmatch code:\n    case 200:\n        print(\"OK\")\n    case 404:\n        print(\"Not Found\")\n    case _:\n        print(f\"Unknown: {code}\")",
+      "output": "Not Found",
+      "tip": "No break needed — Python never falls through from one case to the next."
+    },
+    {
+      "emoji": "🔀",
+      "title": "Match Multiple Values with |",
+      "body": "Use the pipe `|` inside a `case` to group values that share the same outcome. It means **\"or\"** — one branch handles them all.",
+      "code": "grade = \"B\"\n\nmatch grade:\n    case \"A\":\n        print(\"Excellent!\")\n    case \"B\" | \"C\":\n        print(\"Good work, keep it up!\")\n    case _:\n        print(\"Keep trying!\")",
+      "output": "Good work, keep it up!"
+    },
+    {
+      "emoji": "📦",
+      "title": "Match Structures Like Tuples",
+      "body": "`match` really shines with **structured values**. You can match on shape and content at once — variables in a pattern *capture* the value, not compare it.",
+      "code": "point = (0, 5)\n\nmatch point:\n    case (0, 0):\n        print(\"Origin\")\n    case (0, y):\n        print(f\"Y-axis at {y}\")\n    case (x, y):\n        print(f\"Point ({x}, {y})\")",
+      "output": "Y-axis at 5"
+    },
+    {
+      "emoji": "🏁",
+      "title": "You've Got match Mastered!",
+      "body": "`match` makes multi-branch logic **readable and expressive**. Use `case` for each pattern, `|` to combine values, `_` as your default, and unpack tuples right inside the pattern.",
+      "tip": "When you have more than 3-4 if/elif branches checking the same variable, match is usually the cleaner choice."
+    }
+  ]
+}

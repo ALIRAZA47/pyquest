@@ -1,6 +1,14 @@
-import type { Block, Difficulty, Exercise, Lesson, LessonMeta } from "./types";
+import type {
+  Block,
+  Difficulty,
+  Exercise,
+  Lesson,
+  LessonMeta,
+  Slide,
+} from "./types";
 import { ALL_SLUGS, CURRICULUM, categoryForSlug } from "./curriculum";
 import { RAW_LESSONS } from "./generated-lessons";
+import { RAW_SLIDES } from "./generated-slides";
 
 // The content access layer. Lesson JSON is authored per-file and imported via
 // the generated RAW_LESSONS map. Everything here is defensive: any missing or
@@ -84,6 +92,30 @@ function normalizeExercise(raw: unknown): Exercise | undefined {
   };
 }
 
+function normalizeSlides(raw: unknown): Slide[] | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const arr = (raw as Record<string, unknown>).slides;
+  if (!Array.isArray(arr)) return undefined;
+  const slides = arr
+    .map((s): Slide | null => {
+      if (!s || typeof s !== "object") return null;
+      const o = s as Record<string, unknown>;
+      const title = asString(o.title);
+      const body = asString(o.body);
+      if (!title && !body && typeof o.code !== "string") return null;
+      return {
+        title,
+        body,
+        code: typeof o.code === "string" ? o.code : undefined,
+        output: typeof o.output === "string" ? o.output : undefined,
+        tip: typeof o.tip === "string" ? o.tip : undefined,
+        emoji: typeof o.emoji === "string" ? o.emoji : undefined,
+      };
+    })
+    .filter((s): s is Slide => s !== null);
+  return slides.length ? slides : undefined;
+}
+
 function placeholder(slug: string): Lesson {
   const cat = categoryForSlug(slug);
   return {
@@ -132,6 +164,7 @@ function normalize(slug: string, raw: unknown): Lesson {
     blocks: blocks.length ? blocks : placeholder(slug).blocks,
     keyTakeaways: takeaways,
     exercise: normalizeExercise(r.exercise),
+    slides: normalizeSlides(RAW_SLIDES[slug]),
   };
   return lesson;
 }
