@@ -1,0 +1,139 @@
+{
+  "slug": "express-and-routing",
+  "title": "Express & Routing",
+  "category": "Building a Server",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how Express turns raw Node.js into a pleasant web server — with clean routes, URL parameters, and helpful request/response tools.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In the last lesson you built a Node.js HTTP server from scratch. It worked — but look at that code again: you had to check `req.url` with a long chain of `if` statements just to handle a handful of different paths. Add ten more routes and things get messy fast. **Express** is the most popular Node.js framework precisely because it solves this problem. Instead of one giant request handler, Express gives you a clean, readable API where each route is its own self-contained line. The result looks less like plumbing and more like a table of contents for your server."
+    },
+    {
+      "type": "heading",
+      "text": "Why Use a Framework at All?"
+    },
+    {
+      "type": "text",
+      "md": "A framework is just someone else's code that handles the tedious, repetitive parts so you can focus on what makes your app unique. Express wraps Node's built-in `http` module and adds:\n\n- **Routing** — map any HTTP method and URL pattern to a function\n- **Middleware** — small, chainable functions that process requests (more on this in the next lesson)\n- **Convenience helpers** — `res.json()`, `res.send()`, `res.status()`, and more\n\nExpress deliberately stays small. It gives you the rails, not the whole train."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Express is like a post office sorting room",
+      "md": "Imagine all incoming mail arriving in one giant pile (Node's raw `http` server). Without Express, you personally dig through every envelope to decide what goes where. With Express, there is a sorting room with labeled slots — one for letters addressed to `/users`, one for `/products`, one for `/login`. Each piece of mail lands in the right slot automatically, and you only write the handler for that slot."
+    },
+    {
+      "type": "heading",
+      "text": "Installing Express"
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Create a project folder and initialise it\nmkdir my-server && cd my-server\nnpm init -y\n\n# Install Express\nnpm install express",
+      "caption": "npm install express adds Express to your project's node_modules and records it in package.json."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Express Server"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// server.js\nconst express = require(\"express\");\n\nconst app = express(); // create the application\n\napp.get(\"/\", (req, res) => {\n  res.send(\"Hello from Express!\");\n});\n\napp.listen(3000, () => {\n  console.log(\"Server running at http://localhost:3000\");\n});",
+      "output": "Server running at http://localhost:3000",
+      "caption": "Four steps: require Express, create an app, define a route, start listening."
+    },
+    {
+      "type": "text",
+      "md": "Notice how much cleaner this is compared to the raw `http` version. `app.get` tells Express: \"when someone sends a GET request to `/`, run this function.\" The function receives two objects — `req` (the incoming request) and `res` (the outgoing response) — and you call methods on `res` to send something back."
+    },
+    {
+      "type": "heading",
+      "text": "GET and POST: The Two Routes You'll Use Most"
+    },
+    {
+      "type": "text",
+      "md": "HTTP has several **methods** (also called verbs) that describe what a client wants to do. The two you'll reach for constantly are:\n\n- **GET** — retrieve data (loading a page, fetching a list of items)\n- **POST** — send data to the server (submitting a form, creating a new record)\n\nExpress has a method for each: `app.get()` and `app.post()`."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "app.use(express.json()); // allow Express to read JSON request bodies\n\napp.get(\"/users\", (req, res) => {\n  // Respond with a JSON array\n  res.json([{ id: 1, name: \"Alice\" }, { id: 2, name: \"Bob\" }]);\n});\n\napp.post(\"/users\", (req, res) => {\n  const newUser = req.body; // the JSON the client sent\n  console.log(\"Creating user:\", newUser);\n  res.status(201).json({ created: true, user: newUser });\n});",
+      "caption": "app.get and app.post handle the same path (/users) but respond to different HTTP methods."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "What is res.json vs res.send?",
+      "md": "`res.send()` is the general-purpose response helper — it accepts a string, a Buffer, or an object. `res.json()` is a specialised version that always serialises its argument to JSON and sets the `Content-Type` header to `application/json` automatically. When you are building an API, prefer `res.json()` so clients can rely on the content type being correct."
+    },
+    {
+      "type": "heading",
+      "text": "Route Parameters: Dynamic URLs with :id"
+    },
+    {
+      "type": "text",
+      "md": "Real applications rarely serve just static paths. You need routes like `/users/42` or `/products/t-shirt-blue` where part of the URL is variable. Express handles this with **route parameters** — segments prefixed with a colon.\n\nWhatever appears in that position in the URL gets captured and placed on the `req.params` object."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "app.get(\"/users/:id\", (req, res) => {\n  const userId = req.params.id; // captured from the URL\n  console.log(\"Requested user ID:\", userId);\n\n  // In a real app you'd look this up in a database\n  res.json({ id: userId, name: \"Alice\" });\n});",
+      "caption": "Visit /users/42 and req.params.id equals \"42\". Visit /users/99 and it equals \"99\"."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Route params are always strings",
+      "md": "Even if the URL is `/users/42`, `req.params.id` is the **string** `\"42\"`, not the number `42`. If you need to use it as a number — for example, to look something up in an array by index — convert it first: `const id = Number(req.params.id)`. Comparing `\"42\" === 42` will always be `false` and can cause silent, baffling bugs."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const express = require(\"express\");\nconst app = express();\n\napp.use(express.json());\n\nconst books = [\n  { id: 1, title: \"Dune\" },\n  { id: 2, title: \"Neuromancer\" },\n];\n\napp.get(\"/books\", (req, res) => {\n  res.json(books);\n});\n\napp.get(\"/books/:id\", (req, res) => {\n  const id = Number(req.params.id);\n  const book = books.find((b) => b.id === id);\n  if (!book) {\n    return res.status(404).json({ error: \"Book not found\" });\n  }\n  res.json(book);\n});\n\napp.post(\"/books\", (req, res) => {\n  const newBook = { id: books.length + 1, ...req.body };\n  books.push(newBook);\n  res.status(201).json(newBook);\n});\n\napp.listen(3000, () => console.log(\"Listening on port 3000\"));",
+      "caption": "A minimal but complete REST API for a books collection — three routes, three distinct behaviours."
+    },
+    {
+      "type": "text",
+      "md": "Look at how each route reads almost like a sentence: \"when someone GETs `/books`, send back all books\"; \"when someone GETs `/books/:id`, find that book and send it\"; \"when someone POSTs to `/books`, add the new one and return it.\" This is why Express became so popular — it brings your server's structure to the surface."
+    },
+    {
+      "type": "quiz",
+      "question": "A client sends a GET request to `/products/shirt-blue`. Your route is `app.get(\"/products/:slug\", ...)`. What is `req.params.slug`?",
+      "options": [
+        "The number 0, because arrays start at 0",
+        "The string \"shirt-blue\"",
+        "undefined, because hyphens are not valid in route params",
+        "An object like { slug: 'shirt-blue' }"
+      ],
+      "answerIndex": 1,
+      "explanation": "Route parameters capture whatever string appears at that position in the URL and place it on `req.params` under the name you chose after the colon. Hyphens are perfectly valid in URL segments. So `req.params.slug` is the string `\"shirt-blue\"` — a plain string, not a number or an object."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Use app.listen last, define routes first",
+      "md": "Express registers routes in the order they appear in your file. `app.listen` simply starts accepting connections — it does not block or reorder anything. The convention is to define all your routes first, then call `app.listen` at the very end. That way the file reads top-to-bottom like a menu: here are the things this server can do, and here is where it opens its doors."
+    }
+  ],
+  "keyTakeaways": [
+    "Express wraps Node's built-in HTTP module to give you clean, readable routing instead of one giant if-chain.",
+    "`app.get()` and `app.post()` map an HTTP method plus a URL path to a handler function.",
+    "Route parameters like `:id` capture variable URL segments onto `req.params` — always as strings.",
+    "`res.json()` serialises data to JSON and sets the correct Content-Type header; prefer it over `res.send()` when building APIs.",
+    "`res.status(code)` lets you set HTTP status codes like 201 (Created) or 404 (Not Found) before sending the response."
+  ],
+  "exercise": {
+    "prompt": "Build a tiny Express API for a to-do list. It needs three routes: GET `/todos` returns all todos as JSON; GET `/todos/:id` returns a single todo by its numeric id, or a 404 JSON error if not found; POST `/todos` reads `req.body.task` and adds a new todo to the list, responding with 201 and the created todo. Start with the two seed todos already in the starter code.",
+    "starterCode": "const express = require(\"express\");\nconst app = express();\n\napp.use(express.json());\n\nconst todos = [\n  { id: 1, task: \"Learn Express\" },\n  { id: 2, task: \"Build an API\" },\n];\n\n// TODO: GET /todos — respond with the full todos array\n\n// TODO: GET /todos/:id — find by numeric id, return 404 if missing\n\n// TODO: POST /todos — read req.body.task, push a new todo, respond 201\n\napp.listen(3000, () => console.log(\"Listening on port 3000\"));",
+    "hint": "For the GET /:id route, convert req.params.id to a number with Number() before using Array.find(). For the POST route, give the new todo an id of todos.length + 1 so ids stay unique.",
+    "solution": "const express = require(\"express\");\nconst app = express();\n\napp.use(express.json());\n\nconst todos = [\n  { id: 1, task: \"Learn Express\" },\n  { id: 2, task: \"Build an API\" },\n];\n\napp.get(\"/todos\", (req, res) => {\n  res.json(todos);\n});\n\napp.get(\"/todos/:id\", (req, res) => {\n  const id = Number(req.params.id);\n  const todo = todos.find((t) => t.id === id);\n  if (!todo) {\n    return res.status(404).json({ error: \"Todo not found\" });\n  }\n  res.json(todo);\n});\n\napp.post(\"/todos\", (req, res) => {\n  const newTodo = { id: todos.length + 1, task: req.body.task };\n  todos.push(newTodo);\n  res.status(201).json(newTodo);\n});\n\napp.listen(3000, () => console.log(\"Listening on port 3000\"));"
+  }
+}

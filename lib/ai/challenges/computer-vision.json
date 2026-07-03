@@ -1,0 +1,55 @@
+{
+  "slug": "computer-vision",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A single 3x3 kernel is applied to one 3x3 patch of pixels: multiply each kernel value by the pixel beneath it, then sum all 9 products. What does this snippet print?",
+      "code": "patch = [\n    [10, 10, 80],\n    [10, 10, 80],\n    [10, 10, 80],\n]\nkernel = [\n    [-1, 0, 1],\n    [-1, 0, 1],\n    [-1, 0, 1],\n]\ntotal = sum(\n    patch[r][c] * kernel[r][c]\n    for r in range(3) for c in range(3)\n)\nprint(total)",
+      "options": ["0", "210", "270", "-210"],
+      "answerIndex": 1,
+      "explanation": "The middle column is multiplied by 0, so only the left and right columns matter. Each row contributes (-1 * 10) + (1 * 80) = 70, and 3 rows give 210. This large positive value is the edge-detection kernel 'lighting up' where dark meets bright."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "An image is a grid of numbers. This snippet reports the size of the output feature map when a 3x3 kernel slides over a 6x6 image (the kernel's top-left corner can occupy positions 0 through rows-3). What does it print?",
+      "code": "image = [[0] * 6 for _ in range(6)]\nk = 3\nrows = len(image)\ncols = len(image[0])\nout_rows = rows - k + 1\nout_cols = cols - k + 1\nprint(out_rows, out_cols)",
+      "options": ["6 6", "3 3", "4 4", "5 5"],
+      "answerIndex": 2,
+      "explanation": "The kernel's top-left corner can start at index 0 up to rows - k, giving rows - k + 1 = 6 - 3 + 1 = 4 valid positions in each direction. Because the kernel needs room to fit, the feature map is smaller than the input: 4x4."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the convolution loop from the lesson. At each kernel position we multiply each kernel value by the pixel beneath it and accumulate. Fill in the operation that combines the two values.",
+      "codeTemplate": "def convolve(image, kernel):\n    k = len(kernel)\n    rows, cols = len(image), len(image[0])\n    output = []\n    for r in range(rows - k + 1):\n        row_out = []\n        for c in range(cols - k + 1):\n            total = sum(\n                image[r + kr][c + kc] {{blank}} kernel[kr][kc]\n                for kr in range(k) for kc in range(k)\n            )\n            row_out.append(total)\n        output.append(row_out)\n    return output",
+      "blanks": [
+        { "answer": "*", "accept": ["x", "×"] }
+      ],
+      "explanation": "Convolution is 'slide, multiply, sum': each kernel weight is multiplied by the pixel underneath it, and all products are summed into one output value. Using + or - here would not implement a convolution."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the stages of a typical CNN pipeline into the correct order, from raw image to final prediction, as described in the lesson.",
+      "lines": [
+        "Input: the image as a grid of numbers",
+        "Conv layer 1: detect low-level features like edges",
+        "Conv layer 2+: combine edges into shapes and object parts",
+        "Flatten the final feature maps into a vector",
+        "Fully connected layer produces the prediction ('cat')"
+      ],
+      "explanation": "CNNs build features hierarchically: early conv layers find edges, deeper layers combine those into shapes and parts, and only at the end are the feature maps flattened and passed to a fully connected layer that outputs the class. Each stage feeds the next."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to load a greyscale pixel value, but it can produce an invalid pixel. What's wrong?",
+      "code": "# Greyscale pixel: brightness from 0 (black) to 255 (white)\ndef clamp_pixel(value):\n    if value < 0:\n        return 0\n    if value > 256:\n        return 256\n    return value",
+      "options": [
+        "Greyscale pixels range from 0 to 255, so the upper bound should be 255, not 256.",
+        "Greyscale images need three numbers per pixel, so one value is not enough.",
+        "The function should return 255 for negative values, not 0.",
+        "Pixel brightness is measured from 1 to 256, so the lower bound is wrong."
+      ],
+      "answerIndex": 0,
+      "explanation": "A greyscale pixel stores one number from 0 (black) to 255 (white) inclusive. Clamping to 256 lets an out-of-range value through; the maximum valid brightness is 255. (RGB colour pixels use three such numbers, one per channel.)"
+    }
+  ]
+}

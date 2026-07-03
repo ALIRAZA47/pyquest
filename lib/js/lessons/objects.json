@@ -1,0 +1,107 @@
+{
+  "slug": "objects",
+  "title": "Objects",
+  "category": "Data & Logic",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to group related data and behavior together using JavaScript objects — the backbone of almost every real-world JS program.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine filling out a form about a person: their name, age, and email. You *could* store each piece of information in a separate variable — `personName`, `personAge`, `personEmail` — but that quickly becomes chaotic. JavaScript **objects** let you bundle all of those related pieces under one roof, labeled and easy to find. Objects are the most-used building block in all of JavaScript, so getting comfortable with them early pays off every single day you write code."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a business card",
+      "md": "A business card has labeled fields: *Name*, *Phone*, *Company*. You look up the field name and read the value next to it. A JavaScript object works exactly the same way — it stores **key-value pairs**, where each key is a label and each value is the data stored at that label."
+    },
+    {
+      "type": "heading",
+      "text": "Creating an Object Literal"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const person = {\n  name: \"Ada\",\n  age: 28,\n  isSubscriber: true\n};\n\nconsole.log(person);",
+      "output": "{ name: 'Ada', age: 28, isSubscriber: true }",
+      "caption": "Curly braces, colon-separated key-value pairs, comma between each entry"
+    },
+    {
+      "type": "heading",
+      "text": "Dot Notation vs Bracket Notation"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const person = { name: \"Ada\", age: 28 };\n\n// Dot notation — clean and readable\nconsole.log(person.name);    // \"Ada\"\n\n// Bracket notation — key is a string\nconsole.log(person[\"age\"]); // 28\n\n// Bracket notation when the key is in a variable\nconst field = \"name\";\nconsole.log(person[field]);  // \"Ada\"",
+      "output": "Ada\n28\nAda",
+      "caption": "Use dot notation by default; use brackets when the key is dynamic or has special characters"
+    },
+    {
+      "type": "heading",
+      "text": "Adding and Updating Properties"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const car = { make: \"Toyota\", year: 2020 };\n\ncar.year = 2023;    // update existing\ncar.color = \"red\"; // add new property\n\nconsole.log(car);",
+      "output": "{ make: 'Toyota', year: 2023, color: 'red' }",
+      "caption": "Assign to a key with dot or bracket notation to add or overwrite"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "const does not freeze the object",
+      "md": "`const` prevents you from *replacing* the object with a totally new value (`car = {}` would throw an error), but it does **not** stop you from changing the properties inside it. Think of `const` as locking the box, not the items inside. The properties remain fully mutable."
+    },
+    {
+      "type": "heading",
+      "text": "Methods and Nested Objects"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const dog = {\n  name: \"Biscuit\",\n  greet() {\n    console.log(\"Woof! My name is \" + this.name);\n  }\n};\n\ndog.greet();",
+      "output": "Woof! My name is Biscuit",
+      "caption": "A function stored on an object is a method; `this` refers to the object. Values can also be nested objects: `{ address: { city: \"Berlin\" } }` — access with `user.address.city`"
+    },
+    {
+      "type": "heading",
+      "text": "Destructuring Basics"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const movie = {\n  title: \"Inception\",\n  year: 2010,\n  director: \"Christopher Nolan\"\n};\n\nconst { title, year } = movie;\n\nconsole.log(title); // \"Inception\"\nconsole.log(year);  // 2010",
+      "output": "Inception\n2010",
+      "caption": "Destructuring unpacks properties into standalone variables in one line"
+    },
+    {
+      "type": "quiz",
+      "question": "What does the following code log?\n\n```js\nconst pet = { type: \"cat\", lives: 9 };\npet.lives = 8;\nconsole.log(pet.lives);\n```",
+      "options": [
+        "9",
+        "8",
+        "undefined",
+        "An error — you cannot change a const object"
+      ],
+      "answerIndex": 1,
+      "explanation": "Even though `pet` is declared with `const`, you can still update its properties. `const` only prevents reassigning the variable itself (e.g. `pet = {}` would fail). So `pet.lives` becomes 8 and that is what gets logged."
+    }
+  ],
+  "keyTakeaways": [
+    "Objects store related data as key-value pairs inside curly braces `{}`.",
+    "Use dot notation (`obj.key`) by default; switch to bracket notation (`obj[\"key\"]`) when the key is dynamic or has special characters.",
+    "You can freely add or update properties — even on `const` objects.",
+    "Functions stored on an object are called methods; use `this` inside a method to access the object's own properties.",
+    "Destructuring (`const { a, b } = obj`) pulls out properties into variables in one clean line."
+  ],
+  "exercise": {
+    "prompt": "Create a `book` object with the properties `title` (string), `author` (string), and `pages` (number). Add a method called `summary` that logs a sentence like: \"Pride and Prejudice by Jane Austen — 432 pages.\". Then destructure `title` and `author` from the object and log them separately.",
+    "starterCode": "// TODO: Create a book object with title, author, pages, and a summary method\nconst book = {\n  // your properties here\n};\n\n// TODO: Call book.summary()\n\n// TODO: Destructure title and author from book, then log each",
+    "hint": "Inside the summary method, use `this.title`, `this.author`, and `this.pages` to build the sentence. For destructuring, write: const { title, author } = book;",
+    "solution": "const book = {\n  title: \"Pride and Prejudice\",\n  author: \"Jane Austen\",\n  pages: 432,\n  summary() {\n    console.log(this.title + \" by \" + this.author + \" — \" + this.pages + \" pages.\");\n  }\n};\n\nbook.summary();\n\nconst { title, author } = book;\nconsole.log(title);\nconsole.log(author);"
+  }
+}

@@ -13,7 +13,7 @@ export function generateMetadata({
   params: { slug: string };
 }): Metadata {
   const lesson = aiCourse.getLesson(params.slug);
-  if (!lesson) return { title: "Lesson not found — PyQuest" };
+  if (!lesson) return { title: "Lesson not found — Quest" };
   return {
     title: `${lesson.title} — Artificial Intelligence`,
     description: lesson.summary,

@@ -1,0 +1,50 @@
+{
+  "slug": "links-and-navigation",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this anchor tag. Fill in the attribute that tells the browser where to go, and the value that safely opens external links in a new tab.",
+      "codeTemplate": "<a href=\"https://example.com\" target=\"_blank\" rel=\"{{blank}}\">Open</a>",
+      "blanks": [
+        { "answer": "noopener noreferrer", "accept": ["noopener noreferrer", "noopener", "noreferrer noopener", "noreferrer"] }
+      ],
+      "explanation": "Whenever you add target=\"_blank\" to open a link in a new tab, pair it with rel=\"noopener noreferrer\". Without it, the newly opened page can reach window.opener and redirect your original page to a malicious URL — a classic phishing loophole."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "This link should jump to the section below when clicked. Fill in the href value and the matching attribute on the section so they connect.",
+      "codeTemplate": "<a href=\"{{blank}}\">Jump to Contact</a>\n\n<section {{blank}}=\"contact\">\n  <h2>Contact Us</h2>\n</section>",
+      "blanks": [
+        { "answer": "#contact", "accept": ["#contact", "#Contact"] },
+        { "answer": "id", "accept": ["id", "ID"] }
+      ],
+      "explanation": "A fragment link works in two steps: give the destination a unique id, then point the link's href at # followed by that same id. Clicking href=\"#contact\" scrolls the page to the element whose id=\"contact\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This link is meant to point to another website, but it goes nowhere. What's wrong?",
+      "code": "<a href=\"developer.mozilla.org\">MDN Web Docs</a>",
+      "options": [
+        "An anchor cannot link to an external site without target=\"_blank\"",
+        "The href is missing the https:// protocol, so it is treated as a relative path",
+        "The link text must exactly match the domain name",
+        "You must use <link> instead of <a> for external sites"
+      ],
+      "answerIndex": 1,
+      "explanation": "An absolute URL to another site needs the full address including the protocol: href=\"https://developer.mozilla.org\". Without https://, the browser reads it as a relative path and looks for a file named developer.mozilla.org next to the current page."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a valid navigation bar: a <nav> landmark wrapping an unordered list with two link items.",
+      "lines": [
+        "<nav>",
+        "  <ul>",
+        "    <li><a href=\"index.html\">Home</a></li>",
+        "    <li><a href=\"about.html\">About</a></li>",
+        "  </ul>",
+        "</nav>"
+      ],
+      "explanation": "A nav bar is a <nav> landmark (which tells screen readers and search engines this group is site navigation) wrapping a <ul>. Each link lives inside its own <li>, and the list and nav are closed in reverse order: </ul> then </nav>."
+    }
+  ]
+}

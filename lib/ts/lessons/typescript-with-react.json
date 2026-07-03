@@ -1,0 +1,105 @@
+{
+  "slug": "typescript-with-react",
+  "title": "TypeScript with React",
+  "category": "Advanced TypeScript",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how TypeScript supercharges your React components by typing props, state, event handlers, and children — catching bugs before they ever hit the browser.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know how TypeScript catches mistakes in plain JavaScript files. Now imagine bringing that same safety net into a React component. Every prop your component accepts, every piece of state it holds, every button click it handles — TypeScript can verify all of it. The result is components that are easier to understand, impossible to misuse, and far less likely to blow up at runtime. We will work through four concrete skills: typing props with an interface, typing `useState`, typing event handlers, and typing `children`. By the end you will see why TypeScript and React are one of the most popular combinations in professional front-end development."
+    },
+    {
+      "type": "heading",
+      "text": "Typing Props with an Interface"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Props as a contract",
+      "md": "Think of an interface like the printed label on a power adapter: it tells you exactly what voltage and plug shape is expected. If you try to plug in something that doesn't match, you know *before* you damage anything. An interface does the same job for your component — it documents the contract and enforces it at compile time."
+    },
+    {
+      "type": "code",
+      "lang": "tsx",
+      "code": "interface UserCardProps {\n  name: string;\n  age: number;\n  isPremium?: boolean; // optional — the ? means it may be omitted\n}\n\nfunction UserCard({ name, age, isPremium = false }: UserCardProps) {\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Age: {age}</p>\n      {isPremium && <span>Premium member</span>}\n    </div>\n  );\n}",
+      "output": "A card showing the user's name, age, and optionally a 'Premium member' badge.",
+      "caption": "Define the interface above the component; destructure props in the signature. A caller writing <UserCard name={42} age=\"thirty\" /> gets two errors immediately — the ? marks isPremium as optional so callers can omit it."
+    },
+    {
+      "type": "heading",
+      "text": "Typing useState"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "import { useState } from \"react\";\n\n// TypeScript infers: count is number\nconst [count, setCount] = useState(0);\n\n// Explicit type parameter — starts null, but will become a string later\nconst [username, setUsername] = useState<string | null>(null);\n\nsetUsername(\"Alice\"); // OK\n// setUsername(42);  // Error: Argument of type 'number' is not assignable",
+      "caption": "Inferred vs. explicit type parameters in useState"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When to be explicit",
+      "md": "If the initial value is `null`, `undefined`, `[]`, or `{}`, TypeScript infers a very narrow type. Write an explicit type parameter — `useState<User | null>(null)` — so TypeScript knows the full range of values the state can hold."
+    },
+    {
+      "type": "heading",
+      "text": "Typing Event Handlers"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "import { useState } from \"react\";\nimport type { ChangeEvent, MouseEvent } from \"react\";\n\nfunction SearchBox() {\n  const [query, setQuery] = useState(\"\");\n\n  function handleChange(event: ChangeEvent<HTMLInputElement>) {\n    setQuery(event.target.value); // TypeScript knows .value exists here\n  }\n\n  function handleClear(event: MouseEvent<HTMLButtonElement>) {\n    event.preventDefault();\n    setQuery(\"\");\n  }\n\n  return (\n    <div>\n      <input value={query} onChange={handleChange} />\n      <button onClick={handleClear}>Clear</button>\n    </div>\n  );\n}",
+      "caption": "ChangeEvent and MouseEvent typed with their element generics"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The element generic matters",
+      "md": "`ChangeEvent<HTMLInputElement>` and `ChangeEvent<HTMLSelectElement>` are different types. Without the element generic, TypeScript gives you a very limited event object — `event.target.value` won't even be available. Always supply the HTML element type in angle brackets."
+    },
+    {
+      "type": "heading",
+      "text": "Typing Children with ReactNode"
+    },
+    {
+      "type": "code",
+      "lang": "tsx",
+      "code": "import type { ReactNode } from \"react\";\n\ninterface CardProps {\n  title: string;\n  children: ReactNode; // accepts JSX, strings, numbers, null, arrays...\n}\n\nfunction Card({ title, children }: CardProps) {\n  return (\n    <section className=\"card\">\n      <h3>{title}</h3>\n      <div className=\"card-body\">{children}</div>\n    </section>\n  );\n}\n\n// <Card title=\"Welcome\"><p>Any JSX can go here.</p></Card>",
+      "caption": "ReactNode is the widest type — it covers everything React can render"
+    },
+    {
+      "type": "code",
+      "lang": "tsx",
+      "code": "import { useState } from \"react\";\nimport type { ReactNode, ChangeEvent } from \"react\";\n\ninterface FormFieldProps {\n  label: string;\n  children: ReactNode;\n}\n\nfunction FormField({ label, children }: FormFieldProps) {\n  return <label><span>{label}</span>{children}</label>;\n}\n\nfunction SignupForm() {\n  const [email, setEmail] = useState(\"\");\n\n  function handleEmail(e: ChangeEvent<HTMLInputElement>) {\n    setEmail(e.target.value);\n  }\n\n  return (\n    <form>\n      <FormField label=\"Email\">\n        <input type=\"email\" value={email} onChange={handleEmail} />\n      </FormField>\n      <button type=\"submit\">Sign up</button>\n    </form>\n  );\n}",
+      "caption": "All four techniques — interface, useState, ChangeEvent, and ReactNode — working together"
+    },
+    {
+      "type": "quiz",
+      "question": "You have a component that accepts a `count` prop (required number) and an `onReset` prop (optional function that takes no arguments and returns nothing). Which interface is correct?",
+      "options": [
+        "interface Props { count: number; onReset: void; }",
+        "interface Props { count: number; onReset?: () => void; }",
+        "interface Props { count: number; onReset?: void; }",
+        "interface Props { count?: number; onReset: () => void; }"
+      ],
+      "answerIndex": 1,
+      "explanation": "A function that takes no arguments and returns nothing has the type `() => void`. The `?` after the property name makes it optional. `void` alone is not a function type — it is a return type. And `count` is required, so it must not have a `?`."
+    }
+  ],
+  "keyTakeaways": [
+    "Define a props interface above your component to document and enforce what callers must pass.",
+    "Use `useState<YourType>(initialValue)` when the initial value doesn't reveal the full range of possible state.",
+    "Type event handlers with `ChangeEvent<HTMLInputElement>` or `MouseEvent<HTMLButtonElement>` — always include the HTML element generic.",
+    "Use `ReactNode` as the type for `children` in any wrapper component that accepts arbitrary JSX.",
+    "TypeScript errors in React components appear in your editor before you run the code, so bugs never reach the browser."
+  ],
+  "exercise": {
+    "prompt": "Build a typed `Badge` component. It should accept a `label` (string, required), a `color` of either `\"blue\"`, `\"green\"`, or `\"red\"` (required), and an optional `onClick` handler (a function that returns void). Render a `<span>` that shows the label. Below it, write a `BadgeDemo` component that holds a `count` state (starts at 0) and renders a Badge with label `Clicks: {count}`, color `\"blue\"`, and an onClick that increments the count.",
+    "starterCode": "import { useState } from \"react\";\n\n// TODO: Define a BadgeProps interface with:\n// - label: string (required)\n// - color: \"blue\" | \"green\" | \"red\" (required)\n// - onClick?: a function that takes no args and returns void\n\n// TODO: Write the Badge component using BadgeProps\nfunction Badge(/* props here */) {\n  return (\n    <span\n      style={{ background: \"grey\", padding: \"4px 8px\", borderRadius: 4 }}\n      onClick={undefined /* TODO: wire up onClick */}\n    >\n      {/* TODO: render label */}\n    </span>\n  );\n}\n\n// TODO: Write BadgeDemo\n// - useState for count (starts at 0)\n// - render <Badge label={`Clicks: ${count}`} color=\"blue\" onClick={...} />\nexport function BadgeDemo() {\n  return <div>{/* your Badge here */}</div>;\n}",
+    "hint": "The `color` prop type is a union of string literals: `\"blue\" | \"green\" | \"red\"`. For `onClick`, the type is `() => void`. In `BadgeDemo`, call `setCount(c => c + 1)` inside the handler so each click adds one.",
+    "solution": "import { useState } from \"react\";\n\ninterface BadgeProps {\n  label: string;\n  color: \"blue\" | \"green\" | \"red\";\n  onClick?: () => void;\n}\n\nconst colorMap: Record<BadgeProps[\"color\"], string> = {\n  blue: \"#3b82f6\",\n  green: \"#22c55e\",\n  red: \"#ef4444\",\n};\n\nfunction Badge({ label, color, onClick }: BadgeProps) {\n  return (\n    <span\n      style={{\n        background: colorMap[color],\n        color: \"white\",\n        padding: \"4px 10px\",\n        borderRadius: 4,\n        cursor: onClick ? \"pointer\" : \"default\",\n        fontWeight: 600,\n      }}\n      onClick={onClick}\n    >\n      {label}\n    </span>\n  );\n}\n\nexport function BadgeDemo() {\n  const [count, setCount] = useState(0);\n  return (\n    <div style={{ padding: 20 }}>\n      <Badge\n        label={`Clicks: ${count}`}\n        color=\"blue\"\n        onClick={() => setCount((c) => c + 1)}\n      />\n    </div>\n  );\n}"
+  }
+}

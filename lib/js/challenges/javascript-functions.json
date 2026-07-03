@@ -1,0 +1,55 @@
+{
+  "slug": "javascript-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print?",
+      "code": "const multiply = (a, b = 3) => a * b;\n\nconsole.log(multiply(4));\nconsole.log(multiply(4, 2));",
+      "options": [
+        "12\n8",
+        "4\n8",
+        "12\n12",
+        "undefined\n8"
+      ],
+      "answerIndex": 0,
+      "explanation": "Because b has a default value of 3, multiply(4) runs as multiply(4, 3) = 12. In the second call the argument 2 overrides the default, giving 4 * 2 = 8. Default parameters only kick in when the argument is omitted."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function getDiscount(price) {\n  return price * 0.9;\n  console.log(\"Discount applied!\");\n}\n\nconsole.log(getDiscount(100));",
+      "options": [
+        "The console.log after return never runs because return exits the function immediately",
+        "You cannot multiply a number by 0.9 inside a function",
+        "The function is missing a second parameter",
+        "return should come at the very end, so the multiplication is skipped"
+      ],
+      "answerIndex": 0,
+      "explanation": "return exits the function the instant it runs, so any code written after it in the same block is unreachable. The multiplication returns 90 correctly, but the console.log never executes. Move logging above the return if you need it to run."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this arrow function so it takes one parameter n and implicitly returns n squared (n * n), matching the lesson's square example.",
+      "codeTemplate": "const square = n => {{blank}};\n\nconsole.log(square(5)); // 25",
+      "blanks": [
+        {
+          "answer": "n * n",
+          "accept": ["n*n", "n ** 2", "n**2", "Math.pow(n, 2)"]
+        }
+      ],
+      "explanation": "With a single-expression body, an arrow function returns that expression implicitly — no curly braces or return keyword needed. So n => n * n takes n and hands back n * n, making square(5) evaluate to 25."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to declare a function, store it in a variable via return, and print the result — like the add example from the lesson.",
+      "lines": [
+        "function add(a, b) {",
+        "  return a + b;",
+        "}",
+        "const total = add(3, 4);",
+        "console.log(total);"
+      ],
+      "explanation": "First you declare the function with its body (the return line sits inside the braces). Then you call add(3, 4), storing the returned value 7 in total. Finally you log total. A function must be defined before its returned value can be stored and used."
+    }
+  ]
+}

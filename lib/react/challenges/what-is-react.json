@@ -1,0 +1,57 @@
+{
+  "slug": "what-is-react",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function greeting() {\n  return <p>Hi</p>;\n}\n\nfunction App() {\n  return (\n    <div>\n      <greeting />\n    </div>\n  );\n}",
+      "options": [
+        "The component name is lowercase, so React treats <greeting /> as an unknown HTML tag instead of your component.",
+        "You cannot return a <p> tag from a component; only <div> is allowed.",
+        "App is missing an export, so <greeting /> can never render.",
+        "JSX tags must use class instead of a capital letter to be recognized."
+      ],
+      "answerIndex": 0,
+      "explanation": "React uses the first letter of a tag to decide what it is: a lowercase name like <greeting /> is treated as a built-in HTML element, so your function is never called. Capitalizing it to Greeting (and <Greeting />) lets React find and render your component."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this JSX so it sets the element's CSS class correctly. Remember JSX is not quite HTML.",
+      "codeTemplate": "const element = <h1 {{blank}}=\"title\">Hi there!</h1>;",
+      "blanks": [
+        {
+          "answer": "className",
+          "accept": ["classname", "class Name"]
+        }
+      ],
+      "explanation": "In JSX you write className instead of class, because class is a reserved word in JavaScript. JSX looks like HTML but lives inside JavaScript, so a few attribute names differ."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "JSX is just syntactic sugar. Fill in the React method that <h1 className=\"title\">Hi there!</h1> compiles to under the hood.",
+      "codeTemplate": "const element = React.{{blank}}(\n  \"h1\",\n  { className: \"title\" },\n  \"Hi there!\"\n);",
+      "blanks": [
+        {
+          "answer": "createElement",
+          "accept": ["createelement", "create Element"]
+        }
+      ],
+      "explanation": "Before it runs in the browser, JSX is transformed into React.createElement calls. The tag name becomes the first argument, the attributes become the props object, and the children come last — there is no performance magic, just readable shorthand."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines to define a Header component that composes the Logo component inside it, following the lesson's nesting style.",
+      "lines": [
+        "function Header() {",
+        "  return (",
+        "    <header>",
+        "      <Logo />",
+        "      <h1>My App</h1>",
+        "    </header>",
+        "  );",
+        "}"
+      ],
+      "explanation": "A component is a capitalized function that returns JSX. Here Header returns a <header> that nests the <Logo /> component alongside an <h1>. Composing small components inside larger ones is how React builds full UIs from focused pieces."
+    }
+  ]
+}

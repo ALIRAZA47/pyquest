@@ -1,0 +1,126 @@
+{
+  "slug": "how-the-web-works",
+  "title": "How the Web Works",
+  "category": "Getting Started with HTML",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how your browser fetches a web page from a server and what roles HTML, CSS, and JavaScript each play in making it come alive.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every time you open a web page — whether it's a recipe blog, a banking app, or a social network — something remarkable happens in milliseconds. Your browser travels across the internet, knocks on a server's door, and brings back a bundle of files that get transformed into the page you see. Before you write a single line of HTML, understanding this journey will make *everything* else click into place."
+    },
+    {
+      "type": "heading",
+      "text": "The Web is a Conversation"
+    },
+    {
+      "type": "analogy",
+      "variant": "analogy",
+      "title": "Think of a restaurant",
+      "md": "You (the **client**) sit at a table and ask a waiter for a cheeseburger. The waiter (the **internet**) walks to the kitchen (the **server**), which prepares your order and sends it back. You eat the meal (your browser **renders** the page). You never go into the kitchen yourself — you just make requests and receive responses."
+    },
+    {
+      "type": "text",
+      "md": "On the web, *your browser* is the client. A **server** is a computer somewhere in the world that stores website files and is always switched on, waiting for requests. The conversation between them follows a set of rules called **HTTP** (HyperText Transfer Protocol) — the common language the web uses."
+    },
+    {
+      "type": "heading",
+      "text": "What Happens When You Type a URL"
+    },
+    {
+      "type": "text",
+      "md": "Let's break down what happens step by step when you type `https://example.com/about` into your browser and press Enter:\n\n1. **DNS lookup** — The browser asks a Domain Name System (DNS) server to translate the human-readable domain `example.com` into a numeric IP address like `93.184.216.34`. Think of DNS as the internet's phonebook.\n2. **HTTP request** — The browser sends a request to that IP address, asking for the `/about` page.\n3. **Server response** — The server finds the right file(s) and sends back an **HTTP response** containing status information and the page content.\n4. **Browser renders** — The browser reads the HTML, fetches any linked CSS and JavaScript files, and paints the finished page on your screen."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- A minimal HTML page the server might send back -->\n<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>About Us</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <h1>About Us</h1>\n    <p>Welcome to our site!</p>\n    <script src=\"app.js\"></script>\n  </body>\n</html>",
+      "output": "A page with a large heading 'About Us' and a paragraph beneath it.",
+      "caption": "This is what the server sends back — a plain text HTML file. The browser does the rest."
+    },
+    {
+      "type": "heading",
+      "text": "Understanding URLs"
+    },
+    {
+      "type": "text",
+      "md": "A URL (Uniform Resource Locator) is just a structured address. Each part has a job:\n\n```\nhttps://www.example.com/about?ref=home\n  │         │              │       │\n  │         │              │       └─ query string (extra data)\n  │         │              └─ path (which page/resource)\n  │         └─ domain (which server)\n  └─ protocol (how to communicate)\n```\n\nThe **protocol** `https` means the conversation is encrypted — the `s` stands for *secure*. Plain `http` sends data in the open, which is why modern sites always use `https`."
+    },
+    {
+      "type": "heading",
+      "text": "HTTP Requests and Responses"
+    },
+    {
+      "type": "text",
+      "md": "Every request the browser makes gets a **status code** in reply. You've probably encountered some already:\n\n| Code | Meaning |\n|------|---------|\n| `200 OK` | Everything worked. Here's your page. |\n| `301 Moved Permanently` | The page lives at a new URL now. |\n| `404 Not Found` | The server can't find what you asked for. |\n| `500 Internal Server Error` | Something broke on the server's side. |\n\nThink of status codes like the waiter's reply before bringing your food: \"Coming right up!\" (200), \"Sorry, we moved locations\" (301), or \"We don't have that on the menu\" (404)."
+    },
+    {
+      "type": "heading",
+      "text": "The Three Languages of the Web"
+    },
+    {
+      "type": "text",
+      "md": "Once the browser has the files, it uses three languages together to build the page you see. They each have a distinct job, and that separation is intentional."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- HTML: Structure — the skeleton -->\n<article>\n  <h2>My First Post</h2>\n  <p>This is the content of the post.</p>\n  <button>Read more</button>\n</article>",
+      "output": "A heading, a paragraph, and a button — unstyled but logically structured.",
+      "caption": "HTML defines WHAT is on the page and its meaning."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* CSS: Style — the skin and clothes */\narticle {\n  background: #f9f9f9;\n  padding: 1.5rem;\n  border-radius: 8px;\n}\n\nbutton {\n  background: #0070f3;\n  color: white;\n  border: none;\n  padding: 0.5rem 1rem;\n  border-radius: 4px;\n  cursor: pointer;\n}",
+      "output": "The article now has a light grey card appearance; the button is blue with white text.",
+      "caption": "CSS controls HOW the page looks — colours, spacing, fonts, layout."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// JavaScript: Behaviour — the muscles\nconst button = document.querySelector('button');\n\nbutton.addEventListener('click', () => {\n  alert('Opening the full post!');\n});",
+      "output": "Clicking the button shows a browser alert: 'Opening the full post!'",
+      "caption": "JavaScript makes the page interactive and dynamic — it responds to what the user does."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Common mix-up: where does HTML end and CSS begin?",
+      "md": "Beginners sometimes style things directly inside HTML with `style` attributes (e.g. `<p style=\"color:red\">`). This works, but it mixes *structure* with *presentation*, making both harder to maintain. As a rule: use HTML files for structure, separate `.css` files for style. Your future self will thank you."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The browser does a LOT of work for free",
+      "md": "When your browser receives an HTML file it finds `<link>` and `<script>` tags and automatically fires off extra HTTP requests to fetch those CSS and JS files. You don't have to manage this — the browser handles it. That's why the order of your tags matters: link CSS in `<head>` so styles load before content appears, and often place scripts at the bottom of `<body>` so the HTML is ready before JavaScript runs."
+    },
+    {
+      "type": "quiz",
+      "question": "You type a URL into your browser and see a '404' status code in the developer tools. What does this mean?",
+      "options": [
+        "The page loaded successfully.",
+        "The server encountered an internal error.",
+        "The server could not find the requested resource.",
+        "Your internet connection is down."
+      ],
+      "answerIndex": 2,
+      "explanation": "A 404 status means 'Not Found' — the server received your request just fine but couldn't locate the specific page or file you asked for. A 500 would indicate a server-side error, while a 200 means success."
+    }
+  ],
+  "keyTakeaways": [
+    "The browser (client) sends HTTP requests to a server; the server responds with files the browser then renders.",
+    "A URL has distinct parts: protocol, domain, path, and optional query string — each with its own job.",
+    "HTTP status codes are shorthand for the server's reply: 200 = success, 404 = not found, 500 = server error.",
+    "HTML structures content, CSS styles it, and JavaScript adds interactivity — three separate concerns, working together.",
+    "The browser automatically fetches linked CSS and JS files after receiving the initial HTML response."
+  ],
+  "exercise": {
+    "prompt": "Build a tiny 'business card' web page. It should include: your name in an `<h1>`, your job title in a `<p>`, and a link to any website wrapped in an `<a>` tag. Then add a `<style>` block inside `<head>` that makes the `<h1>` a colour of your choice and centres all text on the page. This exercise practices using all three web technologies (HTML structure + CSS style) in one file.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>My Business Card</title>\n    <style>\n      /* TODO: centre all text on the page */\n\n      /* TODO: give h1 a colour of your choice */\n\n    </style>\n  </head>\n  <body>\n    <!-- TODO: add an h1 with your name -->\n\n    <!-- TODO: add a p with your job title -->\n\n    <!-- TODO: add an a tag linking to a website -->\n\n  </body>\n</html>",
+    "hint": "To centre text you can use `text-align: center` on the `body` element. For colour, try `color: #0070f3` or any hex code. An anchor tag looks like `<a href=\"https://example.com\">Visit</a>`.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>My Business Card</title>\n    <style>\n      body {\n        text-align: center;\n        font-family: sans-serif;\n        padding: 2rem;\n      }\n\n      h1 {\n        color: #0070f3;\n      }\n    </style>\n  </head>\n  <body>\n    <h1>Alex Rivera</h1>\n    <p>Front-End Developer</p>\n    <a href=\"https://example.com\">Visit my portfolio</a>\n  </body>\n</html>"
+  }
+}

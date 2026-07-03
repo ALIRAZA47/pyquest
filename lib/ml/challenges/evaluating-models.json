@@ -1,0 +1,51 @@
+{
+  "slug": "evaluating-models",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This snippet computes accuracy from scratch, just like in the lesson. What does it print?",
+      "code": "predictions = [1, 1, 0, 1, 0]\ntrue_labels  = [1, 0, 0, 1, 0]\n\ncorrect = sum(p == t for p, t in zip(predictions, true_labels))\naccuracy = correct / len(true_labels)\nprint(f\"Accuracy: {accuracy:.1%}\")",
+      "options": [
+        "Accuracy: 80.0%",
+        "Accuracy: 4.0%",
+        "Accuracy: 0.8%",
+        "Accuracy: 100.0%"
+      ],
+      "answerIndex": 0,
+      "explanation": "Accuracy is the fraction of predictions that match the true labels. Here 4 of the 5 predictions are correct (only the 2nd differs), so 4/5 = 0.8, and the .1% format renders 0.8 as 80.0%."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def confusion_matrix(y_true, y_pred):\n    TP = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\n    TN = sum(t == 0 and p == 0 for t, p in zip(y_true, y_pred))\n    FP = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\n    FN = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\n    return TP, TN, FP, FN",
+      "options": [
+        "FP and FN are swapped: a False Positive is t==0 and p==1, and a False Negative is t==1 and p==0",
+        "zip() stops at the shorter list, so it silently drops data and should never be used here",
+        "TP should compare t == p instead of checking both equal 1",
+        "The counts should be divided by len(y_true) before being returned"
+      ],
+      "answerIndex": 0,
+      "explanation": "A False Positive means the model said YES (p==1) but the truth was NO (t==0). A False Negative means the model said NO (p==0) but the truth was YES (t==1). This code has those two conditions reversed, so it would report FP and FN backwards."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the blank so this function correctly computes recall — 'of all real positives, how many did the model catch?'",
+      "codeTemplate": "def recall(TP, FN):\n    return TP / (TP + {{blank}}) if (TP + FN) > 0 else 0\n\nprint(recall(TP=3, FN=1))  # 0.75",
+      "blanks": [
+        { "answer": "FN", "accept": ["fn", "FN "] }
+      ],
+      "explanation": "Recall = TP / (TP + FN). The denominator counts every actual positive: the ones caught (TP) plus the ones missed (FN). With TP=3 and FN=1 that is 3/4 = 0.75. Using FP instead would give precision, not recall."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to properly evaluate a model without overfitting: split the data, train only on training data, then measure on the held-out test set.",
+      "lines": [
+        "train_X, test_X, train_y, test_y = split(X, y, test_size=0.2)",
+        "model.fit(train_X, train_y)",
+        "predictions = model.predict(test_X)",
+        "print(accuracy(test_y, predictions))"
+      ],
+      "explanation": "First set aside a held-out test set (~20%). Then train the model only on the training portion. Finally, predict on the untouched test set and score there. Measuring on the test set — not the training data — is what reveals whether the model generalizes instead of just memorizing."
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "slug": "custom-hooks",
+  "title": "Custom Hooks",
+  "category": "Hooks",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Learn how to extract reusable stateful logic into your own use-prefixed functions so your components stay clean and your logic stays shareable.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have already learned how `useState`, `useEffect`, and other built-in hooks work. But here is the real power move: you can **build your own hooks**. Imagine you have a toggle (open/closed, visible/hidden) appearing in five different components. Right now you are probably copying the same `const [isOpen, setIsOpen] = useState(false)` boilerplate into each one. Custom hooks let you write that logic once, give it a name, and use it everywhere — just like a regular function, but one that can hold state and side effects."
+    },
+    {
+      "type": "heading",
+      "text": "What Is a Custom Hook?"
+    },
+    {
+      "type": "text",
+      "md": "A custom hook is just a **JavaScript function whose name starts with `use`** and that calls one or more React hooks inside it. That's it. The `use` prefix is not magic — it is a convention that tells React (and your linter) to apply the Rules of Hooks to this function. Under the hood, your custom hook is regular JavaScript; the hooks you call inside it do the heavy lifting."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a kitchen appliance",
+      "md": "A blender combines a motor, blades, and a jar into one reusable tool. You do not re-wire a motor every time you want a smoothie — you just press the button. A custom hook is the same idea: it packages up useState, useEffect, or whatever else you need into one reusable \"appliance\" your components can just plug in."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Custom Hook: useToggle"
+    },
+    {
+      "type": "text",
+      "md": "Let's build `useToggle` — a hook that manages a boolean that can flip between `true` and `false`. This covers the most common UI pattern: show/hide, open/close, on/off."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState, useCallback } from 'react';\n\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n\n  const toggle = useCallback(() => {\n    setValue(prev => !prev);\n  }, []);\n\n  return [value, toggle];\n}\n\nexport default useToggle;",
+      "caption": "useToggle.js — a tiny, reusable hook"
+    },
+    {
+      "type": "text",
+      "md": "Now any component can use it without knowing anything about `useState` or the toggling logic:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import useToggle from './useToggle';\n\nfunction Accordion({ title, children }) {\n  const [isOpen, toggle] = useToggle(false);\n\n  return (\n    <div>\n      <button onClick={toggle}>{title}</button>\n      {isOpen && <div>{children}</div>}\n    </div>\n  );\n}",
+      "output": "A button that shows or hides content below it when clicked.",
+      "caption": "Component using useToggle — notice how clean it is"
+    },
+    {
+      "type": "heading",
+      "text": "A More Powerful Hook: useLocalStorage"
+    },
+    {
+      "type": "text",
+      "md": "`useLocalStorage` is a popular custom hook that works exactly like `useState` but **persists the value in the browser's localStorage**. When the user refreshes the page, the value survives. Let's build one:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState } from 'react';\n\nfunction useLocalStorage(key, initialValue) {\n  const [storedValue, setStoredValue] = useState(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  const setValue = (value) => {\n    try {\n      setStoredValue(value);\n      window.localStorage.setItem(key, JSON.stringify(value));\n    } catch (error) {\n      console.error(error);\n    }\n  };\n\n  return [storedValue, setValue];\n}\n\nexport default useLocalStorage;",
+      "caption": "useLocalStorage.js — useState that remembers across page refreshes"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import useLocalStorage from './useLocalStorage';\n\nfunction ThemePicker() {\n  const [theme, setTheme] = useLocalStorage('theme', 'light');\n\n  return (\n    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>\n      Switch to {theme === 'light' ? 'dark' : 'light'} mode\n    </button>\n  );\n}",
+      "output": "A button that toggles dark/light mode and remembers the choice after refresh.",
+      "caption": "useLocalStorage in action — API is identical to useState"
+    },
+    {
+      "type": "heading",
+      "text": "The Rules of Hooks (They Apply to Custom Hooks Too)"
+    },
+    {
+      "type": "text",
+      "md": "React enforces two rules for all hooks — built-in and custom alike:\n\n1. **Only call hooks at the top level.** Never inside loops, conditions, or nested functions. This keeps the hook call order consistent across renders, which is how React tracks state.\n2. **Only call hooks from React functions.** That means function components or other custom hooks. Never from a plain helper function or class."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Conditional hook calls will break React",
+      "md": "This is the most common beginner mistake:\n\n```jsx\n// BAD — hooks must not be inside conditions\nif (isLoggedIn) {\n  const [name, setName] = useState('');\n}\n```\n\nReact relies on the **order** of hook calls being identical every render. If you skip a hook call, React loses track of which state belongs to which hook and everything breaks. Always call hooks unconditionally at the top of your function."
+    },
+    {
+      "type": "heading",
+      "text": "Why Custom Hooks Keep Components Clean"
+    },
+    {
+      "type": "text",
+      "md": "When logic lives directly in a component, the component mixes two concerns: **what to render** and **how state works**. As features grow, components balloon into hundreds of lines. Custom hooks let you pull the *how* into its own file, leaving the component to focus entirely on the *what*. This also makes testing easier — you can test a hook in isolation without rendering any UI."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Name your hook after what it does, not how",
+      "md": "Call it `useToggle`, `useLocalStorage`, `useWindowSize`, `useDebounce` — names that describe the **behaviour** from the caller's perspective. Avoid names like `useStateAndCallback` that expose implementation details."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following is a valid place to call a hook inside a custom hook?",
+      "options": [
+        "Inside an if statement: `if (condition) { useState(...) }`",
+        "Inside a for loop that runs for each item in a list",
+        "At the top level of the custom hook function, unconditionally",
+        "Inside a nested helper function defined inside the custom hook"
+      ],
+      "answerIndex": 2,
+      "explanation": "Hooks must always be called at the top level of a React function (component or custom hook), unconditionally and in the same order every render. Calling them inside conditions, loops, or nested functions breaks React's ability to track which state belongs to which hook call."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Each component gets its own state",
+      "md": "Even though two components call the same custom hook, **each one gets its own independent state**. The hook is not a singleton — it is a recipe. Every time a component uses `useToggle()`, React creates a fresh `useState` slot for that component. Sharing logic does not mean sharing state."
+    }
+  ],
+  "keyTakeaways": [
+    "A custom hook is a function whose name starts with `use` and calls other hooks inside — no special API required.",
+    "Custom hooks let you extract reusable stateful logic so components stay focused on rendering.",
+    "The Rules of Hooks apply equally to custom hooks: call unconditionally, only from React functions.",
+    "Each component that calls the same custom hook gets its own independent state — logic is shared, state is not.",
+    "Name hooks after the behaviour they expose (useToggle, useLocalStorage) to keep your code readable."
+  ],
+  "exercise": {
+    "prompt": "Build a custom hook called `useCounter` that manages a numeric counter. It should accept an `initialValue` (default 0) and return an object with `count`, `increment`, `decrement`, and `reset` functions. Then use it in a `Counter` component that displays the count and three buttons.",
+    "starterCode": "import { useState } from 'react';\n\n// TODO: build useCounter here\nfunction useCounter(initialValue = 0) {\n  // 1. create state for the count\n  // 2. define increment, decrement, and reset functions\n  // 3. return { count, increment, decrement, reset }\n}\n\nexport default function Counter() {\n  // TODO: call useCounter and wire up the buttons\n  return (\n    <div>\n      <p>Count: </p>\n      <button>-</button>\n      <button>Reset</button>\n      <button>+</button>\n    </div>\n  );\n}",
+    "hint": "Inside useCounter, use useState(initialValue) to create the count. Each helper function (increment, decrement, reset) should call the state setter — use the functional form `prev => prev + 1` for increment and decrement so updates are always based on the latest value.",
+    "solution": "import { useState, useCallback } from 'react';\n\nfunction useCounter(initialValue = 0) {\n  const [count, setCount] = useState(initialValue);\n\n  const increment = useCallback(() => setCount(prev => prev + 1), []);\n  const decrement = useCallback(() => setCount(prev => prev - 1), []);\n  const reset = useCallback(() => setCount(initialValue), [initialValue]);\n\n  return { count, increment, decrement, reset };\n}\n\nexport default function Counter() {\n  const { count, increment, decrement, reset } = useCounter(0);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={decrement}>-</button>\n      <button onClick={reset}>Reset</button>\n      <button onClick={increment}>+</button>\n    </div>\n  );\n}"
+  }
+}

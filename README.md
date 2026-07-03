@@ -1,6 +1,6 @@
-# 🐍 PyQuest — Learn Python, Beautifully
+# 🐍 Quest — Learn Python, Beautifully
 
-PyQuest is a gorgeous, beginner-friendly web app for learning Python **completely**,
+Quest is a gorgeous, beginner-friendly web app for learning Python **completely**,
 from "what is code?" to decorators and generators. It's built with Next.js and
 features a clickable sidebar, 60+ interactive lessons, runnable code examples,
 quizzes, hands-on exercises, progress tracking, and polished light & dark themes.

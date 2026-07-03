@@ -1,0 +1,59 @@
+{
+  "slug": "jsx",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function Profile() {\n  return (\n    <div class=\"card\">\n      <img src=\"/me.png\">\n      <h2>Maya</h2>\n    </div>\n  );\n}",
+      "options": [
+        "It uses `class` instead of `className`, and `<img>` is not self-closed as `<img />`",
+        "The <h2> must come before the <img> tag",
+        "`src` must be written as `source` in JSX",
+        "The component name should be lowercase: `profile`"
+      ],
+      "answerIndex": 0,
+      "explanation": "JSX follows JavaScript's rules, so `class` (a reserved keyword) becomes `className`, and every void element must be self-closed — `<img src=\"/me.png\" />`. Both fixes are needed. Component names are actually meant to be capitalized so the compiler passes a function reference, not a string."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "A component can only return ONE top-level element. To return two siblings without adding an extra DOM node, wrap them in a Fragment. Fill in the opening Fragment tag.",
+      "codeTemplate": "function Header() {\n  return (\n    {{blank}}\n      <h1>Title</h1>\n      <p>Body</p>\n    </>\n  );\n}",
+      "blanks": [
+        {
+          "answer": "<>",
+          "accept": ["<>", "<Fragment>", "<React.Fragment>"]
+        }
+      ],
+      "explanation": "JSX requires exactly one root element. A Fragment (`<>...</>`) groups the two siblings together to satisfy that rule without rendering an extra wrapper like a `<div>` — which keeps flex containers and table rows intact."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The value inside {} is a JavaScript expression. What text does the rendered <p> contain?",
+      "code": "const user = { name: \"Maya\", score: 42 };\nconst isWinner = user.score > 40;\n\nfunction ScoreCard() {\n  return <p>{isWinner ? \"You won!\" : \"Try again\"}</p>;\n}",
+      "options": [
+        "You won!",
+        "Try again",
+        "true",
+        "{isWinner ? \"You won!\" : \"Try again\"}"
+      ],
+      "answerIndex": 0,
+      "explanation": "Curly braces evaluate a JavaScript expression. Since `user.score` (42) is greater than 40, `isWinner` is true, so the ternary evaluates to \"You won!\". The braces render the result of the expression, not the literal text between them."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a valid ScoreCard component that embeds a name, a calculation, and a ternary using {}, all inside a single root <div>.",
+      "lines": [
+        "function ScoreCard({ name, score }) {",
+        "  return (",
+        "    <div>",
+        "      <h2>Player: {name}</h2>",
+        "      <p>Score: {score * 2}</p>",
+        "      <p>{score > 40 ? \"You won!\" : \"Try again\"}</p>",
+        "    </div>",
+        "  );",
+        "}"
+      ],
+      "explanation": "The function signature destructures its props first, then returns a single root <div> — a component can only return one top-level element. Inside {} you can embed a variable ({name}), a calculation ({score * 2}), and a ternary — all are JavaScript expressions, which is exactly what {} accepts."
+    }
+  ]
+}

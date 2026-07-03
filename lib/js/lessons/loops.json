@@ -1,0 +1,107 @@
+{
+  "slug": "loops",
+  "title": "Loops",
+  "category": "Data & Logic",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to repeat work automatically with JavaScript's for, while, for...of, and for...in loops — and when to reach for each one.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you need to send a \"Happy Birthday\" message to every person in a list of 500 friends. Writing that message 500 times by hand would be absurd — and if the list grows to 501, you'd have to write it again. **Loops** are JavaScript's answer to this: write a task once, and tell the computer to repeat it as many times as needed. Almost every real program uses loops, whether it's rendering a list of tweets, calculating a shopping cart total, or validating each item in an order."
+    },
+    {
+      "type": "heading",
+      "text": "The Classic for Loop"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "for (let i = 0; i < 5; i++) {\n  console.log(`Step ${i}`);\n}",
+      "output": "Step 0\nStep 1\nStep 2\nStep 3\nStep 4",
+      "caption": "Three parts in one line: initialise (let i = 0), check (i < 5), update (i++). Use for when you know the exact count."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A for loop is like a treadmill timer",
+      "md": "You set the start time (initialise), the end time (condition), and the interval (update). The treadmill runs each interval until the time is up — then it stops. The `for` loop works the same way: initialise once, check before each step, run the body, then update."
+    },
+    {
+      "type": "heading",
+      "text": "The while Loop"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "let attempts = 0;\nlet correct = false;\n\nwhile (!correct) {\n  attempts++;\n  if (attempts === 3) correct = true;\n}\n\nconsole.log(`Took ${attempts} attempt(s).`);",
+      "output": "Took 3 attempt(s).",
+      "caption": "Use while when you don't know in advance how many times to repeat — just keep going while a condition holds."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Infinite loops will freeze your program",
+      "md": "If the condition in a `while` loop never becomes `false`, the loop runs forever and the page (or Node process) hangs. Always make sure something inside the loop eventually makes the condition false — a counter that increments, a flag that flips, or user input that changes."
+    },
+    {
+      "type": "heading",
+      "text": "for...of and for...in"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// for...of — each VALUE from an array\nconst groceries = [\"eggs\", \"milk\", \"bread\"];\nfor (const item of groceries) {\n  console.log(`Buy: ${item}`);\n}\n\n// for...in — each KEY from an object\nconst scores = { Alice: 92, Bob: 78 };\nfor (const name in scores) {\n  console.log(`${name}: ${scores[name]}`);\n}",
+      "output": "Buy: eggs\nBuy: milk\nBuy: bread\nAlice: 92\nBob: 78",
+      "caption": "for...of gives you values from arrays; for...in gives you keys from objects. Keep them on the right job."
+    },
+    {
+      "type": "heading",
+      "text": "forEach — Looping with a Callback"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const colors = [\"red\", \"green\", \"blue\"];\n\ncolors.forEach((color, index) => {\n  console.log(`${index}: ${color}`);\n});",
+      "output": "0: red\n1: green\n2: blue",
+      "caption": "forEach is an array method that runs a function per element, passing (value, index, array). Unlike for...of, you cannot use break inside it."
+    },
+    {
+      "type": "heading",
+      "text": "break and continue — Controlling the Flow"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const numbers = [3, 7, 2, 9, 4, 6, 1];\n\nfor (const n of numbers) {\n  if (n === 9) break;       // stop the whole loop\n  if (n % 2 === 0) continue; // skip even numbers\n  console.log(n);\n}",
+      "output": "3\n7",
+      "caption": "break exits the loop immediately; continue skips the rest of the current iteration and moves to the next. Both work in for, while, and for...of."
+    },
+    {
+      "type": "quiz",
+      "question": "Which loop is best for visiting every item in the array `[\"cat\", \"dog\", \"fish\"]`?",
+      "options": [
+        "for...in, because arrays are objects under the hood",
+        "while, because you don't know the length in advance",
+        "for...of, because it gives you each value directly from an iterable",
+        "forEach is the only correct choice"
+      ],
+      "answerIndex": 2,
+      "explanation": "for...of is the idiomatic choice for arrays — it gives you each value cleanly, supports break/continue, and works with any iterable. forEach is also fine but cannot use break. for...in gives you index strings, not values, so it's the wrong tool for arrays. Quick rule: for...of for array values, for...in for object keys, for when you need the index, while when the count is unknown."
+    }
+  ],
+  "keyTakeaways": [
+    "Use `for` when you know the exact number of iterations or need a counter variable.",
+    "`while` loops keep running until a condition becomes false — always ensure something inside will eventually stop it.",
+    "`for...of` is the cleanest way to iterate over array values; `for...in` iterates over object keys.",
+    "`forEach` is an array method that runs a callback per element and conveniently exposes the index alongside the value.",
+    "`break` exits a loop immediately; `continue` skips the rest of the current iteration and moves on to the next."
+  ],
+  "exercise": {
+    "prompt": "You have an array of student grades. Write code that: (1) uses a for...of loop to print every grade, (2) uses continue to skip and only print passing grades (70 or above), and (3) uses a classic for loop to print each grade alongside its 1-based position number, like \"1: 85\".",
+    "starterCode": "const grades = [85, 42, 91, 67, 73, 55, 88];\n\n// TODO 1: Use for...of to print every grade\nfor (const grade of grades) {\n  // your code here\n}\n\n// TODO 2: Use for...of + continue to print only passing grades (>= 70)\nfor (const grade of grades) {\n  // TODO: use continue to skip grades below 70\n  // your code here\n}\n\n// TODO 3: Use a classic for loop to print \"1: 85\", \"2: 42\", etc.\nfor (let i = 0; i < grades.length; i++) {\n  // TODO: log (i + 1) and grades[i]\n}",
+    "hint": "For TODO 2, add `if (grade < 70) continue;` at the top of the loop body. For TODO 3, `grades[i]` gives you the current grade and `i + 1` gives the 1-based position — combine them in a template literal.",
+    "solution": "const grades = [85, 42, 91, 67, 73, 55, 88];\n\n// 1. Print every grade\nfor (const grade of grades) {\n  console.log(grade);\n}\n\n// 2. Print only passing grades\nfor (const grade of grades) {\n  if (grade < 70) continue;\n  console.log(`Passing: ${grade}`);\n}\n// Passing: 85\n// Passing: 91\n// Passing: 73\n// Passing: 88\n\n// 3. Print each grade with its 1-based position\nfor (let i = 0; i < grades.length; i++) {\n  console.log(`${i + 1}: ${grades[i]}`);\n}\n// 1: 85\n// 2: 42\n// 3: 91\n// 4: 67\n// 5: 73\n// 6: 55\n// 7: 88"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "slug": "handling-events",
+  "title": "Handling Events",
+  "category": "State & Interaction",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to make your React components respond to clicks, keystrokes, and input changes by wiring up event handlers the right way.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "A component that never responds to the user is really just a fancy brochure. The magic of interactive UIs — buttons that do things, inputs that react as you type, forms that submit — all comes down to **event handling**. In this lesson you'll learn how React lets you listen for user actions, respond to them with functions, and ultimately use them to drive state changes. By the end, clicking a button will feel like a superpower you actually understand."
+    },
+    {
+      "type": "heading",
+      "text": "Events in HTML vs. React"
+    },
+    {
+      "type": "text",
+      "md": "If you've seen a little HTML before, you may have noticed attributes like `onclick` on buttons. React has a very similar idea, but with two key differences:\n\n1. The attribute names are **camelCase** — `onClick` instead of `onclick`, `onChange` instead of `onchange`.\n2. You pass a **JavaScript function**, not a string of code.\n\nHere is the simplest possible example:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function HelloButton() {\n  function handleClick() {\n    alert('Hello from React!');\n  }\n\n  return <button onClick={handleClick}>Say Hello</button>;\n}",
+      "output": "A button labeled \"Say Hello\". Clicking it shows an alert.",
+      "caption": "The onClick prop receives the function itself — not a call to the function."
+    },
+    {
+      "type": "heading",
+      "text": "The Golden Rule: Pass the Function, Don't Call It"
+    },
+    {
+      "type": "text",
+      "md": "This is the single most common mistake beginners make, and it trips up experienced developers too. When you wire up an event handler, you hand React the function so *React* can call it later when the event happens. If you call it yourself right now, it runs immediately — before any click has occurred."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Handing Over Your Phone Number vs. Calling Right Now",
+      "md": "Imagine a friend asks, \"Can someone call me when the pizza arrives?\"\n\n- **Correct:** You hand them your phone number. They call you *when* the pizza arrives.\n- **Wrong:** You call them *right now*, before the pizza is even ordered.\n\n`onClick={handleClick}` is handing over your number.\n`onClick={handleClick()}` is calling immediately — and React will run it during render, not on click."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// CORRECT: pass the function reference\n<button onClick={handleClick}>Click me</button>\n\n// WRONG: calling the function immediately during render\n<button onClick={handleClick()}>Click me</button>",
+      "caption": "Spot the difference: parentheses () after the name means \"call now\"."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The Invisible Bug",
+      "md": "If you write `onClick={handleClick()}`, your component may seem to work at first — but you'll notice it fires on every render, or causes an infinite loop if it updates state. React won't throw an error; the code just does the wrong thing silently. Always double-check for stray parentheses."
+    },
+    {
+      "type": "heading",
+      "text": "The Event Object"
+    },
+    {
+      "type": "text",
+      "md": "When React calls your handler, it passes along an **event object** — a bundle of information about what just happened. For a click, you can read where the mouse was. For a keystroke, you can read which key was pressed. For an input change, the most useful property is `event.target.value` — the current text in the field.\n\nYou can name this parameter anything, but `e` or `event` are the conventions:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function ClickLogger() {\n  function handleClick(e) {\n    console.log('Button clicked!');\n    console.log('Mouse X position:', e.clientX);\n  }\n\n  return <button onClick={handleClick}>Log Click</button>;\n}",
+      "output": "Button clicked!\nMouse X position: 342",
+      "caption": "React passes a synthetic event object — it behaves just like a native browser event."
+    },
+    {
+      "type": "heading",
+      "text": "Handling Input Changes with onChange"
+    },
+    {
+      "type": "text",
+      "md": "The `onChange` event fires every time the value inside an input changes — on every single keystroke. This is how React keeps your UI in sync with what the user is typing. Paired with `useState`, it forms the foundation of **controlled inputs** (more on those in the next lesson). Here's a sneak peek:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState } from 'react';\n\nfunction NameInput() {\n  const [name, setName] = useState('');\n\n  function handleChange(e) {\n    setName(e.target.value);\n  }\n\n  return (\n    <div>\n      <input value={name} onChange={handleChange} placeholder=\"Type your name\" />\n      <p>Hello, {name || 'stranger'}!</p>\n    </div>\n  );\n}",
+      "output": "An input field. As you type \"Ada\", the paragraph updates live to say \"Hello, Ada!\"",
+      "caption": "e.target.value holds the current text. Passing it to setName re-renders the component instantly."
+    },
+    {
+      "type": "heading",
+      "text": "Passing Extra Arguments to Handlers"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you need to pass extra data to your handler — for example, when you have a list of items and each delete button needs to know *which* item to delete. The trick is to wrap your handler in an **arrow function** inside the JSX:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function TodoList() {\n  const items = ['Buy milk', 'Walk the dog', 'Learn React'];\n\n  function handleDelete(item) {\n    console.log('Deleting:', item);\n  }\n\n  return (\n    <ul>\n      {items.map((item) => (\n        <li key={item}>\n          {item}\n          <button onClick={() => handleDelete(item)}>Delete</button>\n        </li>\n      ))}\n    </ul>\n  );\n}",
+      "output": "Deleting: Walk the dog",
+      "caption": "The arrow function () => handleDelete(item) is a new function that, when called, will call handleDelete with the right item."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Inline Arrow Functions Are Fine Here",
+      "md": "You might wonder: doesn't creating a new arrow function on every render waste memory? For most cases — lists of a few dozen items — the answer is no, the cost is negligible. Optimize only when you have measured a real performance problem, not in advance."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following correctly wires up a click handler in React?",
+      "options": [
+        "<button onClick={handleClick()}>Click</button>",
+        "<button onClick='handleClick'>Click</button>",
+        "<button onClick={handleClick}>Click</button>",
+        "<button on-click={handleClick}>Click</button>"
+      ],
+      "answerIndex": 2,
+      "explanation": "Option C is correct. You pass the function reference without parentheses — so React holds onto it and calls it when the user clicks. Option A calls the function immediately during render. Option B passes a string (that's the old HTML style). Option D uses a hyphenated name, which is not valid JSX."
+    },
+    {
+      "type": "text",
+      "md": "You now have all the core tools for interactive React: `onClick` for buttons, `onChange` for inputs, the event object for context, and the rule that you always pass functions rather than calling them. These patterns appear in virtually every React component you'll ever write — you're already thinking like a React developer."
+    }
+  ],
+  "keyTakeaways": [
+    "Use camelCase event props like onClick and onChange — not the lowercase HTML versions.",
+    "Always pass the function reference (onClick={fn}), never call it (onClick={fn()}) — stray parentheses are a silent, common bug.",
+    "React passes an event object to your handler; use e.target.value to read what's inside an input.",
+    "To pass extra arguments, wrap your handler in an arrow function: onClick={() => handleDelete(item)}.",
+    "onChange fires on every keystroke — that's what makes live, responsive inputs possible."
+  ],
+  "exercise": {
+    "prompt": "Build a small 'Like' button component. It should display a heart button and a count that starts at 0. Each click on the button should increase the count by 1. As a bonus, change the button label to show the current count: e.g. '♥ 3 Likes'.",
+    "starterCode": "import { useState } from 'react';\n\nfunction LikeButton() {\n  // TODO: add a state variable for the like count\n\n  // TODO: write a handleLike function that increments the count\n\n  return (\n    <div>\n      {/* TODO: render a button that calls handleLike on click */}\n      {/* TODO: display the current count */}\n    </div>\n  );\n}\n\nexport default LikeButton;",
+    "hint": "useState(0) gives you a number to start with. Inside your handler, call the setter with the previous value plus one: setCount(count + 1). Then drop {count} into your JSX to display it.",
+    "solution": "import { useState } from 'react';\n\nfunction LikeButton() {\n  const [count, setCount] = useState(0);\n\n  function handleLike() {\n    setCount(count + 1);\n  }\n\n  return (\n    <div>\n      <button onClick={handleLike}>\n        ♥ {count} {count === 1 ? 'Like' : 'Likes'}\n      </button>\n    </div>\n  );\n}\n\nexport default LikeButton;"
+  }
+}

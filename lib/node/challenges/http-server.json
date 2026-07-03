@@ -1,0 +1,51 @@
+{
+  "slug": "http-server",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A client sends GET /about to this server. What does the server write to the console?",
+      "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  console.log(`${req.method} ${req.url}`);\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end('ok');\n});\n\nserver.listen(3000);",
+      "options": [
+        "GET /about",
+        "/about GET",
+        "GET http://localhost:3000/about"
+      ],
+      "answerIndex": 0,
+      "explanation": "The request listener receives req, whose req.method is the HTTP verb ('GET') and req.url is just the path ('/about') — not the full URL with host. The template literal prints method first, then a space, then the path."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This server is supposed to reply 'Hello, world!' to every request, but clients just hang forever with no response. What's wrong?",
+      "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.write('Hello, world!');\n});\n\nserver.listen(3000);",
+      "options": [
+        "The callback never calls res.end(), so the response is never finished and the client waits forever",
+        "res.write() is not a real method — you must use res.send() instead",
+        "The status code 200 must be passed as a string, like res.writeHead('200')"
+      ],
+      "answerIndex": 0,
+      "explanation": "res.write() sends a chunk of the body but does not finish the response. You must call res.end() to signal the response is complete — without it the client keeps waiting for more data and hangs."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this line so the server sends a JSON response body. Fill in the method that converts the object into a string for res.end().",
+      "codeTemplate": "const data = { message: 'Hello from Node!' };\nres.writeHead(200, { 'Content-Type': 'application/json' });\nres.end({{blank}}(data));",
+      "blanks": [
+        { "answer": "JSON.stringify", "accept": ["JSON.stringify()", "json.stringify"] }
+      ],
+      "explanation": "res.end() sends strings or buffers, not raw objects. JSON.stringify(data) serializes the object into a JSON string that the client can parse, which is why it pairs with the 'application/json' Content-Type header."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to build a minimal HTTP server that replies with plain text and then starts listening on port 3000.",
+      "lines": [
+        "const http = require('http');",
+        "const server = http.createServer((req, res) => {",
+        "  res.writeHead(200, { 'Content-Type': 'text/plain' });",
+        "  res.end('Hello, world!');",
+        "});",
+        "server.listen(3000);"
+      ],
+      "explanation": "You require the http module first, then create the server with a (req, res) callback. Inside the callback you set the status and headers with res.writeHead() before finishing with res.end(). Finally, server.listen(3000) is the last step that actually opens the port and starts accepting connections."
+    }
+  ]
+}

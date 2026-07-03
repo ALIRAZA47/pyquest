@@ -7,6 +7,7 @@ import { ALL_SLUGS, TOTAL_LESSONS } from "@/lib/curriculum";
 import { useProgress } from "@/components/ProgressContext";
 import { ProgressRing } from "@/components/ProgressRing";
 import { Glyph, categoryGlyph, lessonGlyph } from "@/components/glyphs";
+import { AiIllustration } from "@/components/Illustrations";
 import { CheckIcon, ArrowRight, TargetIcon } from "@/components/Icons";
 
 const SECTIONS = getNavSections();
@@ -61,6 +62,9 @@ export default function LearnDashboard() {
               {count > 0 && !allDone ? "Continue learning" : "Start learning"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
+          </div>
+          <div className="hidden w-64 shrink-0 lg:block">
+            <AiIllustration className="w-full" />
           </div>
         </div>
       </motion.div>

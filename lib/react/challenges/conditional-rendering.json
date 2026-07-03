@@ -1,0 +1,57 @@
+{
+  "slug": "conditional-rendering",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function Cart({ items }) {\n  return (\n    <div>\n      <h2>Cart</h2>\n      {items.length && <p>You have items!</p>}\n    </div>\n  );\n}",
+      "options": [
+        "When items.length is 0, this renders the digit \"0\" on screen instead of nothing — compare with `items.length > 0`",
+        "&& can only be used with boolean variables, never with numbers at all",
+        "The <p> is missing a key prop, so React will warn in the console",
+        "items.length should be written as items.length() with parentheses"
+      ],
+      "answerIndex": 0,
+      "explanation": "`0` is falsy, so `&&` short-circuits — but React renders the number `0` on screen rather than nothing. Always convert a numeric left side to a real boolean with a comparison like `items.length > 0 && <p>...</p>`. This is the classic conditional-rendering gotcha."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this show-or-nothing pattern: render the badge ONLY when unreadCount is greater than zero, and render nothing otherwise. Fill in the operator that renders its right side only when the left side is truthy.",
+      "codeTemplate": "function Inbox({ unreadCount }) {\n  return (\n    <div>\n      <h2>Inbox</h2>\n      {unreadCount > 0 {{blank}} <p>{unreadCount} unread</p>}\n    </div>\n  );\n}",
+      "blanks": [
+        {
+          "answer": "&&",
+          "accept": ["&&", "& &"]
+        }
+      ],
+      "explanation": "The `&&` operator renders its right side when the left side is truthy and renders nothing when it is falsy — ideal for show-or-nothing UI. The `> 0` comparison first turns the count into a proper boolean, avoiding the trap of rendering a stray `0`."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a correct Profile component that uses early-return guard clauses: show a loading message while fetching, a fallback if there is no user, then the profile card otherwise.",
+      "lines": [
+        "function Profile({ user, isLoading }) {",
+        "  if (isLoading) return <p>Loading...</p>;",
+        "  if (!user) return <p>No user found.</p>;",
+        "  return (",
+        "    <div><h2>{user.name}</h2></div>",
+        "  );",
+        "}"
+      ],
+      "explanation": "Guard clauses go at the top: check the loading state first, then the missing-user case, each returning early with a fallback. Only when both guards pass do you reach the main JSX — this keeps the happy path clean and unindented, and safely accesses user.name knowing user exists."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The Spoiler component starts with revealed = false. What is on screen BEFORE the user clicks anything?",
+      "code": "function Spoiler({ text }) {\n  const [revealed, setRevealed] = useState(false);\n  return (\n    <div>\n      {revealed ? <p>{text}</p> : <p>Hidden</p>}\n      <button onClick={() => setRevealed(prev => !prev)}>\n        {revealed ? 'Hide' : 'Reveal'}\n      </button>\n    </div>\n  );\n}",
+      "options": [
+        "A paragraph reading \"Hidden\" and a button labelled \"Reveal\"",
+        "A paragraph showing the text and a button labelled \"Hide\"",
+        "Both paragraphs (the text AND \"Hidden\") with a \"Reveal\" button",
+        "Nothing renders until the button is clicked once"
+      ],
+      "answerIndex": 0,
+      "explanation": "Initial state is false, so the ternary's false branch runs for both spots: the paragraph shows \"Hidden\" and the button label is \"Reveal\". A ternary only ever renders one of its two branches, so the real text is not present yet. Clicking flips state, re-renders, and swaps to the true branches."
+    }
+  ]
+}

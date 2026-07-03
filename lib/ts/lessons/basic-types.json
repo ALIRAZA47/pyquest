@@ -1,0 +1,135 @@
+{
+  "slug": "basic-types",
+  "title": "Basic Types",
+  "category": "TypeScript Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to label your variables with TypeScript's core types — string, number, boolean, and arrays — and discover how TypeScript can often figure out the type for you.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine handing a note to a friend that says \"Please bring me some _____\". If you leave the blank empty, your friend might show up with anything — a pizza, a cactus, a confused look. But if you write \"Please bring me some **milk**\", there is no ambiguity. TypeScript works exactly the same way. Plain JavaScript lets you put anything into any variable, which is flexible but can lead to surprising bugs. TypeScript lets you *label* your variables so that both you and your editor always know exactly what kind of data to expect. In this lesson we will learn the most common labels: `string`, `number`, `boolean`, arrays, and the magic of type *inference* — where TypeScript reads your code and figures the label out on its own."
+    },
+    {
+      "type": "heading",
+      "text": "The : Type Syntax"
+    },
+    {
+      "type": "text",
+      "md": "Adding a type annotation in TypeScript is simple: write a colon (`:`) after the variable name, then the type. That is the entire syntax. TypeScript reads the annotation and will warn you any time you try to store the wrong kind of value."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "let username: string = \"Alice\";\nlet age: number = 30;\nlet isLoggedIn: boolean = true;\n\n// TypeScript now prevents mistakes like this:\n// age = \"thirty\"; // Error: Type 'string' is not assignable to type 'number'",
+      "caption": "Annotating three common variable types"
+    },
+    {
+      "type": "heading",
+      "text": "The Three Everyday Types"
+    },
+    {
+      "type": "text",
+      "md": "**string** holds text — anything wrapped in quotes. **number** holds integers and decimals alike (TypeScript, like JavaScript, does not separate them). **boolean** holds exactly one of two values: `true` or `false`. These three types cover the vast majority of data you will work with."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "let greeting: string = \"Hello, world!\";\nlet price: number = 9.99;\nlet isOnSale: boolean = false;\n\nconsole.log(greeting);  // Hello, world!\nconsole.log(price);     // 9.99\nconsole.log(isOnSale);  // false",
+      "output": "Hello, world!\n9.99\nfalse",
+      "caption": "string, number, and boolean in action"
+    },
+    {
+      "type": "heading",
+      "text": "Annotating Arrays"
+    },
+    {
+      "type": "text",
+      "md": "When all items in a list share the same type, you annotate it by writing the item type followed by `[]`. So an array of numbers is `number[]`, an array of strings is `string[]`, and so on. TypeScript will flag it if you accidentally push the wrong kind of item into the array."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "let scores: number[] = [98, 87, 76];\nlet colors: string[] = [\"red\", \"green\", \"blue\"];\n\nscores.push(55);   // fine\n// scores.push(\"A+\"); // Error: Argument of type 'string' is not assignable to parameter of type 'number'\n\nconsole.log(scores);",
+      "output": "[98, 87, 76, 55]",
+      "caption": "number[] and string[] array annotations"
+    },
+    {
+      "type": "heading",
+      "text": "Type Inference — Let TypeScript Do the Work"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "TypeScript as a Smart Autocomplete",
+      "md": "Think of type inference like your phone's autocomplete. You start typing \"I love\" and your phone already guesses the rest from context. TypeScript looks at the value you assign and *infers* the type automatically — you do not always have to spell it out."
+    },
+    {
+      "type": "text",
+      "md": "When you initialize a variable with a value right away, TypeScript can infer its type without any annotation. The result is identical to annotating it explicitly — you get the same protection with less typing. This is idiomatic TypeScript: annotate when the type is not obvious, let inference handle the rest."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// TypeScript infers all of these types automatically:\nlet city = \"Tokyo\";        // inferred: string\nlet temperature = 24.5;    // inferred: number\nlet isSunny = true;        // inferred: boolean\nlet ratings = [4, 5, 3];   // inferred: number[]\n\n// Hover over a variable in your editor to see the inferred type!\n// city = 42; // still an Error — inference gives full protection",
+      "caption": "Inference in action — no annotation needed"
+    },
+    {
+      "type": "heading",
+      "text": "Avoid any — The Type That Opts You Out"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "any turns off TypeScript's superpowers",
+      "md": "The `any` type tells TypeScript \"I do not care what this is\" — and TypeScript believes you completely, checking *nothing*. It is like turning off spell-check. Reach for `any` only as a last resort; prefer specific types or TypeScript's other escape hatches (`unknown`) when you truly do not know the shape of data yet."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "let mystery: any = \"hello\";\nmystery = 42;        // no error\nmystery = true;      // no error\nmystery.foo.bar();   // no error at compile time — but will crash at runtime!\n\n// Compare: a properly typed variable catches the mistake immediately:\nlet name: string = \"Alice\";\n// name = 42; // Error caught before you even run the code",
+      "caption": "any disables all type checking — use sparingly"
+    },
+    {
+      "type": "quiz",
+      "question": "What will TypeScript do if you write: let count = 10; count = \"ten\";",
+      "options": [
+        "Allow it, because JavaScript is flexible",
+        "Show a type error, because count was inferred as number",
+        "Automatically convert \"ten\" to the number 10",
+        "Throw a runtime exception immediately"
+      ],
+      "answerIndex": 1,
+      "explanation": "TypeScript infers count as number from the initial value 10. Assigning the string \"ten\" to a number variable is a type error that TypeScript reports at compile time — before the code ever runs. This is exactly the kind of mistake TypeScript is designed to catch early."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "text",
+      "md": "Here is a small realistic snippet that uses everything from this lesson. Notice how annotations and inference work side by side — annotate what needs clarity, let TypeScript infer the rest."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// Explicit annotations where the intent benefits from clarity:\nfunction describeUser(name: string, age: number, isPremium: boolean): string {\n  return `${name} is ${age} years old. Premium: ${isPremium}`;\n}\n\n// Inference handles the local variable:\nconst result = describeUser(\"Priya\", 28, true);\nconsole.log(result);",
+      "output": "Priya is 28 years old. Premium: true",
+      "caption": "Annotations on function parameters, inference on the return value"
+    }
+  ],
+  "keyTakeaways": [
+    "Use the colon syntax (variableName: type) to annotate variables with string, number, boolean, or array types like number[].",
+    "TypeScript infers the type from the initial value, so you do not need annotations when the type is obvious from context.",
+    "Type annotations and inference both give the same protection — TypeScript will catch mismatches before your code runs.",
+    "Avoid any: it silences TypeScript's checks and reintroduces the very bugs you are trying to prevent.",
+    "Arrays are typed as ElementType[] — for example, string[] means every item must be a string."
+  ],
+  "exercise": {
+    "prompt": "Declare four variables: a `string` called `productName`, a `number` called `price`, a `boolean` called `inStock`, and a `string[]` called `tags`. Give each a sensible initial value. Then log a sentence that uses all four variables.",
+    "starterCode": "// TODO: declare productName as a string\n// TODO: declare price as a number\n// TODO: declare inStock as a boolean\n// TODO: declare tags as an array of strings\n\n// TODO: log a sentence using all four variables\n// Example output: \"Laptop costs $999. In stock: true. Tags: electronics, sale\"",
+    "hint": "Use the colon syntax for at least two of the four variables, and let TypeScript infer the other two. For the sentence, template literals (backticks with ${}) make it easy to combine values.",
+    "solution": "let productName: string = \"Laptop\";\nlet price: number = 999;\nlet inStock = true;          // inferred as boolean\nlet tags = [\"electronics\", \"sale\"];  // inferred as string[]\n\nconsole.log(`${productName} costs $${price}. In stock: ${inStock}. Tags: ${tags.join(\", \")}`);\n// Output: Laptop costs $999. In stock: true. Tags: electronics, sale"
+  }
+}

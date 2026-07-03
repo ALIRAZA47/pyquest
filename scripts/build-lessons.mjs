@@ -94,18 +94,52 @@ const lessonValidate = (p) =>
     ? "missing blocks array"
     : null;
 
-generate({
-  dir: path.join(root, "lib", "ml", "lessons"),
-  outFile: path.join(root, "lib", "ml", "generated-lessons.ts"),
-  exportName: "RAW_ML_LESSONS",
-  idPrefix: "ML_",
-  validate: lessonValidate,
-});
+const challengeValidate = (p) =>
+  !p || typeof p !== "object" || !Array.isArray(p.challenges)
+    ? "missing challenges array"
+    : null;
 
-generate({
-  dir: path.join(root, "lib", "ai", "lessons"),
-  outFile: path.join(root, "lib", "ai", "generated-lessons.ts"),
-  exportName: "RAW_AI_LESSONS",
-  idPrefix: "AI_",
-  validate: lessonValidate,
-});
+// Per-course content: lessons + optional slides/challenges. Slides and
+// challenges are course-agnostic (the renderer handles them generically); a
+// missing directory just emits an empty map, so courses opt in by authoring
+// files under lib/<course>/challenges or lib/<course>/slides.
+const CORE_COURSES = [
+  { id: "ml", prefix: "ML" },
+  { id: "ai", prefix: "AI" },
+];
+const WEB_COURSES = ["html", "css", "js", "ts", "react", "node"];
+
+for (const { id, prefix } of CORE_COURSES) {
+  generate({
+    dir: path.join(root, "lib", id, "lessons"),
+    outFile: path.join(root, "lib", id, "generated-lessons.ts"),
+    exportName: `RAW_${prefix}_LESSONS`,
+    idPrefix: `${prefix}_`,
+    validate: lessonValidate,
+  });
+  generate({
+    dir: path.join(root, "lib", id, "challenges"),
+    outFile: path.join(root, "lib", id, "generated-challenges.ts"),
+    exportName: `RAW_${prefix}_CHALLENGES`,
+    idPrefix: `${prefix}C_`,
+    validate: challengeValidate,
+  });
+}
+
+for (const c of WEB_COURSES) {
+  const prefix = c.toUpperCase();
+  generate({
+    dir: path.join(root, "lib", c, "lessons"),
+    outFile: path.join(root, "lib", c, "generated-lessons.ts"),
+    exportName: `RAW_${prefix}_LESSONS`,
+    idPrefix: `${prefix}_`,
+    validate: lessonValidate,
+  });
+  generate({
+    dir: path.join(root, "lib", c, "challenges"),
+    outFile: path.join(root, "lib", c, "generated-challenges.ts"),
+    exportName: `RAW_${prefix}_CHALLENGES`,
+    idPrefix: `${prefix}C_`,
+    validate: challengeValidate,
+  });
+}

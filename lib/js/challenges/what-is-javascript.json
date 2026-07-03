@@ -1,0 +1,54 @@
+{
+  "slug": "what-is-javascript",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson shows that console.log can print text, numbers, and expressions. What appears in the developer console when this runs?",
+      "code": "console.log(\"Hello, JavaScript!\");\nconsole.log(42);\nconsole.log(2 + 2);",
+      "options": [
+        "Hello, JavaScript!\n42\n4",
+        "Hello, JavaScript!\n42\n2 + 2",
+        "\"Hello, JavaScript!\"\n42\n4",
+        "Hello, JavaScript!\n42\n22"
+      ],
+      "answerIndex": 0,
+      "explanation": "console.log prints text without the surrounding quotes, prints numbers as-is, and evaluates expressions before printing. So 2 + 2 is computed to 4 rather than shown literally, and the quotes around the string are only part of the code, not the output."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script>\n      const button = document.getElementById(\"greet-btn\");\n      button.addEventListener(\"click\", function () {\n        console.log(\"Clicked!\");\n      });\n    </script>\n  </head>\n  <body>\n    <button id=\"greet-btn\">Click me!</button>\n  </body>\n</html>",
+      "options": [
+        "The <script> is in <head>, so it runs before the button exists and getElementById returns nothing",
+        "You cannot use getElementById; only querySelector can find a button element",
+        "console.log only works in Node.js, not inside a browser <script> tag",
+        "addEventListener must come before getElementById or the listener is ignored"
+      ],
+      "answerIndex": 0,
+      "explanation": "The browser reads HTML top to bottom, and a <script> in the <head> runs before the <button> in the <body> has been created. getElementById then finds nothing and the code fails. As the lesson advises, place the <script> just before </body>, or add the defer attribute so it waits for the HTML."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this snippet from the lesson. Fill in the method that prints to the developer console, and the method that finds an element by its id.",
+      "codeTemplate": "{{blank}}(\"Hello, JavaScript!\");\n\nconst message = document.{{blank}}(\"message\");\nmessage.textContent = \"Hi!\";",
+      "blanks": [
+        { "answer": "console.log", "accept": ["console.log()", "console . log"] },
+        { "answer": "getElementById", "accept": ["getElementById()", "getelementbyid"] }
+      ],
+      "explanation": "console.log() is the programmer's sticky note for printing values to the browser's developer console. document.getElementById() looks up an element by the id you gave it in the HTML, so you can then read or change it, like updating its textContent."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in order to build the lesson's click example: grab the button, grab the paragraph, then attach a click listener that updates the page and logs a message.",
+      "lines": [
+        "const button = document.getElementById(\"greet-btn\");",
+        "const message = document.getElementById(\"message\");",
+        "button.addEventListener(\"click\", function () {",
+        "  message.textContent = \"Hello from JavaScript!\";",
+        "  console.log(\"Button was clicked!\");",
+        "});"
+      ],
+      "explanation": "You must select the elements before you can use them, so the two getElementById lines come first. Then addEventListener attaches a click handler to the button. Inside that handler you update the paragraph's textContent and log a message, and the closing }); ends both the callback and the addEventListener call."
+    }
+  ]
+}

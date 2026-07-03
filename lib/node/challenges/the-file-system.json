@@ -1,0 +1,46 @@
+{
+  "slug": "the-file-system",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Both appendFile and writeFile run against the same file. What gets printed?",
+      "code": "const fs = require('fs').promises;\n\nasync function run() {\n  await fs.writeFile('log.txt', 'A', 'utf8');\n  await fs.appendFile('log.txt', 'B', 'utf8');\n  await fs.writeFile('log.txt', 'C', 'utf8');\n  const data = await fs.readFile('log.txt', 'utf8');\n  console.log(data);\n}\n\nrun();",
+      "options": ["ABC", "C", "AB", "CBA"],
+      "answerIndex": 1,
+      "explanation": "appendFile adds to the end of a file, but writeFile replaces the entire contents. After 'A' and 'B' bring the file to 'AB', the final writeFile('C') overwrites everything, leaving just 'C'. Use appendFile when you want to keep existing data (like logs) and writeFile when you want to save fresh state."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code runs inside an HTTP request handler on a busy server. What's the problem?",
+      "code": "const fs = require('fs');\n\nfunction handleRequest(req, res) {\n  const data = fs.readFileSync('notes.txt', 'utf8');\n  res.end(data);\n}",
+      "options": [
+        "readFileSync blocks the single-threaded event loop, so every other concurrent request stalls until the disk responds",
+        "readFileSync cannot read .txt files, only .json files",
+        "The 'utf8' argument should be passed as an object, not a string",
+        "readFileSync must always be wrapped in an async function to work"
+      ],
+      "answerIndex": 0,
+      "explanation": "Node.js runs on a single thread — like one barista. readFileSync freezes that thread until the file finishes loading, so no other request can be handled in the meantime. Inside a request handler you should use the async fs.readFile (callback) or fs.promises.readFile (await) so the event loop keeps serving other users."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Build a safe, cross-platform absolute path to 'config.json' in the same folder as this file.",
+      "codeTemplate": "const path = require('path');\n\nconst configPath = path.join({{blank}}, 'config.json');",
+      "blanks": [
+        { "answer": "__dirname", "accept": ["__dirname ", " __dirname"] }
+      ],
+      "explanation": "__dirname is always the folder the current file lives in, so path.join(__dirname, 'config.json') resolves the same way no matter where you run node from. A bare relative path like 'config.json' would instead be relative to the process's working directory, which can change."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order these lines into the classic read-modify-write cycle: read the file, parse it, change the data, then write it back.",
+      "lines": [
+        "const raw = await fs.readFile(dataFile, 'utf8');",
+        "const users = JSON.parse(raw);",
+        "users.push({ id: users.length + 1, name });",
+        "await fs.writeFile(dataFile, JSON.stringify(users, null, 2), 'utf8');"
+      ],
+      "explanation": "The read-modify-write pattern first reads the file's text, parses that text into a JavaScript value with JSON.parse, mutates the in-memory data, then serializes it back with JSON.stringify and writes it out. You must read and parse before you can modify, and modify before you write the updated result."
+    }
+  ]
+}

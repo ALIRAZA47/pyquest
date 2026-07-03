@@ -1,0 +1,108 @@
+{
+  "slug": "flexbox",
+  "title": "Flexbox",
+  "category": "Layout",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Flexbox is CSS's one-dimensional layout superpower — once you understand its two axes and a handful of properties, you'll be arranging, spacing, and centering elements effortlessly.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "For a long time, getting things to line up in CSS felt like an ongoing battle. Centering something vertically? Floating columns that didn't collapse? Equal-height cards? Developers reached for hacks — negative margins, `display: table`, `position: absolute` gymnastics — just to get basic layouts working.\n\nThen **Flexbox** arrived and almost overnight those problems dissolved. Flexbox (short for *Flexible Box Layout*) is a CSS layout mode designed for arranging items along a **single line** — either a row or a column. It gives you precise, readable control over how items are spaced, sized, and aligned, with property names that say what they mean.\n\nAll you need to activate it is one line on a parent element. From that moment, every direct child becomes a **flex item** the browser arranges for you."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".container {\n  display: flex; /* every direct child lines up in a row */\n}",
+      "output": "The container's direct children line up horizontally in a single row instead of stacking vertically.",
+      "caption": "One declaration flips the layout model entirely. Before it: block children stack. After it: they line up in a row."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a toolbox tray",
+      "md": "Imagine a long, shallow tray in a toolbox. The **tray** is the flex container. The **tools** sitting in it are the flex items. The tray decides how they're arranged — packed tight, spread evenly, centered. Each tool doesn't choose its own position; the tray does.\n\nWhen you write `display: flex`, you turn an element into that tray."
+    },
+    {
+      "type": "heading",
+      "text": "The Two Axes — the Key to Everything"
+    },
+    {
+      "type": "text",
+      "md": "Every Flexbox layout has two axes:\n\n- **Main axis** — the direction items are laid out. Horizontal (left-to-right) by default.\n- **Cross axis** — perpendicular to that. Vertical by default.\n\nThis is the unlock for all of Flexbox: anything with **justify** in its name controls spacing on the main axis. Anything with **align** controls position on the cross axis. Once you see that pattern, the property names stop feeling like guesswork."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".container {\n  display: flex;\n  justify-content: space-between; /* main axis: spread items with gaps */\n  align-items: center;            /* cross axis: vertically centered */\n  gap: 16px;                      /* uniform space between every item */\n}",
+      "output": "Items are spread across the full width with no space at the edges, vertically centered, and separated by 16px gaps.",
+      "caption": "justify = main axis. align = cross axis. gap = space between items. These three together handle most real layouts."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* justify-content: controls main-axis spacing */\njustify-content: flex-start;    /* pack at the start (default) */\njustify-content: center;        /* center the whole group */\njustify-content: space-between; /* max space between items; none at edges */\njustify-content: space-evenly;  /* equal space including outer edges */\n\n/* align-items: controls cross-axis alignment */\nalign-items: stretch;    /* fill container height (default) */\nalign-items: center;     /* vertically centered */\nalign-items: flex-start; /* hug the top edge */\nalign-items: flex-end;   /* hug the bottom edge */",
+      "caption": "The most-used values for both properties. In practice, center and space-between carry most real-world layouts."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Combining both: the classic recipe for perfect centering */\n.centered-page {\n  display: flex;\n  justify-content: center; /* horizontal center */\n  align-items: center;    /* vertical center */\n  height: 100vh;          /* give it height to center within */\n}",
+      "output": "Whatever is inside .centered-page appears perfectly centered both horizontally and vertically in the viewport.",
+      "caption": "Three properties. Perfect centering. Something that used to require multiple hacks now fits in one ruleset."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "gap only adds space between items — not at the edges",
+      "md": "`gap` creates space *between* flex items, but never before the first item or after the last. For padding inside the container edges, use `padding` on the container itself. Mixing per-child `margin` with `gap` leads to uneven spacing that is difficult to track down."
+    },
+    {
+      "type": "heading",
+      "text": "flex-direction, flex-wrap, and flex on Items"
+    },
+    {
+      "type": "text",
+      "md": "Three more tools round out the essential Flexbox toolkit:\n\n- **`flex-direction`** changes the main axis direction. `row` (default) lays items left-to-right; `column` stacks them top-to-bottom and swaps which axis `justify` and `align` refer to.\n- **`flex-wrap`** lets items overflow onto a new line rather than squeezing to fit. Combine it with `gap` for simple responsive grids.\n- **`flex`** (on items, not the container) controls how an item grows, shrinks, and what its starting size is."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* flex-direction: column stacks items vertically */\n.sidebar-nav {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n/* flex-wrap: wrap lets items flow to a new row */\n.tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n}\n\n/* flex on items: grow/shrink/basis shorthand */\n.sidebar      { flex: 0 0 240px; } /* fixed, won't grow or shrink */\n.main-content { flex: 1; }         /* fill all remaining space */",
+      "output": "sidebar-nav: children stack vertically. tag-list: tags wrap to new rows when the container fills. Two-column layout: fixed sidebar beside a fluid main area.",
+      "caption": "flex: 1 is shorthand for flex: 1 1 0 — start at zero and grow to fill available space. When siblings all use flex: 1, they share equally."
+    },
+    {
+      "type": "quiz",
+      "question": "You have a flex container with three items. You want maximum space between them, but no extra space at the left or right edge of the container. Which value should you use?",
+      "options": [
+        "justify-content: space-around",
+        "justify-content: space-between",
+        "align-items: space-between",
+        "justify-content: space-evenly"
+      ],
+      "answerIndex": 1,
+      "explanation": "space-between places the maximum space between each item while pressing the first and last items flush against the container edges — no extra space at either end. space-around adds half-gaps at the edges; space-evenly adds full equal gaps including the edges. align-items controls the cross axis and has no space-between value."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Flexbox is one-dimensional — CSS Grid handles two",
+      "md": "Flexbox arranges items along a single axis at a time (a row *or* a column). When you need to control both rows and columns simultaneously — a page-level grid, a photo mosaic — that is the job of **CSS Grid**. The two tools complement each other perfectly, and most modern layouts use both."
+    }
+  ],
+  "keyTakeaways": [
+    "Write display: flex on a container and its direct children immediately line up as flex items in a row.",
+    "justify-content controls spacing on the main axis; align-items controls alignment on the cross axis — both always say what they do.",
+    "Combine justify-content: center and align-items: center to perfectly center anything, horizontally and vertically, with just three CSS lines.",
+    "Use gap for clean spacing between items, flex-direction: column to stack vertically, and flex-wrap: wrap for responsive multi-line layouts.",
+    "Apply flex: 1 to a child to make it grow into all available space — the foundation of fluid multi-column layouts."
+  ],
+  "exercise": {
+    "prompt": "Build a navigation bar using Flexbox. The nav should have a logo on the left and three links on the right, all vertically centered within a 64px tall bar. Add 24px of gap between the links and 32px of horizontal padding on the container.",
+    "starterCode": ".nav {\n  display: flex;\n  height: 64px;\n  padding: 0 32px;\n  background: #1e1b4b;\n\n  /* TODO: push logo left, links right */\n  /* TODO: vertically center everything */\n}\n\n.nav-logo {\n  color: #fff;\n  font-weight: 700;\n  font-size: 1.25rem;\n}\n\n.nav-links {\n  display: flex;\n  /* TODO: add 24px gap between the links */\n}\n\n.nav-links a {\n  color: #c7d2fe;\n  text-decoration: none;\n}",
+    "hint": "Use justify-content: space-between on .nav so the logo and links group sit at opposite ends. Add align-items: center so everything lines up in the vertical middle. Add gap: 24px to .nav-links to space the anchor tags apart.",
+    "solution": ".nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 64px;\n  padding: 0 32px;\n  background: #1e1b4b;\n}\n\n.nav-logo {\n  color: #fff;\n  font-weight: 700;\n  font-size: 1.25rem;\n}\n\n.nav-links {\n  display: flex;\n  gap: 24px;\n}\n\n.nav-links a {\n  color: #c7d2fe;\n  text-decoration: none;\n}"
+  }
+}

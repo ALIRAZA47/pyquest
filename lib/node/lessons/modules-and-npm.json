@@ -1,0 +1,107 @@
+{
+  "slug": "modules-and-npm",
+  "title": "Modules & npm",
+  "category": "Node.js Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to split your Node.js code into reusable modules and pull in thousands of open-source packages with npm.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine trying to cook every meal in a kitchen the size of a closet, with all your ingredients, pots, and recipe books crammed into one drawer. Real kitchens have separate shelves and pantries — each item in the right place so you can find it instantly. **Modules** do the same thing for your JavaScript code. Instead of piling everything into one enormous file, you split code into focused files and connect them wherever needed. And **npm** (the Node Package Manager) is the giant supermarket where other developers have placed over two million ready-to-use packages on the shelf, free for you to grab."
+    },
+    {
+      "type": "heading",
+      "text": "CommonJS — The Original Node.js Way"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "module.exports is a gift box",
+      "md": "Think of every `.js` file as a gift box. `module.exports` is what you put **inside** the box before handing it over. When another file calls `require('./yourFile')`, it opens the box and gets exactly what you packed. Anything you do NOT put in the box stays private to that file — hidden from the rest of the app."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// greet.js — pack the box\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nfunction farewell(name) {\n  return `Goodbye, ${name}!`;\n}\nmodule.exports = { greet, farewell };",
+      "caption": "Export an object containing every function you want to share with other files."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// app.js — open the box\nconst { greet, farewell } = require('./greet');\n\nconsole.log(greet('Alice'));\nconsole.log(farewell('Alice'));",
+      "output": "Hello, Alice!\nGoodbye, Alice!",
+      "caption": "require() returns whatever module.exports held. The './' prefix means \"look in the current folder\"."
+    },
+    {
+      "type": "heading",
+      "text": "ES Modules — The Modern Standard"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// mathUtils.mjs — named and default exports\n// ESM uses import/export keywords from the JS spec itself.\n// Enable it by naming the file .mjs, or add \"type\":\"module\" in package.json.\nexport function add(a, b) { return a + b; }\nexport function multiply(a, b) { return a * b; }\nexport default function square(n) { return n * n; }",
+      "caption": "Named exports use the 'export' keyword. A default export is the \"main thing\" the file provides — one per file. ESM works in browsers too, unlike CommonJS."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// main.mjs\nimport square, { add, multiply } from './mathUtils.mjs';\n\nconsole.log(add(3, 4));      // named import\nconsole.log(multiply(3, 4)); // named import\nconsole.log(square(5));      // default import",
+      "output": "7\n12\n25",
+      "caption": "The default import can have any name you choose. Named imports must match the exported name exactly."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "You cannot mix require and import in the same file",
+      "md": "CommonJS (`require`) and ESM (`import`) are two separate systems. A `.js` file using `require()` cannot also use `import` at the top level, and vice versa. Pick one style per project. For new projects, **ESM is the recommended choice** — it is the future of JavaScript modules."
+    },
+    {
+      "type": "heading",
+      "text": "npm, package.json, and Installing Packages"
+    },
+    {
+      "type": "text",
+      "md": "Every Node.js project starts with a `package.json` — a structured recipe card that records the project's name, version, and all the packages it depends on. Create one by running `npm init -y` in your project folder. Then install any package with `npm install <name>`.\n\nAfter installing, Node creates a **node_modules/** folder (never edit by hand) and a **package-lock.json** (exact version snapshot for teammates). Add `node_modules/` to your `.gitignore` — teammates restore it with `npm install`."
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Set up a new project\nmkdir my-app && cd my-app\nnpm init -y\n\n# Install a package (adds terminal colour)\nnpm install chalk",
+      "caption": "npm init -y generates package.json instantly. npm install adds chalk to node_modules/ and records it in package.json."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// index.js — use the installed package\nconst chalk = require('chalk');\n\nconsole.log(chalk.green('Success!'));\nconsole.log(chalk.red.bold('Error!'));\nconsole.log(chalk.blue('Info:'), 'server is running');",
+      "output": "Success!          (green text)\nError!            (red bold text)\nInfo: server is running   (blue label)",
+      "caption": "No file path needed — just the package name. Node finds it in node_modules/ automatically."
+    },
+    {
+      "type": "quiz",
+      "question": "You write `module.exports = { greet };` in greet.js. In another file you call `const result = require('./greet');`. What does `result` hold?",
+      "options": [
+        "The greet function directly, ready to call as result()",
+        "An object with a greet property that holds the function",
+        "The source code of greet.js as a string",
+        "undefined — you must call result.load() first"
+      ],
+      "answerIndex": 1,
+      "explanation": "require() returns exactly what module.exports was set to. Since module.exports was { greet }, result is that object — you call result.greet('Alice'), or destructure it: const { greet } = require('./greet')."
+    }
+  ],
+  "keyTakeaways": [
+    "Modules let you split code into focused files and share only what you explicitly export — keeping the rest private.",
+    "CommonJS uses require() and module.exports; ES Modules use import and export. Do not mix them in the same file.",
+    "npm is both a CLI tool and a huge registry. package.json records dependencies; node_modules/ stores them locally.",
+    "Run npm install <package-name> to add a library. Teammates restore everything with a plain npm install.",
+    "Semantic versioning (MAJOR.MINOR.PATCH) and the ^ prefix in package.json keep you on safe, compatible updates automatically."
+  ],
+  "exercise": {
+    "prompt": "Create a small Node.js project using CommonJS modules.\n\n1. In mathUtils.js, export two functions: `double(n)` which returns n * 2, and `isEven(n)` which returns true when n is even.\n2. In index.js, require those functions and log the results of calling double(7) and isEven(4).\n\nBonus: run `npm install chalk` and colour the output — green for even results, red for odd.",
+    "starterCode": "// mathUtils.js\n// TODO: write and export double(n) and isEven(n)\n\n\n// index.js\nconst { double, isEven } = require('./mathUtils');\n\n// TODO: log double(7) and isEven(4)\n",
+    "hint": "Use module.exports = { double, isEven } to export both functions at once. In index.js, write require('./mathUtils') — the './' prefix is important so Node looks in the current folder, not in node_modules.",
+    "solution": "// mathUtils.js\nfunction double(n) {\n  return n * 2;\n}\n\nfunction isEven(n) {\n  return n % 2 === 0;\n}\n\nmodule.exports = { double, isEven };\n\n// index.js\nconst { double, isEven } = require('./mathUtils');\n\nconsole.log('double(7):', double(7));   // 14\nconsole.log('isEven(4):', isEven(4));   // true\nconsole.log('isEven(7):', isEven(7));   // false\n\n// Bonus with chalk:\n// const chalk = require('chalk');\n// const n = 4;\n// const even = isEven(n);\n// console.log(even ? chalk.green('Even!') : chalk.red('Odd!'));"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "slug": "overfitting-underfitting",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Using the lesson's train-vs-test framing, this prints the generalization gap for each model. What does it print?",
+      "code": "train_err = [0.60, 0.15, 0.01]\ntest_err  = [1.00, 1.30, 4.20]\n\nfor tr, te in zip(train_err, test_err):\n    gap = te - tr\n    print(f\"gap: {gap:.2f}\")",
+      "options": [
+        "gap: 0.40\ngap: 1.15\ngap: 4.19",
+        "gap: 1.60\ngap: 1.45\ngap: 4.21",
+        "gap: 0.40\ngap: 1.30\ngap: 4.20"
+      ],
+      "answerIndex": 0,
+      "explanation": "The generalization gap is test error minus training error, so each line is te - tr: 1.00-0.60=0.40, 1.30-0.15=1.15, 4.20-0.01=4.19. Notice the gap explodes as training error shrinks toward zero — that widening gap is the signature of overfitting."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "train, test = train_test_split(dataset, test_fraction=0.25)\n\nmodel = fit(train)\n\n# Report how good the model is\npreds = [model.predict(x) for x, _ in train]\nscore = mean_squared_error([y for _, y in train], preds)\nprint(f\"Model MSE: {score:.2f}\")",
+      "options": [
+        "It scores the model on the training set, so it can't reveal overfitting — the honest score must be measured on the held-out test set",
+        "test_fraction should be 0.25 written as the integer 25, not a decimal",
+        "mean_squared_error should divide by len(preds) - 1, not len(preds)"
+      ],
+      "answerIndex": 0,
+      "explanation": "The model is evaluated on the very data it was trained on, which flatters a model that merely memorized. The whole point of the split is to score on the untouched test set (use test, not train) — only held-out data exposes the generalization gap and overfitting."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the scikit-learn call from the lesson so it runs 5-fold cross-validation. Fill in the argument value that sets the number of folds.",
+      "codeTemplate": "from sklearn.model_selection import cross_val_score\n\nscores = cross_val_score(model, X, y, cv={{blank}})\nprint(scores.mean())",
+      "blanks": [
+        {
+          "answer": "5",
+          "accept": [
+            "5 ",
+            " 5",
+            "k",
+            "5,"
+          ]
+        }
+      ],
+      "explanation": "k-fold cross-validation splits the data into k chunks; cv=5 means 5 folds — train on 4, test on 1, repeat 5 times, and average. The averaged score is far more trustworthy than a single train/test split because every point gets used for testing exactly once."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to honestly measure the generalization gap, following the lesson's from-scratch approach.",
+      "lines": [
+        "train, test = train_test_split(dataset, test_fraction=0.25)",
+        "model = fit(train)",
+        "train_mse = mean_squared_error([y for _, y in train], [model(x) for x, _ in train])",
+        "test_mse  = mean_squared_error([y for _, y in test],  [model(x) for x, _ in test])",
+        "print(f\"Generalization gap: {test_mse - train_mse:.1f}\")"
+      ],
+      "explanation": "First split off a held-out test set, then fit the model only on the training data. Next measure error on train and on the untouched test set, and finally report test minus train as the generalization gap. Fitting must come before scoring, and the gap can't be computed until both errors exist."
+    }
+  ]
+}

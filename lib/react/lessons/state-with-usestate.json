@@ -1,0 +1,129 @@
+{
+  "slug": "state-with-usestate",
+  "title": "State with useState",
+  "category": "State & Interaction",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how useState gives your React components memory — letting them track data that changes over time and automatically update the screen when it does.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "So far you've built React components that always display the same thing — they receive props and render HTML. That's great for static content, but real apps need to *react* to the user. A button that counts clicks. A toggle that shows or hides a menu. A form that tracks what you've typed.\n\nAll of these need **state** — data that can change over time and that should cause the component to update what it shows. This is where React's `useState` hook comes in, and it's one of the most satisfying moments in learning React."
+    },
+    {
+      "type": "heading",
+      "text": "What Is State, Exactly?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Scoreboard at a Sports Game",
+      "md": "Think of a scoreboard at a basketball game. The scoreboard always shows the *current* score. When a team scores, the number changes and the scoreboard immediately reflects the new value.\n\nIn React, **state is your component's scoreboard**. It holds the current value of something that can change. When you update state, React automatically re-renders the component — just like the scoreboard updating the moment a basket is scored. You never have to manually touch the DOM."
+    },
+    {
+      "type": "text",
+      "md": "State is different from props in one key way: **a component owns and controls its own state**, whereas props are handed down from a parent. If you need a number that changes when a button is clicked, that number lives in state — not in props."
+    },
+    {
+      "type": "heading",
+      "text": "Importing and Calling useState"
+    },
+    {
+      "type": "text",
+      "md": "`useState` is a **hook** — a special function React provides that lets you \"hook into\" React features from inside a function component. You import it from the `react` package and call it at the top of your component."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <p>You clicked {count} times</p>\n      <button onClick={() => setCount(count + 1)}>\n        Click me\n      </button>\n    </div>\n  );\n}",
+      "output": "A paragraph showing \"You clicked 0 times\" and a button. Each click increments the number.",
+      "caption": "A minimal but complete counter component using useState."
+    },
+    {
+      "type": "text",
+      "md": "Let's unpack that one line: `const [count, setCount] = useState(0);`\n\n- **`useState(0)`** — calls the hook and tells React: \"this state variable starts at `0`\".\n- **`count`** — the current value of the state. Use this anywhere you'd use a regular variable.\n- **`setCount`** — the *setter* function. Call it whenever you want to change the value. React will update `count` and re-render the component automatically.\n\nThe square brackets are JavaScript **array destructuring** — `useState` returns a two-element array, and you're naming those two elements."
+    },
+    {
+      "type": "heading",
+      "text": "Why Never Mutate State Directly"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Never Do This",
+      "md": "```jsx\n// WRONG — React won't know anything changed!\ncount = count + 1;\n```\n\nIf you change `count` directly, React has no idea the value changed, so it never re-renders. The screen stays frozen even though the variable updated. **Always use the setter function** (`setCount`) — that's the signal React listens for."
+    },
+    {
+      "type": "text",
+      "md": "React works by comparing the previous state to the new state. When you call `setCount(newValue)`, React schedules a re-render with the updated value. Mutating the variable directly bypasses this system entirely — it's like changing the scoreboard's wiring without flipping the switch."
+    },
+    {
+      "type": "heading",
+      "text": "The Updater Function Form"
+    },
+    {
+      "type": "text",
+      "md": "Most of the time passing a value directly works fine: `setCount(count + 1)`. But there's a subtle problem if you call the setter *multiple times in one event handler* — React batches those updates, so each call might read the same stale value of `count`.\n\nThe safe pattern is the **updater function form**: instead of passing the next value, you pass a function that receives the *guaranteed-current* previous value and returns the next one."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// Directly passing a value — usually fine\nsetCount(count + 1);\n\n// Updater function form — always safe\nsetCount(prevCount => prevCount + 1);\n\n// Example: incrementing twice correctly\nfunction handleDoubleClick() {\n  setCount(prev => prev + 1); // first\n  setCount(prev => prev + 1); // second — reads updated prev!\n}",
+      "output": "Calling handleDoubleClick increments count by 2 as expected.",
+      "caption": "Use the updater function whenever the new value depends on the old value, especially in rapid or batched updates."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Naming Convention",
+      "md": "By convention, name the previous-value argument with a `prev` prefix: `prevCount`, `prevItems`, `prevIsOpen`. This makes it immediately clear you're working with the previous state, not some other variable."
+    },
+    {
+      "type": "heading",
+      "text": "State Can Hold Any Value"
+    },
+    {
+      "type": "text",
+      "md": "`useState` isn't limited to numbers. You can store strings, booleans, arrays, objects — anything JavaScript can hold."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function ToggleMessage() {\n  const [isVisible, setIsVisible] = useState(false);\n\n  return (\n    <div>\n      <button onClick={() => setIsVisible(prev => !prev)}>\n        {isVisible ? 'Hide' : 'Show'} message\n      </button>\n      {isVisible && <p>Hello there! 👋</p>}\n    </div>\n  );\n}",
+      "output": "A button labeled \"Show message\". Clicking it reveals a paragraph and changes the label to \"Hide message\".",
+      "caption": "A boolean state value toggling a piece of UI on and off."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Each Component Instance Has Its Own State",
+      "md": "If you render `<Counter />` twice on the same page, each one gets its own completely independent `count`. Clicking the button on one counter has zero effect on the other. State lives *inside* the component instance, not globally."
+    },
+    {
+      "type": "quiz",
+      "question": "You want to increment a counter by 1. Which of the following is the SAFEST way to update state?",
+      "options": [
+        "count = count + 1",
+        "setCount(count + 1)",
+        "setCount(prev => prev + 1)",
+        "useState(count + 1)"
+      ],
+      "answerIndex": 2,
+      "explanation": "The updater function form `setCount(prev => prev + 1)` is safest because it always receives the guaranteed-current previous value from React, even if multiple state updates are batched together. Mutating `count` directly never triggers a re-render. `setCount(count + 1)` works in simple cases but can read a stale value when updates are batched. Calling `useState` again is not how you update state."
+    }
+  ],
+  "keyTakeaways": [
+    "`useState(initialValue)` returns `[currentValue, setterFn]` — use the setter to update, never mutate directly.",
+    "Calling the setter tells React the value changed, triggering an automatic re-render of the component.",
+    "Use the updater function form `setState(prev => ...)` whenever the new value depends on the previous one.",
+    "Each component instance has its own independent copy of its state.",
+    "State can hold any JavaScript value: numbers, strings, booleans, arrays, or objects."
+  ],
+  "exercise": {
+    "prompt": "Build a `LikeButton` component. It should display a count starting at 0 and a button labeled \"Like\". Each time the button is clicked, the count should go up by 1. Use the updater function form of `setCount`.",
+    "starterCode": "import { useState } from 'react';\n\nfunction LikeButton() {\n  // TODO: add a state variable called `likes` starting at 0\n\n  return (\n    <div>\n      {/* TODO: show the current number of likes */}\n      {/* TODO: add a button that increments likes using the updater form */}\n    </div>\n  );\n}\n\nexport default LikeButton;",
+    "hint": "Remember: `const [likes, setLikes] = useState(0);` gives you the state variable and its setter. For the updater form, pass a function: `setLikes(prev => prev + 1)`.",
+    "solution": "import { useState } from 'react';\n\nfunction LikeButton() {\n  const [likes, setLikes] = useState(0);\n\n  return (\n    <div>\n      <p>{likes} {likes === 1 ? 'Like' : 'Likes'}</p>\n      <button onClick={() => setLikes(prev => prev + 1)}>\n        Like\n      </button>\n    </div>\n  );\n}\n\nexport default LikeButton;"
+  }
+}

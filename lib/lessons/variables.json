@@ -114,8 +114,8 @@
     },
     {
       "type": "code",
-      "code": "MAX_RETRIES = 3\nPI = 3.14159\nAPP_NAME = \"PyQuest\"\n\nprint(APP_NAME, \"allows up to\", MAX_RETRIES, \"retries\")",
-      "output": "PyQuest allows up to 3 retries",
+      "code": "MAX_RETRIES = 3\nPI = 3.14159\nAPP_NAME = \"Quest\"\n\nprint(APP_NAME, \"allows up to\", MAX_RETRIES, \"retries\")",
+      "output": "Quest allows up to 3 retries",
       "caption": "UPPER_CASE names are a signal that the value is a constant"
     },
     {

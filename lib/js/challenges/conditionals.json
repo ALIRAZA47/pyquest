@@ -1,0 +1,57 @@
+{
+  "slug": "conditionals",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson lists exactly six falsy values. What does this code log?",
+      "code": "const username = \"\";\n\nif (username) {\n  console.log(\"Hello, \" + username);\n} else {\n  console.log(\"Please enter a username.\");\n}",
+      "options": [
+        "Hello, ",
+        "Please enter a username.",
+        "\"\"",
+        "It throws an error"
+      ],
+      "answerIndex": 1,
+      "explanation": "An empty string \"\" is one of the six falsy values, so `if (username)` evaluates to false and the else branch runs. Only false, 0, \"\", null, undefined, and NaN are falsy; every other value (including non-empty strings) is truthy."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const day = \"Wednesday\";\n\nswitch (day) {\n  case \"Monday\":\n    console.log(\"Start of the work week.\");\n  case \"Wednesday\":\n    console.log(\"Halfway there!\");\n  case \"Friday\":\n    console.log(\"Almost the weekend!\");\n  default:\n    console.log(\"Just another day.\");\n}",
+      "options": [
+        "switch cannot be used to compare strings, only numbers",
+        "Each case is missing a break, so execution falls through into the cases below the match",
+        "The default case must come before the other cases",
+        "case values must be wrapped in parentheses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without a `break` at the end of each case, execution \"falls through\" to the following cases. Here the match on \"Wednesday\" would log \"Halfway there!\", then keep going and also log \"Almost the weekend!\" and \"Just another day.\" Adding break after each case stops that."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the ternary so `result` is \"Pass\" when the score is 60 or higher, and \"Fail\" otherwise.",
+      "codeTemplate": "const score = 72;\nconst result = score >= 60 {{blank}} \"Pass\" : \"Fail\";\n\nconsole.log(result); // Pass",
+      "blanks": [
+        {
+          "answer": "?",
+          "accept": ["?"]
+        }
+      ],
+      "explanation": "The ternary operator has the form `condition ? valueIfTrue : valueIfFalse`. The `?` separates the condition from the true value, and the `:` separates the true value from the false value. It's a compact one-liner alternative to a full if/else when you just need to choose between two values."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a getTicketPrice function that returns \"Free\" for ages under 5 and \"$8\" for ages 5–12, checking the smallest range first.",
+      "lines": [
+        "function getTicketPrice(age) {",
+        "  if (age < 5) {",
+        "    return \"Free\";",
+        "  } else if (age <= 12) {",
+        "    return \"$8\";",
+        "  }",
+        "}"
+      ],
+      "explanation": "Order the checks from the smallest range upward so each condition narrows what remains. `age < 5` is tested first; only if that fails does `age <= 12` get checked. Because an if/else if chain stops at the first true branch, this correctly maps young children to \"Free\" and ages 5–12 to \"$8\"."
+    }
+  ]
+}

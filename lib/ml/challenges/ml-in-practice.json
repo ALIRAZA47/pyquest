@@ -1,0 +1,57 @@
+{
+  "slug": "ml-in-practice",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is a minimal data-cleaning pass over a tiny raw dataset with problems. What does it print?",
+      "code": "raw = [\n    {\"age\": 40, \"income\": 70000},   # valid\n    {\"age\": None, \"income\": 52000}, # missing age\n    {\"age\": 150, \"income\": 60000},  # outlier age\n    {\"age\": 33, \"income\": 55000},   # valid\n    {\"age\": 33, \"income\": 55000},   # duplicate\n]\n\nclean = []\nseen = set()\nfor row in raw:\n    if row[\"age\"] is None: continue\n    if row[\"age\"] > 120:   continue\n    key = (row[\"age\"], row[\"income\"])\n    if key in seen:        continue\n    seen.add(key)\n    clean.append(row)\n\nprint(f\"Raw rows: {len(raw)}, Clean rows: {len(clean)}\")",
+      "options": [
+        "Raw rows: 5, Clean rows: 2",
+        "Raw rows: 5, Clean rows: 3",
+        "Raw rows: 5, Clean rows: 5",
+        "Raw rows: 5, Clean rows: 4"
+      ],
+      "answerIndex": 0,
+      "explanation": "Walk through the five rows: the first (age 40) is kept, the None-age row is dropped as missing, the age-150 row is dropped as an outlier (> 120), the age-33 row is kept, and the second age-33 row is dropped as a duplicate. That leaves exactly 2 clean rows. Each guard removes one common data problem — missing values, outliers, and duplicates."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "A fraud model is evaluated on an imbalanced test set (only 1 of 10 cases is fraud). The model lazily predicts 0 (not-fraud) for everything. What does it print?",
+      "code": "y_true = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]\ny_pred = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # always predicts 'not fraud'\n\ncorrect  = sum(t == p for t, p in zip(y_true, y_pred))\naccuracy = correct / len(y_true)\nprint(f\"Accuracy: {accuracy:.2f}\")",
+      "options": [
+        "Accuracy: 0.90",
+        "Accuracy: 1.00",
+        "Accuracy: 0.50",
+        "Accuracy: 0.10"
+      ],
+      "answerIndex": 0,
+      "explanation": "The model is correct on all 9 not-fraud cases and wrong only on the single fraud case, so 9/10 = 0.90. This is exactly why accuracy is misleading on imbalanced data: a model that learned nothing still 'looks' 90% accurate. Its recall on the fraud class is 0 — it catches zero true positives — which is what actually matters here."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the precision calculation. Precision asks: when the model says positive, how often is it right? Fill in the denominator.",
+      "codeTemplate": "tp = sum(t == 1 and p == 1 for t, p in zip(y_true, y_pred))\nfp = sum(t == 0 and p == 1 for t, p in zip(y_true, y_pred))\nfn = sum(t == 1 and p == 0 for t, p in zip(y_true, y_pred))\n\nprecision = tp / ({{blank}}) if (tp + fp) > 0 else 0",
+      "blanks": [
+        {
+          "answer": "tp + fp",
+          "accept": ["tp+fp", "fp + tp", "fp+tp", "tp +fp", "tp+ fp"]
+        }
+      ],
+      "explanation": "Precision = tp / (tp + fp): of all the cases the model labelled positive, what fraction were truly positive? The denominator is every positive prediction, which is the true positives plus the false positives. Recall, by contrast, uses tp / (tp + fn) — of all the real positives, how many did the model catch?"
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the seven stages of the ML workflow into the correct order, from the start of a project to keeping it healthy in production.",
+      "lines": [
+        "Define the problem — one crisp sentence on what you predict and how you measure success",
+        "Gather and clean the data — handle missing values, outliers, and duplicates",
+        "Split the data — set aside a test set before touching anything else",
+        "Pick a model — start simple, like Logistic Regression or a Decision Tree",
+        "Train the model on the training set",
+        "Evaluate on the untouched test set using the right metric",
+        "Tune, deploy, and monitor for drift over time"
+      ],
+      "explanation": "The workflow runs: define, clean, split, pick, train, evaluate, then tune/deploy/monitor. Splitting comes right after cleaning and before any feature work so no test-set information leaks into training. Evaluation must happen on the sealed test set, and monitoring matters because models drift as the world changes — the workflow is a cycle, not a straight line."
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "slug": "handling-events",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function HelloButton() {\n  function handleClick() {\n    alert('Hello from React!');\n  }\n\n  return <button onClick={handleClick()}>Say Hello</button>;\n}",
+      "options": [
+        "handleClick() is called immediately during render — pass the reference handleClick, without the parentheses",
+        "alert is not allowed inside a React component",
+        "onClick should be written as onclick to match the HTML attribute",
+        "handleClick must be defined outside the component to work"
+      ],
+      "answerIndex": 0,
+      "explanation": "The golden rule of event handling: pass the function, don't call it. Writing onClick={handleClick()} runs handleClick during render (firing the alert instantly) and hands its return value to onClick. Drop the parentheses — onClick={handleClick} — so React calls it later, when the button is actually clicked."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "This handler logs a message. When does the console.log run, given how onClick is wired up here?",
+      "code": "function Logger() {\n  function report() {\n    console.log('clicked!');\n  }\n\n  return <button onClick={report}>Go</button>;\n}",
+      "options": [
+        "Nothing logs until the user clicks the button, then 'clicked!' logs once per click",
+        "'clicked!' logs immediately when the component renders, before any click",
+        "'clicked!' logs on every render forever, causing an infinite loop",
+        "Nothing ever logs because report is never called"
+      ],
+      "answerIndex": 0,
+      "explanation": "onClick={report} hands React the function reference without calling it. React holds onto it and invokes it only when the click event fires, so 'clicked!' logs once each time the user clicks — not during render."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "This controlled input keeps state in sync as the user types. Inside handleChange, fill in the property that holds the input's current text so it can be passed to setName.",
+      "codeTemplate": "function NameInput() {\n  const [name, setName] = useState('');\n\n  function handleChange(e) {\n    setName(e.target.{{blank}});\n  }\n\n  return <input value={name} onChange={handleChange} />;\n}",
+      "blanks": [
+        {
+          "answer": "value",
+          "accept": ["value", "Value"]
+        }
+      ],
+      "explanation": "The onChange event fires on every keystroke and hands your handler an event object. e.target is the input element, and e.target.value is the current text inside it. Passing that to setName re-renders the component with the updated value."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a TodoList that maps over items and gives each Delete button an onClick that passes the correct item to handleDelete.",
+      "lines": [
+        "function TodoList({ items }) {",
+        "  function handleDelete(item) { console.log('Deleting:', item); }",
+        "  return items.map((item) => (",
+        "    <button key={item} onClick={() => handleDelete(item)}>Delete</button>",
+        "  ));",
+        "}"
+      ],
+      "explanation": "To pass an extra argument to a handler, wrap it in an inline arrow function: onClick={() => handleDelete(item)}. The arrow function is the reference React stores; only when clicked does it call handleDelete with the right item. Writing onClick={handleDelete(item)} would call it during render instead. Each mapped element also needs a stable key."
+    }
+  ]
+}

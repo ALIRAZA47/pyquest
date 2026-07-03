@@ -1,0 +1,55 @@
+{
+  "slug": "generics",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "TypeScript infers T from the argument. What does this code print at runtime?",
+      "code": "function identity<T>(value: T): T {\n  return value;\n}\n\nconst str = identity(\"hello\");\nconsole.log(str.toUpperCase());",
+      "options": [
+        "HELLO",
+        "hello",
+        "T",
+        "undefined"
+      ],
+      "answerIndex": 0,
+      "explanation": "TypeScript infers T = string from the argument \"hello\", so str is typed as string and .toUpperCase() is allowed. At runtime the type annotations are erased, and the actual string \"hello\" is uppercased to \"HELLO\"."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function logLength<T>(item: T): T {\n  console.log(`Length: ${item.length}`);\n  return item;\n}\n\nlogLength(\"typescript\");",
+      "options": [
+        "T is unconstrained, so TypeScript can't guarantee item has a .length property — it needs T extends HasLength",
+        "You cannot use a template literal inside a generic function",
+        "The function must return void when it logs something",
+        "A generic function can only accept arrays, not strings"
+      ],
+      "answerIndex": 0,
+      "explanation": "With just <T>, T could be anything — including a number, which has no .length. TypeScript reports \"Property 'length' does not exist on type 'T'\". Adding a constraint like <T extends HasLength> (where HasLength has length: number) tells TypeScript every T is guaranteed to have .length, so the access becomes safe."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the type parameter declaration so this identity function is generic over a type T, reusing the lesson's <T> syntax.",
+      "codeTemplate": "function identity<{{blank}}>(value: T): T {\n  return value;\n}\n\nconst num = identity(42); // T inferred as number",
+      "blanks": [
+        {
+          "answer": "T",
+          "accept": ["t"]
+        }
+      ],
+      "explanation": "You declare a type parameter by naming it between angle brackets right after the function name: function identity<T>. T is then a placeholder you can use as the parameter type and the return type. TypeScript infers the real type (here number) from each call."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to define a generic Box<T> interface, then create a Box that holds a number — matching the lesson's example.",
+      "lines": [
+        "interface Box<T> {",
+        "  label: string;",
+        "  value: T;",
+        "}",
+        "const scoreBox: Box<number> = { label: \"score\", value: 99 };"
+      ],
+      "explanation": "First declare the generic interface with its type parameter <T>, then list its members (label is always a string; value uses the placeholder T). After the closing brace you can use the interface, supplying number as the concrete type argument so value must be a number."
+    }
+  ]
+}

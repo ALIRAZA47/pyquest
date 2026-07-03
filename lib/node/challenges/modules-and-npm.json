@@ -1,0 +1,50 @@
+{
+  "slug": "modules-and-npm",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "greet.js exports an object. What does this program print?",
+      "code": "// greet.js\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nmodule.exports = { greet };\n\n// app.js\nconst { greet } = require('./greet');\nconsole.log(greet('Alice'));",
+      "options": [
+        "Hello, Alice!",
+        "[Function: greet]",
+        "{ greet: [Function: greet] }",
+        "undefined"
+      ],
+      "answerIndex": 0,
+      "explanation": "require('./greet') returns whatever module.exports held — the object { greet }. Destructuring pulls out the greet function, so greet('Alice') runs and returns the template string 'Hello, Alice!'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This CommonJS import doesn't find the local file — what's wrong?",
+      "code": "// app.js — greet.js sits in the same folder\nconst { greet } = require('greet');\n\nconsole.log(greet('Bob'));",
+      "options": [
+        "require must be written as import when loading local files",
+        "The path is missing the './' prefix — it should be require('./greet')",
+        "You cannot destructure the result of require()",
+        "greet.js must be renamed to greet.mjs first"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without './', Node looks inside node_modules/ for a published package named 'greet' instead of your local file. The './' prefix tells Node to look in the current folder, so require('./greet') loads your file."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this ES Module so main.mjs can import add as a named import and square as the default import.",
+      "codeTemplate": "// mathUtils.mjs\nexport function add(a, b) { return a + b; }\nexport {{blank}} function square(n) { return n * n; }",
+      "blanks": [
+        { "answer": "default", "accept": ["default"] }
+      ],
+      "explanation": "A default export is the 'main thing' a file provides — one per file. Writing 'export default function square' lets another file import it under any name (e.g. import square from './mathUtils.mjs'), while add stays a named export."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order these terminal commands to create a new project and install the chalk package.",
+      "lines": [
+        "mkdir my-app && cd my-app",
+        "npm init -y",
+        "npm install chalk"
+      ],
+      "explanation": "First make and enter the project folder, then run npm init -y to generate package.json, then npm install chalk to add the package. Installing before package.json exists means npm has nowhere to record the dependency."
+    }
+  ]
+}

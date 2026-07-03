@@ -1,0 +1,53 @@
+{
+  "slug": "the-dom",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson shows that querySelectorAll returns a NodeList of every match, and that forEach visits each one in order. Given this list, what gets logged?",
+      "code": "// HTML: <ul>\n//   <li class=\"item\">Apples</li>\n//   <li class=\"item\">Bananas</li>\n//   <li class=\"item\">Cherries</li>\n// </ul>\n\nconst items = document.querySelectorAll('.item');\nconsole.log(items.length);\nconsole.log(items[0].textContent);",
+      "options": [
+        "3\nApples",
+        "1\nApples",
+        "3\nCherries",
+        "undefined\nApples"
+      ],
+      "answerIndex": 0,
+      "explanation": "querySelectorAll returns ALL matching elements as a NodeList, so items.length is 3 for the three .item elements. A NodeList is indexable like an array, so items[0] is the first match, and its textContent is the plain text 'Apples'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to add a 'highlight' class to the card without disturbing its existing classes. It has a bug — what's wrong?",
+      "code": "// HTML: <div class=\"card rounded\"></div>\n\nconst card = document.querySelector('.card');\ncard.setAttribute('class', 'highlight');\nconsole.log(card.className); // wanted: \"card rounded highlight\"",
+      "options": [
+        "setAttribute('class', ...) overwrites ALL existing classes; use card.classList.add('highlight') instead",
+        "The selector should be '#card', because setAttribute only works on elements found by id",
+        "You must read the class first with getAttribute before you are allowed to set it",
+        "className is read-only, so the log will always be empty no matter what you set"
+      ],
+      "answerIndex": 0,
+      "explanation": "setAttribute('class', 'highlight') replaces the entire class attribute, wiping out 'card' and 'rounded'. As the lesson stresses, let classList do the work: card.classList.add('highlight') appends the class while leaving the others intact."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this snippet. Select the single element whose id is 'title', then safely replace its plain text with 'Hello, DOM!'. Fill in the method that finds the first match and the property that reads or replaces text.",
+      "codeTemplate": "const title = document.{{blank}}('#title');\ntitle.{{blank}} = 'Hello, DOM!';",
+      "blanks": [
+        { "answer": "querySelector", "accept": ["querySelector()", ".querySelector"] },
+        { "answer": "textContent", "accept": [".textContent", "textContent;"] }
+      ],
+      "explanation": "querySelector returns the FIRST element matching a CSS selector, and '#title' targets the element with id 'title'. Setting textContent replaces the element's plain text safely, without ever interpreting HTML tags — the lesson's recommended choice when you only need text."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in order to select an anchor, swap its href to a new URL, and then read the new value back. The steps should run in a sensible top-to-bottom sequence.",
+      "lines": [
+        "const link = document.querySelector('a');",
+        "console.log(link.getAttribute('href'));",
+        "link.setAttribute('href', 'https://mozilla.org');",
+        "link.setAttribute('target', '_blank');",
+        "console.log(link.getAttribute('href'));"
+      ],
+      "explanation": "You must select the element before touching it, so querySelector('a') comes first. Logging the original href shows the starting value, then setAttribute updates href and adds target='_blank'. The final getAttribute reads the freshly-set href, confirming the change took effect."
+    }
+  ]
+}

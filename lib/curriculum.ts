@@ -1,6 +1,6 @@
 import type { CategoryMeta } from "./types";
 
-// The complete PyQuest curriculum — the ordered spine of the whole course.
+// The complete Quest curriculum — the ordered spine of the whole course.
 // Each entry lists the lesson slugs that belong to a category, in learning
 // order. The lesson content itself lives in lib/lessons-data.ts.
 

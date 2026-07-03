@@ -8,6 +8,7 @@ import { useProgress } from "@/components/ProgressContext";
 import { XP } from "@/lib/gamification";
 import { fireConfetti } from "@/components/confetti";
 import { Glyph } from "@/components/glyphs";
+import { EmptyIllustration } from "@/components/Illustrations";
 import { CheckIcon, CloseIcon, ArrowRight } from "@/components/Icons";
 
 interface RQ {
@@ -106,10 +107,8 @@ export default function ReviewPage() {
     return (
       <div className="mx-auto grid min-h-[60vh] max-w-md place-items-center px-6 text-center">
         <div>
-          <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-accent/10 text-accent">
-            <Glyph name="loop" className="h-10 w-10" />
-          </div>
-          <h1 className="mt-4 text-2xl font-black tracking-tight">
+          <EmptyIllustration className="mx-auto w-52" />
+          <h1 className="mt-2 text-2xl font-black tracking-tight">
             Nothing to review yet
           </h1>
           <p className="mt-2 text-muted">

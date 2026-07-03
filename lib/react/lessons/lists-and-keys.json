@@ -1,0 +1,152 @@
+{
+  "slug": "lists-and-keys",
+  "title": "Lists & Keys",
+  "category": "State & Interaction",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to turn any JavaScript array into a list of React elements using .map(), and discover why the key prop is the secret ingredient that keeps things fast and correct.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Almost every real-world app displays collections of things — a todo list, a set of product cards, a stream of messages, a nav menu. React doesn't have a special \"list\" syntax for this. Instead, it leans on something you already know from plain JavaScript: **arrays**. The moment you realize that JSX is just JavaScript, turning a list of data into a list of UI becomes natural. This lesson shows you exactly how, and introduces the `key` prop — a small detail that prevents a surprising class of bugs."
+    },
+    {
+      "type": "heading",
+      "text": "From Data to UI: The .map() Pattern"
+    },
+    {
+      "type": "text",
+      "md": "In React, if you want to render a list, you convert an array of data into an array of JSX elements. The tool for that is the native JavaScript `Array.prototype.map()` method. It takes every item in an array and transforms it into something else — in our case, into a JSX element.\n\nHere's a simple array of fruit names rendered as list items:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "const fruits = ['Apple', 'Banana', 'Cherry'];\n\nfunction FruitList() {\n  return (\n    <ul>\n      {fruits.map((fruit) => (\n        <li key={fruit}>{fruit}</li>\n      ))}\n    </ul>\n  );\n}",
+      "output": "A bullet list: Apple, Banana, Cherry.",
+      "caption": "JSX lets you embed any JavaScript expression inside curly braces — including the result of .map()."
+    },
+    {
+      "type": "text",
+      "md": "Notice the pattern: you write `{array.map((item) => <Element .../>)}` right inside your JSX. React sees the resulting array of elements and renders each one in order. The curly braces are the door between JSX and JavaScript — and `.map()` lives on the JavaScript side."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Stamping Machine",
+      "md": ".map() is like a stamping machine on a factory floor. You feed raw blanks (your data array) in one end, and out the other end comes one stamped part (a JSX element) for every blank that went in. The machine itself doesn't care how many blanks you give it — ten or ten thousand, each one gets the same treatment."
+    },
+    {
+      "type": "heading",
+      "text": "Working with Objects — Richer Data"
+    },
+    {
+      "type": "text",
+      "md": "In real apps your data will almost always be an array of **objects**, not plain strings. Each object has an `id` and other fields. Here's how you'd render a list of user cards:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "const users = [\n  { id: 1, name: 'Aiko Tanaka', role: 'Designer' },\n  { id: 2, name: 'Marcus Bell', role: 'Engineer' },\n  { id: 3, name: 'Sofia Reyes', role: 'PM' },\n];\n\nfunction UserList() {\n  return (\n    <ul>\n      {users.map((user) => (\n        <li key={user.id}>\n          <strong>{user.name}</strong> — {user.role}\n        </li>\n      ))}\n    </ul>\n  );\n}",
+      "output": "A list: Aiko Tanaka — Designer, Marcus Bell — Engineer, Sofia Reyes — PM.",
+      "caption": "Use the object's unique id field as the key — never the display name, which might not be unique."
+    },
+    {
+      "type": "heading",
+      "text": "What Is the key Prop, and Why Does React Need It?"
+    },
+    {
+      "type": "text",
+      "md": "You may have noticed `key={user.id}` in every example. If you leave it off, React will still render the list — but it will print a warning in the console. The `key` prop is not something you use inside the component; it's a **hint to React itself** about how to track each element across re-renders.\n\nHere's the problem React is solving: when your list changes — an item is added, removed, or reordered — React needs to figure out which existing DOM nodes to update, reuse, or remove. Without a key, React's only option is to compare elements by their **position**. With a key, it can match elements by **identity**, even if they've moved."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Nameplates on Seats",
+      "md": "Imagine a classroom where students can move around between lessons. If you only track seats by row number, and a student in row 2 leaves, everyone behind them shifts up — and suddenly your notes say row 3 is \"Maria\" when it's now \"Carlos\". But if every seat has a **nameplate**, you can always find the right student regardless of where they're sitting. The `key` is React's nameplate — a stable identity that survives reordering."
+    },
+    {
+      "type": "heading",
+      "text": "Why Index-as-Key Can Cause Bugs"
+    },
+    {
+      "type": "text",
+      "md": "When developers first see the `key` warning, a common instinct is to silence it with the array index — the second argument `.map()` provides automatically:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// Tempting, but dangerous when the list can change\n{items.map((item, index) => (\n  <li key={index}>{item.name}</li>\n))}",
+      "caption": "This suppresses the warning — but it doesn't actually give React the stable identity it needs."
+    },
+    {
+      "type": "text",
+      "md": "This works fine for a **static** list that never changes. The moment your list can be reordered, filtered, or have items inserted or removed in the middle, you have a problem: the index of each item changes, so React thinks the *element* at position 0 is still the same element, even if it's now showing completely different data. This can cause UI state — like text in an `<input>` inside a list item — to get attached to the wrong item."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Index Keys + Stateful Children = Silent Corruption",
+      "md": "Consider a list of `<input>` fields keyed by index. The user types into item 2. Then item 1 is deleted. React reuses the same DOM node for what is now item 2 (was item 3) — but the key is still `1`, so React thinks nothing moved. The typed value stays in the wrong input. This bug is invisible until it happens in production with real users. **Rule of thumb:** only use index keys when the list is static and never reordered."
+    },
+    {
+      "type": "heading",
+      "text": "The Right Key: Stable, Unique, Not Random"
+    },
+    {
+      "type": "text",
+      "md": "A good key has three properties:\n\n1. **Unique among siblings** — two items in the same list can't share a key (though items in different lists can).\n2. **Stable across re-renders** — the same item must get the same key every time the component re-renders.\n3. **Not randomly generated** — writing `key={Math.random()}` gives a new key every render, defeating the entire purpose.\n\nIf your data comes from a database, the row's primary key (e.g. `user.id`) is almost always the right choice. If you generate data on the client, use a library like `uuid` or an incrementing counter to assign IDs when the item is *created*, not when it is *rendered*."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// Good: stable database ID\n<li key={post.id}>{post.title}</li>\n\n// Good: stable client-generated ID (assigned at creation)\n<li key={task.uuid}>{task.label}</li>\n\n// Bad: changes every render\n<li key={Math.random()}>{item.name}</li>\n\n// Bad: changes when list is reordered\n<li key={index}>{item.name}</li>",
+      "caption": "Quick reference: what makes a key good or bad."
+    },
+    {
+      "type": "heading",
+      "text": "Extracting List Items Into a Component"
+    },
+    {
+      "type": "text",
+      "md": "As your list items grow more complex, it's a good idea to extract each item into its own component. One important rule: **the `key` prop goes on the outermost element returned by `.map()`** — not inside the child component."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function UserCard({ user }) {\n  // key is NOT a prop — you can't read it inside here\n  return (\n    <li>\n      <strong>{user.name}</strong> — {user.role}\n    </li>\n  );\n}\n\nfunction UserList({ users }) {\n  return (\n    <ul>\n      {users.map((user) => (\n        <UserCard key={user.id} user={user} />\n      ))}\n    </ul>\n  );\n}",
+      "caption": "key sits on the component call in the parent, not inside the component's JSX."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "key Is Not a Prop",
+      "md": "Even though you write `key={...}` like a prop, React intercepts it and never passes it through. If you try to read `props.key` inside `UserCard`, you'll get `undefined`. If your child component genuinely needs the ID for something (like fetching data), pass it as a separate prop: `<UserCard key={user.id} id={user.id} user={user} />`."
+    },
+    {
+      "type": "quiz",
+      "question": "A developer has a todo list that can be reordered by the user. Which key choice is correct?",
+      "options": [
+        "key={index} — because it's always available from .map()",
+        "key={Math.random()} — because it guarantees uniqueness",
+        "key={todo.id} — because it's a stable, unique identifier for each item",
+        "No key is needed — React figures it out automatically"
+      ],
+      "answerIndex": 2,
+      "explanation": "todo.id is stable (it doesn't change when items are reordered) and unique (no two todos share an id). Using the array index breaks when items are reordered because positions shift; Math.random() creates a new key every render, forcing React to unmount and remount every item on every re-render — terrible for performance and state."
+    }
+  ],
+  "keyTakeaways": [
+    "Use array.map() to transform data arrays into arrays of JSX elements — it's plain JavaScript inside curly braces.",
+    "The key prop is React's way of tracking which list item is which across re-renders; always provide one.",
+    "Keys must be stable and unique among siblings — a database ID or a client-generated UUID is ideal.",
+    "Using the array index as a key is safe only for static lists that are never reordered, filtered, or have items inserted in the middle.",
+    "The key prop belongs on the outermost element in the .map() call; it is never accessible as a prop inside the component."
+  ],
+  "exercise": {
+    "prompt": "You have an array of `books` objects, each with an `id`, `title`, and `author`. Render them as an unordered list where each item shows the title in bold followed by the author. Make sure to use the correct key. Then add a button that removes the first book from the list — verify that the remaining items display correctly (this is where a bad key would cause trouble).",
+    "starterCode": "import { useState } from 'react';\n\nconst initialBooks = [\n  { id: 'b1', title: 'Dune', author: 'Frank Herbert' },\n  { id: 'b2', title: 'Neuromancer', author: 'William Gibson' },\n  { id: 'b3', title: 'Ancillary Justice', author: 'Ann Leckie' },\n];\n\nfunction BookList() {\n  const [books, setBooks] = useState(initialBooks);\n\n  function removeFirst() {\n    // TODO: update books state to remove the first item\n  }\n\n  return (\n    <div>\n      <button onClick={removeFirst}>Remove first book</button>\n      <ul>\n        {/* TODO: map over books and render each as an <li> with a correct key */}\n      </ul>\n    </div>\n  );\n}\n\nexport default BookList;",
+    "hint": "Use setBooks(books.slice(1)) inside removeFirst to drop the first element. In your .map(), use book.id as the key — not the index — so React can correctly identify which items remain after removal.",
+    "solution": "import { useState } from 'react';\n\nconst initialBooks = [\n  { id: 'b1', title: 'Dune', author: 'Frank Herbert' },\n  { id: 'b2', title: 'Neuromancer', author: 'William Gibson' },\n  { id: 'b3', title: 'Ancillary Justice', author: 'Ann Leckie' },\n];\n\nfunction BookList() {\n  const [books, setBooks] = useState(initialBooks);\n\n  function removeFirst() {\n    setBooks(books.slice(1));\n  }\n\n  return (\n    <div>\n      <button onClick={removeFirst}>Remove first book</button>\n      <ul>\n        {books.map((book) => (\n          <li key={book.id}>\n            <strong>{book.title}</strong> — {book.author}\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nexport default BookList;"
+  }
+}

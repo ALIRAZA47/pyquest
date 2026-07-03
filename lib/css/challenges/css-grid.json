@@ -1,0 +1,49 @@
+{
+  "slug": "css-grid",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The container is 320px wide with no gap. What visual result does this grid produce for its two child items?",
+      "code": ".sidebar-layout {\n  display: grid;\n  grid-template-columns: 1fr 3fr;\n}",
+      "options": [
+        "Two columns where the second is three times as wide as the first (80px and 240px)",
+        "Two equal columns, each 160px wide",
+        "Two columns where the first is three times as wide as the second (240px and 80px)"
+      ],
+      "answerIndex": 0,
+      "explanation": "The fr unit splits available space into shares. 1fr 3fr means 4 shares total, so the first column gets 1/4 (80px) and the second gets 3/4 (240px). fr distributes space proportionally, not equally — that is what makes a narrow-sidebar, wide-main layout so easy."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this one line so the gallery packs in as many columns as fit, each at least 200px wide but free to grow to fill the row — with zero media queries.",
+      "codeTemplate": ".gallery {\n  display: grid;\n  grid-template-columns: repeat({{blank}}, minmax(200px, 1fr));\n  gap: 16px;\n}",
+      "blanks": [
+        { "answer": "auto-fill", "accept": ["auto-fill", "autofill", "auto fill"] }
+      ],
+      "explanation": "auto-fill tells Grid to create as many columns as fit in the container, while minmax(200px, 1fr) keeps each at least 200px wide and lets it grow to fill leftover space. Together they give a fully responsive card grid with no media queries at all."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — the developer wanted three equal columns but got a single stacked column instead. What's wrong?",
+      "code": ".three-col {\n  display: grid;\n  grid-columns: 1fr 1fr 1fr;\n  gap: 24px;\n}",
+      "options": [
+        "The property should be grid-template-columns, not grid-columns — grid-columns is not a real property, so it is ignored and no columns are defined",
+        "fr units are invalid inside a grid; the widths must be given in pixels or percentages",
+        "gap cannot be used together with column definitions, so it cancels the columns out"
+      ],
+      "answerIndex": 0,
+      "explanation": "The correct property is grid-template-columns. grid-columns is not valid CSS, so the browser discards it and the grid falls back to a single implicit column, stacking the items. Renaming it to grid-template-columns: 1fr 1fr 1fr produces the three equal columns."
+    },
+    {
+      "type": "reorder",
+      "prompt": "On a 3-column grid, order these facts about column LINES from the FIRST line (top) to the LAST line (bottom), matching how the lesson numbers them.",
+      "lines": [
+        "Line 1 — the left edge, where the first column starts",
+        "Line 2 — between column one and column two",
+        "Line 3 — between column two and column three",
+        "Line 4 — the right edge, which -1 also refers to"
+      ],
+      "explanation": "Grid lines are numbered from 1, so a 3-column grid has 4 column lines (1 through 4). Line 1 is the far left and line 4 is the far right. The special value -1 always means the last line, so grid-column: 1 / -1 spans every column without hard-coding the count."
+    }
+  ]
+}

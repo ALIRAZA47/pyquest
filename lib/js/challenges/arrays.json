@@ -1,0 +1,52 @@
+{
+  "slug": "arrays",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson says reading an index that does not exist returns undefined instead of throwing. What does this print?",
+      "code": "const fruits = [\"apple\", \"banana\", \"cherry\"];\n\nconsole.log(fruits[0]);\nconsole.log(fruits[3]);",
+      "options": [
+        "apple\nundefined",
+        "apple\ncherry",
+        "apple\nError: index out of bounds",
+        "banana\nundefined"
+      ],
+      "answerIndex": 0,
+      "explanation": "Indexing is zero-based, so fruits[0] is the first element, \"apple\". The last valid index is length - 1 = 2, so fruits[3] is out of bounds. JavaScript does not throw an error for this — it silently returns undefined."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const scores = [98, 72, 85, 91];\n\n// Try to log the last score\nconsole.log(scores[scores.length]);",
+      "options": [
+        "It should be scores[scores.length - 1], because the last valid index is length - 1",
+        "It should be scores[scores.length + 1] to reach the final element",
+        "You cannot use .length inside brackets; use scores.last() instead",
+        "Nothing is wrong — scores[scores.length] returns 91"
+      ],
+      "answerIndex": 0,
+      "explanation": "The array has 4 elements at indexes 0 through 3, so scores.length is 4 but there is no element at index 4 — scores[scores.length] is undefined. Because indexing is zero-based, the last element lives at length - 1, so scores[scores.length - 1] correctly returns 91."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the code so it adds \"Carol\" to the END of the queue, then checks that \"Alice\" is present. Fill in the two array methods from the lesson.",
+      "codeTemplate": "const queue = [\"Alice\", \"Bob\"];\n\nqueue.{{blank}}(\"Carol\");            // add to the end\nconsole.log(queue.{{blank}}(\"Alice\")); // check membership -> true",
+      "blanks": [
+        { "answer": "push", "accept": ["push()", ".push"] },
+        { "answer": "includes", "accept": ["includes()", ".includes"] }
+      ],
+      "explanation": "push() adds a new element to the end of the array (unshift() would add to the front). includes() returns a boolean telling you whether a value is present, so queue.includes(\"Alice\") is true."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lines in order to: start from numbers, keep only the even numbers with filter, then double each survivor with map, and finally log the result.",
+      "lines": [
+        "const numbers = [1, 2, 3, 4, 5];",
+        "const evens = numbers.filter(n => n % 2 === 0);",
+        "const doubled = evens.map(n => n * 2);",
+        "console.log(doubled);"
+      ],
+      "explanation": "You must create the array before using it, so numbers comes first. filter keeps elements that pass the test (the evens: 2 and 4), and map then transforms each of those, producing [4, 8]. Both methods return new arrays without mutating the original, which is why doubled must be defined from evens before it can be logged."
+    }
+  ]
+}

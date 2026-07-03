@@ -1,0 +1,53 @@
+{
+  "slug": "semantic-html",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A screen reader user loads this page and presses the key to jump between landmarks. What can they do that they could NOT do with a page built entirely of <div> tags?",
+      "code": "<header>\n  <nav>...</nav>\n</header>\n<main>\n  <article>Why Cold Brew Takes 12 Hours...</article>\n</main>\n<footer>&copy; 2026 The Daily Brew</footer>",
+      "options": [
+        "Jump straight to <main>, skipping the header and nav they have already heard",
+        "Nothing changes — screen readers treat <header> and <div> identically",
+        "See the page render faster because semantic tags load first",
+        "Automatically translate the article into another language"
+      ],
+      "answerIndex": 0,
+      "explanation": "Semantic elements act as landmarks. A screen reader lets the user leap directly to <main> and bypass the repeated header and navigation. With div soup there are no landmarks, so they must listen to everything from the top on every page load."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "<img src=\"cold-brew.jpg\" alt=\"image\">",
+      "options": [
+        "The alt text is too vague — it should describe what the image shows, e.g. \"A glass of iced cold brew coffee on a wooden table\"",
+        "The alt attribute should be removed entirely so the browser guesses the description",
+        "The src should come after alt for screen readers to work",
+        "<img> needs a closing </img> tag or the alt is ignored"
+      ],
+      "answerIndex": 0,
+      "explanation": "Alt text should describe what the image depicts, not repeat the word \"image\" or the file name. The test: if you read it aloud to someone with their eyes closed, would they understand the picture? (Only purely decorative images get an empty alt=\"\".)"
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the tag so this self-contained blog post — one that could be syndicated to another site unchanged — uses the correct semantic element.",
+      "codeTemplate": "<main>\n  <{{blank}}>\n    <h2>Why Cold Brew Takes 12 Hours</h2>\n    <p>Unlike hot coffee, cold brew relies on time...</p>\n  </{{blank}}>\n</main>",
+      "blanks": [
+        { "answer": "article", "accept": ["ARTICLE"] },
+        { "answer": "article", "accept": ["ARTICLE"] }
+      ],
+      "explanation": "<article> is for self-contained content that would still make sense copy-pasted to another site — exactly a standalone blog post. <section> would imply it only makes sense as part of the current page."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a valid semantic page skeleton, from the top of the body to the bottom.",
+      "lines": [
+        "<header>",
+        "  <nav>...</nav>",
+        "</header>",
+        "<main>...</main>",
+        "<footer>&copy; 2026 The Daily Brew</footer>"
+      ],
+      "explanation": "Semantic landmarks flow top to bottom: the <header> (holding the <nav>) comes first, then the single <main> with the page's primary content, and finally the <footer>. This mirrors how a screen reader announces the page and how the layout reads visually."
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "slug": "k-nearest-neighbors",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the Euclidean distance helper from the lesson. What does it print?",
+      "code": "import math\n\ndef euclidean_distance(a, b):\n    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))\n\nprint(euclidean_distance((0, 0), (6, 8)))",
+      "options": ["10.0", "14.0", "100.0", "7.0"],
+      "answerIndex": 0,
+      "explanation": "Euclidean distance subtracts each coordinate, squares the differences, sums them, then takes the square root: sqrt((6-0)**2 + (8-0)**2) = sqrt(36 + 64) = sqrt(100) = 10.0. This is just the Pythagorean theorem — the classic 6-8-10 right triangle."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This k-NN classifier is supposed to keep the k CLOSEST neighbors, but it predicts the wrong label. What's wrong?",
+      "code": "def knn_predict(query, data, k=3):\n    distances = []\n    for *features, label in data:\n        d = euclidean_distance(query, features)\n        distances.append((d, label))\n\n    distances.sort(key=lambda x: x[0], reverse=True)\n    neighbors = distances[:k]\n\n    votes = {}\n    for _, label in neighbors:\n        votes[label] = votes.get(label, 0) + 1\n    return max(votes, key=votes.get)",
+      "options": [
+        "sort with reverse=True puts the FARTHEST points first, so distances[:k] grabs the k most distant neighbors instead of the k closest.",
+        "The distance should be squared again before sorting.",
+        "votes.get(label, 0) should start counting from 1, not 0.",
+        "max(votes, key=votes.get) returns the least common label, not the most common."
+      ],
+      "answerIndex": 0,
+      "explanation": "k-NN votes among the CLOSEST points. reverse=True sorts distances largest-first, so slicing [:k] selects the k farthest neighbors — the opposite of what we want. Remove reverse=True (or use reverse=False) so the nearest points come first. The vote-counting and max() logic are both correct."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two core steps of k-NN prediction: after computing distances, sort them ascending, then keep only the k nearest neighbors.",
+      "codeTemplate": "def knn_predict(query, data, k=3):\n    distances = []\n    for *features, label in data:\n        d = euclidean_distance(query, features)\n        distances.append((d, label))\n\n    distances.sort(key=lambda x: x[0])\n    neighbors = distances[:{{blank}}]\n\n    votes = {}\n    for _, label in neighbors:\n        votes[label] = votes.get(label, 0) + 1\n    return max(votes, key=votes.get)",
+      "blanks": [
+        { "answer": "k", "accept": ["k ", " k"] }
+      ],
+      "explanation": "After sorting the (distance, label) pairs from nearest to farthest, distances[:k] slices out exactly the k closest neighbors. Those are the only points allowed to vote — the entire k-NN prediction rests on this slice."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to make a k-NN prediction: compute every distance, sort by nearest, keep the k closest, tally the votes, and return the winning label.",
+      "lines": [
+        "distances = [(euclidean_distance(query, feat), lbl) for *feat, lbl in data]",
+        "distances.sort(key=lambda x: x[0])",
+        "neighbors = distances[:k]",
+        "votes = {}",
+        "for _, label in neighbors:\n    votes[label] = votes.get(label, 0) + 1",
+        "return max(votes, key=votes.get)"
+      ],
+      "explanation": "k-NN always follows the same recipe: (1) measure the distance from the query to every stored point, (2) sort those distances so the nearest come first, (3) slice off the k closest neighbors, (4) tally each neighbor's vote in a dictionary, and (5) return whichever label got the most votes. You must build the votes dict before the loop fills it, and count votes before you can take the max."
+    }
+  ]
+}

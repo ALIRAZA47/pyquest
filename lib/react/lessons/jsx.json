@@ -1,0 +1,102 @@
+{
+  "slug": "jsx",
+  "title": "JSX",
+  "category": "React Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how JSX lets you write HTML-like UI directly in JavaScript, embed dynamic values with {}, and understand exactly what the browser actually runs.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "When you look at a React component for the first time, something feels off. There's HTML sitting right inside a JavaScript function — no quotes, no template strings, just tags. That's **JSX**, and it's one of the things that makes React feel so natural to work with.\n\nJSX isn't magic, and it isn't a separate language. It's a compact shorthand that your build tool transforms into regular JavaScript before it ever reaches the browser. Once you understand what's really going on, JSX will feel like one of the best ideas in modern web development."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Shorthand, like texting",
+      "md": "When you text \"omw\" you mean \"on my way\" — shorthand your reader mentally expands. JSX works the same way: you write `<Button color=\"blue\">Click me</Button>` and the build tool expands it into a full `React.createElement(...)` call. You write the short form; the computer fills in the rest."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// What you write (JSX):\nconst element = <h1 className=\"title\">Hello!</h1>;\n\n// What the build tool produces (plain JS):\nconst element2 = React.createElement(\n  \"h1\",\n  { className: \"title\" },\n  \"Hello!\"\n);",
+      "caption": "JSX is syntactic sugar — the top line is what you type, the bottom is what runs in the browser."
+    },
+    {
+      "type": "heading",
+      "text": "Embedding Expressions with {}"
+    },
+    {
+      "type": "text",
+      "md": "The curly braces `{}` are JSX's escape hatch back into JavaScript. Anything inside them is a JavaScript **expression** — a variable, a calculation, a ternary. This is how your UI stays connected to live data. Statements like `if` blocks or `for` loops don't work inside `{}`; use ternaries for conditionals and `.map()` for lists instead."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "const user = { name: \"Maya\", score: 42 };\nconst isWinner = user.score > 40;\n\nfunction ScoreCard() {\n  return (\n    <div>\n      <h2>Player: {user.name}</h2>\n      <p>Score: {user.score * 2}</p>\n      <p>{isWinner ? \"You won!\" : \"Try again\"}</p>\n    </div>\n  );\n}",
+      "output": "Heading 'Player: Maya', paragraph 'Score: 84', paragraph 'You won!'",
+      "caption": "Variables, math, and ternaries all work inside {}."
+    },
+    {
+      "type": "heading",
+      "text": "HTML Differences: className, Self-Closing Tags, and camelCase Events"
+    },
+    {
+      "type": "text",
+      "md": "JSX looks like HTML but follows JavaScript's rules, so a few attributes change:\n\n- **`className` instead of `class`** — `class` is a reserved keyword in JavaScript.\n- **Every tag must be closed** — void elements like `<img>` and `<input>` need a self-closing slash: `<img />`.\n- **camelCase event names** — `onclick` becomes `onClick`, `onchange` becomes `onChange`."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// HTML:\n// <button class=\"btn\" onclick=\"save()\">Save</button>\n// <img src=\"photo.png\">\n\n// JSX equivalents:\nfunction Form() {\n  return (\n    <div className=\"form\">\n      <img src=\"/photo.png\" alt=\"Profile\" />\n      <button className=\"btn\" onClick={save}>Save</button>\n    </div>\n  );\n}",
+      "output": "A div containing a profile image and a Save button.",
+      "caption": "className, self-closing />, and camelCase events are the three main HTML-to-JSX adjustments."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "JSX must have exactly one root element — use Fragments to fix it",
+      "md": "A component's `return` can only return **one top-level element**. Returning two siblings side-by-side causes a syntax error. Wrap them in a **Fragment** (`<>...</>`) to satisfy the rule without adding an extra DOM node:\n\n```jsx\n// Broken:\nreturn (<h1>Title</h1><p>Body</p>);\n\n// Fixed with a Fragment:\nreturn (\n  <>\n    <h1>Title</h1>\n    <p>Body</p>\n  </>\n);\n```\n\nFragments are especially useful inside flex containers or table rows, where a stray `<div>` would break your layout."
+    },
+    {
+      "type": "heading",
+      "text": "How JSX Compiles to Function Calls"
+    },
+    {
+      "type": "text",
+      "md": "Every JSX element compiles to `React.createElement(tag, props, ...children)`. For HTML elements the tag is a plain string (`\"div\"`); for your own components it's the actual function reference (`Button`, not `\"Button\"`). This is exactly why component names must start with a capital letter — that capital is how the compiler knows to pass the function, not a string."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// JSX you write:\nfunction Alert({ message }) {\n  return (\n    <div className=\"alert\">\n      <strong>Notice:</strong> {message}\n    </div>\n  );\n}\n\n// What the compiler produces:\nfunction Alert({ message }) {\n  return React.createElement(\n    \"div\",\n    { className: \"alert\" },\n    React.createElement(\"strong\", null, \"Notice:\"),\n    \" \",\n    message\n  );\n}",
+      "caption": "Nested JSX becomes nested createElement calls — that's all it ever is."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following is valid JSX?",
+      "options": [
+        "<img src=\"photo.png\">",
+        "<div class=\"card\"><p>Hello</p></div>",
+        "<><p>First</p><p>Second</p></>",
+        "<div>{if (x) { return 'yes'; }}</div>"
+      ],
+      "answerIndex": 2,
+      "explanation": "Option A is invalid — <img> must be self-closed as <img /> in JSX. Option B is invalid — use 'className', not 'class'. Option C is correct — a Fragment wrapping two siblings is perfectly valid JSX. Option D is invalid — an if statement is not a JavaScript expression; use a ternary like {x ? 'yes' : 'no'} instead."
+    }
+  ],
+  "keyTakeaways": [
+    "JSX compiles to React.createElement() calls — it's readable shorthand, not a separate language.",
+    "Use {} to embed any JavaScript expression (variables, math, ternaries) directly in your markup.",
+    "Write className instead of class, close every void element with />, and use camelCase event names.",
+    "A component can only return one root element — wrap siblings in a Fragment (<>...</>) to avoid extra DOM nodes.",
+    "Capital letters on component names tell the compiler to pass a function reference, not an HTML string."
+  ],
+  "exercise": {
+    "prompt": "Build a `WeatherCard` component that displays: a city name in an `<h2>`, the temperature in a `<p>`, and a condition label (e.g. 'Sunny') in a `<span>` with `className=\"condition\"`. Embed all three values from the provided `weather` object using `{}`. Return everything inside a Fragment so no extra `<div>` is added to the DOM.",
+    "starterCode": "const weather = {\n  city: \"Lisbon\",\n  temp: 28,\n  condition: \"Sunny\",\n};\n\nfunction WeatherCard() {\n  // TODO: Return a Fragment (<>...</>) containing:\n  //   1. An <h2> with the city name\n  //   2. A <p> with the temperature followed by \" °C\"\n  //   3. A <span className=\"condition\"> with the condition\n  // Embed all values from the weather object using {}.\n}\n\nexport default WeatherCard;",
+    "hint": "Start your return with <> and close it with </>. You can write {weather.temp} followed by \" °C\" as plain text, or combine them: {`${weather.temp} °C`}.",
+    "solution": "const weather = {\n  city: \"Lisbon\",\n  temp: 28,\n  condition: \"Sunny\",\n};\n\nfunction WeatherCard() {\n  return (\n    <>\n      <h2>{weather.city}</h2>\n      <p>{weather.temp} °C</p>\n      <span className=\"condition\">{weather.condition}</span>\n    </>\n  );\n}\n\nexport default WeatherCard;"
+  }
+}

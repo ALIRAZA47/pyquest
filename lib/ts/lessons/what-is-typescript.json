@@ -1,0 +1,131 @@
+{
+  "slug": "what-is-typescript",
+  "title": "What is TypeScript?",
+  "category": "TypeScript Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover how TypeScript adds a safety net of types on top of JavaScript, catching bugs before your code ever runs.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know JavaScript — or you're learning it. So why does everyone keep mentioning TypeScript? The short answer is: JavaScript is wonderfully flexible, but that flexibility can bite you. A typo in a variable name, a function that receives the wrong kind of value, a property that doesn't exist on an object — JavaScript won't warn you about any of these until the moment they blow up in a user's browser. TypeScript exists to catch those problems *before* you ever press run."
+    },
+    {
+      "type": "heading",
+      "text": "TypeScript is JavaScript with a Safety Net"
+    },
+    {
+      "type": "text",
+      "md": "TypeScript is a *superset* of JavaScript. That means every valid JavaScript file is already a valid TypeScript file — TypeScript just adds one extra concept on top: **types**. You can annotate your variables, function parameters, and return values with information about what *kind* of data they hold. TypeScript reads those annotations and flags inconsistencies before your code runs."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a GPS with guardrails",
+      "md": "JavaScript is like driving on an open road with no guardrails — you can go anywhere, which is powerful, but one wrong turn sends you off a cliff and you only find out when you're already falling. TypeScript adds guardrails along the road. You can still drive wherever you want, but the guardrails give you instant feedback if you drift toward the edge. The road itself (JavaScript) hasn't changed — the guardrails are just an extra layer of protection."
+    },
+    {
+      "type": "heading",
+      "text": "A Side-by-Side Comparison"
+    },
+    {
+      "type": "text",
+      "md": "Here is the same function written in plain JavaScript, then in TypeScript. The TypeScript version tells the language *exactly* what types the inputs and output should be."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// JavaScript — no type information\nfunction greet(name) {\n  return \"Hello, \" + name.toUpperCase();\n}\n\ngreet(\"Alice\");   // works fine: \"Hello, ALICE\"\ngreet(42);        // crashes at runtime: TypeError",
+      "output": "greet(\"Alice\") → \"Hello, ALICE\"\ngreet(42)      → TypeError: name.toUpperCase is not a function",
+      "caption": "JavaScript only finds the problem when the bad call actually runs — which might be in production."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// TypeScript — parameter is annotated as string\nfunction greet(name: string): string {\n  return \"Hello, \" + name.toUpperCase();\n}\n\ngreet(\"Alice\");   // fine\ngreet(42);        // Error caught instantly: Argument of type 'number' is not assignable to parameter of type 'string'.",
+      "caption": "TypeScript highlights the mistake in your editor before you run anything."
+    },
+    {
+      "type": "heading",
+      "text": "What Types Look Like"
+    },
+    {
+      "type": "text",
+      "md": "A type annotation is written with a colon after a variable or parameter name. TypeScript has several built-in primitive types you will use constantly."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "let username: string = \"alice\";\nlet age: number = 28;\nlet isLoggedIn: boolean = true;\nlet scores: number[] = [95, 87, 100];\n\n// TypeScript can also infer types without annotations:\nlet city = \"Lagos\";   // inferred as string\ncity = 42;            // Error: Type 'number' is not assignable to type 'string'.",
+      "caption": "Explicit annotations are optional when TypeScript can work out the type itself — this is called type inference."
+    },
+    {
+      "type": "heading",
+      "text": "TypeScript Compiles to Plain JavaScript"
+    },
+    {
+      "type": "text",
+      "md": "Browsers and Node.js do not understand TypeScript directly — they only speak JavaScript. So TypeScript comes with a **compiler** (the `tsc` command) that reads your `.ts` files, checks them for type errors, and outputs clean `.js` files. The types vanish entirely at that point; what runs in production is pure JavaScript."
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Install TypeScript globally\nnpm install -g typescript\n\n# Compile a file\ntsc greet.ts\n\n# This produces greet.js — plain JavaScript the browser can run",
+      "caption": "You write TypeScript, the compiler produces the JavaScript. Think of tsc as a translator."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Your editor does the heavy lifting",
+      "md": "In practice, you rarely run `tsc` by hand. Tools like VS Code run TypeScript's type checker *in the background*, underlining mistakes as you type — the same way a spell-checker highlights misspelled words. This instant feedback loop is one of the biggest reasons developers love TypeScript: you fix bugs while the code is still fresh in your head, not hours later when something breaks."
+    },
+    {
+      "type": "heading",
+      "text": "Why Teams Choose TypeScript"
+    },
+    {
+      "type": "text",
+      "md": "TypeScript is not just about catching typos. Here is what it concretely improves in day-to-day development:\n\n- **Editor autocomplete** — Because TypeScript knows the shape of your data, your editor can suggest the right property names and method names as you type.\n- **Safe refactoring** — Rename a function or change a parameter, and TypeScript immediately shows every place in the codebase that needs updating.\n- **Self-documenting code** — Type annotations act as lightweight documentation that is always in sync with the actual code (unlike comments, which go stale).\n- **Onboarding** — A new team member can understand what a function expects and returns just by reading its signature, without digging through all the call sites."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "TypeScript checks types — it does not make code faster",
+      "md": "One common misconception: TypeScript does not change how your code *runs*. It only checks it *before* it runs. A TypeScript program is not faster or slower than the equivalent JavaScript — the compiled output is identical JavaScript. TypeScript's value is entirely in the development experience: fewer bugs, better tooling, more confident code."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the TypeScript compiler (`tsc`) produce as its output?",
+      "options": [
+        "A faster, optimised version of your TypeScript file",
+        "Plain JavaScript that browsers and Node.js can run",
+        "A compiled binary executable",
+        "A minified bundle with the types embedded"
+      ],
+      "answerIndex": 1,
+      "explanation": "tsc strips out all type annotations and outputs plain .js files. Browsers have no concept of TypeScript types — they need standard JavaScript. The types exist only to help you during development."
+    },
+    {
+      "type": "heading",
+      "text": "TypeScript is a Gradual Commitment"
+    },
+    {
+      "type": "text",
+      "md": "You do not have to convert an entire codebase to TypeScript overnight. You can rename individual files from `.js` to `.ts` one at a time, and TypeScript is happy to work alongside plain JavaScript files. Many teams start by turning on TypeScript in new files only, and migrate the rest over time. This makes it low-risk to adopt — there is no big-bang rewrite required."
+    }
+  ],
+  "keyTakeaways": [
+    "TypeScript is a superset of JavaScript — it adds static types and compiles back down to plain JavaScript.",
+    "Type annotations let you declare what kind of data a variable or function parameter should hold, so TypeScript can catch mismatches before you run anything.",
+    "Type inference means you often don't need to write annotations explicitly — TypeScript figures out the type from context.",
+    "The real payoff is in your editor: instant error highlighting, autocomplete, and safe refactoring across a whole codebase.",
+    "TypeScript does not change runtime behaviour — it is a development-time tool only."
+  ],
+  "exercise": {
+    "prompt": "Write a TypeScript function called `formatPrice` that takes two parameters: `amount` (a number) and `currency` (a string). It should return a string that combines them, like `\"$29.99\"` when called with `(29.99, \"$\")`. Add type annotations to both parameters and the return type. Then call your function and store the result in a typed variable.",
+    "starterCode": "// TODO: add type annotations to the parameters and return type\nfunction formatPrice(amount, currency) {\n  // TODO: return the currency symbol followed by the amount\n}\n\n// TODO: call formatPrice and store the result in a typed variable\nconst price = formatPrice(29.99, \"$\");\nconsole.log(price);",
+    "hint": "A parameter annotation looks like `name: type`. The return type goes after the closing parenthesis: `function foo(x: number): string { ... }`. To join two values into a string you can use a template literal: `` `${currency}${amount}` ``.",
+    "solution": "function formatPrice(amount: number, currency: string): string {\n  return `${currency}${amount}`;\n}\n\nconst price: string = formatPrice(29.99, \"$\");\nconsole.log(price); // \"$29.99\""
+  }
+}

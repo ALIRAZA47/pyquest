@@ -1,0 +1,46 @@
+{
+  "slug": "loops",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this loop print to the console?",
+      "code": "const numbers = [3, 7, 2, 9, 4, 6, 1];\n\nfor (const n of numbers) {\n  if (n === 9) break;\n  if (n % 2 === 0) continue;\n  console.log(n);\n}",
+      "options": ["3\n7", "3\n7\n1", "3\n7\n9", "3\n2\n7\n4\n6"],
+      "answerIndex": 0,
+      "explanation": "continue skips even numbers (2, 4, 6) so they never print, while break stops the whole loop the moment n reaches 9. That leaves only 3 and 7 printed before the loop exits at 9 — everything after 9 is never reached."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "let attempts = 0;\nlet correct = false;\n\nwhile (!correct) {\n  if (attempts === 3) correct = true;\n}\n\nconsole.log(`Took ${attempts} attempt(s).`);",
+      "options": [
+        "attempts is never incremented, so the condition never becomes false and the loop runs forever",
+        "You cannot use ! inside a while condition",
+        "correct should be declared with const, not let",
+        "while loops require an update expression like a for loop does"
+      ],
+      "answerIndex": 0,
+      "explanation": "The loop body never does attempts++, so attempts stays 0 and never reaches 3 — correct stays false and the condition !correct is always true. That is an infinite loop. Every while loop needs something inside that eventually makes the condition false, like incrementing attempts."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this classic for loop so it logs Step 0 through Step 4 (five steps total), matching the lesson's example.",
+      "codeTemplate": "for (let i = 0; i {{blank}} 5; i++) {\n  console.log(`Step ${i}`);\n}",
+      "blanks": [
+        { "answer": "<", "accept": ["<", " < "] }
+      ],
+      "explanation": "A for loop has three parts: initialise (let i = 0), the condition checked before each step (i < 5), and the update (i++). Using < 5 runs for i = 0, 1, 2, 3, 4 — five iterations. Using <= 5 would run six times, and > would never run at all."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a working for...of loop that buys each grocery item, exactly as taught in the lesson.",
+      "lines": [
+        "const groceries = [\"eggs\", \"milk\", \"bread\"];",
+        "for (const item of groceries) {",
+        "  console.log(`Buy: ${item}`);",
+        "}"
+      ],
+      "explanation": "First declare the array, then open the for...of loop that pulls each VALUE into item, put the console.log in the loop body, and finally close the loop with }. for...of is the cleanest way to walk over array values — each item is the value itself, not an index."
+    }
+  ]
+}

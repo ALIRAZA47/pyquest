@@ -8,7 +8,7 @@ import { searchLessons } from "@/lib/search";
 import { Glyph, categoryGlyph, lessonGlyph } from "./glyphs";
 import { SearchIcon, ArrowRight } from "./Icons";
 
-export const OPEN_COMMAND_EVENT = "pyquest:open-command";
+export const OPEN_COMMAND_EVENT = "quest:open-command";
 
 export function openCommandPalette() {
   if (typeof window !== "undefined") {

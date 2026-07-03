@@ -1,0 +1,57 @@
+{
+  "slug": "how-the-web-works",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "The lesson showed that the browser reads the HTML and automatically fetches any linked CSS file. Fill in the attribute that tells the <link> tag WHERE the stylesheet lives, so the browser knows which file to request.",
+      "codeTemplate": "<link rel=\"stylesheet\" {{blank}}=\"styles.css\" />",
+      "blanks": [
+        { "answer": "href", "accept": ["href", "HREF", "href="] }
+      ],
+      "explanation": "The href attribute holds the path or URL of the resource the browser should fetch. When the browser sees this <link> tag it fires off an extra HTTP request for styles.css automatically. rel=\"stylesheet\" says WHAT kind of file it is; href says WHERE to get it."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into the minimal HTML document the server sends back (from the lesson). The document type comes first, the head holds page info and the linked stylesheet, and the body holds the visible content.",
+      "lines": [
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "  <head>",
+        "    <title>About Us</title>",
+        "    <link rel=\"stylesheet\" href=\"styles.css\" />",
+        "  </head>",
+        "  <body>",
+        "    <h1>About Us</h1>",
+        "  </body>",
+        "</html>"
+      ],
+      "explanation": "A valid page starts with <!DOCTYPE html>, then the <html> element wraps everything. The <head> comes first and holds metadata plus the <link> to the CSS (loaded before content appears), and the <body> holds what the user actually sees. Every opened tag closes in reverse order, so </html> is last."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code was meant to load an encrypted page, but the URL sends data in the open instead of securely. What's wrong?",
+      "code": "<a href=\"http://www.example.com/about\">About Us</a>",
+      "options": [
+        "The protocol is http, not https — the 's' for 'secure' is missing, so the connection is not encrypted",
+        "The path /about is invalid because paths must end with a slash",
+        "The domain should not include www, which disables encryption",
+        "The <a> tag cannot link to another site, only to files on the same server"
+      ],
+      "answerIndex": 0,
+      "explanation": "The protocol is the first part of a URL and tells the browser HOW to communicate. Plain http sends data in the open; https adds a secure, encrypted layer — the 's' literally stands for secure. Changing http to https fixes it. The domain, path, and cross-site links are all perfectly valid."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "A user types a URL and, in the developer tools, the browser reports a 404 status code for the page. What happened, and what will the user see?",
+      "code": "GET https://www.example.com/about\n→ 404 Not Found",
+      "options": [
+        "The page loaded normally; 404 just means the request was received",
+        "The server found the request but could NOT locate that page or file, so the user sees a 'Not Found' error page",
+        "The server itself crashed while building the page",
+        "The internet connection dropped before the request was sent"
+      ],
+      "answerIndex": 1,
+      "explanation": "A 404 means 'Not Found': the request reached the server fine, but the server has no resource at that path, so it returns an error page. A successful load would be 200 OK, a server-side crash would be 500 Internal Server Error, and a dropped connection would mean no status code came back at all."
+    }
+  ]
+}

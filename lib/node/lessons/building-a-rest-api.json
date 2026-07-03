@@ -1,0 +1,136 @@
+{
+  "slug": "building-a-rest-api",
+  "title": "Building a REST API",
+  "category": "APIs & Async",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn the REST conventions that power the web, then build a real in-memory CRUD API with Express — resources, HTTP verbs, status codes, and JSON all included.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Almost every app you use daily — weather apps, social feeds, shopping carts — is secretly two programs talking to each other over the internet. The frontend (what you see) sends requests; the backend (the server) replies with data. The agreed-upon language for that conversation is usually a **REST API**. Once you understand REST, you can build the backend half of any web application. In this lesson you will go from zero to a working, in-memory API that can create, read, update, and delete items — the four fundamental operations of nearly every data-driven app."
+    },
+    {
+      "type": "heading",
+      "text": "What is REST?"
+    },
+    {
+      "type": "text",
+      "md": "REST stands for **Representational State Transfer** — a set of conventions (not a strict standard) for designing web APIs. Three ideas make up the heart of it:\n\n1. **Resources** — Everything the API exposes is a \"resource\" (a book, a user, an order). Each resource lives at a URL.\n2. **HTTP verbs** — The *type* of action you want is encoded in the HTTP method: GET to read, POST to create, PUT/PATCH to update, DELETE to remove.\n3. **Stateless requests** — Each request must contain all the information the server needs. The server does not remember what you asked last time.\n\nThat's it. REST is not a library or a framework; it is a style."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A REST API is like a post office",
+      "md": "Imagine every type of item in a warehouse has its own address (URL). You send a letter (HTTP request) to that address. The *envelope color* tells the warehouse worker what you want: a blue envelope means \"send me the item\" (GET), a green envelope means \"here is a new item, please store it\" (POST), a yellow envelope means \"replace this item\" (PUT), and a red envelope means \"throw this item away\" (DELETE). The worker sends back a reply slip (the HTTP response) confirming what happened — or explaining what went wrong."
+    },
+    {
+      "type": "heading",
+      "text": "HTTP Verbs at a Glance"
+    },
+    {
+      "type": "text",
+      "md": "For a resource like `/books`, here is the conventional mapping of verbs to actions:\n\n| Method | URL | What it does |\n|--------|-----|--------------|\n| GET | `/books` | Return all books |\n| GET | `/books/42` | Return book with id 42 |\n| POST | `/books` | Create a new book |\n| PUT | `/books/42` | Replace book 42 entirely |\n| DELETE | `/books/42` | Delete book 42 |\n\nThis naming convention is not enforced by any technology — it is a social contract that makes APIs predictable for every developer who uses them."
+    },
+    {
+      "type": "heading",
+      "text": "Status Codes: the Server's Emoji"
+    },
+    {
+      "type": "text",
+      "md": "Every HTTP response carries a **status code** — a three-digit number that tells the client at a glance whether things went well. You do not need to memorize them all, but a handful appear in every API:\n\n- **200 OK** — the request succeeded\n- **201 Created** — a new resource was created (use this after a successful POST)\n- **400 Bad Request** — the client sent something the server could not understand\n- **404 Not Found** — the resource does not exist\n- **500 Internal Server Error** — something broke on the server side\n\nChoosing the *right* status code is part of building a polite API. A client should be able to know whether its request worked without parsing the body."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "201 vs 200 after a POST",
+      "md": "When you create something new, respond with **201 Created**, not 200 OK. It is a small detail, but it lets the caller know exactly what happened — and some HTTP clients and proxies treat 201 differently from 200. It costs one extra character and signals intent clearly."
+    },
+    {
+      "type": "heading",
+      "text": "Setting Up Express"
+    },
+    {
+      "type": "text",
+      "md": "Express is the most popular Node.js framework for building APIs. It handles the plumbing — routing, parsing request bodies, sending responses — so you can focus on your logic. Start a new project and install it:"
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "mkdir books-api && cd books-api\nnpm init -y\nnpm install express",
+      "caption": "This creates a package.json and installs Express. You only need these three commands to start."
+    },
+    {
+      "type": "heading",
+      "text": "Building the API: GET and POST"
+    },
+    {
+      "type": "text",
+      "md": "Here is a complete, working file for an in-memory books API. \"In-memory\" means the data lives in a JavaScript array — it resets when the server restarts, which is perfect for learning because there is no database to set up."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// index.js\nconst express = require(\"express\");\nconst app = express();\n\n// Tell Express to parse JSON request bodies automatically\napp.use(express.json());\n\n// In-memory \"database\"\nlet books = [\n  { id: 1, title: \"The Pragmatic Programmer\", author: \"Hunt & Thomas\" },\n  { id: 2, title: \"You Don't Know JS\", author: \"Kyle Simpson\" }\n];\nlet nextId = 3;\n\n// GET /books — return all books\napp.get(\"/books\", (req, res) => {\n  res.json(books);\n});\n\n// GET /books/:id — return one book\napp.get(\"/books/:id\", (req, res) => {\n  const book = books.find(b => b.id === Number(req.params.id));\n  if (!book) return res.status(404).json({ error: \"Book not found\" });\n  res.json(book);\n});\n\n// POST /books — create a new book\napp.post(\"/books\", (req, res) => {\n  const { title, author } = req.body;\n  if (!title || !author) {\n    return res.status(400).json({ error: \"title and author are required\" });\n  }\n  const newBook = { id: nextId++, title, author };\n  books.push(newBook);\n  res.status(201).json(newBook);\n});\n\napp.listen(3000, () => console.log(\"API running on http://localhost:3000\"));",
+      "output": "API running on http://localhost:3000",
+      "caption": "Run with 'node index.js'. The array is your database — simple, zero config."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting express.json() is a classic first bug",
+      "md": "Without `app.use(express.json())`, `req.body` is always `undefined` — even when the client sends a perfectly valid JSON body. This trips up almost every beginner. Always add `express.json()` before your routes if you expect a JSON body."
+    },
+    {
+      "type": "heading",
+      "text": "Adding PUT and DELETE"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// PUT /books/:id — replace a book\napp.put(\"/books/:id\", (req, res) => {\n  const index = books.findIndex(b => b.id === Number(req.params.id));\n  if (index === -1) return res.status(404).json({ error: \"Book not found\" });\n\n  const { title, author } = req.body;\n  if (!title || !author) {\n    return res.status(400).json({ error: \"title and author are required\" });\n  }\n\n  books[index] = { id: Number(req.params.id), title, author };\n  res.json(books[index]);\n});\n\n// DELETE /books/:id — remove a book\napp.delete(\"/books/:id\", (req, res) => {\n  const index = books.findIndex(b => b.id === Number(req.params.id));\n  if (index === -1) return res.status(404).json({ error: \"Book not found\" });\n\n  books.splice(index, 1);\n  res.status(200).json({ message: \"Book deleted\" });\n});",
+      "caption": "Add these routes to index.js before app.listen. Now you have full CRUD."
+    },
+    {
+      "type": "heading",
+      "text": "Testing Your API"
+    },
+    {
+      "type": "text",
+      "md": "With the server running (`node index.js`), you can test every endpoint with `curl` in a second terminal — no browser or extra tool needed."
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Get all books\ncurl http://localhost:3000/books\n\n# Create a new book\ncurl -X POST http://localhost:3000/books \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"title\": \"Clean Code\", \"author\": \"Robert Martin\"}'\n\n# Get book with id 3\ncurl http://localhost:3000/books/3\n\n# Delete book with id 1\ncurl -X DELETE http://localhost:3000/books/1",
+      "output": "[{\"id\":1,\"title\":\"The Pragmatic Programmer\",\"author\":\"Hunt & Thomas\"},{\"id\":2,\"title\":\"You Don't Know JS\",\"author\":\"Kyle Simpson\"}]\n{\"id\":3,\"title\":\"Clean Code\",\"author\":\"Robert Martin\"}\n{\"id\":3,\"title\":\"Clean Code\",\"author\":\"Robert Martin\"}\n{\"message\":\"Book deleted\"}",
+      "caption": "curl is your best friend for quickly poking at an API. The -X flag sets the HTTP method; -H adds a header; -d sends a body."
+    },
+    {
+      "type": "quiz",
+      "question": "You send a POST request to create a new resource, and the server responds with status code 200. What is the problem?",
+      "options": [
+        "Nothing — 200 means success, which is correct",
+        "The correct status for a successful creation is 201, which more precisely communicates that a new resource was created",
+        "POST requests should always return 204 No Content",
+        "The server should return 202 Accepted for any POST"
+      ],
+      "answerIndex": 1,
+      "explanation": "200 OK means the request succeeded in a general sense, but 201 Created is the precise status for a newly created resource. Using the right code costs nothing and gives the caller richer information — some clients and frameworks treat 201 differently from 200 (e.g. automatically following a Location header). It's a small habit that makes your API feel professional."
+    }
+  ],
+  "keyTakeaways": [
+    "REST maps HTTP verbs (GET, POST, PUT, DELETE) onto CRUD actions on named resources (URLs).",
+    "Status codes communicate the result at a glance: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 500 Server Error.",
+    "Always add `app.use(express.json())` before your routes, or `req.body` will be undefined.",
+    "An in-memory array is a great zero-setup database for learning; swap it for a real database when you're ready.",
+    "Test any API quickly with `curl` from the terminal — no extra tools needed."
+  ],
+  "exercise": {
+    "prompt": "Extend the books API with a PATCH /books/:id endpoint that lets callers update only the fields they provide. If only 'title' is sent, only the title should change; if only 'author' is sent, only the author should change. Return 404 if the book does not exist, and 400 if neither field is provided.",
+    "starterCode": "// Assume 'books' array and Express app already exist from the lesson.\n\n// TODO: Add a PATCH /books/:id route\napp.patch(\"/books/:id\", (req, res) => {\n  // TODO: Find the book by id (remember to convert req.params.id to a Number)\n  const index = /* find the book's index */;\n\n  // TODO: Return 404 if not found\n\n  // TODO: Destructure title and author from req.body\n\n  // TODO: Return 400 if neither field was provided\n\n  // TODO: Update only the fields that were provided (leave the rest unchanged)\n\n  // TODO: Respond with the updated book\n});",
+    "hint": "Use findIndex to locate the book. Check if both title and author are undefined — if so, return 400. Otherwise, use the nullish coalescing operator (??) or a simple 'if' to update each field: books[index].title = title ?? books[index].title.",
+    "solution": "app.patch(\"/books/:id\", (req, res) => {\n  const index = books.findIndex(b => b.id === Number(req.params.id));\n  if (index === -1) return res.status(404).json({ error: \"Book not found\" });\n\n  const { title, author } = req.body;\n  if (title === undefined && author === undefined) {\n    return res.status(400).json({ error: \"Provide at least one of: title, author\" });\n  }\n\n  if (title !== undefined) books[index].title = title;\n  if (author !== undefined) books[index].author = author;\n\n  res.json(books[index]);\n});"
+  }
+}

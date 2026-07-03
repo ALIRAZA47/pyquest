@@ -1,0 +1,54 @@
+{
+  "slug": "what-is-html",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the closing tag so this becomes one valid paragraph element from the lesson.",
+      "codeTemplate": "<p>HTML is the skeleton of the web.<{{blank}}p>",
+      "blanks": [
+        { "answer": "/", "accept": ["/ ", " /"] }
+      ],
+      "explanation": "A closing tag reuses the same keyword as the opening tag but is prefixed with a slash, like </p>. The slash is what tells the browser the element is ending rather than a new one beginning."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "<p>Visit <a href=\"https://example.com\">our website</p></a> for more.",
+      "options": [
+        "The inner <a> element is closed after the outer <p>, so the elements are improperly nested.",
+        "The href attribute must not use quotation marks around the URL.",
+        "A paragraph is not allowed to contain a link, so <a> cannot go inside <p>."
+      ],
+      "answerIndex": 0,
+      "explanation": "When nesting elements you must always close the inner element before the outer one. Here the <a> should close (</a>) before the paragraph closes (</p>). Anchors are perfectly fine inside paragraphs, and quoting the URL is correct."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "<body>\n  <h1>Hello, world!</h1>\n  <p>This is my first web page.\n</body>",
+      "options": [
+        "The <h1> heading should not appear before the <p> paragraph.",
+        "The <p> element is never closed — it is missing its </p> closing tag.",
+        "The <body> tag needs a lang attribute like the <html> tag does."
+      ],
+      "answerIndex": 1,
+      "explanation": "Most elements need both an opening and a closing tag, and forgetting the closing tag is one of the most common beginner mistakes. The paragraph opens with <p> but never closes with </p>. Heading-before-paragraph order is fine, and lang belongs on <html>, not <body>."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into the minimal HTML document skeleton taught in the lesson.",
+      "lines": [
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "  <head>",
+        "    <title>My First Page</title>",
+        "  </head>",
+        "  <body>",
+        "    <h1>Hello, world!</h1>",
+        "  </body>",
+        "</html>"
+      ],
+      "explanation": "Every HTML page starts with <!DOCTYPE html>, then the <html> root wraps everything. The <head> (invisible metadata like the <title>) comes before the <body> (the visible content), and each element closes in reverse order of how it opened."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "slug": "neural-networks-and-deep-learning",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This single artificial neuron computes a weighted sum plus bias, then applies ReLU. What does it print?",
+      "code": "def relu(x): return max(0, x)\n\ndef neuron(inputs, weights, bias):\n    raw = sum(w * x for w, x in zip(weights, inputs)) + bias\n    return relu(raw)\n\noutput = neuron(\n    inputs=[1.0, 2.0],\n    weights=[0.5, -1.0],\n    bias=1.5\n)\nprint(f\"Neuron output: {output:.1f}\")",
+      "options": [
+        "Neuron output: 0.0",
+        "Neuron output: -0.5",
+        "Neuron output: 1.5"
+      ],
+      "answerIndex": 0,
+      "explanation": "The raw sum is (0.5 * 1.0) + (-1.0 * 2.0) + 1.5 = 0.5 - 2.0 + 1.5 = 0.0. ReLU is max(0, x), so it returns 0.0. Notice the raw value lands exactly at 0, and ReLU passes it through unchanged. A negative-weighted input can drag the sum down to (or below) zero, which is exactly how a neuron 'stays quiet'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong? The neuron should follow the lesson's formula output = activation(w1*x1 + w2*x2 + ... + bias).",
+      "code": "def relu(x): return max(0, x)\n\ndef neuron(inputs, weights, bias):\n    # weighted sum of the inputs, then add the bias\n    raw = sum(w + x for w, x in zip(weights, inputs)) + bias\n    return relu(raw)",
+      "options": [
+        "It uses w + x instead of w * x; each input must be MULTIPLIED by its weight",
+        "The bias should be multiplied by the sum, not added to it",
+        "ReLU should be applied to each input before summing, not to the total"
+      ],
+      "answerIndex": 0,
+      "explanation": "A neuron multiplies each input by its weight, then sums those products: sum(w * x for w, x in zip(...)). Using w + x adds the weight and input together instead, which throws away the whole point of a weight (deciding how much to trust each input). The bias is correctly added once after the weighted sum, and ReLU is correctly applied to the final total."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two activation functions from the lesson: ReLU (blocks negatives) and sigmoid. Fill in the missing pieces.",
+      "codeTemplate": "import math\n\ndef relu(x):\n    return max({{blank}}, x)\n\ndef sigmoid(x):\n    return 1 / (1 + math.exp({{blank}}))",
+      "blanks": [
+        { "answer": "0", "accept": ["0", "0.0"] },
+        { "answer": "-x", "accept": ["-x", "- x", "(-x)", "-1*x"] }
+      ],
+      "explanation": "ReLU is max(0, x): it passes positive values through and clamps anything negative to 0. Sigmoid is 1 / (1 + exp(-x)): the negative sign in the exponent is what squashes any real number into the (0, 1) range, making the output readable as a probability-like signal."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to run a full forward pass through a 2-layer classifier, matching the structure taught in the lesson (hidden layer with ReLU, output layer with softmax).",
+      "lines": [
+        "inputs = [0.9, 0.4]                                  # 1. raw input layer",
+        "h1 = [relu(sum(w*x for w,x in zip(row, inputs)) + b) for row, b in zip(W1, b1)]  # 2. hidden layer, ReLU",
+        "raw_out = [sum(w*x for w,x in zip(row, h1)) + b for row, b in zip(W2, b2)]       # 3. output layer, raw scores",
+        "probs = softmax(raw_out)                             # 4. squash scores into probabilities",
+        "print('Prediction:', 'A' if probs[0] > probs[1] else 'B')  # 5. pick the higher class"
+      ],
+      "explanation": "Signal flows strictly input to output. First the raw inputs, then the hidden layer (weighted sum + bias + ReLU) whose outputs h1 become the inputs to the output layer. The output layer produces raw scores, softmax turns those into probabilities that sum to 100%, and only then can you compare them to make a prediction. Each step depends on the one before it, so the order is fixed."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "slug": "arrays",
+  "title": "Arrays",
+  "category": "Data & Logic",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to store and work with ordered lists of data using JavaScript arrays, from basic indexing to the powerful map, filter, and reduce methods.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine writing an app that tracks your favourite movies. You could create a separate variable for each one — `movie1`, `movie2`, `movie3` — but that gets messy fast. What if you have 50 movies? That is exactly the problem **arrays** solve. An array is a single variable that holds an **ordered list** of values, and JavaScript gives you a rich set of tools to read, update, and transform that list with very little code."
+    },
+    {
+      "type": "heading",
+      "text": "Creating an Array and Reading Its Length"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fruits = [\"apple\", \"banana\", \"cherry\"];\nconst scores = [98, 72, 85, 91];\n\nconsole.log(fruits);         // the whole list\nconsole.log(scores.length);  // how many elements",
+      "output": "[ 'apple', 'banana', 'cherry' ]\n4",
+      "caption": "Square brackets create an array; .length tells you how many elements it has"
+    },
+    {
+      "type": "heading",
+      "text": "Indexing — Zero-Based Counting"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a row of lockers",
+      "md": "Picture school lockers numbered starting from **0**, not 1. The first locker is locker 0, the second is locker 1, and so on. JavaScript arrays work exactly the same way — the first element lives at index `0`. This trips up almost every beginner at least once!"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fruits = [\"apple\", \"banana\", \"cherry\"];\n\nconsole.log(fruits[0]); // first element\nconsole.log(fruits[2]); // third (last) element\nconsole.log(fruits[3]); // out of bounds — no error, just undefined",
+      "output": "apple\ncherry\nundefined",
+      "caption": "Access elements with bracket notation. Last valid index = length - 1"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Off-by-one errors are silent",
+      "md": "Trying to read an index that does not exist returns `undefined` — JavaScript will NOT throw an error. That means bugs like `fruits[3]` on a 3-element array can be easy to miss. Always remember: **last valid index = array.length - 1**."
+    },
+    {
+      "type": "heading",
+      "text": "Adding, Removing, and Checking Elements"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const queue = [\"Alice\", \"Bob\"];\n\nqueue.push(\"Carol\");           // add to END\nconsole.log(queue);            // ['Alice', 'Bob', 'Carol']\n\nqueue.pop();                   // remove from END\nqueue.unshift(\"Zara\");         // add to FRONT\nqueue.shift();                 // remove from FRONT\nconsole.log(queue);            // ['Alice', 'Bob']\n\nconsole.log(queue.includes(\"Alice\")); // true\nconsole.log(queue.includes(\"Zara\"));  // false",
+      "output": "[ 'Alice', 'Bob', 'Carol' ]\n[ 'Alice', 'Bob' ]\ntrue\nfalse",
+      "caption": "push/pop act on the end; unshift/shift act on the front; includes() checks membership"
+    },
+    {
+      "type": "heading",
+      "text": "Iterating Over an Array"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const planets = [\"Mercury\", \"Venus\", \"Earth\", \"Mars\"];\n\nfor (const planet of planets) {\n  console.log(`Planet: ${planet}`);\n}",
+      "output": "Planet: Mercury\nPlanet: Venus\nPlanet: Earth\nPlanet: Mars",
+      "caption": "for...of visits every element in order — clean and readable"
+    },
+    {
+      "type": "heading",
+      "text": "The Big Three: map, filter, and reduce"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const numbers = [1, 2, 3, 4, 5];\n\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled);\n\nconst evens = numbers.filter(n => n % 2 === 0);\nconsole.log(evens);\n\nconst total = numbers.reduce((sum, n) => sum + n, 0);\nconsole.log(total);",
+      "output": "[ 2, 4, 6, 8, 10 ]\n[ 2, 4 ]\n15",
+      "caption": "map transforms every element; filter keeps elements that pass a test; reduce boils the list to one value. They never mutate the original, and you can chain them: numbers.filter(n => n > 2).map(n => n * 10)"
+    },
+    {
+      "type": "quiz",
+      "question": "What does `[10, 20, 30][1]` evaluate to?",
+      "options": ["10", "20", "30", "undefined"],
+      "answerIndex": 1,
+      "explanation": "Arrays use zero-based indexing. Index 0 is 10, index 1 is 20, and index 2 is 30. So [10, 20, 30][1] gives you 20."
+    }
+  ],
+  "keyTakeaways": [
+    "Arrays store ordered lists in a single variable using square brackets `[ ]`.",
+    "Indexing starts at 0 — the first element is always at index 0, and the last is at `length - 1`.",
+    "Use `push`/`pop` to add or remove from the end, and `unshift`/`shift` for the front.",
+    "`map`, `filter`, and `reduce` transform arrays without mutating the original — they are the backbone of modern JS data processing.",
+    "`includes()` is the quickest way to check whether a value is present in an array."
+  ],
+  "exercise": {
+    "prompt": "You have an array of product prices. Write code that: (1) adds a new price of 15 to the end of the array using push, (2) uses filter to keep only prices above 10, and (3) uses map to apply a 10% discount to those filtered prices. Log the final discounted prices.",
+    "starterCode": "const prices = [5, 12, 8, 20, 3, 18];\n\n// TODO 1: Push the price 15 onto prices\n\n// TODO 2: Filter — keep only prices greater than 10\nconst expensive = prices.filter(/* your condition */);\n\n// TODO 3: Apply a 10% discount with map (multiply by 0.9)\nconst discounted = expensive.map(/* your transformation */);\n\nconsole.log(discounted);",
+    "hint": "The filter callback should return `price > 10`. The map callback should return `price * 0.9`. Call push() before filtering so the new price is included.",
+    "solution": "const prices = [5, 12, 8, 20, 3, 18];\n\n// 1. Add 15 to the end\nprices.push(15);\n\n// 2. Keep only prices above 10\nconst expensive = prices.filter(price => price > 10);\n\n// 3. Apply a 10% discount\nconst discounted = expensive.map(price => price * 0.9);\n\nconsole.log(discounted);\n// [ 10.8, 18, 16.2, 13.5 ]"
+  }
+}

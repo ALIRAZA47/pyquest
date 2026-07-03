@@ -1,0 +1,53 @@
+{
+  "slug": "the-box-model",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "With no box-sizing reset applied, how wide does this element actually appear on screen?",
+      "code": ".box {\n  width: 200px;\n  padding: 20px;\n  border: 5px solid black;\n}",
+      "options": [
+        "200px wide, because width sets the final rendered size",
+        "250px wide, because padding and border are added on top of the content width",
+        "230px wide, because only padding is added but the border is drawn inside"
+      ],
+      "answerIndex": 1,
+      "explanation": "In the default content-box model, width sets only the content area. Padding and border are added outside it: 200 + 20 + 20 (padding both sides) + 5 + 5 (border both sides) = 250px. This surprise is exactly why border-box is so widely used."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the reset so that width means the total rendered size, with padding and border carving into the content instead of growing the element.",
+      "codeTemplate": "*,\n*::before,\n*::after {\n  box-sizing: {{blank}};\n}",
+      "blanks": [
+        {
+          "answer": "border-box",
+          "accept": ["border-box;", "borderbox", "border box"]
+        }
+      ],
+      "explanation": "box-sizing: border-box makes width and height include padding and border. This is the first thing to add to every new stylesheet so that adding padding or a border never silently grows your elements and breaks the layout."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": ".box {\n  padding: 10px 20px;\n  margin-collapse: none;\n}",
+      "options": [
+        "margin-collapse is not a real CSS property; you can't disable collapse that way",
+        "padding shorthand can only take one value, not two",
+        "the padding must come after the margin declaration to work"
+      ],
+      "answerIndex": 0,
+      "explanation": "There is no margin-collapse property. Vertical margins between block elements collapse to the larger value automatically. To avoid it, use padding on a parent container or switch to a flex or grid layout, which disables margin collapse between items."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "A heading has margin-bottom: 24px and the paragraph directly below it has margin-top: 16px. Both are block elements stacked vertically. What is the actual gap between them?",
+      "code": "h2 { margin-bottom: 24px; }\np  { margin-top: 16px; }",
+      "options": [
+        "40px, because the two margins add together",
+        "24px, because vertical margins collapse to the larger value",
+        "16px, because the paragraph's margin wins over the heading's"
+      ],
+      "answerIndex": 1,
+      "explanation": "Vertical margins between stacked block elements collapse: CSS takes the larger of the two (24px) as the gap rather than the sum (40px). Only top and bottom margins collapse — left and right margins always add up normally."
+    }
+  ]
+}

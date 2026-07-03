@@ -1,0 +1,52 @@
+{
+  "slug": "what-is-nodejs",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is hello.js from the lesson, run with `node hello.js`. What does it print?",
+      "code": "// hello.js\nconsole.log(\"Hello from Node.js!\");\n\nconst name = \"world\";\nconsole.log(`Greetings, ${name}.`);",
+      "options": [
+        "Hello from Node.js!\nGreetings, world.",
+        "Hello from Node.js!\nGreetings, ${name}.",
+        "Hello from Node.js!",
+        "ReferenceError: console is not defined"
+      ],
+      "answerIndex": 0,
+      "explanation": "The JavaScript syntax you already know works exactly the same in Node.js. console.log runs in Node just as in the browser, and the template literal `Greetings, ${name}.` substitutes the variable, printing 'Greetings, world.' on the second line."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is pasted from a browser script into a file and run with `node app.js`. What's wrong?",
+      "code": "// app.js\nconst app = document.querySelector('#app');\napp.textContent = 'Loaded!';",
+      "options": [
+        "querySelector is spelled wrong",
+        "document is a browser-only API, so Node throws ReferenceError: document is not defined",
+        "You must call require('document') before using it",
+        "textContent should be innerHTML in Node"
+      ],
+      "answerIndex": 1,
+      "explanation": "Node.js has no DOM, so globals like document, window, and localStorage do not exist. Accessing an undefined global throws ReferenceError: document is not defined. Server-side code works with files, networks, and databases instead of the DOM."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this Node.js line so it loads the built-in file-system module (as shown in the lesson).",
+      "codeTemplate": "const fs = {{blank}}(\"fs\");\nconst contents = fs.readFileSync(\"hello.js\", \"utf8\");",
+      "blanks": [
+        { "answer": "require", "accept": ["require"] }
+      ],
+      "explanation": "In Node.js you load built-in modules like fs, http, path, and os with require(). Unlike the browser, Node has no <script> tags — require is how a file pulls in the modules it needs."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order these lines to build the smallest possible Node.js web server from the lesson.",
+      "lines": [
+        "const http = require(\"http\");",
+        "const server = http.createServer((req, res) => {",
+        "  res.end(\"Hello from my Node server!\\n\");",
+        "});",
+        "server.listen(3000);"
+      ],
+      "explanation": "First require the built-in http module, then create the server with a request handler, close the callback and createServer call, and finally call listen so the server starts accepting connections on port 3000. You must create the server before you can tell it to listen."
+    }
+  ]
+}

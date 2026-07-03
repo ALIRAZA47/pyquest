@@ -1,0 +1,159 @@
+{
+  "slug": "async-in-node",
+  "title": "Async in Node",
+  "category": "APIs & Async",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how Node.js handles asynchronous work — from old-school callbacks all the way to clean async/await — and how to keep your code from turning into a tangled mess.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Here is something that trips up almost every developer new to Node.js: **JavaScript runs on a single thread**. That means it can only do one thing at a time. Yet Node.js servers cheerfully handle thousands of simultaneous requests — file reads, database queries, HTTP calls — without breaking a sweat. How? The answer is **asynchronous programming**, and understanding it will unlock the full power of Node.js for you.\n\nIn this lesson we will travel through the history of async patterns in JavaScript: from humble callbacks, through Promises, and finally to the elegant `async/await` syntax used in all modern Node.js code. We will also cover error handling and running tasks in parallel. By the end, writing async code will feel natural."
+    },
+    {
+      "type": "heading",
+      "text": "Why Async Exists: The Single-Thread Problem"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Node.js is like a great waiter",
+      "md": "Imagine a restaurant with one waiter. A bad waiter takes your order, walks to the kitchen, and *stands there staring at the grill* until your food is ready — blocking everyone else. A great waiter takes your order, drops it at the kitchen window, then immediately turns around and takes the next table's order. When the kitchen calls \"order up!\", the waiter comes back to deliver it.\n\nNode.js is that great waiter. It kicks off slow work (reading a file, calling an API) and moves on immediately. When the slow work finishes, Node gets a notification and handles the result. This is the **event loop** in action."
+    },
+    {
+      "type": "text",
+      "md": "If Node.js used the \"bad waiter\" model — pausing and waiting for every slow operation — a single slow database query would freeze the entire server for every user. Async patterns let Node.js hand slow work off to the operating system, stay responsive, and pick up results when they arrive."
+    },
+    {
+      "type": "heading",
+      "text": "Era 1: Callbacks"
+    },
+    {
+      "type": "text",
+      "md": "The original async pattern in Node.js is the **callback**: a function you pass *into* another function, to be called when the work is done. Node's built-in APIs were all designed this way.\n\nThe convention is **error-first callbacks** — the first argument to your callback is always an error (or `null` if everything went fine)."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs');\n\nfs.readFile('hello.txt', 'utf8', function (err, data) {\n  if (err) {\n    console.error('Something went wrong:', err.message);\n    return;\n  }\n  console.log('File contents:', data);\n});\n\nconsole.log('This line runs BEFORE the file is read!');",
+      "output": "This line runs BEFORE the file is read!\nFile contents: Hello, world!",
+      "caption": "fs.readFile is async — the callback fires later, after the OS delivers the file contents."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Callback Hell",
+      "md": "Callbacks work fine for one level deep. The problem comes when you need to chain several async operations — read a file, then parse its contents, then save a result. Each step nests inside the previous callback, creating deeply indented code nicknamed **\"callback hell\"** or \"the pyramid of doom\".\n\n```js\nreadFile('config.txt', (err, config) => {\n  parseConfig(config, (err, settings) => {\n    fetchUser(settings.userId, (err, user) => {\n      saveUser(user, (err) => {\n        // By now you've lost track of which err is which\n      });\n    });\n  });\n});\n```\n\nThis code is hard to read, hard to debug, and a maintenance nightmare. Promises were invented to solve exactly this."
+    },
+    {
+      "type": "heading",
+      "text": "Era 2: Promises"
+    },
+    {
+      "type": "text",
+      "md": "A **Promise** is an object that represents a value that will be available *at some point in the future* — or an error if something goes wrong. Instead of passing a callback into a function, the function returns a Promise, and you attach handlers to it with `.then()` and `.catch()`.\n\nThis transforms the pyramid into a flat, readable **chain**."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\n\nfs.readFile('hello.txt', 'utf8')\n  .then((data) => {\n    console.log('File contents:', data);\n    return data.toUpperCase();\n  })\n  .then((upper) => {\n    console.log('Uppercased:', upper);\n  })\n  .catch((err) => {\n    console.error('Error:', err.message);\n  });",
+      "caption": "fs.promises gives Promise-based versions of all file system methods. One .catch() handles errors from the entire chain."
+    },
+    {
+      "type": "text",
+      "md": "Notice two things: the chain reads top-to-bottom like synchronous code, and a single `.catch()` at the end handles any error that occurs anywhere in the chain. That is already a huge improvement over callbacks.\n\nYou can also create your own Promises when wrapping older callback-based APIs:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "function wait(ms) {\n  return new Promise((resolve) => {\n    setTimeout(resolve, ms);\n  });\n}\n\nwait(1000).then(() => console.log('1 second passed!'));",
+      "caption": "new Promise takes an executor function with resolve and reject. Call resolve() when done, reject() on failure."
+    },
+    {
+      "type": "heading",
+      "text": "Era 3: async/await — Promises with a Superpower"
+    },
+    {
+      "type": "text",
+      "md": "`async/await` is not a replacement for Promises — it is **syntax sugar on top of Promises**. Under the hood, everything is still a Promise. But `await` lets you pause inside a function until a Promise settles, making async code look and feel synchronous.\n\nRules:\n- Mark the function with `async`.\n- Use `await` before any expression that returns a Promise.\n- An `async` function always returns a Promise itself."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\n\nasync function readAndPrint() {\n  const data = await fs.readFile('hello.txt', 'utf8');\n  const upper = data.toUpperCase();\n  console.log('Uppercased:', upper);\n}\n\nreadAndPrint();",
+      "output": "Uppercased: HELLO, WORLD!",
+      "caption": "Compare this to the .then() chain above — same behaviour, but reads like straight-line synchronous code."
+    },
+    {
+      "type": "heading",
+      "text": "Error Handling with try/catch"
+    },
+    {
+      "type": "text",
+      "md": "With `async/await`, error handling uses the familiar `try/catch` blocks you already know from synchronous code. Wrap the awaited calls in a `try` block and handle failures in `catch`."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\n\nasync function readSafely(filename) {\n  try {\n    const data = await fs.readFile(filename, 'utf8');\n    console.log('Contents:', data);\n  } catch (err) {\n    console.error('Could not read file:', err.message);\n  } finally {\n    console.log('Done attempting to read.');\n  }\n}\n\nreadSafely('missing.txt');",
+      "output": "Could not read file: ENOENT: no such file or directory, open 'missing.txt'\nDone attempting to read.",
+      "caption": "The finally block always runs — useful for cleanup like closing database connections."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Forgetting to await is a silent killer",
+      "md": "If you forget `await`, the function returns a Promise object instead of its resolved value — and no error is thrown. Your code will silently produce wrong results.\n\n```js\n// BAD: data is a Promise object, not a string\nconst data = fs.readFile('hello.txt', 'utf8');\nconsole.log(data); // [object Promise]\n\n// GOOD\nconst data = await fs.readFile('hello.txt', 'utf8');\n```\n\nIf you ever see `[object Promise]` in your output, this is almost always the cause."
+    },
+    {
+      "type": "heading",
+      "text": "Running Tasks in Parallel with Promise.all"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you have several independent async tasks and you want to run them **at the same time** instead of one after another. `Promise.all` takes an array of Promises and returns a single Promise that resolves when *all of them* finish.\n\nCompare the two approaches:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "async function sequential() {\n  // Waits 1s, then waits another 1s — total: ~2 seconds\n  const a = await fetchUser(1);   // 1 second\n  const b = await fetchUser(2);   // 1 second\n  return [a, b];\n}\n\nasync function parallel() {\n  // Both fire at the same time — total: ~1 second\n  const [a, b] = await Promise.all([\n    fetchUser(1),\n    fetchUser(2)\n  ]);\n  return [a, b];\n}",
+      "caption": "Promise.all is a huge win when tasks don't depend on each other. Use destructuring to grab each result cleanly."
+    },
+    {
+      "type": "text",
+      "md": "One important caveat: if **any** Promise in the array rejects, `Promise.all` immediately rejects with that error. Wrap it in `try/catch` to handle failures gracefully.\n\nFor cases where you want all results even if some fail, check out `Promise.allSettled` — it waits for every Promise to either resolve or reject and gives you a status report for each one."
+    },
+    {
+      "type": "quiz",
+      "question": "You `await` two async operations one after the other (sequentially) and each takes 500ms. You then refactor to use `Promise.all`. Roughly how long will the parallel version take?",
+      "options": [
+        "~1000ms — same as before",
+        "~500ms — both run at the same time",
+        "~250ms — Promise.all makes each one twice as fast",
+        "It depends on whether you use async/await or .then()"
+      ],
+      "answerIndex": 1,
+      "explanation": "Promise.all kicks off all the Promises simultaneously. Since neither task waits for the other to finish, the total time is roughly as long as the *slowest* single task — in this case ~500ms instead of ~1000ms. Promise.all doesn't make individual tasks faster; it just avoids waiting for them one-by-one."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Quick mental model for choosing a pattern",
+      "md": "- **Callbacks**: only when using a legacy library that forces them (e.g. some older npm packages).\n- **Promises with .then()**: handy for short chains or when you need fine-grained control.\n- **async/await**: your default for all new code — clearest, easiest to debug.\n- **Promise.all**: whenever two or more independent async tasks can safely run at the same time."
+    }
+  ],
+  "keyTakeaways": [
+    "Node.js uses an event loop to handle many operations concurrently on a single thread — async patterns are what make this possible.",
+    "Callbacks were the original async tool, but nesting them creates hard-to-read 'callback hell'.",
+    "Promises flatten async chains and centralise error handling with a single .catch().",
+    "async/await is syntactic sugar over Promises — it makes async code read like synchronous code and pairs naturally with try/catch.",
+    "Promise.all runs independent tasks in parallel, dramatically cutting total wait time when tasks don't depend on each other."
+  ],
+  "exercise": {
+    "prompt": "Write an async function called `loadUserData` that does three things in parallel using `Promise.all`: fetches a user name (simulated with a 500ms delay returning 'Alice'), fetches their score (300ms delay returning 42), and fetches their rank (400ms delay returning 'Gold'). Log all three results. Wrap everything in try/catch so errors are handled gracefully.",
+    "starterCode": "function delay(ms, value) {\n  return new Promise((resolve) => setTimeout(() => resolve(value), ms));\n}\n\nasync function loadUserData() {\n  try {\n    // TODO: use Promise.all to fetch name, score, and rank in parallel\n    // delay(500, 'Alice') -> name\n    // delay(300, 42)      -> score\n    // delay(400, 'Gold')  -> rank\n\n    console.log(`Name: ${name}, Score: ${score}, Rank: ${rank}`);\n  } catch (err) {\n    console.error('Failed to load user data:', err.message);\n  }\n}\n\nloadUserData();",
+    "hint": "Destructure the result of `await Promise.all([...])` directly into three variables: `const [name, score, rank] = await Promise.all([...])`.",
+    "solution": "function delay(ms, value) {\n  return new Promise((resolve) => setTimeout(() => resolve(value), ms));\n}\n\nasync function loadUserData() {\n  try {\n    const [name, score, rank] = await Promise.all([\n      delay(500, 'Alice'),\n      delay(300, 42),\n      delay(400, 'Gold')\n    ]);\n\n    console.log(`Name: ${name}, Score: ${score}, Rank: ${rank}`);\n  } catch (err) {\n    console.error('Failed to load user data:', err.message);\n  }\n}\n\nloadUserData();"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "slug": "operators-and-expressions",
+  "title": "Operators & Expressions",
+  "category": "JavaScript Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how JavaScript does math, compares values, combines logic, and builds strings — the everyday building blocks every program depends on.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every program needs to *calculate* things, *compare* things, and *make decisions*. The tools JavaScript gives you for all of that are called **operators**. They work on values — numbers, strings, booleans — and combine them into **expressions** that produce a result.\n\nThink of operators as verbs: `+` says \"add\", `===` says \"are these identical?\", `&&` says \"are *both* of these true?\". By the end of this lesson you will know the most important ones, and the subtle traps that trip up beginners."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Operators are the verbs of JavaScript",
+      "md": "If values are nouns — `42`, `\"hello\"`, `true` — then operators are the verbs that *do something* with them. `4 + 3` is a tiny sentence: \"take 4 and add 3\". The result `7` is what that sentence *means*. A chain of operators and values is an **expression**."
+    },
+    {
+      "type": "heading",
+      "text": "Arithmetic and Assignment Operators"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// Arithmetic\nconsole.log(10 + 3);  // 13  — addition\nconsole.log(10 - 3);  // 7   — subtraction\nconsole.log(10 * 3);  // 30  — multiplication\nconsole.log(10 / 4);  // 2.5 — division\nconsole.log(10 % 3);  // 1   — remainder (modulo)\n\n// Compound assignment — shorthand for updating a variable\nlet score = 0;\nscore += 10;   // same as: score = score + 10\nscore -= 3;    // same as: score = score - 3\nconsole.log(score);",
+      "output": "13\n7\n30\n2.5\n1\n7",
+      "caption": "% (modulo) gives the remainder. += and -= update a variable in one concise step."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "What is modulo useful for?",
+      "md": "Think of a clock: after 12, you don't say \"hour 13\" — you wrap back to 1. `13 % 12` is `1`. Modulo is perfect for even/odd checks (`n % 2 === 0` means even) and any time you need values to wrap around a range."
+    },
+    {
+      "type": "heading",
+      "text": "Comparison Operators — and the === vs == Trap"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "console.log(5 > 3);    // true  — greater than\nconsole.log(5 < 3);    // false — less than\nconsole.log(5 >= 5);   // true  — greater than or equal\nconsole.log(5 !== 3);  // true  — strict NOT equal\n\n// == does type coercion — avoid it!\nconsole.log(\"5\" == 5);   // true  (yikes!)\nconsole.log(\"5\" === 5);  // false (correct)",
+      "output": "true\nfalse\ntrue\ntrue\ntrue\nfalse",
+      "caption": "Comparison operators return true or false. === checks value AND type — use it instead of =="
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always use === and !== — never ==",
+      "md": "The `==` operator performs **type coercion**: it quietly converts values before comparing, producing results like `0 == false → true` and `\"\" == false → true`. `===` never converts types — it is `true` only when value *and* type both match. Make `===` your default and you will avoid a whole class of confusing bugs."
+    },
+    {
+      "type": "heading",
+      "text": "Logical Operators, Truthy, and Falsy"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// && = AND (both must be true), || = OR (one is enough), ! = NOT\nconst hasTicket = true;\nconst isOver18 = false;\nconsole.log(hasTicket && isOver18);  // false\nconsole.log(hasTicket || isOver18);  // true\nconsole.log(!hasTicket);             // false\n\n// Every value is truthy or falsy\n// Falsy: false, 0, \"\", null, undefined, NaN — everything else is truthy\nconsole.log(Boolean(0));        // false\nconsole.log(Boolean(\"\"));       // false\nconsole.log(Boolean(\"hello\"));  // true\nconsole.log(Boolean([]));       // true — even an empty array!",
+      "output": "false\ntrue\nfalse\nfalse\nfalse\ntrue\ntrue",
+      "caption": "Logical operators combine booleans. Boolean() reveals a value's truthy/falsy nature."
+    },
+    {
+      "type": "heading",
+      "text": "String Concatenation and Template Literals"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const name = \"Priya\";\nconst score = 95;\n\n// Old way: + concatenation — gets messy fast\nconsole.log(\"Hello, \" + name + \"! Score: \" + score);\n\n// Modern way: template literal (backticks + ${})\nconsole.log(`Hello, ${name}! Score: ${score}`);\n\n// Any expression works inside ${}\nconsole.log(`Double: ${score * 2}, Pass? ${score >= 70}`);",
+      "output": "Hello, Priya! Score: 95\nHello, Priya! Score: 95\nDouble: 190, Pass? true",
+      "caption": "Template literals are cleaner and support any JS expression inside ${}"
+    },
+    {
+      "type": "quiz",
+      "question": "What does this expression evaluate to?\n\n```js\nconsole.log(\"3\" === 3);\n```",
+      "options": [
+        "true, because both represent the number 3",
+        "false, because === checks both value AND type, and a string is not a number",
+        "true, because JavaScript automatically converts types",
+        "A TypeError is thrown"
+      ],
+      "answerIndex": 1,
+      "explanation": "=== (strict equality) never converts types. The string \"3\" and the number 3 have different types, so the result is false. With == it would be true — which is exactly why === is safer and preferred."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Four groups to remember",
+      "md": "**Arithmetic** (`+ - * / %`) crunches numbers. **Comparison** (`=== !== > <`) answers yes/no questions. **Logical** (`&& || !`) combines those answers. **Template literals** weave values into readable strings. Master these four groups and you can express almost any idea in code."
+    }
+  ],
+  "keyTakeaways": [
+    "Use === and !== for all equality checks — == does sneaky type conversion that causes bugs.",
+    "The % (modulo) operator gives the remainder after division — great for even/odd checks and wrap-around logic.",
+    "Compound assignment operators like += update a variable in one concise step.",
+    "Only six values are falsy: false, 0, \"\", null, undefined, and NaN — everything else is truthy.",
+    "Template literals (backtick strings with ${}) are the modern, readable way to build strings with variables."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `gradeReport` that takes a student's `name` (string) and `score` (number 0–100) and returns a sentence. Use a template literal. Determine the letter grade: 90+ is \"A\", 80–89 is \"B\", 70–79 is \"C\", below 70 is \"F\".\n\nExample: `gradeReport(\"Sam\", 85)` should return `\"Sam scored 85 — that's a B!\"`",
+    "starterCode": "function gradeReport(name, score) {\n  // TODO: determine the letter grade using if / else-if\n  let grade;\n  if (score >= 90) {\n    grade = \"A\";\n  } else if (/* TODO: condition for B */) {\n    grade = \"B\";\n  } // TODO: add C and F cases\n\n  // TODO: return a template literal with name, score, and grade\n}\n\nconsole.log(gradeReport(\"Sam\", 85));\nconsole.log(gradeReport(\"Alex\", 72));\nconsole.log(gradeReport(\"Jordan\", 95));",
+    "hint": "With chained else-if, each condition is only reached when earlier ones were false. So `score >= 80` inside an else-if implicitly means 80–89 — you don't need `&& score <= 89`.",
+    "solution": "function gradeReport(name, score) {\n  let grade;\n  if (score >= 90) {\n    grade = \"A\";\n  } else if (score >= 80) {\n    grade = \"B\";\n  } else if (score >= 70) {\n    grade = \"C\";\n  } else {\n    grade = \"F\";\n  }\n  return `${name} scored ${score} — that's a ${grade}!`;\n}\n\nconsole.log(gradeReport(\"Sam\", 85));    // Sam scored 85 — that's a B!\nconsole.log(gradeReport(\"Alex\", 72));   // Alex scored 72 — that's a C!\nconsole.log(gradeReport(\"Jordan\", 95)); // Jordan scored 95 — that's a A!"
+  }
+}

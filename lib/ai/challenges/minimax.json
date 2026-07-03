@@ -1,0 +1,54 @@
+{
+  "slug": "minimax",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Using the same abstract game tree from the lesson, what does this print? The root is a MAX node, its children are MIN nodes, and leaves are integers.",
+      "code": "def minimax(node, is_maximizing):\n    if isinstance(node, int):\n        return node\n    if is_maximizing:\n        best = -999\n        for child in node:\n            best = max(best, minimax(child, False))\n        return best\n    else:\n        best = 999\n        for child in node:\n            best = min(best, minimax(child, True))\n        return best\n\ntree = [[8, 1], [6, 4], [2, 3]]\nprint(\"Root value:\", minimax(tree, True))",
+      "options": [
+        "Root value: 8",
+        "Root value: 4",
+        "Root value: 1",
+        "Root value: 6"
+      ],
+      "answerIndex": 1,
+      "explanation": "At each MIN node, MIN takes the lowest child: min(8,1)=1, min(6,4)=4, min(2,3)=2. MAX then takes the highest of those results: max(1,4,2)=4. MIN prunes the tempting 8 and 6, so MAX's real best is 4."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the propagation rule. At a MAX node we take the highest child value; at a MIN node we take the lowest. Fill in the function each branch should use.",
+      "codeTemplate": "def minimax(node, is_maximizing):\n    if isinstance(node, int):\n        return node\n    if is_maximizing:\n        best = -999\n        for child in node:\n            best = {{blank}}(best, minimax(child, False))\n        return best\n    else:\n        best = 999\n        for child in node:\n            best = {{blank}}(best, minimax(child, True))\n        return best",
+      "blanks": [
+        { "answer": "max", "accept": ["max()", "MAX"] },
+        { "answer": "min", "accept": ["min()", "MIN"] }
+      ],
+      "explanation": "MAX wants the highest score, so a maximizing node accumulates with max(). MIN wants to minimize MAX's score, so a minimizing node accumulates with min(). Note the is_maximizing flag also flips on each recursive call, since players alternate turns."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should return the correct leaf scores for tic-tac-toe, where 'X' is MAX and 'O' is MIN. This code has a bug — what's wrong?",
+      "code": "def score(b):\n    w = winner(b)\n    if w == 'X': return -1   # X is MAX\n    if w == 'O': return  1   # O is MIN\n    if None not in b: return 0\n    return None  # not terminal",
+      "options": [
+        "The draw case should return 1, not 0",
+        "The win/loss scores are swapped: an 'X' (MAX) win must be +1 and an 'O' (MIN) win must be -1",
+        "It should check 'O' before 'X'",
+        "None not in b is the wrong way to detect a full board"
+      ],
+      "answerIndex": 1,
+      "explanation": "In the lesson's convention MAX ('X') winning scores +1 and MIN ('O') winning scores -1. Here they are reversed, which would make minimax steer toward losing for X. Draw stays 0 and the full-board check is correct."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to find the best move INDEX for MAX from the root of an abstract game tree (children are MIN nodes).",
+      "lines": [
+        "best_val, best_idx = -999, None",
+        "for i, child in enumerate(tree):",
+        "    val = minimax(child, False)",
+        "    if val > best_val:",
+        "        best_val, best_idx = val, i",
+        "print(\"Best move index:\", best_idx)"
+      ],
+      "explanation": "First initialize the running best to a very low value with no index. Then loop over each child, run minimax on it as a MIN node (opponent moves next), and keep the index whenever a child beats the current best. After the loop, the surviving index is MAX's optimal move."
+    }
+  ]
+}

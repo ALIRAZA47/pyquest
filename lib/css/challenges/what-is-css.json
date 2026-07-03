@@ -1,0 +1,47 @@
+{
+  "slug": "what-is-css",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This external stylesheet is linked to a page. What visual result does this rule produce for every <h1> on the page?",
+      "code": "h1 {\n  color: darkblue;\n  font-size: 32px;\n}",
+      "options": [
+        "Every <h1> appears in dark blue at 32 pixels, larger than the default black heading",
+        "Only the first <h1> on the page turns dark blue; the rest stay black",
+        "The whole page background turns dark blue and text becomes 32px"
+      ],
+      "answerIndex": 0,
+      "explanation": "The selector h1 targets ALL <h1> elements, and the two declarations change their color and font-size. A tag selector applies to every matching element, not just the first, and it styles the elements themselves, not the page background."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This CSS rule is supposed to turn paragraphs red, but nothing changes. What's wrong?",
+      "code": "p {\n  color = red;\n}",
+      "options": [
+        "A property and value must be separated by a colon (color: red;), not an equals sign",
+        "You cannot use the named colour 'red'; only hex codes work",
+        "The selector should be <p> with angle brackets, not p"
+      ],
+      "answerIndex": 0,
+      "explanation": "Inside a CSS rule each declaration is written as property: value; — the property and value are joined by a colon and the declaration ends with a semicolon. An equals sign is not valid CSS syntax, so the browser ignores the broken declaration."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the <link> tag that loads an external stylesheet named styles.css into the page's <head>. Fill in the attribute that points to the file.",
+      "codeTemplate": "<link rel=\"stylesheet\" {{blank}}=\"styles.css\">",
+      "blanks": [
+        { "answer": "href", "accept": ["HREF", " href"] }
+      ],
+      "explanation": "An external stylesheet is attached with <link rel=\"stylesheet\" href=\"styles.css\">. The href attribute holds the path to the CSS file. If the href path is wrong, the browser silently loads no styles and the page appears unstyled."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the missing character so this line is a valid CSS comment. Comments in CSS start with /* and end with these two characters.",
+      "codeTemplate": "/* This sets the brand colour {{blank}}\ncolor: #4f46e5;",
+      "blanks": [
+        { "answer": "*/", "accept": ["* /", "*/ "] }
+      ],
+      "explanation": "A CSS comment opens with /* and closes with */. Everything between the two markers is ignored by the browser. Forgetting the closing */ would accidentally comment out the code that follows, so the color declaration would never apply."
+    }
+  ]
+}

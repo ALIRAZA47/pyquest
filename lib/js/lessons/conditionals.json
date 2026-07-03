@@ -1,0 +1,167 @@
+{
+  "slug": "conditionals",
+  "title": "Conditionals",
+  "category": "Data & Logic",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Teach your programs to make decisions using if/else, comparison and logical operators, the ternary shortcut, switch statements, and JavaScript's quirky truthy/falsy rules.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every interesting program makes choices. Should we show the dashboard or the login screen? Is the user old enough to proceed? Did the password match? Without the ability to make decisions, a program can only do the exact same thing every time — which makes it pretty useless in the real world.\n\nIn JavaScript, **conditionals** are the tool that lets your code look at a situation and choose a path. By the end of this lesson you will be comfortable writing `if/else` statements, chaining multiple conditions, using the handy ternary operator as a one-liner, reaching for `switch` when you have many fixed cases, and understanding why some values in JavaScript are treated as \"truthy\" or \"falsy\" even when they are not literally `true` or `false`."
+    },
+    {
+      "type": "heading",
+      "text": "The if Statement — Your Program's First Decision"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Conditionals are like traffic lights",
+      "md": "Think of a conditional as a traffic light at an intersection. When you arrive, the light checks its timer and decides: green means go, red means stop. You do not always take the same action — the action depends on a **condition** that is checked in the moment. A JavaScript `if` statement works exactly the same way: it checks a condition, and runs a block of code only if that condition is `true`."
+    },
+    {
+      "type": "text",
+      "md": "The simplest form is just `if`. If the condition inside the parentheses is true, the code inside the curly braces runs. If it is false, JavaScript skips the whole block and moves on."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const temperature = 28;\n\nif (temperature > 25) {\n  console.log(\"It's warm outside!\");\n}\n\nconsole.log(\"Program continues here.\");",
+      "output": "It's warm outside!\nProgram continues here.",
+      "caption": "The message only prints because 28 > 25 is true."
+    },
+    {
+      "type": "heading",
+      "text": "Adding an else — The Fallback Path"
+    },
+    {
+      "type": "text",
+      "md": "Often you want to do something different when the condition is false, not just skip it. That is where `else` comes in. The `else` block runs whenever the `if` condition is **not** true — think of it as the default path."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const hour = 14; // 2 PM in 24-hour time\n\nif (hour < 12) {\n  console.log(\"Good morning!\");\n} else {\n  console.log(\"Good afternoon!\");\n}",
+      "output": "Good afternoon!",
+      "caption": "14 is not less than 12, so the else branch runs."
+    },
+    {
+      "type": "heading",
+      "text": "else if — Handling More Than Two Cases"
+    },
+    {
+      "type": "text",
+      "md": "Real decisions often have more than two paths. What if the hour is in the evening? You can chain as many `else if` blocks as you need. JavaScript checks each condition from top to bottom and runs the **first** block whose condition is true, then skips the rest."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const hour = 20; // 8 PM\n\nif (hour < 12) {\n  console.log(\"Good morning!\");\n} else if (hour < 18) {\n  console.log(\"Good afternoon!\");\n} else {\n  console.log(\"Good evening!\");\n}",
+      "output": "Good evening!",
+      "caption": "20 fails both earlier checks, so the final else runs."
+    },
+    {
+      "type": "heading",
+      "text": "Comparison and Logical Operators"
+    },
+    {
+      "type": "text",
+      "md": "Every condition is an expression that evaluates to `true` or `false`. You build those expressions with **comparison operators** and **logical operators**.\n\n**Comparison operators** compare two values:\n- `===` — strictly equal (value AND type must match)\n- `!==` — strictly not equal\n- `>` — greater than\n- `<` — less than\n- `>=` — greater than or equal to\n- `<=` — less than or equal to\n\n**Logical operators** combine conditions:\n- `&&` (AND) — true only if **both** sides are true\n- `||` (OR) — true if **at least one** side is true\n- `!` (NOT) — flips true to false and false to true"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const age = 20;\nconst hasTicket = true;\n\nif (age >= 18 && hasTicket) {\n  console.log(\"Welcome to the show!\");\n} else {\n  console.log(\"Sorry, you can't enter.\");\n}",
+      "output": "Welcome to the show!",
+      "caption": "Both conditions must be true for the && to pass."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "=== vs == — always use triple equals",
+      "md": "JavaScript has two equality operators: `==` (loose) and `===` (strict). The loose version tries to convert types before comparing, which leads to surprising results like `0 == false` being `true`. Unless you have a specific reason, **always use `===`**. It checks both the value and the type, which is almost always what you want."
+    },
+    {
+      "type": "heading",
+      "text": "Truthy and Falsy — When Non-Booleans Act Like Booleans"
+    },
+    {
+      "type": "text",
+      "md": "JavaScript conditions do not strictly require `true` or `false`. Every value in JavaScript is considered either **truthy** (behaves like `true` in a boolean context) or **falsy** (behaves like `false`). There are exactly **six falsy values** to memorize:\n\n- `false`\n- `0`\n- `\"\"` (empty string)\n- `null`\n- `undefined`\n- `NaN`\n\nEverything else — including `[]`, `{}`, any non-zero number, and any non-empty string — is truthy. This is frequently used as a shorthand."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const username = \"\"; // empty string — falsy!\n\nif (username) {\n  console.log(\"Hello, \" + username);\n} else {\n  console.log(\"Please enter a username.\");\n}",
+      "output": "Please enter a username.",
+      "caption": "An empty string is falsy, so the else branch runs."
+    },
+    {
+      "type": "heading",
+      "text": "The Ternary Operator — Conditionals in One Line"
+    },
+    {
+      "type": "text",
+      "md": "When you just want to pick between two values — not run a block of code — the **ternary operator** is a compact alternative to `if/else`. The syntax is:\n\n```\ncondition ? valueIfTrue : valueIfFalse\n```\n\nThe name \"ternary\" just means it takes three parts (the condition, the true value, and the false value). It is especially useful when assigning a value or building a string."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const score = 72;\nconst result = score >= 60 ? \"Pass\" : \"Fail\";\n\nconsole.log(result);",
+      "output": "Pass",
+      "caption": "Much shorter than writing a full if/else for a simple value choice."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Keep ternaries simple",
+      "md": "Ternaries shine for simple true/false value choices. If you find yourself nesting one ternary inside another, stop — reach for a regular `if/else` instead. Readability always wins over cleverness."
+    },
+    {
+      "type": "heading",
+      "text": "switch — When You Have Many Exact Values to Check"
+    },
+    {
+      "type": "text",
+      "md": "When you need to compare one value against many specific options, a chain of `else if` blocks can get messy. The `switch` statement is designed exactly for this case. It takes an expression, then jumps to the matching `case`. The `break` keyword at the end of each case tells JavaScript to stop and exit the switch — without it, execution \"falls through\" to the next case, which is rarely what you want."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const day = \"Wednesday\";\n\nswitch (day) {\n  case \"Monday\":\n    console.log(\"Start of the work week.\");\n    break;\n  case \"Wednesday\":\n    console.log(\"Halfway there!\");\n    break;\n  case \"Friday\":\n    console.log(\"Almost the weekend!\");\n    break;\n  default:\n    console.log(\"Just another day.\");\n}",
+      "output": "Halfway there!",
+      "caption": "switch jumps straight to the matching case and runs until the break."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this code log?\n\n```js\nconst x = 0;\nif (x) {\n  console.log(\"truthy\");\n} else {\n  console.log(\"falsy\");\n}\n```",
+      "options": [
+        "truthy",
+        "falsy",
+        "0",
+        "It throws an error"
+      ],
+      "answerIndex": 1,
+      "explanation": "The number 0 is one of the six falsy values in JavaScript, so the condition `if (x)` evaluates to false and the else branch runs, logging \"falsy\"."
+    },
+    {
+      "type": "text",
+      "md": "You now have the full toolkit for making decisions in JavaScript. `if/else if/else` for general branching logic, the ternary operator for quick value choices, and `switch` for matching against a fixed list of known values. Pair these with your knowledge of comparison and logical operators, keep the falsy six in mind, and your programs can handle almost any decision the real world throws at them."
+    }
+  ],
+  "keyTakeaways": [
+    "Use if / else if / else to run different code based on a condition — JavaScript checks each branch top to bottom and stops at the first match.",
+    "Always use === for equality checks; the loose == operator can produce surprising results due to automatic type conversion.",
+    "Only six values are falsy in JavaScript: false, 0, \"\", null, undefined, and NaN — everything else is truthy.",
+    "The ternary operator (condition ? a : b) is a clean one-liner for choosing between two values, but avoid nesting them.",
+    "Use switch when you are comparing one value against many fixed options — always add a break at the end of each case."
+  ],
+  "exercise": {
+    "prompt": "Write a function called `getTicketPrice` that takes a person's age (a number) and returns their ticket price as a string. The rules are: children under 5 are free (\"Free\"), ages 5–12 pay $8 (\"$8\"), ages 13–64 pay $15 (\"$15\"), and seniors aged 65 or older pay $10 (\"$10\"). Call the function with a few different ages and log the results.",
+    "starterCode": "function getTicketPrice(age) {\n  // TODO: use if / else if / else to return the right price string\n  // Children under 5: \"Free\"\n  // Ages 5-12: \"$8\"\n  // Ages 13-64: \"$15\"\n  // Ages 65+: \"$10\"\n}\n\nconsole.log(getTicketPrice(3));   // should log: Free\nconsole.log(getTicketPrice(10));  // should log: $8\nconsole.log(getTicketPrice(30));  // should log: $15\nconsole.log(getTicketPrice(70));  // should log: $10",
+    "hint": "Start at the smallest range (under 5) and work upward. Each else if narrows the age range further. The final else handles everything remaining (65+).",
+    "solution": "function getTicketPrice(age) {\n  if (age < 5) {\n    return \"Free\";\n  } else if (age <= 12) {\n    return \"$8\";\n  } else if (age <= 64) {\n    return \"$15\";\n  } else {\n    return \"$10\";\n  }\n}\n\nconsole.log(getTicketPrice(3));   // Free\nconsole.log(getTicketPrice(10));  // $8\nconsole.log(getTicketPrice(30));  // $15\nconsole.log(getTicketPrice(70));  // $10"
+  }
+}

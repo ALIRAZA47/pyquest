@@ -1,0 +1,50 @@
+{
+  "slug": "colors-and-units",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The user bumps their browser's base font size from 16px to 20px for accessibility. With the CSS below, what happens to the two headings on the page?",
+      "code": "html { /* browser default: font-size 16px, user set to 20px */ }\n\n.title    { font-size: 2rem; }\n.subtitle { font-size: 32px; }",
+      "options": [
+        ".title grows to 40px while .subtitle stays fixed at 32px",
+        "Both headings stay exactly 32px regardless of the user's setting",
+        "Both headings grow proportionally to the new 20px base"
+      ],
+      "answerIndex": 0,
+      "explanation": "rem is relative to the root font size, which inherits the user's browser preference, so 2rem becomes 2 x 20px = 40px. px is an absolute unit that ignores that preference entirely, so 32px stays 32px. This is exactly why the lesson recommends rem for font sizes."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — the designer wanted a soft, washed-out (muted) blue, but instead they got a fully vivid blue. What's wrong?",
+      "code": ".badge {\n  /* wanted: a muted, pastel-ish blue */\n  background-color: hsl(217, 100%, 50%);\n}",
+      "options": [
+        "To mute the color you must lower the saturation (the 2nd value), not leave it at 100% — 50% lightness is the most vivid form of the hue, not a grey",
+        "You must lower the lightness (the 3rd value) from 50% toward 0% to wash the color out",
+        "hsl() only produces muted colors when the hue is above 300, so 217 forces full vividness"
+      ],
+      "answerIndex": 0,
+      "explanation": "In HSL the lightness scale runs black (0%) to vivid color (50%) to white (100%), so 50% lightness is the MOST saturated version of the hue, not a mid-grey. To get a muted, washed-out shade you drop the saturation (e.g. hsl(217, 30%, 65%)), leaving hue and lightness alone."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the unit so this hero section fills the entire window height, no matter how tall the browser window is.",
+      "codeTemplate": ".hero {\n  min-height: 100{{blank}};\n}",
+      "blanks": [
+        { "answer": "vh", "accept": ["VH"] }
+      ],
+      "explanation": "vh means 1% of the viewport height, so 100vh equals the full window height and the hero always fills the screen. Its sibling vw is 1% of the viewport width, which the lesson pairs with clamp() for fluid headlines."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order these lines to build a working blue color scale: first open the :root block, define shades from lightest to darkest by only changing the HSL lightness, then close the block. Top line = first, bottom line = last.",
+      "lines": [
+        ":root {",
+        "  --blue-100: hsl(217, 80%, 90%);",
+        "  --blue-500: hsl(217, 80%, 50%);",
+        "  --blue-900: hsl(217, 80%, 15%);",
+        "}"
+      ],
+      "explanation": "Custom properties live inside a :root block that must open and close with braces. Locking the hue (217) and saturation (80%) and only lowering the lightness from 90% to 15% gives a cohesive light-to-dark tonal palette from a single source of truth — the killer feature of HSL."
+    }
+  ]
+}

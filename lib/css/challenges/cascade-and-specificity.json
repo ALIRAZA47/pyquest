@@ -1,0 +1,49 @@
+{
+  "slug": "cascade-and-specificity",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Given the HTML <p id=\"hero\" class=\"intro\">Hi</p> and the CSS below, what color does the paragraph render?",
+      "code": "p        { color: steelblue; }\n.intro   { color: goldenrod; }\n#hero    { color: tomato; }",
+      "options": [
+        "tomato — the ID selector (1,0,0) beats the class (0,1,0) and the element (0,0,1)",
+        "goldenrod — the class selector always wins over an ID",
+        "steelblue — the element rule comes first, so it takes priority"
+      ],
+      "answerIndex": 0,
+      "explanation": "Specificity is compared bucket by bucket (A,B,C). The ID #hero scores (1,0,0), which beats the class .intro at (0,1,0) and the element p at (0,0,1) regardless of source order. So the color is tomato."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — the developer expected the .btn-primary background to win over the button rule, but the button stays steelblue. What's wrong?",
+      "code": "button {\n  background-color: steelblue;\n}\n\n.btn-primary {\n  background-colour: seagreen;\n}",
+      "options": [
+        "The property is misspelled as 'background-colour' — CSS uses American spelling 'background-color', so the declaration is invalid and ignored",
+        "The .btn-primary rule needs !important to override the element selector",
+        "Class selectors cannot style a <button> element, so the rule never matches"
+      ],
+      "answerIndex": 0,
+      "explanation": "background-colour is not a valid CSS property name; the browser silently discards invalid declarations. Fixing it to background-color makes the rule apply — and since .btn-primary (0,1,0) already outscores button (0,0,1), no !important is needed."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "The value below yanks a declaration above the entire specificity system — even above inline styles. The lesson warns to reserve it for true utility classes. Complete the .hidden rule with that keyword/flag.",
+      "codeTemplate": ".hidden {\n  display: none {{blank}};\n}",
+      "blanks": [
+        { "answer": "!important", "accept": ["important", "! important"] }
+      ],
+      "explanation": "!important lifts a declaration above normal specificity and even beats inline styles. It's a trap in general use — once applied, only another !important can override it — but it's acceptable for unconditional utility classes like .hidden { display: none !important; }."
+    },
+    {
+      "type": "reorder",
+      "prompt": "For <p class=\"note\">, these four rules all set color and all match. Order them from LOWEST cascade priority (top) to HIGHEST priority (bottom) — the bottom rule's color is what actually renders.",
+      "lines": [
+        "p          { color: steelblue; }   /* (0,0,1) element */",
+        ".note      { color: goldenrod; }   /* (0,1,0) class */",
+        "#lead      { color: tomato; }      /* (1,0,0) ID */",
+        "p          { color: seagreen !important; }  /* !important wins */"
+      ],
+      "explanation": "Ranking lowest to highest: element (0,0,1) < class (0,1,0) < ID (1,0,0) < !important. Even though the ID has the highest specificity score, an !important declaration overrides the entire specificity system, so seagreen is the color that actually renders."
+    }
+  ]
+}

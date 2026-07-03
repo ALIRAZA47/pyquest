@@ -6,6 +6,7 @@ import { courseFor } from "@/lib/courses";
 import { useProgress } from "./ProgressContext";
 import { ProgressRing } from "./ProgressRing";
 import { Glyph, categoryGlyph, lessonGlyph } from "./glyphs";
+import { WebIllustration, AiIllustration } from "./Illustrations";
 import { CheckIcon, ArrowRight, TargetIcon } from "./Icons";
 
 const DIFF_DOT: Record<string, string> = {
@@ -61,6 +62,13 @@ export function CourseDashboard({ courseId }: { courseId: string }) {
                 {done} of {total} lessons complete
               </span>
             </div>
+          </div>
+          <div className="hidden w-64 shrink-0 lg:block">
+            {info.track === "web" ? (
+              <WebIllustration className="w-full" />
+            ) : (
+              <AiIllustration className="w-full" />
+            )}
           </div>
         </div>
       </motion.div>

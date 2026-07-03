@@ -1,0 +1,106 @@
+{
+  "slug": "interfaces-and-types",
+  "title": "Interfaces & Type Aliases",
+  "category": "Structuring Types",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to describe the exact shape of your objects using TypeScript's interface and type alias — two of the most useful tools in the whole language.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are the head chef at a restaurant. Every order that leaves the kitchen must have a plate, a main dish, and a table number. You could shout those rules at every cook every morning — or you could post a laminated card on the wall that everyone reads once.\n\nIn TypeScript, **interfaces** and **type aliases** are that laminated card. They describe the *shape* an object must have so TypeScript (and your teammates) always know what to expect. Write the shape once, and the compiler enforces it everywhere."
+    },
+    {
+      "type": "heading",
+      "text": "Describing Object Shapes with interface"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "interface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\nfunction greet(user: User): string {\n  return `Hello, ${user.name}!`;\n}\n\nconst alice: User = { id: 1, name: \"Alice\", email: \"alice@example.com\" };\nconsole.log(greet(alice));",
+      "output": "Hello, Alice!",
+      "caption": "The User interface pins down exactly which fields every user object must carry."
+    },
+    {
+      "type": "heading",
+      "text": "Optional and Readonly Properties"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "readonly is like a printed receipt",
+      "md": "Once a receipt is printed, you cannot change the amount. `readonly` works the same way — TypeScript lets you set the value once when you create the object, then refuses to let anything overwrite it later. Mark optional fields with `?`, and TypeScript will accept the object with or without that field while reminding you to handle the missing case."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "interface Product {\n  readonly id: string;  // can never be changed after creation\n  name: string;\n  price: number;\n  description?: string; // optional — may be undefined\n}\n\nconst shirt: Product = { id: \"p-42\", name: \"Linen Shirt\", price: 49 };\n\nshirt.name = \"Cotton Shirt\"; // OK\n// shirt.id = \"p-99\";        // Error: read-only property\n\nconst label = shirt.description ?? \"No description yet\";\nconsole.log(label);",
+      "output": "No description yet",
+      "caption": "readonly blocks reassignment; ? marks a field as optional."
+    },
+    {
+      "type": "heading",
+      "text": "Extending Interfaces"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "interface Animal {\n  name: string;\n  age: number;\n}\n\ninterface Dog extends Animal {\n  breed: string;\n  isGoodBoy: boolean;\n}\n\nconst rex: Dog = {\n  name: \"Rex\",\n  age: 3,\n  breed: \"Labrador\",\n  isGoodBoy: true,\n};\n\nconsole.log(`${rex.name} is a ${rex.breed}.`);",
+      "output": "Rex is a Labrador.",
+      "caption": "Dog extends Animal, inheriting name and age and adding its own two fields."
+    },
+    {
+      "type": "heading",
+      "text": "Type Aliases — The Other Way"
+    },
+    {
+      "type": "text",
+      "md": "TypeScript also has `type`, which lets you give *any* type expression a name — not just objects. You can name primitives, unions of string literals, tuples, or full object shapes. This flexibility is what makes `type` reach further than `interface`."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// A union of string literals\ntype Direction = \"north\" | \"south\" | \"east\" | \"west\";\n\n// An object shape — works just like interface here\ntype Point = { x: number; y: number };\n\n// Composing two shapes into one with &\ntype HasName = { name: string };\ntype HasAge  = { age: number };\ntype Person  = HasName & HasAge;\n\nconst dana: Person = { name: \"Dana\", age: 28 };\nconsole.log(`${dana.name}, age ${dana.age}`);",
+      "output": "Dana, age 28",
+      "caption": "type can name anything. The & operator (intersection) merges two shapes so the result must satisfy both."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "interface vs type — a simple rule to start with",
+      "md": "**Default to `interface` for objects and classes** — especially if you or others will `extend` them. **Reach for `type`** the moment you need a union (`|`), an intersection (`&`), a tuple, or a non-object alias like `type ID = string`. For plain object shapes either works; pick one and be consistent."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "type aliases cannot be reopened",
+      "md": "Interfaces support **declaration merging** — write `interface Foo` twice in the same scope and TypeScript silently combines them. Type aliases do not: declaring `type Foo` twice is an error. This matters most when writing library types that consumers need to augment. For everyday app code it rarely comes up, but now you know."
+    },
+    {
+      "type": "quiz",
+      "question": "Which TypeScript feature lets you mark a property so it can only be set when the object is first created and never changed afterward?",
+      "options": [
+        "The optional marker ?",
+        "The readonly modifier",
+        "A type alias with &",
+        "The extends keyword"
+      ],
+      "answerIndex": 1,
+      "explanation": "readonly prevents any code from reassigning a property after the object is created. The ? marker makes a property optional. extends and & are about combining or inheriting shapes, not about mutability."
+    }
+  ],
+  "keyTakeaways": [
+    "interface describes an object's required shape; every field listed must be present.",
+    "Mark optional fields with ? and immutable fields with readonly.",
+    "Use extends to build a richer interface from a simpler base — the child inherits everything from the parent.",
+    "type aliases can name anything — unions, tuples, primitives, or object shapes — making them more flexible than interface.",
+    "Default to interface for objects; reach for type when you need a union (|), intersection (&), or any non-object concept."
+  ],
+  "exercise": {
+    "prompt": "Define a BlogPost interface with: a readonly id (number), a title (string), an optional subtitle (string), a published (boolean), and tags (string array). Then write a function summarize(post: BlogPost): string that returns a string like \"[42] Hello TypeScript — 3 tag(s)\".",
+    "starterCode": "// TODO 1: Define the BlogPost interface\n// (readonly id, title, optional subtitle, published, tags)\n\n// TODO 2: Implement summarize — return \"[id] title — N tag(s)\"\nfunction summarize(post: BlogPost): string {\n  // your code here\n}\n\n// Test\nconst post: BlogPost = {\n  id: 42,\n  title: \"Hello TypeScript\",\n  published: true,\n  tags: [\"ts\", \"tutorial\", \"beginners\"],\n};\n\nconsole.log(summarize(post));",
+    "hint": "readonly goes before the property name: `readonly id: number`. The optional subtitle gets a question mark: `subtitle?: string`. Use post.tags.length to count the tags.",
+    "solution": "interface BlogPost {\n  readonly id: number;\n  title: string;\n  subtitle?: string;\n  published: boolean;\n  tags: string[];\n}\n\nfunction summarize(post: BlogPost): string {\n  return `[${post.id}] ${post.title} — ${post.tags.length} tag(s)`;\n}\n\nconst post: BlogPost = {\n  id: 42,\n  title: \"Hello TypeScript\",\n  published: true,\n  tags: [\"ts\", \"tutorial\", \"beginners\"],\n};\n\nconsole.log(summarize(post));"
+  }
+}

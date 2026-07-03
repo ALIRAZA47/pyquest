@@ -1,0 +1,54 @@
+{
+  "slug": "unions-and-narrowing",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Types are erased at runtime, but the narrowing logic still runs. What does this snippet print?",
+      "code": "function formatId(id: string | number): string {\n  if (typeof id === \"string\") {\n    return id.toUpperCase();\n  }\n  return id.toFixed(0);\n}\n\nconsole.log(formatId(\"user-42\"));\nconsole.log(formatId(7.9));",
+      "options": [
+        "USER-42\n8",
+        "USER-42\n7",
+        "user-42\n7.9",
+        "USER-42\n7.9"
+      ],
+      "answerIndex": 0,
+      "explanation": "The typeof guard narrows the union: for the string it returns id.toUpperCase() → \"USER-42\", and for the number branch id.toFixed(0) rounds 7.9 to the nearest whole number and returns the string \"8\". toFixed rounds rather than truncates, so 7.9 becomes 8, not 7."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function double(n: number | null): number {\n  if (n) {\n    return n * 2;\n  }\n  return 0;\n}\n\nconsole.log(double(0));",
+      "options": [
+        "if (n) is a truthiness check, so 0 is treated as falsy and skipped — it should be if (n !== null) to guard only against null.",
+        "You cannot multiply a value typed as number | null, so n * 2 is always a type error.",
+        "The function must check typeof n === \"number\" because typeof null is \"number\".",
+        "Returning 0 at the end is unreachable, so TypeScript rejects the code."
+      ],
+      "answerIndex": 0,
+      "explanation": "if (n) guards against null, but it also treats 0, \"\", and false as falsy. Here 0 is a valid number that gets skipped, so double(0) wrongly returns 0 instead of doubling. Use an explicit if (n !== null) to narrow away only null while keeping 0 as a real value."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the narrowing guards. Use typeof to detect the string, and the in operator to detect a Cat by its 'meow' property.",
+      "codeTemplate": "function describe(x: string | number): string {\n  if (typeof x === {{blank}}) {\n    return x.toUpperCase();\n  }\n  return x.toFixed(0);\n}\n\ntype Cat = { meow: () => void };\ntype Dog = { bark: () => void };\nfunction speak(animal: Cat | Dog): void {\n  if ({{blank}} in animal) {\n    animal.meow();\n  } else {\n    animal.bark();\n  }\n}",
+      "blanks": [
+        { "answer": "\"string\"", "accept": ["'string'", "string", "\"String\""] },
+        { "answer": "\"meow\"", "accept": ["'meow'", "meow"] }
+      ],
+      "explanation": "typeof compares against a string tag like \"string\", so the guard is typeof x === \"string\". The in operator checks for a property key by name, so \"meow\" in animal narrows the union to Cat. Both are narrowing guards that unlock type-specific methods inside the branch."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a function that handles string | null: return a greeting for a real name, but 'Hello, stranger!' when the value is null. Narrow away null first.",
+      "lines": [
+        "function greet(name: string | null): string {",
+        "  if (name === null) {",
+        "    return \"Hello, stranger!\";",
+        "  }",
+        "  return `Hello, ${name}!`;",
+        "}"
+      ],
+      "explanation": "A strict === null check is all TypeScript needs to rule out null. By handling the null case first and returning early, the code below the if is reached only when name is a string — so TypeScript narrows the type and the template literal is safe."
+    }
+  ]
+}

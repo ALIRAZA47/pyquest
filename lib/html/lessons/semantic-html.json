@@ -1,0 +1,101 @@
+{
+  "slug": "semantic-html",
+  "title": "Semantic HTML & Accessibility",
+  "category": "Forms & Semantics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to use meaningful HTML elements that help browsers, search engines, and screen readers understand your page — and why that matters for every user.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you receive a parcel in the post. The box is completely unlabelled — no indication of what is fragile, which side is up, or who it is for. You could figure it out by opening everything, but it is slow and error-prone. Now imagine the same parcel with clear labels: \"FRAGILE\", \"THIS SIDE UP\", \"For: Reception\". Suddenly anyone who touches that box knows exactly what to do.\n\nHTML elements work the same way. You *can* build an entire page out of `<div>` and `<span>` tags — and it will look fine — but nobody useful gets any labels: not the browser, not a search engine, and not a screen reader used by someone who cannot see the screen. **Semantic HTML** is the practice of choosing elements whose names describe the content inside them. It is one of the highest-value, lowest-effort improvements you can make as a web developer."
+    },
+    {
+      "type": "heading",
+      "text": "Semantic vs Non-Semantic Elements"
+    },
+    {
+      "type": "text",
+      "md": "A **semantic** element carries meaning in its name. `<nav>` means \"this is a navigation menu\". `<article>` means \"this is a self-contained piece of content\". `<button>` means \"the user can press this\".\n\nA `<div>` means absolutely nothing on its own — it is a generic container with no implied role. Using *only* `<div>` tags to build a page is affectionately called **div soup**. Here is the same page skeleton written two ways:"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- DIV SOUP: generic, meaningless to machines -->\n<div class=\"header\">\n  <div class=\"nav\">...</div>\n</div>\n<div class=\"main\">\n  <div class=\"article\">...</div>\n  <div class=\"sidebar\">...</div>\n</div>\n<div class=\"footer\">...</div>",
+      "caption": "Every element is a generic box. A screen reader sees no landmarks here."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- SEMANTIC HTML: self-documenting and accessible -->\n<header>\n  <nav>...</nav>\n</header>\n<main>\n  <article>...</article>\n  <aside>...</aside>\n</main>\n<footer>...</footer>",
+      "caption": "Each element announces its own purpose. Screen readers can jump straight to <main>."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A city with no street signs",
+      "md": "Imagine a city where every road, alley, park, and car park looks identical — same grey concrete, no signs. You can still get around by memorising the layout, but newcomers are lost, emergency services struggle, and GPS is useless.\n\nSemantic HTML is the city's street signs. `<header>`, `<nav>`, `<main>`, and `<footer>` are landmarks that let everyone — sighted users, assistive technology, and search engine bots — navigate your page instantly."
+    },
+    {
+      "type": "heading",
+      "text": "The Core Landmark Elements"
+    },
+    {
+      "type": "text",
+      "md": "Here is a bird's-eye view of the seven workhorse semantic elements:\n\n| Element | Purpose |\n|---|---|\n| `<header>` | Introductory content for the page or a section (logo, site title, top nav) |\n| `<nav>` | A set of navigation links |\n| `<main>` | The primary, unique content of the page — **only one per page** |\n| `<section>` | A thematic grouping that belongs to a larger whole |\n| `<article>` | Self-contained content that could stand alone (blog post, news story) |\n| `<aside>` | Content tangentially related to the main content (sidebars, pull quotes) |\n| `<footer>` | Closing content for the page or a section (copyright, contact links) |\n\n**`<article>` vs `<section>`** in one sentence: if the content could be copy-pasted to another site and still make sense, use `<article>`. If it only makes sense as part of the current page, use `<section>`."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>The Daily Brew — Coffee Blog</title>\n</head>\n<body>\n  <header>\n    <h1>The Daily Brew</h1>\n    <nav>\n      <ul>\n        <li><a href=\"/\">Home</a></li>\n        <li><a href=\"/recipes\">Recipes</a></li>\n      </ul>\n    </nav>\n  </header>\n\n  <main>\n    <article>\n      <h2>Why Cold Brew Takes 12 Hours</h2>\n      <p>Unlike hot coffee, cold brew relies on time...</p>\n    </article>\n    <aside>\n      <h2>Related Posts</h2>\n      <ul><li><a href=\"/espresso\">Espresso Basics</a></li></ul>\n    </aside>\n  </main>\n\n  <footer>\n    <p>&copy; 2026 The Daily Brew</p>\n  </footer>\n</body>\n</html>",
+      "output": "A structured page: banner with logo and nav at the top, a main article alongside a related-posts sidebar, and a copyright footer.",
+      "caption": "A complete, realistic page using semantic landmarks from top to bottom."
+    },
+    {
+      "type": "heading",
+      "text": "Accessibility & Alt Text"
+    },
+    {
+      "type": "text",
+      "md": "Roughly 1 in 6 people worldwide lives with some form of disability. Many browse the web using **screen readers** — software that reads page content aloud. Screen readers treat semantic elements as *landmarks* that users can jump between with a single keypress.\n\nA screen reader user can skip directly to `<main>`, bypassing the header and navigation they have already heard. Without semantic markup, there are no landmarks — they must listen to every link and heading from the very top, on every page load.\n\n**Images** are invisible to screen readers unless you describe them with an `alt` attribute. Write alt text that describes what the image *shows* — not its file name, not the word \"image\"."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Too vague — tells the user nothing -->\n<img src=\"coffee.jpg\" alt=\"image\">\n\n<!-- Just right — paints a picture -->\n<img src=\"coffee.jpg\" alt=\"A glass of iced cold brew coffee on a wooden table\">\n\n<!-- Decorative only — leave alt empty so screen readers skip it -->\n<img src=\"divider.png\" alt=\"\">",
+      "caption": "The alt test: if you read it aloud to someone with their eyes closed, would they understand the image?"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Do not replace every div with a semantic element",
+      "md": "Semantic elements are for **content regions** — they do not replace every layout `<div>`. If you need a flex container purely for visual alignment with no semantic meaning, a `<div>` is the correct choice. The rule of thumb is: *content regions get semantic elements; layout helpers use divs*.\n\nAlso remember: `<main>` should appear **only once** per page, and heading levels should always go in order (`<h1>` → `<h2>` → `<h3>`) — never skip levels just to change size. Use CSS for sizing."
+    },
+    {
+      "type": "quiz",
+      "question": "A developer is marking up a self-contained news story that could be syndicated to another website unchanged. Which element is the best choice?",
+      "options": [
+        "<section>",
+        "<div>",
+        "<article>",
+        "<aside>"
+      ],
+      "answerIndex": 2,
+      "explanation": "<article> is designed for self-contained content that makes sense on its own — exactly what a standalone news story is. <section> groups related content within a page but implies it belongs to a larger whole. <div> carries no meaning, and <aside> is for tangentially related content such as sidebars. Semantic HTML is a gift to users, assistive technology, and search engines all at once."
+    }
+  ],
+  "keyTakeaways": [
+    "Semantic elements like <header>, <nav>, <main>, <article>, <aside>, and <footer> label what content *is* — not just where it sits on screen.",
+    "Screen readers use these landmarks so users can skip directly to the content they need; div soup forces them to listen to everything from the top.",
+    "Every meaningful image needs an alt attribute that describes what it shows; purely decorative images get an empty alt=\"\".",
+    "Use <article> for self-contained content and <section> for thematic chunks of a larger page — and keep <main> to one per page.",
+    "Semantic HTML benefits users, assistive technology, and search engines simultaneously, making it one of the easiest high-impact improvements in web development."
+  ],
+  "exercise": {
+    "prompt": "The page below is built entirely out of divs (div soup). Rewrite it using proper semantic HTML. Make sure to: (1) replace structural divs with <header>, <nav>, <main>, <article>, <aside>, and <footer>; (2) add a meaningful alt attribute to the image; (3) add lang=\"en\" to the <html> tag.",
+    "starterCode": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Space Blog</title>\n</head>\n<body>\n\n  <div class=\"header\">\n    <div class=\"nav\">\n      <a href=\"/\">Home</a>\n      <a href=\"/missions\">Missions</a>\n    </div>\n  </div>\n\n  <div class=\"main\">\n    <div class=\"post\">\n      <h2>The James Webb Telescope</h2>\n      <!-- TODO: give this image a meaningful alt attribute -->\n      <img src=\"webb.jpg\" alt=\"\">\n      <p>Launched in 2021, Webb can see light from the earliest galaxies...</p>\n    </div>\n    <div class=\"sidebar\">\n      <h2>Related</h2>\n      <a href=\"/hubble\">The Hubble Story</a>\n    </div>\n  </div>\n\n  <div class=\"footer\">\n    <p>&copy; 2026 Space Blog</p>\n  </div>\n\n</body>\n</html>",
+    "hint": "Work top to bottom: add lang=\"en\" to <html>, then swap each div for the matching semantic element. For the image alt text, ask: what would you say to someone who cannot see it?",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Space Blog</title>\n</head>\n<body>\n\n  <header>\n    <nav>\n      <a href=\"/\">Home</a>\n      <a href=\"/missions\">Missions</a>\n    </nav>\n  </header>\n\n  <main>\n    <article>\n      <h2>The James Webb Telescope</h2>\n      <img src=\"webb.jpg\" alt=\"The James Webb Space Telescope floating in deep space against a star field\">\n      <p>Launched in 2021, Webb can see light from the earliest galaxies...</p>\n    </article>\n    <aside>\n      <h2>Related</h2>\n      <a href=\"/hubble\">The Hubble Story</a>\n    </aside>\n  </main>\n\n  <footer>\n    <p>&copy; 2026 Space Blog</p>\n  </footer>\n\n</body>\n</html>"
+  }
+}

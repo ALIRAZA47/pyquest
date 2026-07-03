@@ -1,0 +1,139 @@
+{
+  "slug": "the-node-runtime",
+  "title": "The Node Runtime & Event Loop",
+  "category": "Node.js Basics",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how Node.js handles thousands of simultaneous connections using a single thread and a clever non-blocking event loop.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine a busy coffee shop. A traditional server (think Java or PHP with threads) would assign a dedicated barista to each customer — that barista just stands there waiting while the espresso machine runs. Hire 10,000 customers and you need 10,000 baristas standing around. Node.js takes a completely different approach: **one super-efficient barista** takes orders, starts the espresso machine, then immediately takes the *next* order — checking back when the machine beeps. This is the essence of Node's single-threaded, non-blocking I/O model, and it lets a single Node process handle tens of thousands of connections at once."
+    },
+    {
+      "type": "heading",
+      "text": "What Is the Node Runtime?"
+    },
+    {
+      "type": "text",
+      "md": "Node.js is a **JavaScript runtime** built on top of two key pieces:\n\n- **V8** — Google's JavaScript engine (the same one in Chrome). It compiles and executes your JS code.\n- **libuv** — A C library that provides the event loop, thread pool, and async I/O primitives across operating systems.\n\nWhen you run `node server.js`, V8 parses and runs your code, but anything that involves waiting — reading a file, making a network request, querying a database — is handed off to libuv, freeing V8 to keep running other JavaScript."
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Check your Node version\nnode --version\n\n# Run a file\nnode server.js",
+      "caption": "Basic Node CLI usage"
+    },
+    {
+      "type": "heading",
+      "text": "Single-Threaded Does NOT Mean Slow"
+    },
+    {
+      "type": "text",
+      "md": "\"Single-threaded\" sounds like a limitation, but here's the insight: **most server time is spent waiting**, not computing. Waiting for a database to respond. Waiting for a file to load. Waiting for an HTTP response. Traditional thread-per-request servers are mostly managing sleeping threads — expensive in memory and context-switching overhead.\n\nNode's single thread stays busy *coordinating* work rather than waiting. When an async operation finishes, its callback gets queued and processed on the next available event loop tick."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Air Traffic Controller",
+      "md": "Think of Node's event loop like an air traffic controller. There's **one controller** (single thread) who directs many planes (async operations) at once. The controller doesn't fly any plane themselves — they just give instructions and respond when a plane radios back. They're never idle waiting for one plane; they're always handling the next communication."
+    },
+    {
+      "type": "heading",
+      "text": "Blocking vs Non-Blocking I/O"
+    },
+    {
+      "type": "text",
+      "md": "Here is the most important concept to internalize: there are two kinds of I/O calls in Node — **blocking** (synchronous) and **non-blocking** (asynchronous). Never use blocking I/O in production server code — it freezes the entire process for everyone."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs');\n\n// BLOCKING — freezes the event loop until the file is fully read\nconst data = fs.readFileSync('big-file.txt', 'utf8');\nconsole.log('Done (blocking):', data.length, 'chars');\n\n// NON-BLOCKING — registers a callback and returns immediately\nfs.readFile('big-file.txt', 'utf8', (err, data) => {\n  if (err) throw err;\n  console.log('Done (non-blocking):', data.length, 'chars');\n});\nconsole.log('This prints BEFORE the file is read!');",
+      "output": "This prints BEFORE the file is read!\nDone (non-blocking): 42301 chars",
+      "caption": "Blocking vs non-blocking file reads"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Never Block the Event Loop in a Server",
+      "md": "If you call `fs.readFileSync` or run a long CPU loop inside an HTTP request handler, **every other request waits** until it finishes. A single slow synchronous operation can bring your server to its knees. Use async APIs (`fs.readFile`, `fs.promises.readFile`, or `await`) in server code."
+    },
+    {
+      "type": "heading",
+      "text": "How the Event Loop Works"
+    },
+    {
+      "type": "text",
+      "md": "The event loop is libuv's core scheduler. It runs in phases, processing different categories of callbacks in a specific order each iteration (called a **tick**). Here are the three most important phases for everyday Node work:\n\n1. **Timers** — Runs callbacks scheduled by `setTimeout` and `setInterval` whose delay has expired.\n2. **Poll** — Retrieves new I/O events (e.g. incoming network data, file reads finishing) and executes their callbacks. If nothing is ready yet, it waits here briefly.\n3. **Check** — Runs callbacks scheduled by `setImmediate`. These always run *after* the poll phase in the same tick.\n\nBetween *every* phase, Node drains two special microtask queues: `process.nextTick()` callbacks first, then resolved Promise callbacks (`.then`/`await`). Microtasks always cut to the front of the line."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "console.log('1 - synchronous');\n\nsetTimeout(() => console.log('2 - setTimeout (timers phase)'), 0);\n\nsetImmediate(() => console.log('3 - setImmediate (check phase)'));\n\nPromise.resolve().then(() => console.log('4 - Promise microtask'));\n\nprocess.nextTick(() => console.log('5 - nextTick microtask'));\n\nconsole.log('6 - synchronous');",
+      "output": "1 - synchronous\n6 - synchronous\n5 - nextTick microtask\n4 - Promise microtask\n2 - setTimeout (timers phase)\n3 - setImmediate (check phase)",
+      "caption": "Execution order reveals the event loop's priority rules"
+    },
+    {
+      "type": "text",
+      "md": "The output order is key to understanding the event loop:\n- Synchronous code runs to completion first.\n- `process.nextTick` fires before Promises (even though both are microtasks).\n- `setTimeout(fn, 0)` and `setImmediate` are macro-tasks — they wait for the next full loop phase.\n- `setImmediate` usually runs before `setTimeout(fn, 0)` when both are scheduled from within an I/O callback."
+    },
+    {
+      "type": "heading",
+      "text": "Node vs Browser Event Loop"
+    },
+    {
+      "type": "text",
+      "md": "Both environments run JavaScript on a single thread with an event loop, but there are meaningful differences:\n\n| Feature | Browser | Node.js |\n|---|---|---|\n| Global object | `window` | `global` / `globalThis` |\n| DOM / Web APIs | Yes | No |\n| `setImmediate` | No | Yes |\n| `process.nextTick` | No | Yes |\n| I/O | Fetch, XHR | `fs`, `net`, `http` modules |\n| Worker threads | Web Workers | `worker_threads` module |\n\nIn the browser, the event loop also handles *rendering* — painting frames between tasks. Node has no rendering concern, so its loop is purely about I/O and timers."
+    },
+    {
+      "type": "heading",
+      "text": "The Thread Pool: Node's Hidden Workers"
+    },
+    {
+      "type": "text",
+      "md": "Here's something that surprises many developers: Node is *not* entirely single-threaded. libuv maintains a **thread pool** (4 threads by default) for operations that cannot be made asynchronous at the OS level — things like DNS lookups, some file system calls, and cryptography. These run on background threads, and when they finish, their callbacks are placed back on the event loop queue for your single JS thread to pick up. You never manage these threads directly; Node handles everything behind the scenes."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const { createHash } = require('crypto');\n\n// crypto.pbkdf2 uses the libuv thread pool — it does NOT block the event loop\ncrypto.pbkdf2('password', 'salt', 100000, 64, 'sha512', (err, key) => {\n  if (err) throw err;\n  console.log('Hash computed:', key.toString('hex').slice(0, 20), '...');\n});\n\nconsole.log('Event loop is free while hashing runs in thread pool');",
+      "output": "Event loop is free while hashing runs in thread pool\nHash computed: 3745e482c6e0adeae1f4...",
+      "caption": "CPU-heavy crypto is offloaded to libuv's thread pool"
+    },
+    {
+      "type": "quiz",
+      "question": "What happens to the Node.js event loop when you call `fs.readFileSync()` inside an HTTP request handler?",
+      "options": [
+        "It spawns a new thread to handle the file read while the event loop continues.",
+        "The entire event loop is paused until the file read completes, blocking all other requests.",
+        "Node automatically converts it to a non-blocking call internally.",
+        "It queues the read in the poll phase and returns control immediately."
+      ],
+      "answerIndex": 1,
+      "explanation": "Sync methods like `readFileSync` are truly blocking — they halt V8 (and therefore the entire event loop) until the operation completes. Every other pending request, timer, and I/O callback must wait. This is why you should always use async file APIs in server code."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "text",
+      "md": "Node's power comes from combining three ideas:\n\n1. **One JS thread** — no lock contention, no race conditions in your application code.\n2. **Non-blocking async I/O** — the thread is never idle waiting; it keeps processing callbacks.\n3. **libuv's thread pool** — truly blocking OS operations are silently offloaded.\n\nThis makes Node an excellent fit for I/O-heavy workloads like REST APIs, real-time apps, and streaming services. It's less suited to CPU-intensive work (image encoding, video transcoding) without using worker threads — because long-running JS code *does* block the event loop."
+    }
+  ],
+  "keyTakeaways": [
+    "Node.js runs your JavaScript on a single thread, but delegates I/O to libuv, which handles it asynchronously using OS primitives and a background thread pool.",
+    "The event loop cycles through phases (Timers → Poll → Check) each tick; microtasks (nextTick, Promises) always run between phases.",
+    "Never use synchronous/blocking APIs (e.g. readFileSync) in a server request handler — it halts the entire process for every connected client.",
+    "setImmediate runs in the Check phase (after I/O), while setTimeout(fn, 0) runs in the Timers phase — order can vary outside I/O callbacks.",
+    "Node is ideal for I/O-bound workloads; for heavy CPU work, reach for worker_threads to avoid starving the event loop."
+  ],
+  "exercise": {
+    "prompt": "Create a small script that demonstrates the event loop order. It should: (1) log 'start', (2) schedule a setTimeout with 0ms delay that logs 'timer', (3) schedule a setImmediate that logs 'immediate', (4) resolve a Promise that logs 'promise', (5) use process.nextTick to log 'nextTick', and (6) log 'end'. Run it mentally and write down the expected output order as comments above each call, then verify by reading the output rules you learned.",
+    "starterCode": "// Event Loop Order Explorer\n// Before writing code, predict the output order in comments!\n\nconsole.log('start');\n\n// TODO: Add a setTimeout(fn, 0) that logs 'timer'\n\n// TODO: Add a setImmediate that logs 'immediate'\n\n// TODO: Add Promise.resolve().then(...) that logs 'promise'\n\n// TODO: Add process.nextTick that logs 'nextTick'\n\nconsole.log('end');\n\n// Expected output order (fill this in before running):\n// 1.\n// 2.\n// 3.\n// 4.\n// 5.\n// 6.",
+    "hint": "Remember: synchronous code runs first (start, end), then microtasks in priority order (nextTick before Promise .then), then macro-tasks (setTimeout, setImmediate). The order of setTimeout vs setImmediate can vary at the top level but nextTick always beats them both.",
+    "solution": "// Event Loop Order Explorer\n\nconsole.log('start'); // 1 - synchronous\n\nsetTimeout(() => {\n  console.log('timer'); // 5 - timers phase (macro-task)\n}, 0);\n\nsetImmediate(() => {\n  console.log('immediate'); // 6 - check phase (macro-task)\n});\n\nPromise.resolve().then(() => {\n  console.log('promise'); // 4 - microtask (Promise queue)\n});\n\nprocess.nextTick(() => {\n  console.log('nextTick'); // 3 - microtask (nextTick queue, highest priority)\n});\n\nconsole.log('end'); // 2 - synchronous\n\n// Expected output:\n// start\n// end\n// nextTick\n// promise\n// timer\n// immediate"
+  }
+}

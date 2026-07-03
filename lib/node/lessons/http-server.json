@@ -1,0 +1,145 @@
+{
+  "slug": "http-server",
+  "title": "Building an HTTP Server",
+  "category": "Building a Server",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to spin up your own web server using Node's built-in http module — no frameworks needed.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every website you visit is powered by a server — a program that listens for requests and sends back responses. Up until now you might have thought servers were mysterious, complex things reserved for back-end wizards. The truth is that Node.js ships with everything you need to build one, right out of the box, using the built-in `http` module. By the end of this lesson you will have a real, working HTTP server running on your own machine."
+    },
+    {
+      "type": "heading",
+      "text": "What is HTTP, really?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A restaurant analogy",
+      "md": "Think of HTTP like a restaurant. A **client** (your browser) walks in and places an **order** (the request). The kitchen (your server) reads the order, prepares the food, and hands it back on a plate (the response). HTTP is just the agreed-upon language for placing orders and delivering food — it defines the format for both the request and the response."
+    },
+    {
+      "type": "text",
+      "md": "Every HTTP conversation has two sides:\n\n- **Request** — sent by the client. It includes a *method* (like `GET` or `POST`), a *URL path* (like `/about`), optional headers, and sometimes a body.\n- **Response** — sent by the server. It includes a *status code* (like `200 OK` or `404 Not Found`), headers, and a body (like HTML, JSON, or plain text).\n\nNode's `http` module lets you write the kitchen side of this conversation."
+    },
+    {
+      "type": "heading",
+      "text": "Importing the http module"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const http = require('http');\n\nconsole.log(typeof http.createServer); // 'function'",
+      "output": "function",
+      "caption": "http is built into Node — no npm install needed."
+    },
+    {
+      "type": "text",
+      "md": "`http` is a **core module**, meaning it is bundled with Node itself. You never have to install it. Just `require` it and you are ready to go."
+    },
+    {
+      "type": "heading",
+      "text": "Creating a server with http.createServer"
+    },
+    {
+      "type": "text",
+      "md": "`http.createServer()` accepts a **request listener** — a callback function that Node calls every single time a client sends a request. The callback receives two objects: `req` (the incoming request) and `res` (the outgoing response you will write to)."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end('Hello, world!');\n});\n\nserver.listen(3000, () => {\n  console.log('Server running at http://localhost:3000');\n});",
+      "output": "Server running at http://localhost:3000",
+      "caption": "A minimal but complete HTTP server in 8 lines."
+    },
+    {
+      "type": "text",
+      "md": "Let's break that down piece by piece:\n\n1. `http.createServer(callback)` — creates the server object but does **not** start listening yet.\n2. `res.writeHead(statusCode, headers)` — sends the HTTP status line and headers to the client.\n3. `res.end(body)` — sends the response body and signals that the response is complete. You **must** call this or the client will hang forever waiting.\n4. `server.listen(port, callback)` — tells Node to start accepting connections on the given port. The optional callback fires once the server is ready."
+    },
+    {
+      "type": "heading",
+      "text": "Reading the request: url and method"
+    },
+    {
+      "type": "text",
+      "md": "The `req` object is a goldmine of information. The two most important properties for routing are `req.url` and `req.method`."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  console.log(`${req.method} ${req.url}`);\n\n  if (req.method === 'GET' && req.url === '/') {\n    res.writeHead(200, { 'Content-Type': 'text/html' });\n    res.end('<h1>Welcome home!</h1>');\n  } else if (req.method === 'GET' && req.url === '/about') {\n    res.writeHead(200, { 'Content-Type': 'text/html' });\n    res.end('<h1>About us</h1>');\n  } else {\n    res.writeHead(404, { 'Content-Type': 'text/plain' });\n    res.end('404 Not Found');\n  }\n});\n\nserver.listen(3000);",
+      "caption": "Basic manual routing using req.url and req.method."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "req.url includes the query string",
+      "md": "If the browser visits `/search?q=cats`, then `req.url` is the full string `'/search?q=cats'`. To parse it cleanly, use Node's built-in `URL` class:\n\n```js\nconst { pathname, searchParams } = new URL(req.url, 'http://localhost');\n// pathname => '/search'\n// searchParams.get('q') => 'cats'\n```"
+    },
+    {
+      "type": "heading",
+      "text": "Writing the response"
+    },
+    {
+      "type": "text",
+      "md": "The `res` object gives you a few key tools:\n\n| Method | What it does |\n|---|---|\n| `res.writeHead(code, headers)` | Set the status code and response headers |\n| `res.setHeader(name, value)` | Set a single header (can be called before `writeHead`) |\n| `res.write(chunk)` | Send a chunk of the body (can be called multiple times) |\n| `res.end(chunk?)` | Finish the response, optionally sending one last chunk |\n\nA common pattern is to skip `res.write()` and pass everything to `res.end()` in one shot, which is fine for small responses."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  const data = { message: 'Hello from Node!', path: req.url };\n\n  res.writeHead(200, { 'Content-Type': 'application/json' });\n  res.end(JSON.stringify(data));\n});\n\nserver.listen(3000);",
+      "output": "{\"message\":\"Hello from Node!\",\"path\":\"/\"}",
+      "caption": "Serving JSON — the bread and butter of REST APIs."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always set Content-Type",
+      "md": "If you forget `Content-Type`, browsers and API clients may misinterpret your response. Returning HTML? Use `text/html`. Returning JSON? Use `application/json`. Returning plain text? Use `text/plain`. The header tells the client *how* to parse the body."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "You cannot modify headers after res.end()",
+      "md": "Once you call `res.end()` (or `res.write()`), the headers are already sent to the client. Trying to call `res.writeHead()` or `res.setHeader()` after that will throw an error. Always set your headers first."
+    },
+    {
+      "type": "heading",
+      "text": "Putting it all together"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const http = require('http');\n\nconst PORT = 3000;\n\nconst server = http.createServer((req, res) => {\n  const { method, url } = req;\n\n  if (method === 'GET' && url === '/') {\n    res.writeHead(200, { 'Content-Type': 'text/html' });\n    res.end('<h1>Home</h1><p>Welcome!</p>');\n  } else if (method === 'GET' && url === '/api/greet') {\n    res.writeHead(200, { 'Content-Type': 'application/json' });\n    res.end(JSON.stringify({ greeting: 'Hello!' }));\n  } else {\n    res.writeHead(404, { 'Content-Type': 'text/plain' });\n    res.end('Not found');\n  }\n});\n\nserver.listen(PORT, () => {\n  console.log(`Listening on http://localhost:${PORT}`);\n});",
+      "caption": "A complete server handling two routes and a 404 fallback."
+    },
+    {
+      "type": "quiz",
+      "question": "Which line actually starts accepting incoming connections from clients?",
+      "options": [
+        "const server = http.createServer(...)",
+        "res.writeHead(200, { 'Content-Type': 'text/plain' })",
+        "server.listen(3000)",
+        "res.end('Hello')"
+      ],
+      "answerIndex": 2,
+      "explanation": "http.createServer() only builds the server object — it does not open any ports. server.listen(port) is what tells Node to start watching for connections on that port."
+    }
+  ],
+  "keyTakeaways": [
+    "Node's built-in http module lets you create a server with zero external dependencies.",
+    "http.createServer() takes a callback with (req, res) that runs on every request.",
+    "Use req.url and req.method to decide how to respond, and res.writeHead() + res.end() to send the response.",
+    "Always set Content-Type so clients know how to interpret your response body.",
+    "server.listen(port) is the final step that opens the port and starts accepting connections."
+  ],
+  "exercise": {
+    "prompt": "Create an HTTP server that listens on port 4000. It should handle three routes:\n1. GET / — respond with plain text: 'Welcome to my server!'\n2. GET /time — respond with JSON containing the current time, e.g. { \"time\": \"2024-01-01T12:00:00.000Z\" }\n3. Any other request — respond with a 404 status and the text 'Not found'\n\nMake sure to set the correct Content-Type header for each route.",
+    "starterCode": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  // TODO: check req.method and req.url\n  // Route 1: GET /  -> 200, text/plain, 'Welcome to my server!'\n  // Route 2: GET /time -> 200, application/json, { time: <ISO string> }\n  // Fallback: 404, text/plain, 'Not found'\n});\n\nserver.listen(4000, () => {\n  console.log('Server running on http://localhost:4000');\n});",
+    "hint": "Use new Date().toISOString() to get the current time as an ISO string, and JSON.stringify() to turn the object into a string for res.end().",
+    "solution": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  if (req.method === 'GET' && req.url === '/') {\n    res.writeHead(200, { 'Content-Type': 'text/plain' });\n    res.end('Welcome to my server!');\n  } else if (req.method === 'GET' && req.url === '/time') {\n    res.writeHead(200, { 'Content-Type': 'application/json' });\n    res.end(JSON.stringify({ time: new Date().toISOString() }));\n  } else {\n    res.writeHead(404, { 'Content-Type': 'text/plain' });\n    res.end('Not found');\n  }\n});\n\nserver.listen(4000, () => {\n  console.log('Server running on http://localhost:4000');\n});"
+  }
+}

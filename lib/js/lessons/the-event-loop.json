@@ -1,0 +1,145 @@
+{
+  "slug": "the-event-loop",
+  "title": "The Event Loop",
+  "category": "Asynchronous JavaScript",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Peek under the hood of JavaScript to see exactly how the call stack, Web APIs, and two separate queues work together to make async code possible.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have probably written code like `setTimeout` or `.then()` and noticed that JavaScript keeps running while it \"waits\" for something. But JavaScript is single-threaded — it can only do one thing at a time. So how does it pull that trick off?\n\nThe answer is the **event loop**, one of the most important mental models you can have as a JavaScript developer. Once you see it clearly, async code stops feeling like magic and starts feeling like a well-organised kitchen. Let's walk through it step by step."
+    },
+    {
+      "type": "heading",
+      "text": "The Call Stack: JavaScript's To-Do List"
+    },
+    {
+      "type": "text",
+      "md": "Every time JavaScript calls a function, it places a \"frame\" on top of the **call stack**. When the function returns, that frame is popped off. JavaScript can only execute whatever is on top of the stack — nothing else runs until that frame is gone.\n\nThis is synchronous, blocking execution. The call stack is the only place where code actually runs."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Stack is a Stack of Plates",
+      "md": "Imagine stacking plates. You can only pick up or put down the top plate. You can not grab a plate from the middle without removing the ones on top first. Function calls are added to the top; returns remove from the top. JavaScript always works on the top plate."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "function greet(name) {\n  console.log('Hello, ' + name);\n}\n\nfunction main() {\n  greet('Alice');\n  greet('Bob');\n}\n\nmain();",
+      "output": "Hello, Alice\nHello, Bob",
+      "caption": "main() is pushed, then greet('Alice') is pushed on top, logs, pops off, then greet('Bob') does the same. One at a time, top to bottom."
+    },
+    {
+      "type": "heading",
+      "text": "Web APIs: Offloading the Waiting"
+    },
+    {
+      "type": "text",
+      "md": "JavaScript itself has no timer, no network, no file system. Those live in the **Web APIs** provided by the browser (or in Node.js, by libuv). When you call `setTimeout`, JavaScript hands the timer to the browser and immediately pops `setTimeout` off the stack. The browser counts down in the background — JavaScript keeps running other code.\n\nWhen the timer fires, the browser does not push the callback directly onto the call stack (that could interrupt running code). Instead, it places the callback into a queue."
+    },
+    {
+      "type": "heading",
+      "text": "Two Queues: Macrotasks and Microtasks"
+    },
+    {
+      "type": "text",
+      "md": "There are actually **two** queues, and they have very different priorities:\n\n- **Macrotask queue** (also called the callback queue): holds callbacks from `setTimeout`, `setInterval`, I/O events, and similar Web APIs.\n- **Microtask queue**: holds callbacks from resolved Promises (`.then`, `.catch`, `.finally`) and `queueMicrotask`.\n\nThe event loop follows one rule above all others: **drain the entire microtask queue before picking up the next macrotask**."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "VIP Lane vs. Regular Lane",
+      "md": "Picture two checkout lanes at a supermarket. The microtask queue is the VIP express lane — every customer already there must finish before the cashier turns to the regular macrotask lane. Promise callbacks cut to the front; setTimeout callbacks wait in the regular line."
+    },
+    {
+      "type": "heading",
+      "text": "The Event Loop's One Job"
+    },
+    {
+      "type": "text",
+      "md": "The event loop is a simple, infinite loop that does exactly this:\n\n1. Run all synchronous code on the call stack until it is empty.\n2. Drain the entire microtask queue (run every microtask, including any that are added while draining).\n3. Pick **one** macrotask from the macrotask queue and run it.\n4. Drain the microtask queue again.\n5. Repeat from step 3.\n\nThat cycle — one macrotask, then all microtasks, then the next macrotask — is the heartbeat of every JavaScript program."
+    },
+    {
+      "type": "heading",
+      "text": "Step-by-Step: Reading the Log Order"
+    },
+    {
+      "type": "text",
+      "md": "Here is the classic mixed example. Before reading the explanation, try to predict the order yourself:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "console.log('1 - sync start');\n\nsetTimeout(() => {\n  console.log('4 - setTimeout callback');\n}, 0);\n\nPromise.resolve()\n  .then(() => console.log('3 - promise .then'));\n\nconsole.log('2 - sync end');",
+      "output": "1 - sync start\n2 - sync end\n3 - promise .then\n4 - setTimeout callback",
+      "caption": "Even with a 0ms delay, setTimeout logs AFTER the Promise. Here is exactly why."
+    },
+    {
+      "type": "text",
+      "md": "Let's trace it tick by tick:\n\n**Synchronous phase** (call stack running):\n- `console.log('1 - sync start')` executes immediately. Logs `1`.\n- `setTimeout(callback, 0)` is called. The browser registers the timer and the callback goes to the Web API layer. Pops off the stack instantly.\n- `Promise.resolve().then(fn)` — the promise is already resolved, so `fn` is immediately scheduled onto the **microtask queue**.\n- `console.log('2 - sync end')` executes immediately. Logs `2`.\n- The call stack is now empty.\n\n**Microtask drain** (before any macrotask):\n- The event loop checks the microtask queue. It finds the `.then` callback. Runs it. Logs `3`.\n- Microtask queue is now empty.\n\n**Macrotask pickup**:\n- The event loop picks the `setTimeout` callback from the macrotask queue. Runs it. Logs `4`.\n\nResult: `1, 2, 3, 4`. The Promise always beats setTimeout, even at 0ms, because microtasks are drained first."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "setTimeout(fn, 0) Does NOT Mean \"Immediately\"",
+      "md": "`setTimeout(fn, 0)` means \"no sooner than 0ms AND only when the call stack is empty AND after all microtasks\". In practice, browsers enforce a minimum delay (~4ms) and you still wait for every pending Promise to resolve first. Never rely on `setTimeout(0)` for precise timing."
+    },
+    {
+      "type": "heading",
+      "text": "Chained Promises and Nested Microtasks"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "console.log('start');\n\nPromise.resolve()\n  .then(() => {\n    console.log('microtask 1');\n    return Promise.resolve();\n  })\n  .then(() => console.log('microtask 2'));\n\nsetTimeout(() => console.log('macrotask'), 0);\n\nconsole.log('end');",
+      "output": "start\nend\nmicrotask 1\nmicrotask 2\nmacrotask",
+      "caption": "Each .then schedules the next microtask. Both run before the setTimeout macrotask."
+    },
+    {
+      "type": "text",
+      "md": "Notice that `microtask 2` still runs before `macrotask`. Even though it was added to the microtask queue *while* the microtask queue was being drained, the rule holds: the event loop keeps draining until the microtask queue is completely empty before moving on."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Starving the Macrotask Queue",
+      "md": "If your code keeps adding new microtasks inside `.then` callbacks in an infinite loop, the macrotask queue will never get a turn. This freezes rendering, timers, and I/O events — the page hangs. Infinite promise chains are just as dangerous as infinite `while` loops."
+    },
+    {
+      "type": "quiz",
+      "question": "Given this code, what is the correct log order?\n\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+      "options": [
+        "A, B, C, D",
+        "A, D, B, C",
+        "A, D, C, B",
+        "A, C, D, B"
+      ],
+      "answerIndex": 2,
+      "explanation": "A and D are synchronous and run first. Then the microtask queue is drained — C logs. Finally the macrotask queue gives B a turn. Order: A, D, C, B."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "text",
+      "md": "The event loop is not complicated once you know the three pieces:\n\n1. **Call stack** — only place code runs; must be empty before anything else can happen.\n2. **Microtask queue** — Promise callbacks; completely drained after every task.\n3. **Macrotask queue** — setTimeout/setInterval/I/O; one at a time, only after microtasks.\n\nWith this model you can predict exactly what any async JavaScript snippet will do, debug mysterious ordering bugs, and write code that behaves the way you intend."
+    }
+  ],
+  "keyTakeaways": [
+    "JavaScript is single-threaded; the call stack must be empty before async callbacks can run.",
+    "Web APIs (browser or Node.js) handle waiting in the background and push callbacks into queues when ready.",
+    "The microtask queue (Promises) is fully drained before the event loop picks the next macrotask (setTimeout).",
+    "setTimeout(fn, 0) does not mean immediate — it always yields to all pending microtasks first.",
+    "Infinite microtask chains can starve the macrotask queue and freeze the UI just like an infinite loop."
+  ],
+  "exercise": {
+    "prompt": "Predict and then verify the log order of the snippet below. Add one more `Promise.resolve().then(...)` call that logs `'extra microtask'` after `'microtask 1'` but still before `'timeout'`. Run the code mentally using the event loop rules, then write the expected output in a comment at the top.",
+    "starterCode": "// TODO: Write the expected log order as a comment here\n// Expected: ???\n\nconsole.log('sync 1');\n\nsetTimeout(() => {\n  console.log('timeout');\n}, 0);\n\nPromise.resolve()\n  .then(() => {\n    console.log('microtask 1');\n    // TODO: add another Promise.resolve().then() here\n    // that logs 'extra microtask'\n  });\n\nconsole.log('sync 2');",
+    "hint": "Remember: any microtask added while the microtask queue is draining still runs before the event loop moves to the macrotask queue. Trace it step by step: sync first, then drain all microtasks, then macrotask.",
+    "solution": "// Expected: sync 1, sync 2, microtask 1, extra microtask, timeout\n\nconsole.log('sync 1');\n\nsetTimeout(() => {\n  console.log('timeout');\n}, 0);\n\nPromise.resolve()\n  .then(() => {\n    console.log('microtask 1');\n    Promise.resolve().then(() => {\n      console.log('extra microtask');\n    });\n  });\n\nconsole.log('sync 2');"
+  }
+}

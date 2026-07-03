@@ -1,0 +1,47 @@
+{
+  "slug": "responsive-design",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the mobile-first grid from the lesson. What layout appears when the browser is exactly 700px wide?",
+      "code": ".card-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 1.5rem;\n}\n\n@media (min-width: 600px) {\n  .card-grid { grid-template-columns: repeat(2, 1fr); }\n}\n\n@media (min-width: 1024px) {\n  .card-grid { grid-template-columns: repeat(3, 1fr); }\n}",
+      "options": [
+        "One full-width column",
+        "Two equal columns",
+        "Three equal columns"
+      ],
+      "answerIndex": 1,
+      "explanation": "At 700px the 600px min-width query matches (700 is at least 600) but the 1024px query does not. So the two-column rule wins. min-width queries apply when the viewport is at least that wide."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — the viewport meta tag is not making the page use the device's real width. What's wrong?",
+      "code": "<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\"\n        content=\"width=980px, initial-scale=1.0\">\n  <title>My Page</title>\n</head>",
+      "options": [
+        "The content should be width=device-width, not a fixed width=980px",
+        "initial-scale should be 0 instead of 1.0",
+        "The meta tag needs a max-width attribute added"
+      ],
+      "answerIndex": 0,
+      "explanation": "width=device-width tells the browser to use the device's actual screen width so media queries fire at the right sizes. Hard-coding width=980px recreates the exact problem the tag exists to fix — the page pretends to be ~980px wide on phones."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this mobile-first media query so the enhancement applies on tablets that are 600px OR wider (not narrower).",
+      "codeTemplate": "@media ({{blank}}: 600px) {\n  .card-grid { grid-template-columns: repeat(2, 1fr); }\n}",
+      "blanks": [
+        { "answer": "min-width", "accept": ["min-width", "minwidth", "min width"] }
+      ],
+      "explanation": "Mobile-first CSS uses min-width, meaning 'apply when the viewport is at least this wide.' Using max-width would reverse the logic and lead to a tangle of desktop-first overrides."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the value that makes headings scale fluidly: never smaller than 1.5rem, never larger than 3rem, preferring 4vw in between.",
+      "codeTemplate": "h1 {\n  font-size: {{blank}}(1.5rem, 4vw, 3rem);\n}",
+      "blanks": [
+        { "answer": "clamp", "accept": ["clamp", "CLAMP"] }
+      ],
+      "explanation": "clamp(min, preferred, max) locks a value between two limits while letting it flex in between — the go-to tool for fluid typography that never gets too tiny or too huge."
+    }
+  ]
+}

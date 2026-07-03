@@ -1,0 +1,168 @@
+{
+  "slug": "images-and-media",
+  "title": "Images & Media",
+  "category": "Content & Media",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to add images, audio, and video to your web pages — and why a few small attributes make a huge difference for accessibility and performance.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "A web page with only text is like a cinema with only subtitles. It communicates, but it doesn't *engage*. HTML gives you simple, powerful tools to embed images, audio, and video directly into your pages — no plugins, no tricks. In this lesson we will start with the humble `<img>` tag, understand why `alt` text matters deeply, and then peek at how `<audio>` and `<video>` work. Along the way we will talk about something every beginner trips over: **file paths**."
+    },
+    {
+      "type": "heading",
+      "text": "The <img> Tag"
+    },
+    {
+      "type": "text",
+      "md": "The `<img>` tag places an image on the page. It is a **void element** — it has no closing tag, because it has no content of its own; it just points to an image file.\n\nThe two attributes you always need are `src` and `alt`."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<img src=\"cat.jpg\" alt=\"A ginger cat sleeping on a windowsill\">",
+      "output": "A photo of a ginger cat is displayed on the page.",
+      "caption": "The simplest possible image. src tells the browser where the file is; alt describes it."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "src and alt are like a picture and its caption",
+      "md": "Imagine a framed photo on a wall. `src` is the **photo itself** — without it, the frame is empty. `alt` is the little **label beside the frame** that says what you are looking at.\n\nIf the photo falls off the wall (the file is missing or slow to load), visitors can still read the label. Screen readers used by blind users read the label aloud — always. That label is `alt`."
+    },
+    {
+      "type": "heading",
+      "text": "Why alt Text Matters"
+    },
+    {
+      "type": "text",
+      "md": "`alt` is not optional in spirit, even if the browser won't crash without it. Here is why it matters:\n\n1. **Accessibility.** Screen readers announce `alt` text to blind or low-vision users. Without it, they hear \"image\" — or nothing at all.\n2. **Broken images.** When a file path is wrong or a network is slow, browsers display the `alt` text as a fallback.\n3. **Search engines.** Google and others use `alt` to understand what an image shows, which helps people find your page.\n\nWrite `alt` as a brief, honest description of what the image *shows* and *why it is there*. A decorative divider line can have an empty `alt=\"\"` — that tells screen readers to skip it. But a photo of your product, your team, or a key diagram always deserves a real description."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Good: describes the image meaningfully -->\n<img src=\"team.jpg\" alt=\"Four engineers gathered around a laptop in a bright office\">\n\n<!-- Decorative: explicitly empty alt tells screen readers to skip it -->\n<img src=\"divider.png\" alt=\"\">\n\n<!-- Bad: says nothing useful -->\n<img src=\"img1.jpg\" alt=\"image\">",
+      "caption": "Three patterns: meaningful alt, empty alt for decoration, and the anti-pattern to avoid."
+    },
+    {
+      "type": "heading",
+      "text": "Controlling Size with width and height"
+    },
+    {
+      "type": "text",
+      "md": "You can set an image's display size with the `width` and `height` attributes (numbers, in pixels). This is good practice for two reasons: the browser can **reserve space** for the image before it has finished downloading, preventing the page from jumping around, and it gives you a quick way to resize without CSS."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<img\n  src=\"logo.png\"\n  alt=\"Quest logo\"\n  width=\"200\"\n  height=\"80\"\n>",
+      "output": "The logo renders at exactly 200 × 80 pixels.",
+      "caption": "Width and height in HTML are unitless pixel values. CSS can always override them later."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always add width and height to avoid layout shift",
+      "md": "When a browser loads a page, it needs to know how much space to reserve for each image before the image itself arrives. If you omit `width` and `height`, the browser guesses zero — then the image loads and everything on the page suddenly jumps down. This jarring effect is called **Cumulative Layout Shift (CLS)** and it frustrates users. Adding `width` and `height` (matching the image's real proportions) prevents it entirely."
+    },
+    {
+      "type": "heading",
+      "text": "Making Images Responsive"
+    },
+    {
+      "type": "text",
+      "md": "A fixed `width=\"800\"` looks fine on a desktop, but it overflows a phone screen. The modern solution is one line of CSS: set `max-width: 100%` on the image. This tells it: \"never be wider than your container, but shrink if you have to.\"\n\nYou can apply this to all images at once in a stylesheet:"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "img {\n  max-width: 100%;\n  height: auto; /* keep the original proportions when scaling down */\n}",
+      "caption": "Two lines of CSS make every image on your page mobile-friendly."
+    },
+    {
+      "type": "text",
+      "md": "With `height: auto`, the browser recalculates the height to match the width proportionally, so the image never gets squished or stretched. You keep the `width` and `height` HTML attributes for layout-shift prevention, but CSS takes over for actual display size."
+    },
+    {
+      "type": "heading",
+      "text": "File Paths: Relative vs Absolute"
+    },
+    {
+      "type": "text",
+      "md": "The `src` in `<img src=\"...\">` is a **file path** — directions to the image file. Getting this wrong is one of the most common beginner mistakes. There are two kinds:\n\n**Relative paths** are directions *from the current HTML file*.\n\n**Absolute paths** are full URLs starting with `https://` or `/`."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Relative: image is in the same folder as the HTML file -->\n<img src=\"photo.jpg\" alt=\"...\">\n\n<!-- Relative: image is in an 'images' subfolder -->\n<img src=\"images/photo.jpg\" alt=\"...\">\n\n<!-- Relative: go up one folder, then into 'assets' -->\n<img src=\"../assets/photo.jpg\" alt=\"...\">\n\n<!-- Absolute: a full URL from another website -->\n<img src=\"https://example.com/photo.jpg\" alt=\"...\">",
+      "caption": "The ../ means 'go up one directory level'. Think of it like backing out of a folder."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Broken image? Check the path first",
+      "md": "If your image shows a broken icon, the first thing to check is the `src` path. The most common mistakes are:\n\n- **Wrong capitalisation** — `Photo.jpg` is not the same as `photo.jpg` on most servers.\n- **Wrong folder** — You put the image in `images/` but wrote `src=\"photo.jpg\"`.\n- **Spaces in file names** — `my photo.jpg` breaks paths. Always use hyphens or underscores: `my-photo.jpg`.\n\nWhen in doubt, open your browser's developer tools (F12), go to the Console or Network tab, and look for a 404 error — it will show you the exact path the browser tried."
+    },
+    {
+      "type": "heading",
+      "text": "Adding Audio with <audio>"
+    },
+    {
+      "type": "text",
+      "md": "The `<audio>` element embeds sound. The `controls` attribute gives the user a play button and volume slider — without it, the audio is invisible and unplayable. Always include it."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<audio controls>\n  <source src=\"podcast.mp3\" type=\"audio/mpeg\">\n  <source src=\"podcast.ogg\" type=\"audio/ogg\">\n  Your browser does not support audio.\n</audio>",
+      "output": "A browser audio player with play, pause, and volume controls appears.",
+      "caption": "Offering two formats (mp3 and ogg) improves browser compatibility. The fallback text shows if neither works."
+    },
+    {
+      "type": "text",
+      "md": "A few useful `<audio>` attributes:\n- `controls` — show the player UI (always add this)\n- `autoplay` — start playing immediately (use sparingly; it annoys users)\n- `loop` — repeat the audio when it ends\n- `muted` — start with the audio muted"
+    },
+    {
+      "type": "heading",
+      "text": "Embedding Video with <video>"
+    },
+    {
+      "type": "text",
+      "md": "`<video>` works exactly like `<audio>` but shows a visual frame. You can also add a `poster` attribute — a still image shown before the video plays, like a thumbnail."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<video\n  controls\n  width=\"640\"\n  height=\"360\"\n  poster=\"video-thumbnail.jpg\"\n>\n  <source src=\"demo.mp4\" type=\"video/mp4\">\n  <source src=\"demo.webm\" type=\"video/webm\">\n  Your browser does not support video.\n</video>",
+      "output": "A 640×360 video player with a thumbnail and playback controls.",
+      "caption": "poster shows a preview image while the video loads. Controls give users play, pause, and scrubbing."
+    },
+    {
+      "type": "quiz",
+      "question": "A blind user visits your page using a screen reader. Your page has an image of a bar chart showing sales data. Which alt attribute is most helpful?",
+      "options": [
+        "alt=\"\"",
+        "alt=\"chart\"",
+        "alt=\"image of bar chart\"",
+        "alt=\"Bar chart showing Q3 sales: Product A led with 4 200 units, followed by Product B at 3 100 units\""
+      ],
+      "answerIndex": 3,
+      "explanation": "An empty alt tells the screen reader to skip the image entirely — fine for decoration, but this chart contains key information. Generic labels like 'chart' or 'image of bar chart' don't convey the data. The fourth option gives the actual insight, so blind users get the same information as sighted users."
+    }
+  ],
+  "keyTakeaways": [
+    "The `<img>` tag needs `src` (where the file is) and `alt` (what it shows) — both are essential for function and accessibility.",
+    "Write meaningful `alt` text so screen reader users and people with broken images still understand the content; use `alt=\"\"` only for purely decorative images.",
+    "Add `width` and `height` attributes to images to prevent layout shift while the page loads, then use `max-width: 100%; height: auto;` in CSS to make them responsive.",
+    "File paths are directions to your file — double-check capitalisation, folder structure, and avoid spaces in filenames when images appear broken.",
+    "`<audio>` and `<video>` both use the `controls` attribute to show a player UI; offer multiple `<source>` formats for the widest browser support."
+  ],
+  "exercise": {
+    "prompt": "Build a small media card for a fictional nature documentary called 'Deep Ocean'. It should show a banner image with a meaningful alt description, display the title as a heading, include a short paragraph description, and embed a video player with a poster image and controls. Make the image responsive using CSS.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Deep Ocean</title>\n  <style>\n    /* TODO: make images responsive */\n  </style>\n</head>\n<body>\n\n  <!-- TODO: add a banner image with a meaningful alt attribute -->\n\n  <h1>Deep Ocean</h1>\n  <p>An expedition into the world's least explored frontier.</p>\n\n  <!-- TODO: add a <video> with controls, a poster image, and a <source> -->\n\n</body>\n</html>",
+    "hint": "For the responsive image, add `img { max-width: 100%; height: auto; }` inside the `<style>` tag. For the video, the `poster` attribute takes a path to a still image, just like `src` on an `<img>` tag. Don't forget `controls` on the `<video>` element or the player won't be visible.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Deep Ocean</title>\n  <style>\n    img, video {\n      max-width: 100%;\n      height: auto;\n      display: block;\n    }\n\n    body {\n      font-family: sans-serif;\n      max-width: 720px;\n      margin: 0 auto;\n      padding: 1rem;\n    }\n  </style>\n</head>\n<body>\n\n  <img\n    src=\"images/deep-ocean-banner.jpg\"\n    alt=\"A glowing anglerfish drifting through dark deep-sea water\"\n    width=\"720\"\n    height=\"400\"\n  >\n\n  <h1>Deep Ocean</h1>\n  <p>An expedition into the world's least explored frontier.</p>\n\n  <video\n    controls\n    width=\"720\"\n    height=\"405\"\n    poster=\"images/deep-ocean-poster.jpg\"\n  >\n    <source src=\"videos/deep-ocean-trailer.mp4\" type=\"video/mp4\">\n    <source src=\"videos/deep-ocean-trailer.webm\" type=\"video/webm\">\n    Your browser does not support video playback.\n  </video>\n\n</body>\n</html>"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "slug": "javascript-functions",
+  "title": "Functions",
+  "category": "Data & Logic",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to package reusable logic into functions, pass data in with parameters, get results back with return, and write the sleek arrow-function syntax.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine writing directions to your house. You could repeat every turn every time someone asks — or you could write them down once and hand that sheet to anyone who needs it. **Functions** are JavaScript's version of that reusable sheet of directions.\n\nWithout functions, programs are enormous walls of repeated code. With them, you write logic once, give it a name, and call on it as many times as you like. This lesson covers everything: declaring functions, passing data in with parameters, returning results, default params, modern arrow syntax, and why functions are actually first-class values."
+    },
+    {
+      "type": "heading",
+      "text": "Declaring and Calling a Function"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A function is a recipe card",
+      "md": "A recipe card describes steps once. Handing it to a chef is like **calling** the function — the same instructions run every time, with whatever ingredients (arguments) you provide."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "function greet(name) {\n  console.log(\"Hello, \" + name + \"!\");\n}\n\ngreet(\"Alice\"); // 'name' receives 'Alice'\ngreet(\"Bob\");   // same function, different argument",
+      "output": "Hello, Alice!\nHello, Bob!",
+      "caption": "A function declaration. 'name' is the parameter (placeholder); 'Alice' and 'Bob' are arguments (real values)."
+    },
+    {
+      "type": "heading",
+      "text": "Returning a Value"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "function add(a, b) {\n  return a + b; // sends the result back to the caller\n}\n\nconst total = add(3, 4);\nconsole.log(total);        // 7\nconsole.log(add(10, 25)); // 35",
+      "output": "7\n35",
+      "caption": "return hands a value back so you can store or reuse it anywhere"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "return exits the function immediately",
+      "md": "Any code written **after** a `return` in the same block will never run — JavaScript stops the function the instant it hits `return`. If your function seems to skip logic, check whether an earlier `return` is cutting it short."
+    },
+    {
+      "type": "heading",
+      "text": "Default Parameters & Arrow Functions"
+    },
+    {
+      "type": "text",
+      "md": "You can give any parameter a **default value** — if the caller omits it, the default kicks in automatically. ES6 also introduced **arrow functions**, a shorter syntax using `=>`. With a single-expression body you skip the curly braces and `return` entirely (called an **implicit return**) — a style you will see constantly in modern JavaScript and React."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// Traditional function\nfunction square(n) { return n * n; }\n\n// Equivalent arrow function (implicit return)\nconst square = n => n * n;\n\n// Arrow with two parameters needs parentheses\nconst add = (a, b) => a + b;\n\nconsole.log(square(5)); // 25\nconsole.log(add(3, 4)); // 7",
+      "output": "25\n7",
+      "caption": "Arrow syntax: single param = no parens needed; single expression = no curly braces or return needed"
+    },
+    {
+      "type": "heading",
+      "text": "Functions as First-Class Values"
+    },
+    {
+      "type": "text",
+      "md": "In JavaScript, functions are **values** — just like numbers or strings. You can store them in variables (as you saw with arrow functions), pass them to other functions as arguments, or return them. Passing a function as an argument is called a **callback**, a pattern you will use constantly with arrays, events, and more."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "function runTwice(fn) {\n  fn();\n  fn();\n}\n\nconst sayHi = () => console.log(\"Hi!\");\nrunTwice(sayHi); // pass the function itself, not sayHi()",
+      "output": "Hi!\nHi!",
+      "caption": "Passing a function as an argument — the foundation of callbacks"
+    },
+    {
+      "type": "quiz",
+      "question": "What does the following code print?\n\nconst multiply = (a, b = 2) => a * b;\nconsole.log(multiply(5));",
+      "options": [
+        "undefined",
+        "5",
+        "10",
+        "An error — b is missing"
+      ],
+      "answerIndex": 2,
+      "explanation": "Because b has a default value of 2, calling multiply(5) is the same as multiply(5, 2), which returns 5 * 2 = 10. Default parameters automatically provide a fallback when an argument is omitted."
+    }
+  ],
+  "keyTakeaways": [
+    "A function declaration packages reusable logic under a name; call it anywhere with parentheses.",
+    "Parameters are placeholders; arguments are the real values you pass when calling the function.",
+    "return sends a computed value back to the caller and exits the function immediately.",
+    "Arrow functions (=>) are a concise alternative — a single-expression body returns its value implicitly, no return keyword needed.",
+    "Functions are first-class values: store them in variables, pass them as arguments, and use them as callbacks."
+  ],
+  "exercise": {
+    "prompt": "Write an arrow function called `calculateTip` that takes two parameters: `billAmount` (the total in dollars) and `tipPercent` (the tip percentage, defaulting to 18). Return the tip amount rounded to two decimal places.\n\nExamples:\n- calculateTip(50) → 9\n- calculateTip(80, 20) → 16\n- calculateTip(33.33) → 6\n\nHint: tip = billAmount * (tipPercent / 100). Use Math.round(value * 100) / 100 to round to two decimal places.",
+    "starterCode": "// TODO: write the calculateTip arrow function\n// Parameters: billAmount, tipPercent (default 18)\n// Returns the tip amount rounded to 2 decimal places\n\nconst calculateTip = (billAmount, tipPercent = /* your default */) => {\n  // your code here\n};\n\nconsole.log(calculateTip(50));      // expected: 9\nconsole.log(calculateTip(80, 20)); // expected: 16\nconsole.log(calculateTip(33.33));  // expected: 6",
+    "hint": "Compute the raw tip: billAmount * (tipPercent / 100). Then round it with Math.round(rawTip * 100) / 100. With a single expression you can use an implicit return and skip the curly braces entirely.",
+    "solution": "const calculateTip = (billAmount, tipPercent = 18) =>\n  Math.round(billAmount * (tipPercent / 100) * 100) / 100;\n\nconsole.log(calculateTip(50));      // 9\nconsole.log(calculateTip(80, 20)); // 16\nconsole.log(calculateTip(33.33));  // 6"
+  }
+}

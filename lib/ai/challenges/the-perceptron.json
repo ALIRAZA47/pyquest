@@ -1,0 +1,51 @@
+{
+  "slug": "the-perceptron",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Using the perceptron's predict function from the lesson, what does this print?",
+      "code": "def predict(inputs, weights, bias):\n    net = sum(x * w for x, w in zip(inputs, weights)) + bias\n    return 1 if net >= 0 else 0\n\nweights = [0.5, 0.5]\nbias = -0.6\nprint(predict([1, 1], weights, bias))\nprint(predict([1, 0], weights, bias))",
+      "options": [
+        "1\n0",
+        "1\n1",
+        "0\n0"
+      ],
+      "answerIndex": 0,
+      "explanation": "For [1, 1] the net input is (1*0.5)+(1*0.5)-0.6 = 0.4, which is >= 0, so the step function outputs 1. For [1, 0] the net input is (1*0.5)+(0*0.5)-0.6 = -0.1, which is below 0, so it outputs 0. The bias of -0.6 shifts the threshold so that a single active input isn't enough to fire."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the perceptron learning rule from the lesson. When a prediction is wrong, we compute the error and nudge each weight. Fill in the error expression and the weight-update operator.",
+      "codeTemplate": "err = label {{blank}} pred\nif err != 0:\n    weights = [w {{blank}} lr * err * x for w, x in zip(weights, inputs)]\n    bias += lr * err",
+      "blanks": [
+        { "answer": "-", "accept": ["minus", "−"] },
+        { "answer": "+", "accept": ["plus"] }
+      ],
+      "explanation": "The error is actual minus predicted: err = label - pred. When the perceptron predicts 0 but should output 1, err is +1 and the weights GROW (w + lr*err*x), raising the net sum next time. We add the scaled nudge because we want to push the weighted sum toward the correct side of the threshold; subtracting would move it the wrong way."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the body of the perceptron's per-example training step into the correct order, matching the train() loop from the lesson.",
+      "lines": [
+        "net  = sum(x * w for x, w in zip(inputs, weights)) + bias   # 1. weighted sum plus bias",
+        "pred = 1 if net >= 0 else 0                                 # 2. step function -> 0 or 1",
+        "err  = label - pred                                        # 3. how wrong were we?",
+        "weights = [w + lr * err * x for w, x in zip(weights, inputs)]  # 4. nudge each weight",
+        "bias += lr * err                                           # 5. nudge the bias too"
+      ],
+      "explanation": "Each training step first computes the net input (weighted sum + bias), applies the step function to get a crisp 0/1 prediction, measures the error against the true label, then nudges the weights and bias. The order is forced: you can't get a prediction before the sum, can't measure error before predicting, and can't update before knowing the error."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def predict(inputs, weights, bias):\n    net = sum(x * w for x, w in zip(inputs, weights))\n    return 1 if net >= 0 else 0",
+      "options": [
+        "The bias is never added to the net input; it should be net = sum(...) + bias",
+        "The step function is backwards; it should return 0 if net >= 0 else 1",
+        "It should multiply by the bias, not add it: net = sum(...) * bias"
+      ],
+      "answerIndex": 0,
+      "explanation": "The net input must include the bias: net = (x1*w1)+(x2*w2)+... + bias. Dropping it forces the decision boundary through the origin, so the perceptron can no longer shift its threshold independently of the inputs. The step function (1 if net >= 0 else 0) is correct, and the bias is added, not multiplied."
+    }
+  ]
+}

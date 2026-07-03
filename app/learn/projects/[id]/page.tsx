@@ -13,8 +13,8 @@ export function generateMetadata({
   params: { id: string };
 }): Metadata {
   const c = getCapstone(params.id);
-  if (!c) return { title: "Project not found — PyQuest" };
-  return { title: `${c.title} — PyQuest Projects`, description: c.blurb };
+  if (!c) return { title: "Project not found — Quest" };
+  return { title: `${c.title} — Quest Projects`, description: c.blurb };
 }
 
 export default function CapstonePage({ params }: { params: { id: string } }) {

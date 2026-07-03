@@ -91,10 +91,12 @@ function ChoiceChallenge({
   challenge,
   solved,
   onSolve,
+  lang,
 }: {
   challenge: Extract<Challenge, { type: "predict-output" | "fix-bug" }>;
   solved: boolean;
   onSolve: () => void;
+  lang?: string;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
   const answered = selected !== null;
@@ -108,7 +110,7 @@ function ChoiceChallenge({
 
   return (
     <>
-      <CodeBlock code={challenge.code} caption={challenge.type} />
+      <CodeBlock code={challenge.code} caption={challenge.type} lang={lang} />
       <div className="mt-3 grid gap-2">
         {challenge.options.map((opt, i) => {
           const isChosen = selected === i;
@@ -353,11 +355,13 @@ function ChallengeCard({
   index,
   solved,
   onSolve,
+  lang,
 }: {
   challenge: Challenge;
   index: number;
   solved: boolean;
   onSolve: () => void;
+  lang?: string;
 }) {
   return (
     <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
@@ -372,7 +376,7 @@ function ChallengeCard({
       </div>
       <p className="mb-3 font-semibold text-fg">{challenge.prompt}</p>
       {challenge.type === "predict-output" || challenge.type === "fix-bug" ? (
-        <ChoiceChallenge challenge={challenge} solved={solved} onSolve={onSolve} />
+        <ChoiceChallenge challenge={challenge} solved={solved} onSolve={onSolve} lang={lang} />
       ) : challenge.type === "fill-blank" ? (
         <FillBlankChallenge challenge={challenge} onSolve={onSolve} />
       ) : (
@@ -385,9 +389,11 @@ function ChallengeCard({
 export function Challenges({
   challenges,
   slug,
+  lang,
 }: {
   challenges: Challenge[];
   slug: string;
+  lang?: string;
 }) {
   const { awardXp, hasEvent } = useProgress();
   const solvedCount = challenges.filter((_, i) =>
@@ -418,6 +424,7 @@ export function Challenges({
             key={i}
             challenge={c}
             index={i}
+            lang={lang}
             solved={hasEvent(`chal:${slug}:${i}`)}
             onSolve={() => {
               if (!hasEvent(`chal:${slug}:${i}`)) {

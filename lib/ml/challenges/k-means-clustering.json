@@ -1,0 +1,54 @@
+{
+  "slug": "k-means-clustering",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Using the lesson's distance helper, what does this snippet print? It measures which centroid the point (3, 4) is closest to.",
+      "code": "import math\n\ndef distance(p1, p2):\n    return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))\n\npoint     = (3, 4)\ncentroids = [(1, 1), (5, 5)]\n\ndists = [distance(point, c) for c in centroids]\nprint(dists.index(min(dists)))",
+      "options": ["0", "1", "2"],
+      "answerIndex": 1,
+      "explanation": "The distance from (3, 4) to centroid 0 (1, 1) is sqrt(4 + 9) = sqrt(13) ~ 3.61, while to centroid 1 (5, 5) it is sqrt(4 + 1) = sqrt(5) ~ 2.24. Centroid 1 is closer, and dists.index(min(dists)) returns that index, 1. This is exactly the assignment step of k-Means."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "In the assignment step, each point joins its nearest centroid. Given these points and centroids, what does this print?",
+      "code": "import math\n\ndef distance(p1, p2):\n    return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))\n\ndef assign_clusters(points, centroids):\n    out = []\n    for point in points:\n        dists = [distance(point, c) for c in centroids]\n        out.append(dists.index(min(dists)))\n    return out\n\npoints    = [(1, 1), (1.5, 2), (5, 7)]\ncentroids = [(1, 1), (5, 5)]\nprint(assign_clusters(points, centroids))",
+      "options": ["[0, 0, 1]", "[0, 1, 1]", "[1, 1, 0]"],
+      "answerIndex": 0,
+      "explanation": "(1, 1) and (1.5, 2) are both nearest to centroid 0 at (1, 1), so they get index 0. (5, 7) is nearest to centroid 1 at (5, 5), so it gets index 1. The result is [0, 0, 1]."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the centroid update (the 'move' step). Each new centroid is the ____ position of all points assigned to that cluster. Fill in the operation that turns a sum of coordinates into that value.",
+      "codeTemplate": "def move_centroids(points, assignments, k):\n    new_centroids = []\n    for cid in range(k):\n        pts = [p for p, a in zip(points, assignments) if a == cid]\n        dims = len(pts[0])\n        mean = tuple(sum(p[d] for p in pts) {{blank}} len(pts) for d in range(dims))\n        new_centroids.append(mean)\n    return new_centroids",
+      "blanks": [
+        { "answer": "/", "accept": ["/ ", " / ", "divide", "divided by"] }
+      ],
+      "explanation": "The centroid is the mean (average) of its points, so each summed coordinate is divided by the number of points, len(pts). Dividing the sum by the count is literally why the algorithm is called k-Means."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the body of the k-Means loop in the correct order for one iteration, including the convergence check that stops when centroids stop moving.",
+      "lines": [
+        "assignments   = assign_clusters(points, centroids)",
+        "new_centroids = move_centroids(points, assignments, k)",
+        "if new_centroids == centroids:",
+        "    break",
+        "centroids = new_centroids"
+      ],
+      "explanation": "Each iteration first assigns every point to its nearest centroid, then moves the centroids to the mean of their points. You then compare: if the centroids didn't change, the algorithm has converged and you break; otherwise you adopt the new centroids and repeat."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to compute the within-cluster sum of squared distances (WCSS) for the elbow method. It has a bug — what's wrong?",
+      "code": "import math\n\ndef wcss(points, assignments, centroids):\n    total = 0\n    for point, cid in zip(points, assignments):\n        c = centroids[cid]\n        total += math.sqrt(sum((a - b) ** 2 for a, b in zip(point, c)))\n    return total",
+      "options": [
+        "It uses math.sqrt, so it sums plain distances instead of squared distances — WCSS wants the squared distance (no square root).",
+        "It should divide total by len(points) to get an average, not a sum.",
+        "It loops over assignments, but it should loop over centroids instead."
+      ],
+      "answerIndex": 0,
+      "explanation": "WCSS is the sum of squared distances from each point to its centroid. Taking math.sqrt cancels the squaring and gives plain Euclidean distance instead. Removing the sqrt (just sum((a - b) ** 2 ...)) fixes it, matching the squared-distance definition used by the elbow method."
+    }
+  ]
+}

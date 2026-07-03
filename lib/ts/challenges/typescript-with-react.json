@@ -1,0 +1,60 @@
+{
+  "slug": "typescript-with-react",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Type annotations are erased at runtime. What does this code print?",
+      "code": "import { useState } from \"react\";\n\nconst [username, setUsername] = useState<string | null>(null);\nsetUsername(\"Alice\");\n\n// pretend React re-runs and username is now \"Alice\"\nconst current: string | null = \"Alice\";\nconsole.log(current?.toUpperCase() ?? \"NO USER\");",
+      "options": [
+        "ALICE",
+        "Alice",
+        "NO USER",
+        "null"
+      ],
+      "answerIndex": 0,
+      "explanation": "The explicit type parameter useState<string | null> lets the state hold either a string or null, but it disappears at runtime. Since current is the string \"Alice\", the optional chain runs .toUpperCase() and produces \"ALICE\". The ?? fallback only fires when the left side is null or undefined."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "import type { ChangeEvent } from \"react\";\n\nfunction handleChange(event: ChangeEvent) {\n  console.log(event.target.value);\n}\n\n// used as: <input onChange={handleChange} />",
+      "options": [
+        "ChangeEvent needs its element generic — ChangeEvent<HTMLInputElement> — or event.target.value isn't available",
+        "You must import ChangeEvent with a regular import, not import type",
+        "Event handlers cannot use console.log inside them",
+        "The parameter must be named e, not event"
+      ],
+      "answerIndex": 0,
+      "explanation": "Without the element generic, TypeScript only gives you a bare ChangeEvent whose target is a generic Element — so event.target.value doesn't exist. Writing ChangeEvent<HTMLInputElement> tells TypeScript the target is an input, making .value safely available. The element type in angle brackets is what unlocks the right properties."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the type for children so this wrapper component accepts any JSX, strings, numbers, or arrays — the widest renderable type from the lesson.",
+      "codeTemplate": "import type { {{blank}} } from \"react\";\n\ninterface CardProps {\n  title: string;\n  children: {{blank}};\n}",
+      "blanks": [
+        {
+          "answer": "ReactNode",
+          "accept": ["reactnode", "React.ReactNode"]
+        },
+        {
+          "answer": "ReactNode",
+          "accept": ["reactnode", "React.ReactNode"]
+        }
+      ],
+      "explanation": "ReactNode is the widest type React can render — it covers JSX elements, strings, numbers, null, and arrays of those. You import it as a type and use it for the children prop on any wrapper component that accepts arbitrary content."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to define a props interface and a component that destructures those props — matching the lesson's UserCard style.",
+      "lines": [
+        "interface UserCardProps {",
+        "  name: string;",
+        "  isPremium?: boolean;",
+        "}",
+        "function UserCard({ name, isPremium = false }: UserCardProps) {",
+        "  return <h2>{name}</h2>;"
+      ],
+      "explanation": "Declare the props interface first, listing each prop — the ? on isPremium marks it optional so callers may omit it. Then write the function, destructuring the props in the signature and annotating the whole parameter object with : UserCardProps. A default value (isPremium = false) fills in the optional prop when it isn't passed."
+    }
+  ]
+}

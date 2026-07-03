@@ -1,0 +1,53 @@
+{
+  "slug": "the-event-loop",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson shows that microtasks (Promises) are drained before the event loop picks up the next macrotask (setTimeout). Predict the exact log order.",
+      "code": "console.log('1 - sync start');\n\nsetTimeout(() => {\n  console.log('setTimeout callback');\n}, 0);\n\nPromise.resolve()\n  .then(() => console.log('promise .then'));\n\nconsole.log('2 - sync end');",
+      "options": [
+        "1 - sync start\n2 - sync end\npromise .then\nsetTimeout callback",
+        "1 - sync start\n2 - sync end\nsetTimeout callback\npromise .then",
+        "1 - sync start\nsetTimeout callback\npromise .then\n2 - sync end",
+        "1 - sync start\npromise .then\n2 - sync end\nsetTimeout callback"
+      ],
+      "answerIndex": 0,
+      "explanation": "Both console.log calls are synchronous, so they run first in order. The call stack then empties and the event loop drains the entire microtask queue, running the .then callback. Only after that does it pick the setTimeout callback from the macrotask queue. Even at 0ms, the Promise always beats setTimeout."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Chained .then callbacks each schedule the next microtask. The lesson stresses the microtask queue is drained COMPLETELY before any macrotask runs. What is logged?",
+      "code": "console.log('start');\n\nPromise.resolve()\n  .then(() => console.log('microtask 1'))\n  .then(() => console.log('microtask 2'));\n\nsetTimeout(() => console.log('macrotask'), 0);\n\nconsole.log('end');",
+      "options": [
+        "start\nend\nmicrotask 1\nmacrotask\nmicrotask 2",
+        "start\nend\nmicrotask 1\nmicrotask 2\nmacrotask",
+        "start\nmicrotask 1\nmicrotask 2\nend\nmacrotask",
+        "start\nend\nmacrotask\nmicrotask 1\nmicrotask 2"
+      ],
+      "answerIndex": 1,
+      "explanation": "'start' and 'end' are synchronous and log first. The second .then is added to the microtask queue while the first is running, but the event loop keeps draining until the microtask queue is completely empty. So both microtasks finish before the setTimeout macrotask gets its turn."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the two API names from the lesson: the timer that schedules a MACROTASK, and the object whose .then callback schedules a MICROTASK.",
+      "codeTemplate": "// schedules a macrotask (runs later, after microtasks)\n{{blank}}(() => console.log('later'), 0);\n\n// schedules a microtask (runs before the macrotask above)\n{{blank}}.resolve().then(() => console.log('sooner'));",
+      "blanks": [
+        { "answer": "setTimeout", "accept": ["settimeout", "window.setTimeout"] },
+        { "answer": "Promise", "accept": ["promise"] }
+      ],
+      "explanation": "setTimeout hands its callback to the Web API layer, which later places it in the macrotask queue. Promise.resolve().then schedules its callback in the microtask queue. Because the event loop drains all microtasks before the next macrotask, 'sooner' logs before 'later' even with a 0ms delay."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these steps into the event loop's one repeating job, exactly as the lesson describes its cycle.",
+      "lines": [
+        "Run all synchronous code on the call stack until it is empty.",
+        "Drain the entire microtask queue (run every microtask, including ones added while draining).",
+        "Pick ONE macrotask from the macrotask queue and run it.",
+        "Drain the microtask queue again.",
+        "Repeat from the 'pick one macrotask' step."
+      ],
+      "explanation": "The event loop first lets all synchronous code finish so the call stack is empty. Then it fully drains the microtask queue. Only then does it take a single macrotask, after which it drains microtasks again before looping. That heartbeat — one macrotask, then all microtasks — repeats forever."
+    }
+  ]
+}

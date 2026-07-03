@@ -1,0 +1,106 @@
+{
+  "slug": "transitions-and-animations",
+  "title": "Transitions & Animations",
+  "category": "Responsive & Motion",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Give your interfaces a pulse: learn how CSS transitions and keyframe animations add smooth, meaningful motion that guides attention without getting in the way.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "A web page without motion is like a door that teleports open — technically functional, but a little startling. Motion, used well, tells a story: a button press feels responsive, a menu sliding in feels connected to where it came from, a loading spinner says \"I'm working on it.\"\n\nCSS gives you two tools for this: **transitions** for smooth changes between states (like hover-on and hover-off), and **keyframe animations** for choreographed sequences that can loop, reverse, or trigger on their own. By the end of this lesson you will be able to add motion that feels intentional rather than decorative — and you'll know exactly why some animations feel buttery-smooth while others stutter."
+    },
+    {
+      "type": "heading",
+      "text": "Part 1: Transitions — Bridging Before and After"
+    },
+    {
+      "type": "text",
+      "md": "A **transition** interpolates a CSS property from one value to another whenever that property changes. Without a transition, changes are instant — a snap. With one, the browser draws every frame in between.\n\nThe shorthand takes four values: **property**, **duration**, **easing**, and **delay**. You can list multiple transitions separated by commas, giving each its own timing:\n\nEasing controls the speed curve. The most useful built-in keywords:\n\n| Keyword | Feel |\n|---|---|\n| `ease` | Starts fast, ends slow — the default |\n| `ease-out` | Fast start, gentle stop — great for elements *entering* the screen |\n| `ease-in` | Slow start, fast end — good for elements *leaving* |\n| `linear` | Constant speed — useful for spinners, mechanical elsewhere |"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".button {\n  background-color: #3b82f6;\n  transform: scale(1);\n\n  /* property  duration  easing      delay */\n  transition:\n    background-color 0.25s ease,\n    transform        0.2s  ease-out  0s;\n}\n\n.button:hover {\n  background-color: #1d4ed8;\n  transform: scale(1.05);\n}",
+      "output": "On hover the button darkens and grows slightly; both changes animate smoothly. Off hover, they reverse.",
+      "caption": "Each transition can have its own duration and easing. 150–300 ms is the sweet spot for most UI interactions."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Transitions are like a dimmer switch, not a light switch",
+      "md": "A regular light switch jumps instantly from off to on. A dimmer glides the light up over a second. CSS transitions are that dimmer — you set the two endpoints (original style and changed style) and the browser fills in every frame between them."
+    },
+    {
+      "type": "heading",
+      "text": "Part 2: Transform — Move, Scale, Rotate Without Breaking Layout"
+    },
+    {
+      "type": "text",
+      "md": "`transform` is your most important animation companion. It visually moves, resizes, and rotates elements **without affecting the document layout** — the element still occupies its original space, only its painted position changes. The three functions you will reach for most are `translate()`, `scale()`, and `rotate()`. You can combine them in a single declaration:"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".card:hover {\n  /* Lift the card 6px without pushing neighbours away */\n  transform: translateY(-6px) scale(1.02);\n}\n\n.icon.spinning {\n  transform: rotate(45deg);\n}\n\n/* Works great with a transition */\n.card {\n  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;\n}",
+      "output": "The card lifts and grows slightly on hover with a smooth motion.",
+      "caption": "Stack multiple transform functions in one declaration — the browser applies them in order."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always animate transform and opacity — not width, left, or top",
+      "md": "When you animate `width`, `height`, `top`, or `left`, the browser must **recalculate layout** on every frame (a costly process called *reflow*). Animating `transform` and `opacity` skips reflow entirely — they are handled by the GPU. This is the single most impactful performance rule in CSS animation:\n\n- Want something to move? Use `translate`, not `left`/`top`.\n- Want something to appear? Use `opacity`, not toggling `display`."
+    },
+    {
+      "type": "heading",
+      "text": "Part 3: @keyframes — Scripting a Full Animation"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "@keyframes slide-in {\n  from { opacity: 0; transform: translateY(24px); }\n  to   { opacity: 1; transform: translateY(0);    }\n}\n\n.card {\n  /* name      dur    easing    fill-mode */\n  animation: slide-in 0.4s ease-out forwards;\n}\n\n/* Stagger three cards by delaying each */\n.card:nth-child(2) { animation-delay: 0.1s; }\n.card:nth-child(3) { animation-delay: 0.2s; }",
+      "output": "Three cards fade up into place in sequence, each starting 100ms after the previous.",
+      "caption": "A @keyframes block is a storyboard — you define what the element looks like at each point in the timeline, then attach it with animation: name duration easing fill-mode. \"forwards\" keeps the final styles after the animation ends; without it the element snaps back."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "@keyframes pulse {\n  0%, 100% { transform: scale(1);    opacity: 1;   }\n  50%       { transform: scale(1.08); opacity: 0.75; }\n}\n\n.badge {\n  animation: pulse 1.6s ease-in-out infinite;\n}",
+      "output": "The badge gently breathes — growing and fading, then returning — in a seamless loop.",
+      "caption": "When 0% and 100% are identical, the loop is seamless. Use \"infinite\" to keep it going."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Always respect prefers-reduced-motion",
+      "md": "Some users have vestibular disorders and have told their OS to reduce motion. One media query handles this for every animation on your page:\n\n```css\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after {\n    animation-duration: 0.01ms !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n```\n\nThis makes your site accessible to everyone and costs you nothing."
+    },
+    {
+      "type": "quiz",
+      "question": "A teammate's hover animation is janky on their laptop. They're animating `left` and `width`. What is the best fix?",
+      "options": [
+        "Increase the duration so the browser has more time per frame",
+        "Switch to animating transform: translateX() and transform: scaleX() instead",
+        "Add will-change: left, width to move them to the GPU",
+        "Use JavaScript requestAnimationFrame instead of CSS"
+      ],
+      "answerIndex": 1,
+      "explanation": "Animating left and width triggers a full layout recalculation (reflow) on every frame — expensive and janky. Switching to transform keeps work on the compositor thread where the GPU handles it without touching layout. will-change is a hint that can help in some cases but does not eliminate the root reflow cost."
+    }
+  ],
+  "keyTakeaways": [
+    "Use transition to smoothly animate between two CSS states; list the property, duration, and easing for each property you want to animate.",
+    "Use @keyframes + animation for multi-step sequences, entrance effects, and loops — define percentage steps to control the timeline.",
+    "Always animate transform and opacity instead of layout properties like width or left; they run on the GPU and never cause reflow.",
+    "Easing is not decoration — ease-out for entering elements, ease-in for exiting, linear only for constant-speed loops.",
+    "Wrap all motion in a prefers-reduced-motion media query so users who need a still experience always get one."
+  ],
+  "exercise": {
+    "prompt": "Create a .notification-dot element that pulses to draw attention. It should: (1) be a 14px circle in a vivid color of your choice, (2) use a @keyframes animation called 'ping' that scales it up to 1.6x and fades it out over 1 second, (3) loop infinitely. Bonus: stop the animation when the user prefers reduced motion.",
+    "starterCode": "/* Style the base dot */\n.notification-dot {\n  width: 14px;\n  height: 14px;\n  border-radius: 50%;\n  background-color: /* TODO: pick a vivid color */;\n\n  /* TODO: attach the ping animation — infinite, 1s, ease-out */\n}\n\n/* TODO: define @keyframes ping */\n/* scale(1) + opacity 1  =>  scale(1.6) + opacity 0 */\n\n/* Bonus TODO: stop animation for prefers-reduced-motion users */",
+    "hint": "For a ping/ripple effect, animate both transform: scale() and opacity together in your keyframes. A border-radius of 50% on an element with equal width and height gives a circle. Use the animation shorthand: name duration easing iteration-count.",
+    "solution": "@keyframes ping {\n  from {\n    transform: scale(1);\n    opacity: 1;\n  }\n  to {\n    transform: scale(1.6);\n    opacity: 0;\n  }\n}\n\n.notification-dot {\n  width: 14px;\n  height: 14px;\n  border-radius: 50%;\n  background-color: #ef4444;\n  animation: ping 1s ease-out infinite;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .notification-dot {\n    animation: none;\n  }\n}"
+  }
+}

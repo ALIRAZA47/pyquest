@@ -1,0 +1,50 @@
+{
+  "slug": "objects",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The car is declared with const, but its properties get changed. What does this log?",
+      "code": "const car = { make: \"Toyota\", year: 2020 };\ncar.year = 2023;\ncar.color = \"red\";\nconsole.log(car);",
+      "options": [
+        "{ make: 'Toyota', year: 2020 }",
+        "{ make: 'Toyota', year: 2023, color: 'red' }",
+        "An error — you cannot change a const object"
+      ],
+      "answerIndex": 1,
+      "explanation": "const locks the variable, not the object's contents. You can still update an existing property (year becomes 2023) and add a new one (color). Only reassigning car itself, like car = {}, would throw."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This method should log \"Woof! My name is Biscuit\", but it doesn't. What's wrong?",
+      "code": "const dog = {\n  name: \"Biscuit\",\n  greet() {\n    console.log(\"Woof! My name is \" + name);\n  }\n};\ndog.greet();",
+      "options": [
+        "Inside the method it should be this.name — a bare name doesn't refer to the object's property",
+        "greet is missing the function keyword, so it isn't a real method",
+        "You must call it as dog[\"greet\"]() for this to work"
+      ],
+      "answerIndex": 0,
+      "explanation": "Inside a method, a property of the object is not automatically in scope as a plain variable. You reach it through this, which refers to the object the method was called on — so it must be this.name to read the dog's name."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the two variable names so this destructuring pulls the title and year properties out of the movie object.",
+      "codeTemplate": "const movie = { title: \"Inception\", year: 2010 };\nconst { {{blank}}, {{blank}} } = movie;\nconsole.log(title, year);",
+      "blanks": [
+        { "answer": "title", "accept": ["title "] },
+        { "answer": "year", "accept": ["year "] }
+      ],
+      "explanation": "In object destructuring, the names inside the braces must match the object's property keys. const { title, year } = movie creates two variables named after those keys and copies their values out."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in order: create a person object, then add a new property, then read it back with bracket notation.",
+      "lines": [
+        "const person = { name: \"Ada\", age: 28 };",
+        "person[\"email\"] = \"ada@mail.com\";",
+        "const field = \"email\";",
+        "console.log(person[field]);"
+      ],
+      "explanation": "First the object must exist, then you add the email property. Next you store the key name in a variable, and finally bracket notation person[field] reads person[\"email\"], logging the value you just set."
+    }
+  ]
+}

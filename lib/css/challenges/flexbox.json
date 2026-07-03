@@ -1,0 +1,53 @@
+{
+  "slug": "flexbox",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this ruleset so the container's direct children line up horizontally in a single row instead of stacking.",
+      "codeTemplate": ".container {\n  display: {{blank}};\n}",
+      "blanks": [
+        {
+          "answer": "flex",
+          "accept": ["flex;", "'flex'"]
+        }
+      ],
+      "explanation": "display: flex turns the element into a flex container, so every direct child becomes a flex item and lines up along the main axis (a row by default) instead of stacking as blocks."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What visual result does this ruleset produce for the content inside .centered-page?",
+      "code": ".centered-page {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n}",
+      "options": [
+        "The content is perfectly centered both horizontally and vertically in the viewport",
+        "The content is centered horizontally but pinned to the top edge",
+        "The content is spread across the full width with gaps between items"
+      ],
+      "answerIndex": 0,
+      "explanation": "justify-content: center centers the group on the main (horizontal) axis, align-items: center centers it on the cross (vertical) axis, and height: 100vh gives the container the full viewport height to center within. Together that is the classic perfect-centering recipe."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": ".container {\n  display: flex;\n  align-items: space-between;\n  gap: 16px;\n}",
+      "options": [
+        "space-between is not a valid value for align-items; main-axis spacing belongs to justify-content",
+        "gap cannot be used together with align-items on a flex container",
+        "display: flex must come after align-items in the ruleset"
+      ],
+      "answerIndex": 0,
+      "explanation": "Anything with justify in its name controls the main axis, and space-between is a justify-content value. align-items controls the cross axis and has no space-between value — to spread items with max space between them, use justify-content: space-between."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two children so the sidebar stays a fixed 240px while the main content grows to fill all remaining space.",
+      "codeTemplate": ".sidebar      { flex: 0 0 240px; }\n.main-content { flex: {{blank}}; }",
+      "blanks": [
+        {
+          "answer": "1",
+          "accept": ["1 1 0", "1 1 0%", "1;"]
+        }
+      ],
+      "explanation": "flex: 1 is shorthand for flex: 1 1 0 — the item starts at zero and grows to fill the available space. With the sidebar fixed at flex: 0 0 240px, the main content takes everything that is left, giving a fluid two-column layout."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "slug": "colors-and-units",
+  "title": "Colors & Units",
+  "category": "CSS Fundamentals",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Master every way CSS lets you describe color — from simple names to powerful HSL — and learn which unit (px, em, rem, %, vw/vh) to reach for in any situation.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Two questions come up in virtually every CSS rule you will ever write: *what color is this?* and *how big is this?* CSS gives you a surprisingly rich toolkit for both. You can describe a color as a human-readable name, a six-digit hex code, an RGB triplet, or a hue-saturation-lightness formula. For sizing, CSS offers absolute units like pixels and a family of relative units that scale with the screen, the user's font preferences, or the parent element. Understanding both well is the difference between a layout that breaks on a phone and one that feels right everywhere."
+    },
+    {
+      "type": "heading",
+      "text": "Four Ways to Write a Color"
+    },
+    {
+      "type": "text",
+      "md": "**Named colors** — CSS knows 140+ words like `coral`, `steelblue`, and `tomato`. Great for learning; impossible to fine-tune.\n\n**Hex codes** — The workhorse of the web. `#3a86ff` encodes red, green, and blue in pairs: `3a` is red, `86` is green, `ff` is blue. Design tools always output hex, so you will copy these constantly.\n\n**RGB / RGBA** — `rgb(58, 134, 255)` spells out the same channels in plain decimals (0–255). Add a fourth argument for transparency: `rgba(0, 0, 0, 0.6)` is 60% opaque black — the classic modal backdrop.\n\n**HSL** — The most human-friendly format. Hue (0–360°, a color wheel position), Saturation (0% grey → 100% vivid), Lightness (0% black → 100% white). The killer feature: lock the hue and vary lightness to build an instant palette of related shades."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "HSL: Think Like a Painter",
+      "md": "RGB asks *how much red, green, and blue light?* — a question for a monitor engineer. HSL asks *what color is it, how vivid is it, and how bright is it?* — the questions a painter asks. When you want a button and its hover state to share the same hue but differ in darkness, HSL makes that trivial: just change the lightness value."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ":root {\n  /* One hue, five shades — a full tonal palette */\n  --blue-50:  hsl(217, 90%, 95%);\n  --blue-300: hsl(217, 80%, 65%);\n  --blue-500: hsl(217, 75%, 50%);\n  --blue-700: hsl(217, 70%, 35%);\n  --blue-900: hsl(217, 65%, 15%);\n}\n\n.modal-backdrop {\n  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent overlay */\n}\n\n.tag {\n  background-color: var(--blue-50);\n  color: var(--blue-700);\n  border: 1px solid var(--blue-300);\n}",
+      "output": "A pale-blue tag with dark-blue text and a medium-blue border — all derived from a single hue by varying lightness.",
+      "caption": "HSL + CSS custom properties = a cohesive palette from one source of truth"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "HSL Lightness 50% Is the Full Color, Not a Mid-Grey",
+      "md": "The HSL lightness scale goes **black (0%) → vivid color (50%) → white (100%)**. The middle point is actually the *most saturated* version of your hue. If you want a muted, washed-out shade, drop the **saturation** — not the lightness."
+    },
+    {
+      "type": "heading",
+      "text": "Absolute vs. Relative Units"
+    },
+    {
+      "type": "text",
+      "md": "**Absolute units** are fixed. `24px` means exactly 24 pixels, regardless of the screen size or the user's settings. Use `px` for things that should never flex: borders, box shadows, icon sizes.\n\n**Relative units** are defined in relation to *something else* — and they are what make a design adapt to different screens and accessibility preferences.\n\n- **`rem`** — relative to the root (`<html>`) font size. Browser default is 16px, so `1rem = 16px`. Think of `rem` as every element syncing to a single lobby clock — your type scale stays predictable no matter how deeply things are nested. Use it for font sizes and most spacing.\n- **`em`** — relative to the *current element's* font size. It compounds when nested (a child inside a parent, both set to `1.2em`, ends up at `1.44em`). Best for things that should scale with a component's own text, like `letter-spacing`.\n- **`%`** — relative to the parent element's matching dimension. `width: 50%` means half the parent's width.\n- **`vw` / `vh`** — 1% of the viewport width or height. `100vh` fills the full window height — great for hero sections."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Browser default: html font-size = 16px */\n\nbody    { font-size: 1rem;     }  /* 16px, scales with user prefs */\nh1      { font-size: 2.5rem;   }  /* 40px */\n.caption{ font-size: 0.875rem; }  /* 14px */\n\n.hero {\n  min-height: 100vh;             /* fills the full window */\n  padding: 4rem 2rem;            /* generous breathing room */\n}\n\n.hero h1 {\n  /* scales between 32px and 72px based on viewport width */\n  font-size: clamp(2rem, 5vw, 4.5rem);\n}\n\n.card {\n  border: 1px solid #ddd;        /* px: always sharp and thin */\n  border-radius: 8px;\n  padding: 1.5rem;\n}",
+      "output": "A full-viewport hero with a headline that scales fluidly, and a card with a consistent 1px border regardless of zoom level.",
+      "caption": "rem for type, px for fine details, vw inside clamp() for fluid headlines"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Quick Reference: Which Unit When?",
+      "md": "| Situation | Unit |\n|---|---|\n| Font sizes | `rem` |\n| Component padding / gap | `rem` |\n| Borders, shadows | `px` |\n| Fluid widths | `%` or `fr` |\n| Full-screen sections | `vh` |\n| Fluid headlines | `vw` inside `clamp()` |\n| Letter-spacing | `em` (scales with its own font) |"
+    },
+    {
+      "type": "heading",
+      "text": "Putting It Together: A Teaser of Typography"
+    },
+    {
+      "type": "text",
+      "md": "Color and units are the raw material of CSS typography. Every property — `font-size`, `line-height`, `letter-spacing`, `color` — uses what you just learned. A solid baseline: set `font-size` in `rem`, use a unitless `line-height` (like `1.6`) so it always multiplies cleanly against the current font size, and define your text colors in HSL so you can create hover states and disabled states just by nudging the lightness. The next lesson goes deep on typefaces and font pairing — the concepts here carry you all the way there."
+    },
+    {
+      "type": "quiz",
+      "question": "A user increases their browser's base font size from 16px to 20px for accessibility. Which font-size declaration automatically scales up with that change?",
+      "options": [
+        "font-size: 24px",
+        "font-size: 1.5rem",
+        "font-size: 150% on the root, then px on children",
+        "font-size: 1.5em on a deeply nested element"
+      ],
+      "answerIndex": 1,
+      "explanation": "rem is always relative to the root HTML element's font size, which inherits the user's browser preference. So 1.5rem becomes 1.5 × 20px = 30px automatically. Plain px ignores the browser preference entirely. Setting % on the root helps, but children using px will still not scale. em on deeply nested elements compounds with ancestor sizes in unpredictable ways."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Define Your Palette Once in :root",
+      "md": "Put all your colors as custom properties at the top of your stylesheet:\n```css\n:root {\n  --color-primary: hsl(217, 75%, 50%);\n  --color-text: hsl(220, 15%, 20%);\n}\n```\nThen use `var(--color-primary)` everywhere. When the brand color changes, you update one line."
+    }
+  ],
+  "keyTakeaways": [
+    "CSS has four color formats — named, hex, rgb/rgba, and hsl. Use HSL when building tonal palettes since you can shift darkness without touching the hue.",
+    "rgba() and hsla() add an alpha transparency channel — essential for overlays, frosted-glass effects, and shadows with color.",
+    "Use rem for font sizes and most spacing so your layout respects the user's browser accessibility settings; px is best for borders and fine decorative details.",
+    "vw and vh tie dimensions to the viewport — pair them with clamp() to set safe minimum and maximum bounds for fluid text.",
+    "Defining colors as CSS custom properties in :root gives you a single source of truth, making palette-wide updates trivial."
+  ],
+  "exercise": {
+    "prompt": "Build a small profile card that demonstrates what you learned. The card should use: an HSL background color, a heading with a hex color in rem, a muted subtitle using rgba(), a px border, and rem padding. Bonus: add a .card--alt variant with a different background using a CSS custom property.",
+    "starterCode": "/* Profile Card — Colors & Units Exercise */\n\n:root {\n  /* TODO: define at least two custom color properties */\n}\n\n.card {\n  width: 20rem;\n  /* TODO: padding in rem */\n  /* TODO: border in px */\n  border-radius: 12px;\n  /* TODO: background-color using hsl() */\n}\n\n.card__name {\n  /* TODO: font-size in rem, color as a hex code */\n  margin: 0 0 0.25rem;\n}\n\n.card__role {\n  /* TODO: font-size in rem, color using rgba() for a muted look */\n  margin: 0;\n}\n\n/* Bonus */\n.card--alt {\n  /* TODO: override the background using a CSS custom property */\n}",
+    "hint": "Start with --color-bg: hsl(210, 60%, 97%) in :root and use it on .card. For the muted subtitle try color: rgba(0, 0, 0, 0.45) — semi-transparent black looks muted on any light background automatically.",
+    "solution": ":root {\n  --color-bg: hsl(210, 60%, 97%);\n  --color-bg-alt: hsl(270, 50%, 96%);\n  --color-primary: #2563eb;\n}\n\n.card {\n  width: 20rem;\n  padding: 2rem;\n  border: 1px solid hsl(210, 20%, 85%);\n  border-radius: 12px;\n  background-color: var(--color-bg);\n}\n\n.card__name {\n  font-size: 1.375rem;\n  font-weight: 700;\n  color: var(--color-primary);\n  margin: 0 0 0.25rem;\n}\n\n.card__role {\n  font-size: 0.9rem;\n  color: rgba(0, 0, 0, 0.5);\n  margin: 0;\n}\n\n.card--alt {\n  background-color: var(--color-bg-alt);\n}"
+  }
+}

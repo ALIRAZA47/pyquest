@@ -1,0 +1,48 @@
+{
+  "slug": "a-star-search",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "In A*, each node's priority is f = g + h. Here g is the real cost from the start and h is the Manhattan-distance heuristic to the goal. What does this snippet print?",
+      "code": "def heuristic(a, b):\n    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Manhattan distance\n\nnode = (1, 2)\ngoal = (4, 4)\ng = 3            # real cost from start to node\nh = heuristic(node, goal)\nprint(g + h)",
+      "options": ["8", "5", "3", "11"],
+      "answerIndex": 0,
+      "explanation": "Manhattan distance from (1,2) to (4,4) is |1-4| + |2-4| = 3 + 2 = 5, so h = 5. The f score is f = g + h = 3 + 5 = 8. A* always expands the node with the lowest f score first."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong? It pushes the wrong priority into the min-heap when adding a neighbour to the open set.",
+      "code": "new_g = g[current] + 1\nif new_g < g.get(nb, float('inf')):\n    came_from[nb] = current\n    g[nb] = new_g\n    # push (priority, node) onto the min-heap\n    heapq.heappush(open_set, (new_g, nb))",
+      "options": [
+        "The priority should be new_g + heuristic(nb, goal), not just new_g — omitting h turns A* into Dijkstra.",
+        "heapq.heappush should be heapq.heappop when adding a node.",
+        "new_g should be g[current] - 1 because cost decreases toward the goal.",
+        "came_from[nb] should store nb, not current."
+      ],
+      "answerIndex": 0,
+      "explanation": "The heap must be ordered by f = g + h. Pushing only new_g (the g score) drops the heuristic, so the frontier no longer leans toward the goal — the code silently degrades into Dijkstra's algorithm and explores far more nodes."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the admissibility rule from the lesson. A heuristic is admissible if it never ______ the true remaining cost — an optimistic guess that guarantees A* finds the optimal path.",
+      "codeTemplate": "# A heuristic h(n) is admissible if it never {{blank}}\n# the true remaining cost to the goal.\nadmissible = h_estimate <= true_remaining_cost",
+      "blanks": [
+        { "answer": "overestimates", "accept": ["overestimate", "over-estimates", "over estimates"] }
+      ],
+      "explanation": "Admissible means the heuristic never overestimates the true remaining cost. An overestimating (inadmissible) heuristic can make A* prematurely rule out the real optimal path and return a suboptimal route. That's why straight-line distance, which can never exceed a real route, is a safe choice."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lines of reconstruct_path in the correct order. It walks came_from pointers from the goal back to the start, then returns the path in start-to-goal order.",
+      "lines": [
+        "current = goal",
+        "while current != start:",
+        "    path.append(current)",
+        "    current = came_from[current]",
+        "path.append(start)",
+        "path.reverse()"
+      ],
+      "explanation": "Start at the goal and repeatedly follow came_from[current] back toward the start, collecting nodes along the way. Because you collected them goal-to-start, you reverse the list at the end so the path reads start-to-goal — exactly what A* returns when it reaches the goal."
+    }
+  ]
+}

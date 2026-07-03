@@ -4,7 +4,7 @@ import { RAW_SLIDES } from "./generated-slides";
 import { RAW_CHALLENGES } from "./generated-challenges";
 import { createCourse, toMeta, type Course, type NavSection } from "./course-factory";
 
-// The Python course — the original PyQuest course. Its public API is kept
+// The Python course — the original Quest course. Its public API is kept
 // stable so all existing Python pages keep working unchanged.
 
 export const pythonCourse: Course = createCourse({

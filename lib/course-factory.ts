@@ -42,6 +42,7 @@ function normalizeBlock(raw: unknown): Block | null {
         code: asString(b.code),
         output: typeof b.output === "string" ? b.output : undefined,
         caption: typeof b.caption === "string" ? b.caption : undefined,
+        lang: typeof b.lang === "string" ? b.lang : undefined,
       };
     case "callout": {
       const variant = (

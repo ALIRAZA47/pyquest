@@ -14,9 +14,9 @@ export function generateMetadata({
   params: { slug: string };
 }): Metadata {
   const lesson = getLesson(params.slug);
-  if (!lesson) return { title: "Lesson not found — PyQuest" };
+  if (!lesson) return { title: "Lesson not found — Quest" };
   return {
-    title: `${lesson.title} — PyQuest`,
+    title: `${lesson.title} — Quest`,
     description: lesson.summary,
   };
 }

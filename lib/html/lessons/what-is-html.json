@@ -1,0 +1,127 @@
+{
+  "slug": "what-is-html",
+  "title": "What is HTML?",
+  "category": "Getting Started with HTML",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover how HTML acts as the skeleton of every web page, giving structure and meaning to content through elements and tags.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every web page you have ever visited — a news article, a social media feed, an online store — is built on HTML. Before any colour, animation, or interactive button can exist, the raw content of a page has to be organised and labelled so the browser knows what it is looking at. HTML is the tool that does exactly that. Learning it is the single most important first step in web development, and the good news is that the fundamentals are simple enough to grasp in one sitting."
+    },
+    {
+      "type": "heading",
+      "text": "What Does HTML Stand For?"
+    },
+    {
+      "type": "text",
+      "md": "HTML stands for **HyperText Markup Language**. Each word is meaningful:\n\n- **HyperText** means text that can link to other text — the clickable links you see everywhere on the web.\n- **Markup** means you annotate (mark up) content with labels that describe what it is.\n- **Language** means it has a defined syntax that both humans and browsers can read.\n\nBecause HTML is a *markup* language and not a *programming* language, it cannot make decisions, run loops, or do maths. Its only job is to describe what content is on a page and how that content relates to other content."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a manuscript editor",
+      "md": "Imagine a physical manuscript handed to a book editor. The editor picks up a red pen and writes notes in the margins: \"this is the chapter title\", \"this paragraph is a quote\", \"this word should link to the glossary\". The editor has not changed the words — they have added labels that tell a reader (or a printer) how to treat each piece of text. HTML is that red pen for the browser."
+    },
+    {
+      "type": "heading",
+      "text": "Elements and Tags"
+    },
+    {
+      "type": "text",
+      "md": "The building blocks of HTML are called **elements**. Each element is made up of:\n\n1. An **opening tag** — a keyword wrapped in angle brackets, like `<p>`.\n2. The **content** — the actual text or other elements inside.\n3. A **closing tag** — the same keyword prefixed with a slash, like `</p>`.\n\nTogether they form one complete element:"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<p>HTML is the skeleton of the web.</p>",
+      "output": "A paragraph of text rendered by the browser.",
+      "caption": "An opening tag, content, and a closing tag make one paragraph element."
+    },
+    {
+      "type": "text",
+      "md": "The tag name tells the browser *what kind of thing* this is. `<p>` means paragraph. `<h1>` means a top-level heading. `<img>` means an image. There are about 100 standard HTML tags, but you will use fewer than 20 in most projects."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Always close your tags",
+      "md": "Most HTML elements require both an opening and a closing tag. Forgetting the closing tag is one of the most common beginner mistakes. Some tags (called *void elements*) like `<img>` and `<br>` are self-closing and need no closing tag at all — but for all others, if you open it, close it."
+    },
+    {
+      "type": "heading",
+      "text": "Nesting Elements"
+    },
+    {
+      "type": "text",
+      "md": "Elements can live inside other elements. This is called **nesting**, and it is how you build complex structures. The rule is simple: always close the inner element before you close the outer one."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<p>Visit <a href=\"https://example.com\">our website</a> for more.</p>",
+      "output": "A paragraph containing a clickable hyperlink on the words 'our website'.",
+      "caption": "An anchor element nested inside a paragraph element."
+    },
+    {
+      "type": "heading",
+      "text": "A Full HTML Page"
+    },
+    {
+      "type": "text",
+      "md": "A complete HTML document has a standard structure that every browser expects. It may look like a lot at first, but each piece has a clear purpose."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Hello, world!</h1>\n    <p>This is my first web page.</p>\n  </body>\n</html>",
+      "output": "A page with a large 'Hello, world!' heading followed by a short paragraph.",
+      "caption": "The minimal skeleton every HTML page starts with."
+    },
+    {
+      "type": "text",
+      "md": "Here is what each part does:\n\n- `<!DOCTYPE html>` — tells the browser this is a modern HTML5 document. Always the very first line.\n- `<html>` — the root element that wraps the entire page. The `lang` attribute helps screen readers and search engines.\n- `<head>` — invisible metadata about the page: character encoding, the tab title, links to stylesheets, and more.\n- `<meta charset=\"UTF-8\">` — declares that the page uses UTF-8 text encoding, which supports almost every character in the world.\n- `<title>` — the text shown in the browser tab.\n- `<body>` — everything visible in the browser window lives here."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Browsers are forgiving — but you should not rely on that",
+      "md": "Browsers do their best to display pages even when the HTML is technically wrong. You might forget `<!DOCTYPE html>` and the page will still appear fine. This is intentional — the web is designed to be resilient. That said, malformed HTML can cause subtle layout bugs and accessibility problems, so always write it correctly from the start."
+    },
+    {
+      "type": "heading",
+      "text": "How the Browser Reads HTML"
+    },
+    {
+      "type": "text",
+      "md": "When you open a web page, the browser downloads the HTML file and reads it **top to bottom**, building an internal model of the page called the **DOM** (Document Object Model). Think of the DOM as the browser's live understanding of your page — a family tree of nested elements. Every tag the browser encounters adds a new node to that tree. This is why the order of elements in your HTML matters: content written first appears first."
+    },
+    {
+      "type": "quiz",
+      "question": "Which part of an HTML document contains the content that users actually see in the browser window?",
+      "options": [
+        "The <head> element",
+        "The <title> element",
+        "The <body> element",
+        "The <!DOCTYPE html> declaration"
+      ],
+      "answerIndex": 2,
+      "explanation": "The <body> element holds all the visible content — headings, paragraphs, images, links, and so on. The <head> contains invisible metadata about the page, and <!DOCTYPE html> is just a declaration that tells the browser which version of HTML to expect."
+    }
+  ],
+  "keyTakeaways": [
+    "HTML is a markup language that labels content so browsers know how to display it — it is not a programming language.",
+    "Every HTML element is made of an opening tag, content, and (usually) a closing tag.",
+    "Elements can be nested inside each other to build complex page structures.",
+    "A complete HTML page always starts with <!DOCTYPE html> and has a <head> and a <body>.",
+    "Browsers read HTML top to bottom, building a live model of the page called the DOM."
+  ],
+  "exercise": {
+    "prompt": "Build a tiny personal introduction page. It should have a proper HTML document structure (DOCTYPE, html, head, body), a page title in the tab, an <h1> with your name, and a <p> paragraph describing yourself in one sentence. Bonus: wrap your favourite website URL in an <a> tag inside the paragraph.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <!-- TODO: add a <title> tag with your name -->\n  </head>\n  <body>\n    <!-- TODO: add an <h1> with your name -->\n    <!-- TODO: add a <p> that describes you -->\n    <!-- BONUS: link to your favourite website using <a href=\"...\"> -->\n  </body>\n</html>",
+    "hint": "The <title> tag goes inside <head>. Your <h1> and <p> tags go inside <body>. For the link, nest an <a href=\"https://...\"> element inside the <p> — remember to close both tags.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Alex Rivera</title>\n  </head>\n  <body>\n    <h1>Alex Rivera</h1>\n    <p>\n      I am a budding web developer who loves building things on the internet.\n      My favourite resource is <a href=\"https://developer.mozilla.org\">MDN Web Docs</a>.\n    </p>\n  </body>\n</html>"
+  }
+}

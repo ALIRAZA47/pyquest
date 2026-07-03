@@ -1,0 +1,50 @@
+{
+  "slug": "how-networks-learn",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the MSE loss function from the lesson. What does it print?",
+      "code": "def mse_loss(predictions, targets):\n    total = sum((p - t) ** 2 for p, t in zip(predictions, targets))\n    return total / len(predictions)\n\npredictions = [0.5, 0.0]\ntargets     = [1.0, 0.0]\nprint(f\"Loss: {mse_loss(predictions, targets):.4f}\")",
+      "options": [
+        "Loss: 0.1250",
+        "Loss: 0.2500",
+        "Loss: 0.5000"
+      ],
+      "answerIndex": 0,
+      "explanation": "MSE squares each difference then averages. The errors are (0.5 - 1.0)**2 = 0.25 and (0.0 - 0.0)**2 = 0.0, giving a total of 0.25, then divided by the 2 examples = 0.125. A common mistake is forgetting to average by the number of predictions, which would give 0.25."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the gradient descent update rule taught in the lesson. Fill in the operator and the two variable names so the weight steps downhill.",
+      "codeTemplate": "def update(weight, gradient, lr):\n    # move the weight downhill to reduce the loss\n    return weight {{blank}} lr * {{blank}}",
+      "blanks": [
+        { "answer": "-", "accept": ["minus", "−"] },
+        { "answer": "gradient", "accept": ["grad", "gradient", "g"] }
+      ],
+      "explanation": "Gradient descent is new_weight = old_weight - learning_rate * gradient. We SUBTRACT the scaled gradient because the gradient points in the direction that increases the loss, so moving against it (downhill) reduces the loss. Adding it instead would be gradient ascent and would make the network worse."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the four steps of one training iteration into the correct order, matching the loop taught in the lesson.",
+      "lines": [
+        "output = forward(w, x)                      # 1. forward pass: make a prediction",
+        "current_loss = (output - target) ** 2       # 2. compute the loss",
+        "grad = 2 * (output - target) * x            # 3. backprop: compute the gradient",
+        "w = w - lr * grad                           # 4. gradient descent: update the weight"
+      ],
+      "explanation": "Every training iteration runs the same four steps in order: forward pass to get a prediction, compute the loss to measure how wrong it is, backpropagation to compute each weight's gradient, then a gradient descent step to update the weight. The gradient depends on the output, and the update depends on the gradient, so the order cannot change."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def train_step(w, x, target, lr):\n    output = w * x\n    grad = 2 * (output - target) * x\n    # apply the gradient descent update\n    w = w + lr * grad\n    return w",
+      "options": [
+        "The update uses + instead of -; it should be w = w - lr * grad",
+        "The gradient formula is wrong; it should be (output - target) without the 2",
+        "The learning rate should multiply the weight, not the gradient"
+      ],
+      "answerIndex": 0,
+      "explanation": "Gradient descent SUBTRACTS the scaled gradient: w = w - lr * grad. Using + is gradient ascent, which climbs the loss surface uphill and makes the loss grow instead of shrink. The gradient formula 2 * (output - target) * x is exactly the one derived in the lesson, and the learning rate correctly scales the gradient, not the weight."
+    }
+  ]
+}

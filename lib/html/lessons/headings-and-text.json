@@ -1,0 +1,132 @@
+{
+  "slug": "headings-and-text",
+  "title": "Headings & Text",
+  "category": "Content & Media",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to structure text with headings, paragraphs, and inline emphasis so your pages are readable, meaningful, and SEO-friendly.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every document in the world — a newspaper, a textbook, a recipe — uses headings and paragraphs to guide the reader. HTML gives you the exact same power. When you mark up text correctly, browsers know what is a title, what is body copy, and what is especially important. So do search engines, screen readers, and every other tool that reads your page. Getting this right is one of the highest-leverage things you can learn."
+    },
+    {
+      "type": "heading",
+      "text": "The Six Heading Levels"
+    },
+    {
+      "type": "text",
+      "md": "HTML provides six heading tags: `<h1>` through `<h6>`. Think of them as the outline of a book — `<h1>` is the book title, `<h2>` is a chapter, `<h3>` is a section inside a chapter, and so on. The number tells the browser (and everyone else) how important and high-level that heading is."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Outline Analogy",
+      "md": "Imagine a school essay outline:\n\n1. Main Topic *(h1)*\n   1.1 First Point *(h2)*\n       1.1.1 Supporting detail *(h3)*\n   1.2 Second Point *(h2)*\n\nEach level nests inside the one above it. HTML headings work exactly the same way."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<h1>Baking Sourdough Bread</h1>\n\n<h2>Ingredients</h2>\n<h3>For the Starter</h3>\n<h3>For the Dough</h3>\n\n<h2>Instructions</h2>\n<h3>Mixing</h3>\n<h3>Proofing</h3>\n<h3>Baking</h3>",
+      "output": "A clear visual hierarchy: a large page title, two medium chapter headings, and smaller sub-section headings beneath each.",
+      "caption": "A well-structured heading outline for a recipe page"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "One h1 Per Page",
+      "md": "Use **only one `<h1>`** on each page. It represents the single main topic of that page — like the title of a book. Using multiple `<h1>` tags confuses search engines and screen readers. Every other heading level can appear as many times as needed."
+    },
+    {
+      "type": "heading",
+      "text": "Paragraphs with <p>"
+    },
+    {
+      "type": "text",
+      "md": "Body text goes inside `<p>` tags. Each `<p>` creates its own paragraph — the browser automatically adds spacing above and below it. You do **not** need to add blank lines or spaces in your HTML to create that gap; the `<p>` tag handles it."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<h1>Why Cats Knock Things Over</h1>\n\n<p>\n  Scientists believe cats swat objects off tables to test whether\n  they are alive. It is a hunting instinct left over from the wild.\n</p>\n\n<p>\n  It might also just be fun for them. We may never know.\n</p>",
+      "output": "A page title followed by two separate paragraphs with visible vertical spacing between them.",
+      "caption": "Two <p> elements render as two distinct paragraphs"
+    },
+    {
+      "type": "heading",
+      "text": "Inline Emphasis: <strong> and <em>"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a word or phrase inside a paragraph deserves special attention. HTML gives you two inline elements for this:\n\n- **`<strong>`** — marks text as *important*. Browsers render it **bold** by default. Use it when the reader *must* notice something.\n- **`<em>`** — marks text as *emphasized*. Browsers render it *italic* by default. Use it for stress emphasis, like when you would change your tone of voice."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<p>\n  <strong>Warning:</strong> Never leave candles unattended.\n</p>\n\n<p>\n  She did not just like the movie — she <em>loved</em> it.\n</p>",
+      "output": "First paragraph: 'Warning:' appears bold. Second paragraph: 'loved' appears italic.",
+      "caption": "<strong> for importance, <em> for vocal stress"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Meaning Over Appearance",
+      "md": "Use `<strong>` and `<em>` for their **meaning**, not just to make text bold or italic. If you only want a visual style change with no semantic meaning, use CSS (`font-weight: bold` or `font-style: italic`) instead. Screen readers can announce `<strong>` content with added emphasis — decorative styling does not need that treatment."
+    },
+    {
+      "type": "heading",
+      "text": "Line Breaks with <br>"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you need a line break *within* a paragraph rather than starting a whole new one — for example, in an address or a poem. That is what `<br>` is for. It is a **void element** (self-closing, no closing tag needed) that inserts a single line break without adding paragraph spacing."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<p>\n  Acme Corporation<br>\n  123 Main Street<br>\n  Springfield, IL 62701\n</p>",
+      "output": "A paragraph where each line of the address appears on its own line, with no extra spacing between lines.",
+      "caption": "<br> breaks a line without starting a new paragraph"
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Do Not Abuse <br>",
+      "md": "Do **not** use `<br><br>` to create vertical space between sections — that is a job for CSS (`margin` or `padding`) or a new `<p>` element. Stacking `<br>` tags for spacing is an old habit that makes pages harder to maintain and style."
+    },
+    {
+      "type": "heading",
+      "text": "Why Heading Structure Matters for SEO"
+    },
+    {
+      "type": "text",
+      "md": "Search engines like Google read your headings to understand what your page is about. A clear hierarchy — one `<h1>` describing the page topic, `<h2>` tags for major sections, `<h3>` for sub-topics — tells the algorithm exactly how your content is organized. Pages with good heading structure tend to rank better and appear more accurately in search results.\n\nAccessibility tools (screen readers used by people with visual impairments) also rely on headings for navigation. A user can jump between `<h2>` sections the way a sighted user scans headlines. Skipping levels or using headings just to make text big breaks this experience entirely."
+    },
+    {
+      "type": "quiz",
+      "question": "You are writing a blog post about coffee. Which heading should appear exactly once and represent the overall topic of the page?",
+      "options": [
+        "<h2> — it is the most common heading level",
+        "<h1> — it is the single top-level heading for the page",
+        "<h3> — it is a good middle ground",
+        "<strong> — it makes text bold and stands out"
+      ],
+      "answerIndex": 1,
+      "explanation": "<h1> represents the one main topic of a page. Every page should have exactly one <h1>, which acts like the title of a book. <h2> through <h6> are used for sub-sections. <strong> is for inline emphasis inside paragraphs, not page structure."
+    }
+  ],
+  "keyTakeaways": [
+    "Use <h1> once per page for the main topic; nest <h2>–<h6> to create a logical outline.",
+    "<p> wraps body text into paragraphs — the browser handles spacing automatically.",
+    "<strong> signals importance (bold); <em> signals vocal stress (italic) — choose by meaning, not looks.",
+    "Use <br> only for intentional line breaks within content like addresses or poetry, never for layout spacing.",
+    "Good heading hierarchy improves both SEO and accessibility for screen reader users."
+  ],
+  "exercise": {
+    "prompt": "Build a short HTML page about your favorite hobby. It must include: one <h1> page title, at least two <h2> section headings, at least one <h3> sub-section, two or more <p> paragraphs, one use of <strong>, one use of <em>, and one <br> used appropriately (e.g. inside an address or a short list of items).",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Favorite Hobby</title>\n</head>\n<body>\n\n  <!-- TODO: Add your h1 page title here -->\n\n  <!-- TODO: Add an h2 for your first section (e.g. \"What is it?\") -->\n\n  <!-- TODO: Write a paragraph describing the hobby -->\n  <!-- Use <strong> for something important and <em> for emphasis -->\n\n  <!-- TODO: Add an h2 for a second section (e.g. \"Getting Started\") -->\n\n  <!-- TODO: Add an h3 for a sub-topic inside that section -->\n\n  <!-- TODO: Write another paragraph; use <br> somewhere sensible -->\n\n</body>\n</html>",
+    "hint": "Start with your <h1>, then think of two natural sections of your hobby — those become your <h2> tags. Inside one section, pick a specific sub-topic for an <h3>. Drop <strong> around a safety tip or key fact, and use <em> when you would naturally stress a word if speaking aloud.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Favorite Hobby</title>\n</head>\n<body>\n\n  <h1>My Love of Hiking</h1>\n\n  <h2>What is Hiking?</h2>\n  <p>\n    Hiking is the activity of walking on natural trails, usually in forests,\n    mountains, or national parks. It is one of the most accessible outdoor\n    sports — all you really need is a pair of comfortable shoes.\n  </p>\n\n  <h2>Getting Started</h2>\n  <p>\n    Before your first hike, a little preparation goes a long way.\n    <strong>Always tell someone where you are going</strong> before you head out.\n    Even a short trail can feel <em>completely</em> different once you are in the middle of it.\n  </p>\n\n  <h3>What to Pack</h3>\n  <p>\n    A basic day-hike kit should include:<br>\n    Water (at least 2 litres)<br>\n    Snacks like nuts or granola bars<br>\n    A map or downloaded offline trail app\n  </p>\n\n</body>\n</html>"
+  }
+}

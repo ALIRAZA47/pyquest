@@ -1,0 +1,52 @@
+{
+  "slug": "typing-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A default parameter supplies a fallback when the caller omits it. What does this code print?",
+      "code": "function createMessage(text: string, prefix: string = \"INFO\"): string {\n  return `[${prefix}] ${text}`;\n}\n\nconsole.log(createMessage(\"Server started\"));\nconsole.log(createMessage(\"Disk full\", \"WARN\"));",
+      "options": [
+        "[INFO] Server started\n[WARN] Disk full",
+        "[INFO] Server started\n[INFO] Disk full",
+        "[undefined] Server started\n[WARN] Disk full",
+        "[WARN] Server started\n[WARN] Disk full"
+      ],
+      "answerIndex": 0,
+      "explanation": "When the first call omits prefix, TypeScript substitutes the default \"INFO\", so it prints [INFO] Server started. The second call passes \"WARN\" explicitly, which overrides the default. A default value is never undefined inside the body — that is what makes it different from an optional ? parameter."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function greetUser(name: string, title?: string): string {\n  return `Hello, ${title.toUpperCase()} ${name}!`;\n}\n\ngreetUser(\"Turing\");",
+      "options": [
+        "title is optional (title?), so it may be undefined when the caller omits it — calling .toUpperCase() on undefined is a type error and crashes at runtime.",
+        "You cannot combine a required parameter (name) with an optional parameter (title) in the same function.",
+        "The return type should be void because the function does not print anything.",
+        "Template literals cannot call methods like .toUpperCase() inside ${ }."
+      ],
+      "answerIndex": 0,
+      "explanation": "The ? makes title optional, so its type is string | undefined. TypeScript flags that title might be undefined, and calling .toUpperCase() on it would throw at runtime when the caller omits it (as greetUser(\"Turing\") does). You must check for undefined first — for example, if (title) { ... } — before using it, or give it a default value instead."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "This function only prints — it returns no meaningful value. Fill in the parameter type for score and the return type that tells callers there is nothing to capture.",
+      "codeTemplate": "function logScore(player: string, score: {{blank}}): {{blank}} {\n  console.log(`${player} scored ${score} points.`);\n}\n\nlogScore(\"Alice\", 4200);",
+      "blanks": [
+        { "answer": "number", "accept": ["number ", "Number"] },
+        { "answer": "void", "accept": ["void ", "Void"] }
+      ],
+      "explanation": "score holds a numeric value, so it is annotated number. Because the function just logs to the console and has no return statement, its return type is void — TypeScript's way of saying this function deliberately produces no result you should rely on."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines to define a typed arrow function 'double' with an explicit number return type, then call it and log the result (10).",
+      "lines": [
+        "const double = (n: number): number => {",
+        "  return n * 2;",
+        "};",
+        "console.log(double(5));"
+      ],
+      "explanation": "Arrow functions follow the same annotation rules as regular functions: the parameter type goes after the name (n: number) and the explicit return type goes after the parameter list, before the => . You must define double before you call it, so the declaration comes first and console.log(double(5)) — which prints 10 — comes last."
+    }
+  ]
+}

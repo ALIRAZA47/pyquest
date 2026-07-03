@@ -1,0 +1,47 @@
+{
+  "slug": "css-selectors",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the selector so this rule targets any element carrying class=\"badge\".",
+      "codeTemplate": "{{blank}} {\n  background-color: #4f46e5;\n  color: white;\n  border-radius: 999px;\n}",
+      "blanks": [
+        { "answer": ".badge", "accept": [".badge ", "badge"] }
+      ],
+      "explanation": "A class selector is written by prefixing the class name with a dot. So class=\"badge\" is targeted with .badge. Writing badge with no dot would instead look for a <badge> tag, which does not exist."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this rule so it matches only <a> elements that live inside a <nav> element.",
+      "codeTemplate": "nav{{blank}}a {\n  color: white;\n  text-decoration: none;\n}",
+      "blanks": [
+        { "answer": " ", "accept": ["space", "\" \"", "a space"] }
+      ],
+      "explanation": "A single space between two selectors creates a descendant relationship: nav a means \"any <a> nested anywhere inside a <nav>\". Remove the space (nava) and it becomes one meaningless tag name that matches nothing."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This rule is meant to style the single element with id=\"page-title\", but nothing changes. What's wrong?",
+      "code": ".page-title {\n  font-size: 2.5rem;\n  color: #1a1a2e;\n}",
+      "options": [
+        "IDs should be selected with a hash (#page-title), not a dot — the dot targets a class",
+        "font-size cannot be set in rem units, only in px",
+        "An id can only receive one declaration at a time"
+      ],
+      "answerIndex": 0,
+      "explanation": "The dot prefix (.) selects elements by class. To target id=\"page-title\" you must use the hash prefix: #page-title. As written, .page-title looks for class=\"page-title\", which the element does not have."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Both rules target the same element (it has id=\"cta\" and class=\"btn\"). What color will its text be?",
+      "code": "#cta {\n  color: white;\n}\n\n.btn {\n  color: black;\n}",
+      "options": [
+        "White — the ID selector wins because it has higher specificity",
+        "Black — the later rule always overrides earlier ones",
+        "Grey — the two colors are blended together"
+      ],
+      "answerIndex": 0,
+      "explanation": "CSS decides the winner by specificity before source order. An ID selector (#cta) outranks a class selector (.btn), so the text is white even though the class rule comes later in the file. Source order only breaks ties when specificity is equal."
+    }
+  ]
+}

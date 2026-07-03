@@ -1,0 +1,46 @@
+{
+  "slug": "building-a-rest-api",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This POST route from the books API runs when a client sends a valid JSON body of {\"title\": \"Clean Code\", \"author\": \"Robert Martin\"}. What status code does the server send back?",
+      "code": "app.post(\"/books\", (req, res) => {\n  const { title, author } = req.body;\n  if (!title || !author) {\n    return res.status(400).json({ error: \"title and author are required\" });\n  }\n  const newBook = { id: nextId++, title, author };\n  books.push(newBook);\n  res.status(201).json(newBook);\n});",
+      "options": ["200", "201", "400"],
+      "answerIndex": 1,
+      "explanation": "Both title and author are present, so the guard clause is skipped and the code reaches res.status(201). 201 Created is the precise status for a successful POST that creates a new resource — use it instead of a plain 200 OK so callers know exactly what happened."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This POST route reads req.body but title and author always come back undefined, even when the client sends valid JSON. What's wrong?",
+      "code": "const express = require(\"express\");\nconst app = express();\n\napp.post(\"/books\", (req, res) => {\n  const { title, author } = req.body;\n  const newBook = { id: nextId++, title, author };\n  books.push(newBook);\n  res.status(201).json(newBook);\n});\n\napp.listen(3000);",
+      "options": [
+        "The route is missing app.use(express.json()) before it, so the JSON body is never parsed and req.body is undefined",
+        "You must use app.put instead of app.post to accept a request body",
+        "req.body should be written as req.params to read the JSON fields"
+      ],
+      "answerIndex": 0,
+      "explanation": "Without app.use(express.json()) registered before the routes, Express never parses the incoming JSON body, so req.body stays undefined and destructuring yields undefined fields. Adding express.json() as middleware fixes it — this is the classic first bug for beginners."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this GET route so it returns 404 when the book id doesn't exist. Fill in the HTTP status code for 'Not Found'.",
+      "codeTemplate": "app.get(\"/books/:id\", (req, res) => {\n  const book = books.find(b => b.id === Number(req.params.id));\n  if (!book) return res.status({{blank}}).json({ error: \"Book not found\" });\n  res.json(book);\n});",
+      "blanks": [
+        { "answer": "404", "accept": ["404 "] }
+      ],
+      "explanation": "404 Not Found is the conventional status code when a requested resource does not exist. Returning it lets the client know the id was valid syntax but points to nothing, without having to parse the response body."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to build a minimal Express books API that parses JSON, serves GET /books, and starts listening.",
+      "lines": [
+        "const express = require(\"express\");",
+        "const app = express();",
+        "app.use(express.json());",
+        "app.get(\"/books\", (req, res) => res.json(books));",
+        "app.listen(3000, () => console.log(\"API running\"));"
+      ],
+      "explanation": "You must require Express first, then create the app, then register express.json() middleware so req.body is parsed before any route runs. Routes are defined next, and app.listen goes last to start the server once everything is wired up."
+    }
+  ]
+}

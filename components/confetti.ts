@@ -7,7 +7,7 @@ export interface ConfettiOptions {
   count?: number;
 }
 
-export const CONFETTI_EVENT = "pyquest:confetti";
+export const CONFETTI_EVENT = "quest:confetti";
 
 export function fireConfetti(opts: ConfettiOptions = {}): void {
   if (typeof window === "undefined") return;

@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { tokenizePython } from "@/lib/highlight";
+import { tokenizeCode } from "@/lib/highlighters";
 
-// Renders Python source as syntax-highlighted spans (themed via the `tok-*`
-// CSS classes). Shared by the static CodeBlock and the live code editor.
-export function HighlightedCode({ code }: { code: string }) {
-  const tokens = useMemo(() => tokenizePython(code), [code]);
+// Renders source code as syntax-highlighted spans (themed via the `tok-*` CSS
+// classes). Language-aware: Python, JS/TS/JSX, CSS, HTML. Shared by the static
+// CodeBlock and the live code editor.
+export function HighlightedCode({ code, lang }: { code: string; lang?: string }) {
+  const tokens = useMemo(() => tokenizeCode(code, lang), [code, lang]);
   return (
     <>
       {tokens.map((t, i) =>

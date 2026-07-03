@@ -1,0 +1,59 @@
+{
+  "slug": "state-with-usestate",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function Counter() {\n  let count = 0;\n\n  return (\n    <button onClick={() => count = count + 1}>\n      Clicked {count} times\n    </button>\n  );\n}",
+      "options": [
+        "count is a plain variable that's mutated directly, so React never re-renders — it must be state via useState",
+        "onClick should be spelled onclick to match the DOM event",
+        "The button is missing a key prop",
+        "count + 1 should be count++ to increment properly"
+      ],
+      "answerIndex": 0,
+      "explanation": "Reassigning a plain variable (`count = count + 1`) changes the value but gives React no signal that anything changed, so the screen stays frozen at 0. Data that changes over time and should update the UI must live in state: `const [count, setCount] = useState(0);` and be updated with the setter."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this counter's state declaration so it starts at 0 and gives you both the current value and a setter. Fill in the hook being called.",
+      "codeTemplate": "import { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = {{blank}}(0);\n  return <button onClick={() => setCount(count + 1)}>{count}</button>;\n}",
+      "blanks": [
+        {
+          "answer": "useState",
+          "accept": ["useState", "usestate", "useState()", "React.useState"]
+        }
+      ],
+      "explanation": "`useState(0)` calls the hook with an initial value of 0 and returns a two-element array. Array destructuring names those elements: `count` (the current value) and `setCount` (the setter you call to update it and trigger a re-render)."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Using the updater function form, what number does the paragraph show after ONE click of the button?",
+      "code": "const [count, setCount] = useState(0);\n\nfunction handleClick() {\n  setCount(prev => prev + 1);\n  setCount(prev => prev + 1);\n}\n\n// <p>{count}</p> and a button wired to handleClick",
+      "options": [
+        "2",
+        "1",
+        "0",
+        "It throws because setCount was called twice"
+      ],
+      "answerIndex": 0,
+      "explanation": "The updater function form passes React the guaranteed-current previous value each time. The first `setCount(prev => prev + 1)` produces 1, and the second reads that updated value and produces 2 — so even though the calls are batched, the paragraph shows 2. Passing a value directly (setCount(count + 1)) twice would instead read the same stale 0 both times and only reach 1."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a correct ToggleMessage component that uses a boolean state to show or hide a paragraph and flips it with the updater form.",
+      "lines": [
+        "function ToggleMessage() {",
+        "  const [isVisible, setIsVisible] = useState(false);",
+        "  return (",
+        "    <div>",
+        "      <button onClick={() => setIsVisible(prev => !prev)}>Toggle</button>",
+        "      {isVisible && <p>Hello there!</p>}",
+        "    </div>",
+        "  );",
+        "}"
+      ],
+      "explanation": "State is declared at the top of the component with `useState(false)`, giving a boolean plus its setter. The setter uses the updater form `prev => !prev` to flip the value based on the guaranteed-current previous one, and `{isVisible && <p>...</p>}` conditionally renders the paragraph. Everything sits inside a single returned wrapper element."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "slug": "neural-networks-basics",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A single neuron computes its weighted sum plus bias, then passes it through ReLU. What does this print?",
+      "code": "def relu(x):\n    return max(0.0, x)\n\ninputs  = [2.0, 3.0]\nweights = [0.5, -1.0]\nbias    = 1.0\n\nraw = sum(x * w for x, w in zip(inputs, weights)) + bias\nprint(relu(raw))",
+      "options": ["0.0", "-1.0", "1.0", "2.0"],
+      "answerIndex": 0,
+      "explanation": "The weighted sum is 2.0*0.5 + 3.0*(-1.0) = 1.0 - 3.0 = -2.0, and adding the bias gives -1.0. ReLU is max(0, x), so any negative input becomes 0.0 — the neuron stays silent."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to compute a neuron's output as activation(weighted sum + bias), but the result is wrong. What's the bug?",
+      "code": "import math\n\ndef sigmoid(x):\n    return 1.0 / (1.0 + math.exp(-x))\n\ninputs  = [1.0, 0.5]\nweights = [0.8, -0.5]\nbias    = 0.1\n\nraw = sum(x * w for x, w in zip(inputs, weights))\nprint(sigmoid(raw))",
+      "options": [
+        "The bias is never added to the weighted sum before applying sigmoid.",
+        "sigmoid should use math.exp(x), not math.exp(-x).",
+        "zip(inputs, weights) pairs the values in the wrong order.",
+        "The weights list should be summed on its own before multiplying."
+      ],
+      "answerIndex": 0,
+      "explanation": "A neuron's core operation is activation(w1*x1 + ... + wn*xn + bias). Here `raw` computes the weighted sum but forgets `+ bias`, so the neuron loses its learnable default threshold. The fix is `raw = sum(x * w for x, w in zip(inputs, weights)) + bias`."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the neuron so it applies the sigmoid activation to the weighted sum plus bias. Fill in the missing function name.",
+      "codeTemplate": "import math\n\ndef sigmoid(x):\n    return 1.0 / (1.0 + math.exp(-x))\n\ndef neuron(inputs, weights, bias):\n    total = sum(x * w for x, w in zip(inputs, weights)) + bias\n    return {{blank}}(total)",
+      "blanks": [
+        { "answer": "sigmoid", "accept": ["sigmoid()", "sigmoid ", " sigmoid"] }
+      ],
+      "explanation": "The neuron first computes the weighted sum plus bias, then passes that single number through an activation function. Here the output layer predicts a probability, so `sigmoid` squashes the result into the range (0, 1)."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to define and run a forward pass through one hidden layer (ReLU) and one sigmoid output neuron.",
+      "lines": [
+        "hidden = [([0.5, -0.4], 0.1), ([0.2, 0.8], -0.3)]",
+        "output_ws, output_b = [0.7, 0.4], 0.2",
+        "hidden_out = [relu(sum(x*w for x,w in zip([1.0, 0.5], ws)) + b) for ws, b in hidden]",
+        "raw = sum(h*w for h,w in zip(hidden_out, output_ws)) + output_b",
+        "print(sigmoid(raw))"
+      ],
+      "explanation": "In a feedforward network data flows in one direction: first define the layers' weights and biases, then compute the hidden layer's ReLU activations from the inputs, feed those into the output neuron's weighted sum plus bias, and finally apply sigmoid to get the prediction. Each step depends on the values produced by the previous one."
+    }
+  ]
+}

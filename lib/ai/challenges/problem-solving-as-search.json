@@ -1,0 +1,56 @@
+{
+  "slug": "problem-solving-as-search",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Using the lesson's city graph, this BFS explores neighbors in the order they appear in each adjacency list. What does it print as the shortest path from A to F?",
+      "code": "from collections import deque\n\ngraph = {\n    \"A\": [\"B\", \"C\"],\n    \"B\": [\"A\", \"D\", \"E\"],\n    \"C\": [\"A\", \"F\"],\n    \"E\": [\"B\", \"F\"],\n}\n\ndef bfs(graph, start, goal):\n    frontier = deque([[start]])\n    visited = set()\n    while frontier:\n        path = frontier.popleft()\n        node = path[-1]\n        if node == goal:\n            return path\n        if node in visited:\n            continue\n        visited.add(node)\n        for nb in graph.get(node, []):\n            frontier.append(path + [nb])\n    return None\n\nprint(bfs(graph, \"A\", \"F\"))",
+      "options": [
+        "['A', 'C', 'F']",
+        "['A', 'B', 'E', 'F']",
+        "['A', 'B', 'C', 'F']",
+        "None"
+      ],
+      "answerIndex": 0,
+      "explanation": "BFS uses a queue, so it finishes all depth-1 paths before any depth-2 path. It expands A (adding A→B and A→C), then B, then C — and A→C→F reaches the goal at depth 2, before the depth-3 route A→B→E→F is ever checked. BFS returns the path with the fewest steps."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This BFS is meant to find a path in the lesson's graph, but it hangs forever and never returns. What's wrong?",
+      "code": "from collections import deque\n\ndef bfs(graph, start, goal):\n    frontier = deque([[start]])\n    while frontier:\n        path = frontier.popleft()\n        node = path[-1]\n        if node == goal:\n            return path\n        for nb in graph[node]:\n            frontier.append(path + [nb])\n    return None",
+      "options": [
+        "It uses popleft() instead of pop(), so it isn't really breadth-first.",
+        "There is no visited set, so states get re-expanded and the search cycles forever on graphs with back-edges.",
+        "It stores whole paths in the frontier instead of single nodes, which is invalid.",
+        "The goal test should run after expanding neighbors, not before."
+      ],
+      "answerIndex": 1,
+      "explanation": "In the lesson's graph a state can be reached by many routes (e.g. A→B→A→B...). Without a visited set the same state is expanded again and again, so the frontier never empties and the loop never terminates. The visited set is non-negotiable: it guarantees each state is expanded at most once."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "The frontier's data structure decides the search strategy. To make this BFS process the OLDEST path first (first-in, first-out), which deque method removes from the front?",
+      "codeTemplate": "from collections import deque\n\nfrontier = deque([[start]])\nwhile frontier:\n    path = frontier.{{blank}}()   # oldest path first\n    node = path[-1]\n    ...",
+      "blanks": [
+        {
+          "answer": "popleft",
+          "accept": ["popleft()", ".popleft", "popLeft"]
+        }
+      ],
+      "explanation": "deque.popleft() removes from the left (front), giving first-in-first-out queue behavior — the defining property of BFS. Using pop() would remove from the right (last-in-first-out), turning the algorithm into Depth-First Search instead."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the body of the BFS loop in the correct order: pull a path off the frontier, read its current node, test the goal, skip already-seen states, mark visited, then expand neighbors.",
+      "lines": [
+        "path = frontier.popleft()",
+        "node = path[-1]",
+        "if node == goal: return path",
+        "if node in visited: continue",
+        "visited.add(node)",
+        "for nb in graph[node]: frontier.append(path + [nb])"
+      ],
+      "explanation": "You first dequeue the oldest path and read its final node, then check the goal so you can stop as soon as you arrive. The visited check comes before marking and expanding, so an already-seen state is skipped instead of re-expanded — which is what prevents infinite loops."
+    }
+  ]
+}

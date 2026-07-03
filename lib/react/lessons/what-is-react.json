@@ -1,0 +1,118 @@
+{
+  "slug": "what-is-react",
+  "title": "What is React?",
+  "category": "React Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover why React was built, how its component-based and declarative approach makes building UIs feel natural, and write your very first component.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you're building a dashboard that shows live stock prices, a chat inbox, and a notification badge — all updating at the same time. With plain JavaScript you'd spend most of your energy answering the question *\"which part of the page needs to change right now?\"* It gets messy fast.\n\nReact was built to solve exactly this problem. Created by engineers at Facebook in 2013, React lets you describe **what your UI should look like** at any moment, and it figures out the how. The result is code that's easier to read, easier to reuse, and much easier to scale."
+    },
+    {
+      "type": "heading",
+      "text": "The Big Idea: Declarative UI"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Google Maps vs. Paper Directions",
+      "md": "Old-school JavaScript is like paper directions: *\"Turn left on Elm, then right on Oak, then go 0.3 miles…\"* You have to describe every step.\n\nReact is like Google Maps: you just say *\"I want to be at Central Park\"* and the app figures out the route. You declare the destination — React handles the journey."
+    },
+    {
+      "type": "text",
+      "md": "In React you write code that describes **what the UI should look like for a given state**, not the manual steps to update it. When the underlying data changes, React automatically re-renders only the parts that need to change. This \"declarative\" style keeps your code focused on the outcome, not the mechanics."
+    },
+    {
+      "type": "heading",
+      "text": "Components: The Building Blocks"
+    },
+    {
+      "type": "text",
+      "md": "React UIs are built from **components** — small, self-contained pieces that know how to render themselves. Think of them like LEGO bricks: each brick has a specific shape and purpose, and you combine them to build anything.\n\nA component is just a JavaScript function that returns some UI (written in a syntax called JSX). You can use that component as many times as you like, anywhere in your app."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// A simple functional component\nfunction Greeting() {\n  return (\n    <div>\n      <h1>Hello, world!</h1>\n      <p>Welcome to React.</p>\n    </div>\n  );\n}\n\nexport default Greeting;",
+      "output": "Renders an h1 saying 'Hello, world!' with a paragraph below it.",
+      "caption": "Your first React component — a plain function that returns JSX."
+    },
+    {
+      "type": "heading",
+      "text": "What Is JSX?"
+    },
+    {
+      "type": "text",
+      "md": "JSX (JavaScript XML) is the HTML-like syntax you see inside React components. It looks like HTML, but it lives inside your JavaScript and has a few differences — for example, you use `className` instead of `class`, and every tag must be closed.\n\nJSX gets transformed into regular JavaScript before it runs in the browser, so there is no performance magic — it is just a more readable way to describe your UI."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// JSX vs plain JavaScript — both do the same thing\n// With JSX (what you write):\nconst element = <h1 className=\"title\">Hi there!</h1>;\n\n// Without JSX (what React sees after transform):\nconst element2 = React.createElement(\n  \"h1\",\n  { className: \"title\" },\n  \"Hi there!\"\n);",
+      "caption": "JSX is syntactic sugar — readable shorthand for React.createElement calls."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "A component name MUST start with a capital letter",
+      "md": "React uses the first letter of a tag name to decide whether it is a built-in HTML element or your own component.\n\n- `<greeting />` — React treats this as an unknown HTML tag. Broken.\n- `<Greeting />` — React finds your `Greeting` function and renders it. Correct.\n\nAlways capitalize your component names."
+    },
+    {
+      "type": "heading",
+      "text": "Composing Components Together"
+    },
+    {
+      "type": "text",
+      "md": "The real power shows up when you nest components inside each other. A `Header` component might contain a `Logo` and a `NavBar`. A `Page` might contain a `Header`, a `MainContent`, and a `Footer`. Each piece stays small and focused, but together they build a full app."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function Logo() {\n  return <img src=\"/logo.png\" alt=\"Site logo\" />;\n}\n\nfunction Header() {\n  return (\n    <header>\n      <Logo />\n      <h1>My App</h1>\n    </header>\n  );\n}\n\nfunction App() {\n  return (\n    <div>\n      <Header />\n      <p>Welcome to my React app!</p>\n    </div>\n  );\n}",
+      "output": "A header with a logo image and 'My App' title, followed by a welcome paragraph.",
+      "caption": "Components composed inside other components — each stays small and focused."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "One component per concern",
+      "md": "A good rule of thumb: if a piece of UI has a clear, single job (show a user card, display a button, render a nav menu), it deserves its own component. Smaller components are easier to test, reuse, and reason about."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following correctly defines a React component?",
+      "options": [
+        "function greeting() { return <p>Hi</p>; }",
+        "function Greeting() { return <p>Hi</p>; }",
+        "function Greeting() { return 'Hi'; }",
+        "const Greeting = { render: () => <p>Hi</p> };"
+      ],
+      "answerIndex": 1,
+      "explanation": "A valid React functional component is a function whose name starts with a capital letter and returns JSX (or null). Option A fails because the name is lowercase. Option C returns a plain string, not JSX (this can actually work in some situations, but returning JSX is the standard). Option D is an object, not a function."
+    },
+    {
+      "type": "heading",
+      "text": "Why React Changed the Game"
+    },
+    {
+      "type": "text",
+      "md": "Before React (and frameworks like it), a typical approach was to manipulate the DOM directly with JavaScript — finding elements, updating their text, hiding and showing things. As apps grew, these manual updates became a tangled web of code that was hard to follow and easy to break.\n\nReact introduced a **virtual DOM** — a lightweight copy of the real DOM kept in memory. When your data changes, React compares the new virtual DOM with the previous snapshot, calculates the minimal set of real DOM changes needed, and applies only those. You get correctness without micromanaging every update."
+    }
+  ],
+  "keyTakeaways": [
+    "React is a JavaScript library for building UIs from small, reusable components.",
+    "Declarative style means you describe what the UI should look like — React handles the DOM updates.",
+    "A component is a function that returns JSX; its name must start with a capital letter.",
+    "Components compose: small pieces nest inside each other to build complex UIs.",
+    "JSX looks like HTML but lives in JavaScript — it compiles to React.createElement calls under the hood."
+  ],
+  "exercise": {
+    "prompt": "Create two components: a `Badge` that displays a short label inside a `<span>`, and a `UserCard` that renders a name in an `<h2>` and reuses your `Badge` to show the user's role. Render `<UserCard />` as the top-level output.",
+    "starterCode": "// TODO 1: Create a Badge component that accepts no props for now\n// and renders a <span> with the text \"Admin\" inside it.\nfunction Badge() {\n  // your code here\n}\n\n// TODO 2: Create a UserCard component that renders:\n//   - An <h2> with the text \"Jane Doe\"\n//   - Your <Badge /> component below it\nfunction UserCard() {\n  // your code here\n}\n\nexport default UserCard;",
+    "hint": "Both components are plain functions. Return JSX from each one. Inside UserCard, use <Badge /> just like you would use an HTML tag.",
+    "solution": "function Badge() {\n  return <span>Admin</span>;\n}\n\nfunction UserCard() {\n  return (\n    <div>\n      <h2>Jane Doe</h2>\n      <Badge />\n    </div>\n  );\n}\n\nexport default UserCard;"
+  }
+}

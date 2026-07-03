@@ -1,0 +1,52 @@
+{
+  "slug": "the-node-runtime",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson explains the event loop's priority rules. Given synchronous code, a microtask, and two macro-tasks, what does this program print?",
+      "code": "console.log('A');\n\nsetTimeout(() => console.log('B'), 0);\n\nPromise.resolve().then(() => console.log('C'));\n\nprocess.nextTick(() => console.log('D'));\n\nconsole.log('E');",
+      "options": [
+        "A\nE\nD\nC\nB",
+        "A\nE\nB\nC\nD",
+        "A\nB\nC\nD\nE",
+        "A\nE\nC\nD\nB"
+      ],
+      "answerIndex": 0,
+      "explanation": "Synchronous code runs first (A, E). Then Node drains microtasks before any macro-task, and process.nextTick beats the Promise queue, so D comes before C. Finally the setTimeout callback (B) runs in the Timers phase on a later tick."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const fs = require('fs');\n\nfunction handleRequest(req, res) {\n  const data = fs.readFileSync('big-file.txt', 'utf8');\n  res.end(data);\n}",
+      "options": [
+        "readFileSync needs a callback as its third argument",
+        "readFileSync is blocking, so it freezes the event loop and every other request waits until the read finishes",
+        "The 'utf8' encoding argument is invalid for readFileSync",
+        "You must call require('fs').promises to read files in a server"
+      ],
+      "answerIndex": 1,
+      "explanation": "As the lesson's gotcha warns, readFileSync is synchronous — it halts V8 and the entire event loop until the file is fully read, so every other pending request is stalled. In server code use an async API like fs.readFile or fs.promises.readFile instead."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "The lesson lists the three most important event loop phases in the order they run each tick. Fill in the missing phase name.",
+      "codeTemplate": "// Event loop phases each tick:\n// 1. Timers  -> setTimeout / setInterval callbacks\n// 2. {{blank}}   -> retrieves new I/O events (network data, file reads)\n// 3. Check   -> setImmediate callbacks",
+      "blanks": [
+        { "answer": "Poll", "accept": ["poll", "Poll", "POLL"] }
+      ],
+      "explanation": "The Poll phase sits between Timers and Check. It retrieves new I/O events and runs their callbacks, and if nothing is ready it waits there briefly. setImmediate then fires in the Check phase, always after Poll in the same tick."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines so they print in the exact order Node executes them, matching the event loop priority rules from the lesson.",
+      "lines": [
+        "console.log('1 - synchronous');",
+        "process.nextTick(() => console.log('2 - nextTick microtask'));",
+        "Promise.resolve().then(() => console.log('3 - Promise microtask'));",
+        "setTimeout(() => console.log('4 - setTimeout timers phase'), 0);",
+        "setImmediate(() => console.log('5 - setImmediate check phase'));"
+      ],
+      "explanation": "Synchronous code runs first, then microtasks (nextTick before Promise), then macro-tasks. Writing the lines in the order they actually print — sync, nextTick, Promise, setTimeout, setImmediate — mirrors the exact priority chain the lesson demonstrates."
+    }
+  ]
+}

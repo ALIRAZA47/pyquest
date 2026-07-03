@@ -9,7 +9,8 @@ import { Glyph } from "@/components/glyphs";
 import { TOTAL_LESSONS } from "@/lib/curriculum";
 import { ArrowRight } from "@/components/Icons";
 
-const NAME_KEY = "pyquest:name";
+const NAME_KEY = "quest:name";
+const OLD_NAME_KEY = "pyquest:name"; // migrate from the previous app name
 
 export default function CertificatePage() {
   const { count, xp, level, rankName, badges, ready } = useProgress();
@@ -19,7 +20,7 @@ export default function CertificatePage() {
   useEffect(() => {
     setMounted(true);
     try {
-      setName(localStorage.getItem(NAME_KEY) || "");
+      setName(localStorage.getItem(NAME_KEY) || localStorage.getItem(OLD_NAME_KEY) || "");
     } catch {
       /* ignore */
     }
@@ -115,7 +116,7 @@ export default function CertificatePage() {
             Certificate of Completion
           </div>
           <h1 className="mt-3 text-2xl font-black tracking-tight text-fg sm:text-3xl">
-            PyQuest · Python 101
+            Quest · Python 101
           </h1>
           <p className="mt-6 text-sm uppercase tracking-wider text-faint">
             This certifies that
@@ -126,7 +127,7 @@ export default function CertificatePage() {
           <p className="mx-auto mt-6 max-w-md text-muted">
             has successfully completed all{" "}
             <span className="font-semibold text-fg">{TOTAL_LESSONS} lessons</span>{" "}
-            of the PyQuest Python course, reaching{" "}
+            of the Quest Python course, reaching{" "}
             <span className="font-semibold text-fg">
               Level {level} · {rankName}
             </span>
@@ -160,7 +161,7 @@ export default function CertificatePage() {
               </div>
             </div>
             <div className="text-center">
-              <div className="font-[cursive] text-lg text-gradient">PyQuest</div>
+              <div className="font-[cursive] text-lg text-gradient">Quest</div>
               <div className="text-[10px] uppercase tracking-wider text-faint">
                 Awarded by
               </div>

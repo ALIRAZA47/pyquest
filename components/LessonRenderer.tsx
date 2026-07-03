@@ -33,10 +33,16 @@ function BlockView({
   block,
   slug,
   index,
+  codeLang,
+  runnable,
+  webRun,
 }: {
   block: Block;
   slug: string;
   index: number;
+  codeLang: string;
+  runnable: boolean;
+  webRun: boolean;
 }) {
   switch (block.type) {
     case "text":
@@ -61,7 +67,9 @@ function BlockView({
           code={block.code}
           output={block.output}
           caption={block.caption}
-          runnable
+          lang={block.lang || codeLang}
+          runnable={runnable}
+          webRun={webRun}
         />
       );
     case "callout":
@@ -111,6 +119,9 @@ export function LessonRenderer({
   index,
   total,
   base = "/learn",
+  runtime = "python",
+  codeLang = "py",
+  courseId,
 }: {
   lesson: Lesson;
   prev?: LessonMeta;
@@ -118,7 +129,14 @@ export function LessonRenderer({
   index: number;
   total: number;
   base?: string;
+  runtime?: string;
+  codeLang?: string;
+  courseId?: string;
 }) {
+  const runnable = runtime === "python";
+  // Web courses run in a sandboxed iframe — except Node, whose require/fs/http
+  // APIs have no browser runtime, so it stays display-only.
+  const webRun = runtime === "web" && courseId !== "node";
   const { isComplete, toggle, markComplete, celebrate } = useProgress();
   const done = isComplete(lesson.slug);
 
@@ -232,7 +250,14 @@ export function LessonRenderer({
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
-              <BlockView block={block} slug={lesson.slug} index={i} />
+              <BlockView
+                block={block}
+                slug={lesson.slug}
+                index={i}
+                codeLang={codeLang}
+                runnable={runnable}
+                webRun={webRun}
+              />
             </motion.div>
             {lesson.slides &&
               lesson.slides.length > 0 &&
@@ -268,11 +293,19 @@ export function LessonRenderer({
 
       {/* Interactive challenges */}
       {lesson.challenges && lesson.challenges.length > 0 && (
-        <Challenges challenges={lesson.challenges} slug={lesson.slug} />
+        <Challenges challenges={lesson.challenges} slug={lesson.slug} lang={codeLang} />
       )}
 
       {/* Exercise */}
-      {lesson.exercise && <Exercise exercise={lesson.exercise} slug={lesson.slug} />}
+      {lesson.exercise && (
+        <Exercise
+          exercise={lesson.exercise}
+          slug={lesson.slug}
+          runnable={runnable}
+          webRun={webRun}
+          lang={codeLang}
+        />
+      )}
 
       {/* Completion nudge + navigation */}
       <div className="mt-12">

@@ -1,0 +1,55 @@
+{
+  "slug": "alpha-beta-pruning",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the lesson's alpha-beta function run on a small MAX-root tree. What does it print?",
+      "code": "def alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):\n        return node\n    if maximizing:\n        value = float('-inf')\n        for child in node:\n            value = max(value, alpha_beta(child, alpha, beta, False))\n            alpha = max(alpha, value)\n            if alpha >= beta:\n                break\n        return value\n    else:\n        value = float('inf')\n        for child in node:\n            value = min(value, alpha_beta(child, alpha, beta, True))\n            beta = min(beta, value)\n            if alpha >= beta:\n                break\n        return value\n\ntree = [[3, 5], [2, 8], [9, 1]]\nprint(alpha_beta(tree, float('-inf'), float('inf'), True))",
+      "options": ["1", "2", "3", "9"],
+      "answerIndex": 2,
+      "explanation": "Each inner list is a MIN node: min(3,5)=3, min(2,8)=2, min(9,1)=1. The MAX root takes the highest of those, which is 3. Pruning skips some leaves (the second branch cuts off after seeing 2) but the returned value is identical to plain minimax."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Alpha starts at -infinity and beta at +infinity at the root. What is printed for this MIN node's returned value?",
+      "code": "def alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):\n        return node\n    value = float('inf')\n    for child in node:\n        value = min(value, alpha_beta(child, alpha, beta, True))\n        beta = min(beta, value)\n        if alpha >= beta:\n            break\n    return value\n\n# MIN node reached with alpha already = 5 from an ancestor\nnode = [7, 3, 9, 1]\nprint(alpha_beta(node, 5, float('inf'), False))",
+      "options": ["1", "3", "7", "5"],
+      "answerIndex": 1,
+      "explanation": "First child 7: beta=7, 5>=7 is False. Second child 3: beta=3, now alpha(5)>=beta(3) is True, so it breaks. The remaining children 9 and 1 are pruned, and the node returns 3. The 1 is never seen, but it does not matter: the MAX ancestor already guarantees >=5 and will never pick this MIN node."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the pruning check inside a MAX node. The lesson's rule: stop exploring remaining children the moment alpha is at least beta.",
+      "codeTemplate": "if maximizing:\n    value = float('-inf')\n    for child in node:\n        value = max(value, alpha_beta(child, alpha, beta, False))\n        alpha = max(alpha, value)\n        if alpha {{blank}} beta:\n            break  # MIN won't allow this; prune remaining siblings\n    return value",
+      "blanks": [
+        { "answer": ">=", "accept": [">= ", "≥", " >= "] }
+      ],
+      "explanation": "The core pruning condition is alpha >= beta. When MAX's best guaranteed score meets or exceeds beta, the MIN ancestor already has a better option elsewhere, so the remaining siblings can be skipped without changing the result."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the body of a MIN node's child loop in the correct order for alpha-beta pruning, matching the lesson's implementation.",
+      "lines": [
+        "value = float('inf')",
+        "for child in node:",
+        "    value = min(value, alpha_beta(child, alpha, beta, True))",
+        "    beta = min(beta, value)",
+        "    if alpha >= beta:",
+        "        break"
+      ],
+      "explanation": "At a MIN node you initialize value to +infinity, recurse into each child (which is a MAX node), tighten beta with the new value, then check the cutoff. Updating beta before the check is essential; testing alpha >= beta first would use a stale beta and prune incorrectly."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def alpha_beta(node, alpha, beta, maximizing):\n    if not isinstance(node, list):\n        return node\n    if maximizing:\n        value = float('-inf')\n        for child in node:\n            value = max(value, alpha_beta(child, alpha, beta, False))\n            beta = max(beta, value)   # update on maximizing branch\n            if alpha >= beta:\n                break\n        return value\n    # ... (MIN branch omitted)",
+      "options": [
+        "The maximizing branch should update alpha, not beta: alpha = max(alpha, value).",
+        "The cutoff should be alpha <= beta, not alpha >= beta.",
+        "value should start at float('inf') on the maximizing branch."
+      ],
+      "answerIndex": 0,
+      "explanation": "On a MAX node you raise the lower bound alpha (the best MAX can guarantee), so it must be alpha = max(alpha, value). Beta is only tightened at MIN nodes. Mutating beta here corrupts the search window and produces wrong results or pruning that never fires."
+    }
+  ]
+}

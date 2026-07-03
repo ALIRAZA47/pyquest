@@ -1,0 +1,52 @@
+{
+  "slug": "decision-trees",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This hand-written decision tree classifies concert ticket buyers. What does it print?",
+      "code": "def predict(age, likes_music):\n    if age >= 18:\n        if likes_music:\n            return \"Will buy\"\n        else:\n            return \"Won't buy\"\n    else:\n        return \"Won't buy\"\n\nprint(predict(30, False))\nprint(predict(16, True))",
+      "options": [
+        "Will buy\nWill buy",
+        "Won't buy\nWon't buy",
+        "Won't buy\nWill buy",
+        "Will buy\nWon't buy"
+      ],
+      "answerIndex": 1,
+      "explanation": "Trace each path like walking down the tree. The 30-year-old passes age >= 18 but fails likes_music, landing on the \"Won't buy\" leaf. The 16-year-old fails age >= 18 immediately, so likes_music is never even checked — they hit the else \"Won't buy\" leaf. A trained tree is just nested if/else logic like this."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code should compute the weighted-average Gini of a split (used to compare candidate questions). This code has a bug — what's wrong?",
+      "code": "def gini_split_score(left, right):\n    total = len(left) + len(right)\n    weight_left = len(left) / total\n    weight_right = len(right) / total\n    # combine the two child groups' impurity\n    return weight_left * gini(left) - weight_right * gini(right)",
+      "options": [
+        "It should divide by total twice, not once",
+        "The two weighted terms should be added, not subtracted",
+        "weight_left should use len(right), not len(left)",
+        "It should return the lower of the two Gini values, not combine them"
+      ],
+      "answerIndex": 1,
+      "explanation": "A split's score is the weighted AVERAGE of both child groups' impurity, so the terms must be added: weight_left * gini(left) + weight_right * gini(right). Subtracting them is meaningless — it can even go negative. The algorithm then picks the split with the lowest combined score."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the weighted-Gini split score. The size of each group divided by the total gives that group's weight. Fill in the denominator.",
+      "codeTemplate": "def gini_split_score(left, right):\n    total = len(left) + len(right)\n    weight_left  = len(left)  / {{blank}}\n    weight_right = len(right) / total\n    return weight_left * gini(left) + weight_right * gini(right)",
+      "blanks": [
+        { "answer": "total", "accept": ["total ", " total"] }
+      ],
+      "explanation": "Each group is weighted by its share of all the examples, so you divide the group size by the total number of examples (len(left) + len(right)). A big, impure group should count more toward the score than a tiny one."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these steps in the order the algorithm follows to choose the best question at a single node.",
+      "lines": [
+        "Try every feature and every possible threshold as a candidate split",
+        "Split the examples into two groups for each candidate",
+        "Compute the weighted Gini of the two groups for each candidate",
+        "Pick the candidate split with the lowest weighted Gini",
+        "Recurse on each child group to build the next level"
+      ],
+      "explanation": "At each node the tree plays \"Twenty Questions\": it generates every candidate split, splits the data, scores each candidate by weighted Gini (lower = purer), keeps the best question, then repeats the same process on each child group until the groups are pure, too small, or hit max depth."
+    }
+  ]
+}

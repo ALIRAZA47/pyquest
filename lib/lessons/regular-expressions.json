@@ -71,8 +71,8 @@
     },
     {
       "type": "code",
-      "code": "import re\n\nexamples = [\n    (r\"\\d{3}-\\d{4}\",  \"Call us at 555-1234 anytime\"),\n    (r\"[aeiou]+\",     \"beautiful\"),\n    (r\"\\w+@\\w+\\.\\w+\", \"contact: info@pyquest.dev\"),\n    (r\"^Hello\",       \"Hello, world!\"),\n]\n\nfor pattern, text in examples:\n    match = re.search(pattern, text)\n    if match:\n        print(f\"Pattern {pattern!r} found: {match.group()!r}\")",
-      "output": "Pattern '\\\\d{3}-\\\\d{4}' found: '555-1234'\nPattern '[aeiou]+' found: 'eau'\nPattern '\\\\w+@\\\\w+\\.\\\\w+' found: 'info@pyquest.dev'\nPattern '^Hello' found: 'Hello'",
+      "code": "import re\n\nexamples = [\n    (r\"\\d{3}-\\d{4}\",  \"Call us at 555-1234 anytime\"),\n    (r\"[aeiou]+\",     \"beautiful\"),\n    (r\"\\w+@\\w+\\.\\w+\", \"contact: info@quest.dev\"),\n    (r\"^Hello\",       \"Hello, world!\"),\n]\n\nfor pattern, text in examples:\n    match = re.search(pattern, text)\n    if match:\n        print(f\"Pattern {pattern!r} found: {match.group()!r}\")",
+      "output": "Pattern '\\\\d{3}-\\\\d{4}' found: '555-1234'\nPattern '[aeiou]+' found: 'eau'\nPattern '\\\\w+@\\\\w+\\.\\\\w+' found: 'info@quest.dev'\nPattern '^Hello' found: 'Hello'",
       "caption": "Mixing metacharacters lets you describe complex patterns compactly."
     },
     {

@@ -1,46 +1,45 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { tokenizePython } from "@/lib/highlight";
 import { PyRunner } from "./PyRunner";
+import { WebSandbox } from "./WebSandbox";
+import { HighlightedCode } from "./PyCode";
+import { webRunMode } from "@/lib/websandbox";
 import { CopyIcon, CheckIcon, PlayIcon } from "./Icons";
 
 interface CodeBlockProps {
   code: string;
   output?: string;
   caption?: string;
-  runnable?: boolean;
+  runnable?: boolean; // live Python (Pyodide)
+  webRun?: boolean; // live web preview (iframe sandbox)
+  lang?: string;
 }
 
-function Highlighted({ code }: { code: string }) {
-  const tokens = useMemo(() => tokenizePython(code), [code]);
-  return (
-    <>
-      {tokens.map((t, i) =>
-        t.type === "plain" ? (
-          <span key={i}>{t.value}</span>
-        ) : (
-          <span key={i} className={`tok-${t.type}`}>
-            {t.value}
-          </span>
-        )
-      )}
-    </>
-  );
-}
-
-export function CodeBlock({ code, output, caption, runnable }: CodeBlockProps) {
+export function CodeBlock({ code, output, caption, runnable, webRun, lang }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [ran, setRan] = useState(false);
   const [live, setLive] = useState(false);
   const trimmed = code.replace(/\n+$/, "");
   const lineCount = trimmed.split("\n").length;
+  const webMode = webRun ? webRunMode(lang) : null;
+  const canRun = runnable || webMode !== null;
 
   if (live) {
     return (
       <div className="my-6">
-        <PyRunner initialCode={trimmed} caption={caption || "python"} minRows={lineCount} />
+        {webMode ? (
+          <WebSandbox
+            initialCode={trimmed}
+            mode={webMode}
+            lang={lang || "code"}
+            caption={caption || lang}
+            minRows={lineCount}
+          />
+        ) : (
+          <PyRunner initialCode={trimmed} caption={caption || "python"} minRows={lineCount} />
+        )}
         <button
           type="button"
           onClick={() => setLive(false)}
@@ -72,17 +71,19 @@ export function CodeBlock({ code, output, caption, runnable }: CodeBlockProps) {
           <span className="h-3 w-3 rounded-full bg-[#28c840]" />
         </span>
         <span className="ml-1 font-mono text-xs font-medium text-faint">
-          {caption || "python"}
+          {caption || lang || "code"}
         </span>
         <div className="ml-auto flex items-center gap-1.5">
-          {runnable && (
+          {canRun && (
             <button
               type="button"
               onClick={() => setLive(true)}
               className="flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent/15"
             >
               <PlayIcon className="h-3 w-3" />
-              Edit &amp; run
+              {webMode === "html" || webMode === "css" || webMode === "react"
+                ? "Edit & preview"
+                : "Edit & run"}
             </button>
           )}
           {output !== undefined && (
@@ -126,7 +127,7 @@ export function CodeBlock({ code, output, caption, runnable }: CodeBlockProps) {
             ))}
           </code>
           <code className="block flex-1 py-4 pl-4 pr-6 font-mono text-fg">
-            <Highlighted code={trimmed} />
+            <HighlightedCode code={trimmed} lang={lang} />
           </code>
         </pre>
       </div>

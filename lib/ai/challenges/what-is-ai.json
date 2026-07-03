@@ -1,0 +1,50 @@
+{
+  "slug": "what-is-ai",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the rule-based spam filter from the lesson. What does it print?",
+      "code": "def is_spam_rules(email):\n    bad = [\"win a prize\", \"click here now\", \"free money\"]\n    return any(phrase in email.lower() for phrase in bad)\n\nprint(is_spam_rules(\"Win a prize now!\"))\nprint(is_spam_rules(\"W1n a pr1ze now!\"))",
+      "options": [
+        "True\nTrue",
+        "True\nFalse",
+        "False\nFalse"
+      ],
+      "answerIndex": 1,
+      "explanation": "The first email lowercases to contain the exact phrase 'win a prize', so any() returns True. The second swaps letters for digits ('w1n a pr1ze'), so no bad phrase matches literally and it returns False. This is exactly why hand-written rules are fragile: change one character and the filter is fooled, while a learning system would still catch the pattern."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this Narrow-AI classifier so an unknown animal safely defaults to False instead of raising an error.",
+      "codeTemplate": "def can_fly_rules(animal):\n    known = {\"eagle\": True, \"dog\": False}\n    return known.{{blank}}(animal.lower(), False)\n\nprint(can_fly_rules(\"unicorn\"))  # False",
+      "blanks": [
+        { "answer": "get", "accept": ["get", ".get", "get()"] }
+      ],
+      "explanation": "dict.get(key, default) returns the value for the key if it exists, otherwise the default (here False). Using known[animal] instead would raise a KeyError for an unknown animal. This mirrors the lesson's rule-based classifier, which handles animals it was never told about by falling back to a default."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lesson's three-step learning loop in order: the body of the training loop that learns Celsius-to-Fahrenheit from data.",
+      "lines": [
+        "for _ in range(5000):",
+        "    for c, f in data:",
+        "        err = (weight * c + bias) - f",
+        "        weight -= lr * err * c",
+        "        bias -= lr * err"
+      ],
+      "explanation": "First loop many times, then iterate over each labelled (input, correct-answer) pair. Inside, you must measure the error BEFORE adjusting, because both weight and bias updates depend on that same 'err'. Then nudge the weights down to reduce the error. This is the lesson's three steps: look at examples, measure error, adjust weights, repeat."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to update the model's weight to reduce its error, but it makes the model worse each step. What's wrong?",
+      "code": "err = (weight * c + bias) - f   # positive means we guessed too high\nweight += lr * err * c          # nudge the weight\nbias   += lr * err",
+      "options": [
+        "'lr' should be a whole number like 1, not a small decimal",
+        "The updates use += but should use -= so the error shrinks toward zero",
+        "'err' should be squared before it is used in the update"
+      ],
+      "answerIndex": 1,
+      "explanation": "When 'err' is positive the guess was too high, so the weight and bias must move DOWN to reduce it. Adding (+=) pushes them further in the wrong direction and the error grows. The lesson's training loop uses -= to step against the error. A tiny learning rate (lr) is correct on purpose: it keeps each adjustment small so the values converge gently."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "slug": "css-selectors",
+  "title": "CSS Selectors",
+  "category": "CSS Fundamentals",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to aim CSS styles at exactly the right elements on a page using element, class, id, grouping, descendant, pseudo-class, and attribute selectors.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "CSS is a two-part language. The first part is the style itself — `color: red`, `font-size: 18px`. The second part, and arguably the more powerful one, is the **selector**: the instruction that tells the browser *which* elements on the page should receive that style. Write the wrong selector and your styles go nowhere. Write the right one and you can reach any element with surgical precision. This lesson is all about learning to aim.\n\nEvery CSS rule follows the same shape: a selector, then a block of declarations in curly braces. The selector says *who* gets the styles; the declarations say *what* those styles are."
+    },
+    {
+      "type": "heading",
+      "text": "Element Selectors — the Wide Net"
+    },
+    {
+      "type": "text",
+      "md": "The simplest selector is the **element selector**: write a tag name and *every* element of that type on the page gets the styles. This is ideal for page-wide defaults — \"all my paragraphs should look like this\"."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "h1 {\n  font-size: 2rem;\n  color: #1a1a2e;\n}\n\np {\n  line-height: 1.6;\n  color: #444;\n}",
+      "output": "Every h1 becomes large and dark. Every paragraph gets comfortable line spacing and a mid-grey colour.",
+      "caption": "Element selectors cast a wide net — they match every element of that tag type, anywhere on the page."
+    },
+    {
+      "type": "heading",
+      "text": "Class Selectors (.) and ID Selectors (#)"
+    },
+    {
+      "type": "text",
+      "md": "When you need to target only *some* elements — not all paragraphs, just specific ones — you use a **class selector**. Add a `class` attribute to your HTML elements, then prefix the class name with a dot (`.`) in CSS. An element can carry multiple classes at once: `class=\"card featured\"`.\n\n**ID selectors** (`#name`) target a single, unique element on the page. An ID must appear only once per page. Use them for one-of-a-kind landmarks like a main navigation bar or a hero section."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Class selector: any element with class='badge' */\n.badge {\n  background-color: #4f46e5;\n  color: white;\n  padding: 3px 10px;\n  border-radius: 999px;\n}\n\n/* ID selector: the one element with id='page-title' */\n#page-title {\n  font-size: 2.5rem;\n  color: #1a1a2e;\n}",
+      "output": "Elements with class='badge' get a pill-shaped indigo label. The single element with id='page-title' becomes large and dark.",
+      "caption": "Dot for class, hash for ID. Classes are reusable; IDs are unique per page."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Prefer classes over IDs for styling",
+      "md": "ID selectors carry very high **specificity** — CSS's way of deciding which rule wins when two rules target the same element. That high power makes your styles hard to override later. Most developers style almost everything with classes and reserve IDs for page anchors (`href=\"#section\"`) and JavaScript. The practical rule: if you ever need the same style on more than one element, use a class."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Descendant selectors are like a mailing address",
+      "md": "An address goes from general to specific: Country → City → Street → House. Writing `nav a` in CSS works the same way — \"find all `<a>` elements that live anywhere inside a `<nav>` element\". You name the container first, then the thing you want inside it. The **space** between them is what creates that ancestor–descendant relationship."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Grouping: apply the same rule to multiple selectors */\nh1, h2, h3 {\n  font-family: Georgia, serif;\n  color: #1a1a2e;\n}\n\n/* Descendant: only <a> tags that are inside <nav> */\nnav a {\n  color: white;\n  text-decoration: none;\n}",
+      "caption": "Commas group selectors; a space creates a descendant relationship.",
+      "output": "All heading levels share the same font and colour. Links turn white only when they are inside a nav element — links elsewhere on the page are unaffected."
+    },
+    {
+      "type": "text",
+      "md": "**Pseudo-classes** style an element based on its *state* — hovered, focused, visited. Append them with a colon (`:`). Two of the most useful: `:hover` fires when the mouse is over an element; `:focus` fires when it receives keyboard focus (vital for accessibility).\n\n**Attribute selectors** use square brackets to target elements by their HTML attributes: `input[type=\"text\"]` matches only text inputs, leaving checkboxes and radio buttons untouched."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* :hover changes the button colour on mouse-over */\nbutton:hover {\n  background-color: #4338ca;\n}\n\n/* :focus gives keyboard users a visible focus ring */\nbutton:focus {\n  outline: 3px solid #a5b4fc;\n  outline-offset: 2px;\n}\n\n/* Attribute selector: only text-type inputs */\ninput[type=\"text\"] {\n  border: 1px solid #ccc;\n  padding: 8px 12px;\n  border-radius: 4px;\n}",
+      "caption": "Pseudo-classes respond to user interaction; attribute selectors filter by HTML attribute values."
+    },
+    {
+      "type": "quiz",
+      "question": "You have ten <li> elements on a page and you want exactly three of them to display a bold, red label style. Which selector type is the best choice?",
+      "options": [
+        "An element selector (li) — it targets all list items at once",
+        "An ID selector (#label) — IDs are designed for repeated use",
+        "A class selector (.label) — you apply the class only to the three elements you want",
+        "A descendant selector — it targets elements by their nesting position"
+      ],
+      "answerIndex": 2,
+      "explanation": "A class selector is the right tool. You add class='label' to the three <li> elements you want, then write .label { } in your CSS. The element selector would hit all ten items. And IDs must be unique per page — you cannot legally put the same ID on multiple elements."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "CSS reads all matching rules — order and specificity decide the winner",
+      "md": "When two rules target the same element and set the same property, CSS does not simply use the last one. It first checks **specificity**: ID selectors beat class selectors, which beat element selectors. Only if specificity is equal does the later rule win. This is why an element selector rule placed at the bottom of your file will still lose to an ID selector at the top. Understanding this saves hours of debugging."
+    }
+  ],
+  "keyTakeaways": [
+    "Element selectors (h1, p) target every element of that tag type — best for page-wide defaults.",
+    "Class selectors (.name) target any element carrying that class — the most flexible and commonly used selector type.",
+    "ID selectors (#name) target one unique element; use them sparingly because their high specificity makes styles hard to override.",
+    "Grouping (h1, h2, h3) avoids repeated declarations; descendant selectors (nav a) target elements nested inside a specific ancestor.",
+    "Pseudo-classes (:hover, :focus) style elements by state; attribute selectors ([type='text']) filter by HTML attribute values."
+  ],
+  "exercise": {
+    "prompt": "Given the HTML below, write CSS to accomplish four things: (1) Make all paragraphs have a line-height of 1.7 and a colour of #333. (2) Give elements with the class 'badge' a pill shape with a blue background and white text. (3) Style the element with id 'page-title' to be large and dark. (4) Make the badge turn darker blue when hovered.",
+    "starterCode": "/* The HTML you are styling:\n\n<h1 id=\"page-title\">My Blog</h1>\n<p>Welcome to my corner of the internet.</p>\n<p>Here I write about CSS and other web things.</p>\n<span class=\"badge\">New</span>\n<span class=\"badge\">Featured</span>\n*/\n\n/* TODO 1: Style all paragraphs */\n\n/* TODO 2: Style elements with class 'badge'\n   Hint: use display: inline-block, border-radius: 999px */\n\n/* TODO 3: Style the element with id 'page-title' */\n\n/* TODO 4: Add a :hover state to .badge */\n",
+    "hint": "For the pill shape on .badge, combine display: inline-block, some padding, and a large border-radius like 999px. For the hover state, write .badge:hover { } and set background-color to a slightly darker shade of blue.",
+    "solution": "/* TODO 1: Style all paragraphs */\np {\n  line-height: 1.7;\n  color: #333;\n}\n\n/* TODO 2: Style elements with class 'badge' */\n.badge {\n  display: inline-block;\n  background-color: #4f46e5;\n  color: white;\n  font-size: 0.75rem;\n  font-weight: 600;\n  padding: 3px 10px;\n  border-radius: 999px;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n\n/* TODO 3: Style the element with id 'page-title' */\n#page-title {\n  font-size: 2.5rem;\n  color: #1a1a2e;\n}\n\n/* TODO 4: Add a :hover state to .badge */\n.badge:hover {\n  background-color: #4338ca;\n}"
+  }
+}

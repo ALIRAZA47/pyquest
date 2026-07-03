@@ -1,0 +1,157 @@
+{
+  "slug": "forms-and-inputs",
+  "title": "Forms & Inputs",
+  "category": "Forms & Semantics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to build interactive HTML forms that collect user data using inputs, labels, and buttons.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Almost every website you use has a form: a login screen, a search bar, a checkout page, a comment box. Forms are how the web talks back to you — they let users *send* information, not just receive it. In this lesson you will go from zero to building real, usable forms in plain HTML. No JavaScript required yet; HTML alone handles quite a lot."
+    },
+    {
+      "type": "heading",
+      "text": "The <form> Element: Your Data Container"
+    },
+    {
+      "type": "text",
+      "md": "Every form starts with the `<form>` element. Think of it as a mailing envelope: you put all your form fields inside it, and when the user clicks Submit, the envelope gets sealed and sent somewhere. The two most important attributes on `<form>` are `action` (where to send the data) and `method` (how to send it)."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<form action=\"/signup\" method=\"post\">\n  <!-- inputs go here -->\n  <button type=\"submit\">Sign Up</button>\n</form>",
+      "caption": "A bare-bones form skeleton. action points to the server endpoint; method=\"post\" keeps data out of the URL."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Form = Envelope, Inputs = Pages Inside",
+      "md": "Imagine filling out a paper form at the doctor's office. Each blank line you write on is an `<input>`. The whole stack of pages goes into an envelope (`<form>`), which you hand to the receptionist (`action`). The method `GET` is like writing your answers on the *outside* of the envelope (visible in the URL); `POST` tucks everything safely *inside*."
+    },
+    {
+      "type": "heading",
+      "text": "Labels: The Unsung Heroes"
+    },
+    {
+      "type": "text",
+      "md": "A `<label>` tells users what an input is for. Always pair every input with a label — not just for looks, but because screen readers read the label aloud to blind users, and clicking the label focuses its input (a nice usability bonus). Connect them with matching `for` and `id` attributes."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<label for=\"username\">Username</label>\n<input type=\"text\" id=\"username\" name=\"username\" placeholder=\"e.g. coolcoder42\">",
+      "output": "A text label 'Username' above (or beside) a text input box with placeholder text.",
+      "caption": "The for attribute on <label> must match the id on <input>. The name attribute is what gets sent to the server."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "id vs name — they do different jobs",
+      "md": "`id` links the label to the input in the browser. `name` is the key that gets sent with the form data (like `username=coolcoder42`). You almost always want both, and they are often set to the same value — but they serve completely different purposes."
+    },
+    {
+      "type": "heading",
+      "text": "Common Input Types"
+    },
+    {
+      "type": "text",
+      "md": "The `type` attribute on `<input>` is remarkably powerful. The browser changes its keyboard, validation, and appearance automatically based on this one attribute. Here are the types you will reach for most often:"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Plain text -->\n<input type=\"text\" name=\"city\" placeholder=\"Your city\">\n\n<!-- Email — browser validates the @ sign -->\n<input type=\"email\" name=\"email\" placeholder=\"you@example.com\">\n\n<!-- Password — characters are hidden -->\n<input type=\"password\" name=\"password\" placeholder=\"Min 8 characters\">\n\n<!-- Number — shows a spinner on desktop -->\n<input type=\"number\" name=\"age\" min=\"1\" max=\"120\">\n\n<!-- Checkbox -->\n<input type=\"checkbox\" id=\"terms\" name=\"terms\">\n<label for=\"terms\">I agree to the terms</label>\n\n<!-- Radio buttons (one choice from a group) -->\n<input type=\"radio\" id=\"catPerson\" name=\"pet\" value=\"cat\">\n<label for=\"catPerson\">Cat person</label>\n\n<input type=\"radio\" id=\"dogPerson\" name=\"pet\" value=\"dog\">\n<label for=\"dogPerson\">Dog person</label>",
+      "output": "Several styled inputs: a text field, email field, password field, number spinner, a checkbox with label, and two radio buttons.",
+      "caption": "All input types — same tag, very different behavior. Radio buttons share the same name to form a group."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Radio buttons need the same name",
+      "md": "Radio buttons become a group by sharing the same `name` value. The browser enforces that only one can be selected at a time within the group. Each button needs its own unique `id` (for the label) and its own `value` (what gets sent to the server when that option is chosen)."
+    },
+    {
+      "type": "heading",
+      "text": "Multi-line Text and Dropdowns"
+    },
+    {
+      "type": "text",
+      "md": "Two more essential form elements: `<textarea>` for longer free-form text (like a message or bio), and `<select>` for a dropdown list of fixed options."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Multi-line text area -->\n<label for=\"bio\">Short bio</label>\n<textarea id=\"bio\" name=\"bio\" rows=\"4\" placeholder=\"Tell us about yourself...\"></textarea>\n\n<!-- Dropdown select -->\n<label for=\"country\">Country</label>\n<select id=\"country\" name=\"country\">\n  <option value=\"\">-- Choose one --</option>\n  <option value=\"us\">United States</option>\n  <option value=\"gb\">United Kingdom</option>\n  <option value=\"ca\">Canada</option>\n</select>",
+      "output": "A multi-line text area and a dropdown menu showing country options.",
+      "caption": "textarea is NOT self-closing — it needs an explicit closing tag. The empty-value first <option> acts as a prompt."
+    },
+    {
+      "type": "heading",
+      "text": "Required and Placeholder Attributes"
+    },
+    {
+      "type": "text",
+      "md": "Two attributes you will use constantly: `required` makes a field mandatory (the browser blocks submission if it is empty), and `placeholder` shows ghost text inside the input as a hint. They are simple but very effective."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<form action=\"/contact\" method=\"post\">\n  <label for=\"name\">Full name</label>\n  <input\n    type=\"text\"\n    id=\"name\"\n    name=\"name\"\n    placeholder=\"Jane Smith\"\n    required>\n\n  <label for=\"email\">Email address</label>\n  <input\n    type=\"email\"\n    id=\"email\"\n    name=\"email\"\n    placeholder=\"jane@example.com\"\n    required>\n\n  <button type=\"submit\">Send message</button>\n</form>",
+      "output": "A contact form with two required fields and a submit button. Submitting while empty shows browser validation errors.",
+      "caption": "required is a boolean attribute — just its presence is enough. No value needed."
+    },
+    {
+      "type": "heading",
+      "text": "The Button Element"
+    },
+    {
+      "type": "text",
+      "md": "A `<button>` inside a `<form>` defaults to `type=\"submit\"`, which triggers form submission. You can also set `type=\"button\"` to prevent submission (useful when you add JavaScript later) or `type=\"reset\"` to clear all fields. Always set the type explicitly so your intent is clear."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<button type=\"submit\">Submit form</button>\n<button type=\"reset\">Clear all fields</button>\n<button type=\"button\">Just a button (no submit)</button>",
+      "caption": "Three flavors of <button>. The submit type is the default inside a form."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<form action=\"/register\" method=\"post\">\n  <label for=\"fullName\">Full name</label>\n  <input type=\"text\" id=\"fullName\" name=\"fullName\"\n         placeholder=\"Jane Smith\" required>\n\n  <label for=\"email\">Email</label>\n  <input type=\"email\" id=\"email\" name=\"email\"\n         placeholder=\"jane@example.com\" required>\n\n  <label for=\"password\">Password</label>\n  <input type=\"password\" id=\"password\" name=\"password\"\n         placeholder=\"At least 8 characters\" required>\n\n  <label for=\"age\">Age</label>\n  <input type=\"number\" id=\"age\" name=\"age\" min=\"13\" max=\"120\">\n\n  <fieldset>\n    <legend>I am a...</legend>\n    <input type=\"radio\" id=\"learner\" name=\"role\" value=\"learner\">\n    <label for=\"learner\">Learner</label>\n\n    <input type=\"radio\" id=\"teacher\" name=\"role\" value=\"teacher\">\n    <label for=\"teacher\">Teacher</label>\n  </fieldset>\n\n  <label for=\"bio\">Bio (optional)</label>\n  <textarea id=\"bio\" name=\"bio\" rows=\"3\"\n            placeholder=\"A little about you...\"></textarea>\n\n  <input type=\"checkbox\" id=\"newsletter\" name=\"newsletter\">\n  <label for=\"newsletter\">Subscribe to newsletter</label>\n\n  <button type=\"submit\">Create account</button>\n</form>",
+      "output": "A complete registration form with name, email, password, age, radio group, textarea, checkbox, and submit button.",
+      "caption": "A realistic registration form using everything covered in this lesson. <fieldset> and <legend> group related inputs semantically."
+    },
+    {
+      "type": "quiz",
+      "question": "You have two radio buttons for 'Yes' and 'No'. What must they share so the browser treats them as a group (allowing only one to be selected)?",
+      "options": [
+        "The same id attribute",
+        "The same name attribute",
+        "The same value attribute",
+        "The same placeholder attribute"
+      ],
+      "answerIndex": 1,
+      "explanation": "Radio buttons form a single-choice group when they share the same name attribute. Each button still needs its own unique id (for its label) and its own value (so the server knows which option was chosen), but name is what groups them."
+    }
+  ],
+  "keyTakeaways": [
+    "Wrap all form fields in <form> with action (destination) and method (GET or POST).",
+    "Always pair every input with a <label> using matching for and id — it helps screen readers and improves usability.",
+    "The type attribute on <input> (text, email, password, checkbox, radio, number) changes browser behavior and validation automatically.",
+    "Use required to enforce mandatory fields and placeholder to show helpful hints inside inputs.",
+    "Radio buttons must share the same name to function as a single-choice group; each needs its own id and value."
+  ],
+  "exercise": {
+    "prompt": "Build a short pizza order form. It should collect: the customer's name (text, required), their email (email, required), pizza size (radio buttons: Small, Medium, Large), extra toppings (at least two checkboxes, e.g. Mushrooms and Olives), any special instructions (textarea), and a Submit Order button.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Pizza Order</title>\n</head>\n<body>\n  <h1>Order Your Pizza</h1>\n\n  <form action=\"/order\" method=\"post\">\n    <!-- TODO: Add a text input for the customer's name (required) -->\n\n    <!-- TODO: Add an email input (required) -->\n\n    <!-- TODO: Add radio buttons for size: Small, Medium, Large -->\n    <!-- Hint: all three should share the same name -->\n\n    <!-- TODO: Add checkboxes for at least two toppings -->\n\n    <!-- TODO: Add a textarea for special instructions -->\n\n    <!-- TODO: Add a submit button -->\n  </form>\n</body>\n</html>",
+    "hint": "Radio buttons need the same name (e.g. name=\"size\") but different id and value attributes. Checkboxes can each have their own name or share one — give each a descriptive value like value=\"mushrooms\".",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Pizza Order</title>\n</head>\n<body>\n  <h1>Order Your Pizza</h1>\n\n  <form action=\"/order\" method=\"post\">\n    <label for=\"customerName\">Your name</label>\n    <input type=\"text\" id=\"customerName\" name=\"customerName\"\n           placeholder=\"Jane Smith\" required>\n\n    <label for=\"email\">Email</label>\n    <input type=\"email\" id=\"email\" name=\"email\"\n           placeholder=\"jane@example.com\" required>\n\n    <fieldset>\n      <legend>Pizza size</legend>\n\n      <input type=\"radio\" id=\"sizeSmall\" name=\"size\" value=\"small\">\n      <label for=\"sizeSmall\">Small</label>\n\n      <input type=\"radio\" id=\"sizeMedium\" name=\"size\" value=\"medium\">\n      <label for=\"sizeMedium\">Medium</label>\n\n      <input type=\"radio\" id=\"sizeLarge\" name=\"size\" value=\"large\">\n      <label for=\"sizeLarge\">Large</label>\n    </fieldset>\n\n    <fieldset>\n      <legend>Extra toppings</legend>\n\n      <input type=\"checkbox\" id=\"mushrooms\" name=\"toppings\" value=\"mushrooms\">\n      <label for=\"mushrooms\">Mushrooms</label>\n\n      <input type=\"checkbox\" id=\"olives\" name=\"toppings\" value=\"olives\">\n      <label for=\"olives\">Olives</label>\n\n      <input type=\"checkbox\" id=\"peppers\" name=\"toppings\" value=\"peppers\">\n      <label for=\"peppers\">Bell peppers</label>\n    </fieldset>\n\n    <label for=\"instructions\">Special instructions</label>\n    <textarea id=\"instructions\" name=\"instructions\" rows=\"3\"\n              placeholder=\"e.g. extra crispy, no garlic...\"></textarea>\n\n    <button type=\"submit\">Submit Order</button>\n  </form>\n</body>\n</html>"
+  }
+}

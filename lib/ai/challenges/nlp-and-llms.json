@@ -1,0 +1,62 @@
+{
+  "slug": "nlp-and-llms",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the naive tokeniser from the lesson, run on a new sentence. What does it print?",
+      "code": "def simple_tokenize(text):\n    tokens = []\n    current = \"\"\n    for ch in text:\n        if ch in \" .,!?;:\":\n            if current:\n                tokens.append(current)\n                current = \"\"\n            if ch != \" \":\n                tokens.append(ch)\n        else:\n            current += ch\n    if current:\n        tokens.append(current)\n    return tokens\n\nprint(len(simple_tokenize(\"Attention is all you need!\")))",
+      "options": [
+        "5",
+        "6",
+        "4"
+      ],
+      "answerIndex": 1,
+      "explanation": "The four words become 'Attention', 'is', 'all', 'you', 'need', and the '!' is emitted as its own token, giving 6. Punctuation is not merged into the preceding word: the tokeniser flushes the current word, then appends the punctuation mark separately. A common mistake is counting only the 5 words and forgetting punctuation gets its own token."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "This uses the cosine_similarity helper from the lesson. What does it print?",
+      "code": "import math\n\ndef dot(a, b): return sum(x*y for x,y in zip(a,b))\ndef norm(a): return math.sqrt(dot(a, a))\ndef cosine_similarity(a, b): return dot(a,b) / (norm(a) * norm(b))\n\nking = [0.9, 0.1, 0.8, 0.2]\nprint(round(cosine_similarity(king, king), 1))",
+      "options": [
+        "0.0",
+        "1.0",
+        "1.4"
+      ],
+      "answerIndex": 1,
+      "explanation": "Cosine similarity measures the angle between two vectors, ignoring their length. A vector compared with itself has an angle of 0 degrees, so the similarity is exactly 1.0 (the maximum). This is why in the lesson 'queen' scoring 0.997 against the king - man + woman vector means they point in almost the same direction."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the softmax helper from the lesson so the raw scores become probabilities that sum to 1. Fill in the math function and the divisor.",
+      "codeTemplate": "import math\n\ndef softmax(scores):\n    exps = [math.{{blank}}(s) for s in scores]\n    total = sum(exps)\n    return [e / {{blank}} for e in exps]",
+      "blanks": [
+        { "answer": "exp", "accept": ["exp", "exp()"] },
+        { "answer": "total", "accept": ["total", "sum(exps)"] }
+      ],
+      "explanation": "Softmax exponentiates each score with math.exp so every value becomes positive, then divides each by the total so the results sum to 1 and form a valid probability distribution. Exponentiating also exaggerates gaps between scores, which is why the top next-token candidate ends up with a clearly higher probability than the rest."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of generating text one token at a time into the correct order, matching the loop taught in the lesson.",
+      "lines": [
+        "scores = model(context)                 # 1. get a raw score for every vocab token",
+        "probs = softmax(scores)                 # 2. turn scores into a probability distribution",
+        "next_token = sample(vocab, probs)       # 3. sample one token from the distribution",
+        "context = context + [next_token]        # 4. append it, then repeat for the next token"
+      ],
+      "explanation": "Generation is one step repeated: the model produces a raw score for every token in the vocabulary, softmax converts those scores into probabilities, one token is sampled from that distribution, and it is appended to the context so the next prediction can be made. Each step depends on the previous one's output, so the order is fixed."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def sample(vocab, probs):\n    r = random.random()\n    cumulative = 0.0\n    for token, prob in zip(vocab, probs):\n        cumulative += prob\n        if r < cumulative:\n            return token\n    return vocab[-1]\n\n# caller\nscores = [2.1, 1.6, 1.3]\nchoice = sample(vocab, scores)",
+      "options": [
+        "The caller passes raw scores into sample instead of first running softmax to get probs",
+        "random.random() should be random.randint(0, 1) to pick an index",
+        "cumulative should start at 1.0, not 0.0"
+      ],
+      "answerIndex": 0,
+      "explanation": "sample expects a probability distribution that sums to 1, but the caller passes the raw scores straight in without calling softmax(scores) first. Raw scores don't sum to 1, so the cumulative comparison against random.random() is meaningless. The lesson always converts scores to probs with softmax before sampling."
+    }
+  ]
+}

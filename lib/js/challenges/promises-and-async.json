@@ -1,0 +1,55 @@
+{
+  "slug": "promises-and-async",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson explains that await pauses only the current async function, not the whole app. Given this code, what gets logged and in what order?",
+      "code": "function delay(ms) {\n  return new Promise((resolve) => setTimeout(resolve, ms));\n}\n\nasync function run() {\n  console.log(\"A\");\n  await delay(0);\n  console.log(\"C\");\n}\n\nrun();\nconsole.log(\"B\");",
+      "options": [
+        "A\nB\nC",
+        "A\nC\nB",
+        "A\nB",
+        "B\nA\nC"
+      ],
+      "answerIndex": 0,
+      "explanation": "\"A\" logs synchronously before the await. Reaching await hands control back to the caller, so \"B\" logs next while the function is paused. Only after the current code finishes does the delay settle and the function resume to log \"C\". This is exactly the lesson's point: await pauses just that function, not the whole program."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function main() {\n  const message = await delay(1000);\n  console.log(message);\n}\n\nmain();",
+      "options": [
+        "The function is missing the async keyword, so await is a syntax error inside it",
+        "await can only be used with fetch, not with a custom delay function",
+        "You must write .await instead of await when calling a Promise-returning function",
+        "delay must be called with new, like new delay(1000)"
+      ],
+      "answerIndex": 0,
+      "explanation": "As the lesson's gotcha warns, await only works inside an async function. Because main is a plain function, JavaScript throws a syntax error. The fix is to mark it: async function main(). await works with any Promise, not just fetch."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this async function. It should pause until the Promise settles, then handle any rejection gracefully. Fill in the keyword that pauses on a Promise, the keyword that marks the function, and the block that catches errors.",
+      "codeTemplate": "{{blank}} function loadData() {\n  try {\n    const data = {{blank}} fetchData();\n    console.log(data);\n  } {{blank}} (error) {\n    console.error(error.message);\n  }\n}",
+      "blanks": [
+        { "answer": "async", "accept": ["async "] },
+        { "answer": "await", "accept": ["await "] },
+        { "answer": "catch", "accept": ["catch ", "} catch"] }
+      ],
+      "explanation": "You mark the function with async so await is allowed inside it, and await pauses the function until fetchData() settles and unwraps its resolved value. Wrapping the await in try/catch means a rejected Promise lands in the catch block instead of crashing, exactly the pattern the lesson recommends."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lines in order to build a Promise that resolves after one second and log its value. This mirrors the lesson's waitOneSecond example.",
+      "lines": [
+        "const waitOneSecond = new Promise((resolve, reject) => {",
+        "  setTimeout(() => {",
+        "    resolve(\"Time's up!\");",
+        "  }, 1000);",
+        "});",
+        "waitOneSecond.then((message) => console.log(message));"
+      ],
+      "explanation": "new Promise takes an executor function that receives resolve and reject. Inside, setTimeout schedules the work, and after one second resolve() fulfills the Promise with its value. The closing }); ends the executor and the constructor, and only then can you attach .then to consume the fulfilled value once it is ready."
+    }
+  ]
+}

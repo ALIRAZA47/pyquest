@@ -1,0 +1,144 @@
+{
+  "slug": "typing-functions",
+  "title": "Typing Functions",
+  "category": "TypeScript Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to annotate function parameters and return types in TypeScript so your functions become self-documenting and error-proof by design.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Functions are the workhorses of any program — they take inputs, do something useful, and hand back a result. In plain JavaScript, a function will happily accept the wrong kind of input and silently do the wrong thing. TypeScript fixes that by letting you **label** every parameter and return value with a type. The moment you add those labels, TypeScript watches every call site and warns you before the code ever runs. That early warning system is one of the biggest reasons developers reach for TypeScript in the first place."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Typed Function"
+    },
+    {
+      "type": "text",
+      "md": "Adding types to a function is straightforward: write the type after the parameter name, separated by a colon, and write the return type after the closing parenthesis."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function greet(name: string): string {\n  return `Hello, ${name}!`;\n}\n\nconsole.log(greet(\"Ada\"));\nconsole.log(greet(\"World\"));",
+      "output": "Hello, Ada!\nHello, World!",
+      "caption": "Parameter type comes after the colon next to the name; return type comes after the closing parenthesis."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A function signature is a contract",
+      "md": "Think of a typed function like a vending machine with labelled slots. The slot says **'coins only'** — you cannot shove in a credit card and expect a snack. The return slot is also labelled: it promises to give you a **specific item**, not a mystery box. TypeScript enforces both promises at compile time, before anyone uses the machine."
+    },
+    {
+      "type": "heading",
+      "text": "Multiple Parameters and Numeric Types"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function add(a: number, b: number): number {\n  return a + b;\n}\n\nconsole.log(add(3, 7));\n// add(\"3\", 7); // TypeScript error: Argument of type 'string' is not assignable to parameter of type 'number'",
+      "output": "10",
+      "caption": "Each parameter gets its own annotation. The commented line shows the kind of mistake TypeScript catches instantly."
+    },
+    {
+      "type": "heading",
+      "text": "Optional Parameters with ?"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a parameter is genuinely optional — it has a sensible absence. Mark it with `?` after the name. Inside the function, TypeScript will remind you that the value could be `undefined`, so you need to handle that case."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function greetUser(name: string, title?: string): string {\n  if (title) {\n    return `Hello, ${title} ${name}!`;\n  }\n  return `Hello, ${name}!`;\n}\n\nconsole.log(greetUser(\"Turing\"));\nconsole.log(greetUser(\"Turing\", \"Dr.\"));",
+      "output": "Hello, Turing!\nHello, Dr. Turing!",
+      "caption": "The ? makes title optional. Callers can omit it; the function handles both cases."
+    },
+    {
+      "type": "heading",
+      "text": "Default Parameters"
+    },
+    {
+      "type": "text",
+      "md": "A default parameter goes one step further: it provides a fallback value so you never have to guard against `undefined` inside the function. TypeScript infers the type from the default, so you usually do not need to write it explicitly."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function createMessage(text: string, prefix: string = \"INFO\"): string {\n  return `[${prefix}] ${text}`;\n}\n\nconsole.log(createMessage(\"Server started\"));\nconsole.log(createMessage(\"Disk full\", \"WARN\"));",
+      "output": "[INFO] Server started\n[WARN] Disk full",
+      "caption": "When the caller omits prefix, TypeScript uses the default value. The return type is still string — no special handling needed."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Optional ? and default values are not interchangeable",
+      "md": "A parameter with `?` can be `undefined` inside the function body — you must check before using it. A parameter with a default value is **never** `undefined` inside the body, because TypeScript substitutes the default automatically. Reaching for a default is usually cleaner when you know what the fallback should be."
+    },
+    {
+      "type": "heading",
+      "text": "void — Functions That Return Nothing"
+    },
+    {
+      "type": "text",
+      "md": "Not every function needs to return a value. A function that just prints to the console, saves data, or triggers an effect has a return type of `void`. Think of `void` as TypeScript's way of saying: \"this function deliberately produces no result you should rely on.\""
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function logScore(player: string, score: number): void {\n  console.log(`${player} scored ${score} points.`);\n  // no return statement needed\n}\n\nlogScore(\"Alice\", 4200);\nlogScore(\"Bob\", 3100);",
+      "output": "Alice scored 4200 points.\nBob scored 3100 points.",
+      "caption": "void tells callers (and TypeScript) that there is no meaningful return value to capture."
+    },
+    {
+      "type": "heading",
+      "text": "Typed Arrow Functions"
+    },
+    {
+      "type": "text",
+      "md": "Arrow functions follow the exact same annotation rules. You can write the types inline, or let TypeScript infer the return type from the function body — both approaches are common in real codebases."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// Explicit return type\nconst double = (n: number): number => n * 2;\n\n// TypeScript infers the return type as number\nconst triple = (n: number) => n * 3;\n\n// Arrow function stored in a typed variable\nconst greet: (name: string) => string = (name) => `Hi, ${name}!`;\n\nconsole.log(double(5));\nconsole.log(triple(5));\nconsole.log(greet(\"Riya\"));",
+      "output": "10\n15\nHi, Riya!",
+      "caption": "All three styles are valid. The third shows how to annotate the variable itself — useful when passing functions around."
+    },
+    {
+      "type": "quiz",
+      "question": "What does the ? symbol mean when placed after a function parameter name in TypeScript?",
+      "options": [
+        "The parameter has a default value and will never be undefined",
+        "The parameter is optional and may be undefined if the caller omits it",
+        "The parameter must be a boolean (true or false)",
+        "The function will return undefined instead of a value"
+      ],
+      "answerIndex": 1,
+      "explanation": "The ? marks a parameter as optional. If the caller omits it, its value inside the function will be undefined, so you need to check before using it. A default value (= something) is different — it guarantees a non-undefined value without any check."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Let TypeScript infer return types when the body is simple",
+      "md": "For short, obvious functions — a one-liner arrow, a simple transformation — you can omit the return type annotation and let TypeScript figure it out. Explicit return types shine on longer functions and public APIs, where the annotation serves as documentation and catches mistakes if the body ever changes."
+    }
+  ],
+  "keyTakeaways": [
+    "Annotate parameters as name: type and return values as function(): ReturnType to make functions self-documenting and type-safe.",
+    "Use ? for optional parameters (check for undefined inside the body) and = value for defaults (never undefined inside the body).",
+    "Use void as the return type for functions that perform side effects and return nothing meaningful.",
+    "Arrow functions follow the same annotation rules — types go on parameters, and the return type (if explicit) goes after the parameter list.",
+    "TypeScript checks every call site against the function signature, catching wrong argument types before the code runs."
+  ],
+  "exercise": {
+    "prompt": "Write a TypeScript function called formatPrice that takes a price (number) and an optional currency symbol (string). If no currency symbol is provided, use '$' as the default. The function should return a formatted string like '$9.99'. Then write a second arrow function called applyDiscount that takes a price and a discount percentage (both numbers) and returns the discounted price as a number. Finally, call both functions and log the results.",
+    "starterCode": "// TODO: Write formatPrice with a default currency parameter\nfunction formatPrice(price: number, currency?: string): string {\n  // your code here\n}\n\n// TODO: Write applyDiscount as a typed arrow function\nconst applyDiscount = (price: number, discountPercent: number): number => {\n  // your code here — return the price after the discount\n};\n\n// Call them and log the results\nconst original = 49.99;\nconst discounted = applyDiscount(original, 20); // 20% off\nconsole.log(formatPrice(original));\nconsole.log(formatPrice(discounted, \"€\"));",
+    "hint": "For formatPrice, use a default parameter (currency: string = '$'). Return a template literal like `${currency}${price.toFixed(2)}`. For applyDiscount, multiply price by (1 - discountPercent / 100).",
+    "solution": "function formatPrice(price: number, currency: string = '$'): string {\n  return `${currency}${price.toFixed(2)}`;\n}\n\nconst applyDiscount = (price: number, discountPercent: number): number => {\n  return price * (1 - discountPercent / 100);\n};\n\nconst original = 49.99;\nconst discounted = applyDiscount(original, 20);\nconsole.log(formatPrice(original));       // $49.99\nconsole.log(formatPrice(discounted, '€')); // €39.99"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "slug": "html-document-structure",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The page below loads in a browser. Where does the text 'My First Page' actually appear?",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Hello, World!</h1>\n  </body>\n</html>",
+      "options": [
+        "In the browser tab (and search results) — not as visible text on the page. The page shows only 'Hello, World!'.",
+        "As a large heading at the top of the page, above 'Hello, World!'.",
+        "Both in the browser tab and as a heading on the page.",
+        "Nowhere — a <title> inside <head> is ignored by the browser."
+      ],
+      "answerIndex": 0,
+      "explanation": "The <title> lives in the <head>, which holds metadata rather than visible content, so its text shows only in the browser tab and in search results. To put a visible heading on the page you use an <h1> inside <body> — which is why only 'Hello, World!' is rendered."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This page is supposed to use the modern HTML5 standard, but something at the very top is wrong. What's the bug?",
+      "code": "<!DOCTYPE html5>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>About Me</title>\n  </head>\n  <body>\n    <h1>Hi, I'm Alex!</h1>\n  </body>\n</html>",
+      "options": [
+        "The <meta charset> tag must come after the <title>, not before it.",
+        "The declaration should be <!DOCTYPE html>, not <!DOCTYPE html5> — there is no version number.",
+        "<html lang=\"en\"> is invalid; the lang attribute is not allowed on the root element.",
+        "The <h1> should be inside <head> so the browser can find the page's main topic."
+      ],
+      "answerIndex": 1,
+      "explanation": "The modern declaration is simply <!DOCTYPE html> with no version number — that single form tells the browser to use the HTML5 rulebook. Writing <!DOCTYPE html5> is not valid and can drop the browser into quirky legacy rendering mode."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two essential <head> meta tags: one that sets the character encoding, and one whose name makes the page mobile-friendly.",
+      "codeTemplate": "<head>\n  <meta charset=\"{{blank}}\" />\n  <meta name=\"{{blank}}\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>My First Page</title>\n</head>",
+      "blanks": [
+        { "answer": "UTF-8", "accept": ["utf-8", "UTF8", "utf8"] },
+        { "answer": "viewport", "accept": ["viewport"] }
+      ],
+      "explanation": "charset=\"UTF-8\" tells the browser how to decode the bytes in your file so accented letters, symbols, and emoji render correctly. The <meta name=\"viewport\"> tag stops mobile browsers from shrinking the page, making it the entry point to a mobile-friendly site."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a valid HTML5 boilerplate document, correctly nested from the outside in.",
+      "lines": [
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "  <head>",
+        "    <title>My First Page</title>",
+        "  </head>",
+        "  <body>",
+        "    <h1>Hello, World!</h1>",
+        "  </body>",
+        "</html>"
+      ],
+      "explanation": "Every document opens with the <!DOCTYPE html> declaration, then the <html> root wraps everything. Inside, <head> (metadata like <title>) comes before <body> (the visible content), and each element closes in the reverse order it opened. Consistent indentation makes this nesting tree visible at a glance."
+    }
+  ]
+}

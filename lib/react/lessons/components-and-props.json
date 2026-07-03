@@ -1,0 +1,141 @@
+{
+  "slug": "components-and-props",
+  "title": "Components & Props",
+  "category": "React Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to pass data into your components using props, make them reusable, and compose small pieces into bigger UIs.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know that a React component is a function that returns JSX. But right now every component you write is like a rubber stamp — it always produces the exact same output. What if you want a `Button` that can say \"Save\", \"Delete\", or \"Submit\"? What if you want a `UserCard` for *any* user, not just Jane Doe?\n\nThis is where **props** come in. Props (short for *properties*) are the mechanism React uses to pass data from a parent component down into a child component. They are the inputs that make your components flexible and reusable — the difference between a rubber stamp and a printing press."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Prop"
+    },
+    {
+      "type": "text",
+      "md": "When you write a component as a JSX tag, you can add attributes to it — just like HTML attributes on a `<button>` or `<input>`. Those attributes become the component's props."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// Child component: receives props as its first argument\nfunction Greeting(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\n// Parent component: passes data via attributes\nfunction App() {\n  return (\n    <div>\n      <Greeting name=\"Alice\" />\n      <Greeting name=\"Bob\" />\n    </div>\n  );\n}",
+      "output": "Renders 'Hello, Alice!' and 'Hello, Bob!' as two separate headings.",
+      "caption": "The same Greeting component renders different output depending on the name prop it receives."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Props are like arguments to a function",
+      "md": "Think of a component as a function you call, and props as the arguments you pass in.\n\n```js\n// A regular function\nfunction greet(name) {\n  return 'Hello, ' + name;\n}\ngreet('Alice'); // => 'Hello, Alice'\ngreet('Bob');   // => 'Hello, Bob'\n```\n\nProps work exactly the same way — they let you call the same component with different inputs and get different output every time."
+    },
+    {
+      "type": "heading",
+      "text": "Destructuring Props (The Clean Way)"
+    },
+    {
+      "type": "text",
+      "md": "Writing `props.name`, `props.age`, `props.email` over and over gets noisy. Most React code uses **destructuring** directly in the function signature to pull out the values you need. The component works identically — it is just easier to read."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// Without destructuring\nfunction UserCard(props) {\n  return (\n    <div>\n      <h2>{props.name}</h2>\n      <p>{props.role}</p>\n    </div>\n  );\n}\n\n// With destructuring — same result, cleaner code\nfunction UserCard({ name, role }) {\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>{role}</p>\n    </div>\n  );\n}",
+      "caption": "Destructuring in the parameter list is the idiomatic React style."
+    },
+    {
+      "type": "heading",
+      "text": "Passing Different Types of Props"
+    },
+    {
+      "type": "text",
+      "md": "Props are not limited to strings. You can pass numbers, booleans, arrays, objects, functions — any JavaScript value. The rule is: strings go in quotes, everything else goes in curly braces `{}`."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function ProductCard({ name, price, inStock, tags }) {\n  return (\n    <div>\n      <h3>{name}</h3>\n      <p>${price.toFixed(2)}</p>\n      <p>{inStock ? 'In stock' : 'Sold out'}</p>\n      <p>Tags: {tags.join(', ')}</p>\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <ProductCard\n      name=\"Mechanical Keyboard\"\n      price={129.99}\n      inStock={true}\n      tags={['tech', 'peripherals', 'sale']}\n    />\n  );\n}",
+      "output": "A card showing the product name, formatted price '$129.99', 'In stock', and 'Tags: tech, peripherals, sale'.",
+      "caption": "Strings use quotes; numbers, booleans, and arrays use curly braces."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Boolean shorthand",
+      "md": "If a prop is a boolean and you want to pass `true`, you can just write the prop name alone — no `={true}` needed.\n\n```jsx\n// These two lines are identical:\n<Button disabled={true} />\n<Button disabled />\n```"
+    },
+    {
+      "type": "heading",
+      "text": "Props Are Read-Only"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Never modify props inside a component",
+      "md": "Props flow one direction: from parent to child. A component must never change the props it receives — they are read-only.\n\n```jsx\n// BAD — mutating a prop\nfunction Badge({ label }) {\n  label = label.toUpperCase(); // don't do this!\n  return <span>{label}</span>;\n}\n\n// GOOD — derive a new value from the prop\nfunction Badge({ label }) {\n  const display = label.toUpperCase();\n  return <span>{display}</span>;\n}\n```\n\nIf you need to *change* something in response to user input, that's the job of **state** — which is the next lesson."
+    },
+    {
+      "type": "heading",
+      "text": "Default Props"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes a prop is optional and you want a sensible fallback when it is not provided. You can set default values right in the destructuring, using the `=` syntax."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function Avatar({ name, size = 40, shape = 'circle' }) {\n  return (\n    <img\n      src={`/avatars/${name}.png`}\n      alt={name}\n      width={size}\n      height={size}\n      style={{ borderRadius: shape === 'circle' ? '50%' : '4px' }}\n    />\n  );\n}\n\n// Uses defaults for size and shape:\n<Avatar name=\"alice\" />\n\n// Overrides both defaults:\n<Avatar name=\"bob\" size={80} shape=\"square\" />",
+      "caption": "Default values let callers omit optional props without breaking the component."
+    },
+    {
+      "type": "heading",
+      "text": "Composing Components with Props"
+    },
+    {
+      "type": "text",
+      "md": "The real payoff arrives when you build a small, prop-driven component and then reuse it many times inside a parent. Here is a `TeamRoster` that renders a list of `MemberCard` components — each powered by its own props."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function MemberCard({ name, role, avatarUrl }) {\n  return (\n    <div className=\"card\">\n      <img src={avatarUrl} alt={name} />\n      <h3>{name}</h3>\n      <span>{role}</span>\n    </div>\n  );\n}\n\nconst team = [\n  { name: 'Priya Sharma', role: 'Designer', avatarUrl: '/avatars/priya.png' },\n  { name: 'Leon Okafor', role: 'Engineer', avatarUrl: '/avatars/leon.png' },\n  { name: 'Sara Mills',  role: 'PM',       avatarUrl: '/avatars/sara.png' },\n];\n\nfunction TeamRoster() {\n  return (\n    <section>\n      <h2>Our Team</h2>\n      {team.map((member) => (\n        <MemberCard key={member.name} {...member} />\n      ))}\n    </section>\n  );\n}",
+      "output": "A section heading 'Our Team' followed by three cards, each with an avatar, name, and role.",
+      "caption": "One component definition, three different outputs — this is the power of props and composition."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The key prop when rendering lists",
+      "md": "When you `.map()` over an array to render components, React needs a `key` prop on each item so it can track which element is which when the list changes. Use something stable and unique — like an ID or a name — not the array index."
+    },
+    {
+      "type": "quiz",
+      "question": "What will this component render when used as <Label />  (no props passed)?",
+      "options": [
+        "An error, because text is undefined",
+        "An empty <span> with no content",
+        "A <span> containing 'Default'",
+        "Nothing — the component returns null"
+      ],
+      "answerIndex": 2,
+      "explanation": "The destructuring `{ text = 'Default' }` sets a fallback value of 'Default' for the text prop. When the component is used with no props, text falls back to 'Default', so the rendered output is <span>Default</span>.\n\nfunction Label({ text = 'Default' }) {\n  return <span>{text}</span>;\n}"
+    }
+  ],
+  "keyTakeaways": [
+    "Props are the inputs to a component — they are passed as JSX attributes from the parent.",
+    "Destructure props in the function signature for cleaner, more readable code.",
+    "Strings use quotes; all other JS values (numbers, booleans, arrays, objects) use curly braces.",
+    "Props are read-only — a component must never mutate the props it receives.",
+    "Default values in destructuring let you make props optional without extra logic."
+  ],
+  "exercise": {
+    "prompt": "Build a `BookCard` component that accepts three props: `title` (string), `author` (string), and `available` (boolean). Render the title in an `<h3>`, the author in a `<p>`, and show either 'Available' or 'Checked out' depending on the `available` prop. Then render at least two `<BookCard />` instances in an `App` component — one available and one not.",
+    "starterCode": "// TODO 1: Define the BookCard component.\n// It should accept: title, author, available\n// Render the title in an <h3>\n// Render the author in a <p>\n// Render 'Available' or 'Checked out' based on the available prop\nfunction BookCard({ title, author, available }) {\n  // your code here\n}\n\n// TODO 2: Render two BookCard components inside App\n// — one with available={true}, one with available={false}\nfunction App() {\n  return (\n    <div>\n      {/* your BookCard instances here */}\n    </div>\n  );\n}\n\nexport default App;",
+    "hint": "Use a ternary expression — `available ? 'Available' : 'Checked out'` — inside your JSX to switch between the two strings.",
+    "solution": "function BookCard({ title, author, available }) {\n  return (\n    <div>\n      <h3>{title}</h3>\n      <p>{author}</p>\n      <p>{available ? 'Available' : 'Checked out'}</p>\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <div>\n      <BookCard\n        title=\"The Pragmatic Programmer\"\n        author=\"Andrew Hunt\"\n        available={true}\n      />\n      <BookCard\n        title=\"Clean Code\"\n        author=\"Robert C. Martin\"\n        available={false}\n      />\n    </div>\n  );\n}\n\nexport default App;"
+  }
+}

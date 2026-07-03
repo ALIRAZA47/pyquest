@@ -1,0 +1,53 @@
+{
+  "slug": "basic-types",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "TypeScript types are erased before the code runs. What does this snippet print?",
+      "code": "let price: number = 9.99;\nlet isOnSale: boolean = false;\nlet colors: string[] = [\"red\", \"green\"];\ncolors.push(\"blue\");\n\nconsole.log(price);\nconsole.log(isOnSale);\nconsole.log(colors.length);",
+      "options": [
+        "9.99\nfalse\n3",
+        "9.99\nfalse\n2",
+        "number\nboolean\n3",
+        "9\nfalse\n3"
+      ],
+      "answerIndex": 0,
+      "explanation": "The annotations (: number, : boolean, : string[]) are compile-time labels only — they are stripped away, so the runtime values print normally. number keeps decimals like 9.99 (TypeScript does not separate integers from decimals), a boolean prints as false, and after pushing \"blue\" the array has 3 items."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "let scores: number[] = [98, 87, 76];\nscores.push(\"A+\");\nconsole.log(scores);",
+      "options": [
+        "\"A+\" is a string, but scores is number[], so every item must be a number — pushing a string is a type error.",
+        "You cannot call .push() on an array that was given a type annotation.",
+        "The array must be declared with const instead of let before you can push to it.",
+        "number[] can only hold exactly three items, so the fourth push overflows the array."
+      ],
+      "answerIndex": 0,
+      "explanation": "Annotating scores as number[] tells TypeScript every element must be a number. Passing the string \"A+\" to push triggers 'Argument of type string is not assignable to parameter of type number'. TypeScript catches this at compile time — before the code ever runs."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the annotations using the colon type syntax. Fill each blank with the correct type for the value being assigned.",
+      "codeTemplate": "let username: {{blank}} = \"Alice\";\nlet age: {{blank}} = 30;\nlet isLoggedIn: {{blank}} = true;",
+      "blanks": [
+        { "answer": "string", "accept": ["string ", "String"] },
+        { "answer": "number", "accept": ["number ", "Number"] },
+        { "answer": "boolean", "accept": ["boolean ", "Boolean", "bool"] }
+      ],
+      "explanation": "The colon syntax is variableName: type. Text in quotes is a string, whole numbers and decimals alike are number, and true/false values are boolean. These three cover the vast majority of everyday data."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines so the code declares a product's details (letting TypeScript infer each type) and logs a sentence like 'Laptop costs $999. In stock: true'.",
+      "lines": [
+        "let productName = \"Laptop\";",
+        "let price = 999;",
+        "let inStock = true;",
+        "console.log(`${productName} costs $${price}. In stock: ${inStock}`);"
+      ],
+      "explanation": "When you initialize a variable with a value, TypeScript infers its type automatically — string, number, and boolean here — so no annotation is needed. Each variable must be declared before it is used, so the three declarations come first and the template literal that reads them comes last."
+    }
+  ]
+}

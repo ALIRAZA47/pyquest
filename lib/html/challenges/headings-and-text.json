@@ -1,0 +1,53 @@
+{
+  "slug": "headings-and-text",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "How does the browser display this markup?",
+      "code": "<h1>Baking Sourdough Bread</h1>\n<h2>Ingredients</h2>\n<h3>For the Starter</h3>",
+      "options": [
+        "A large page title, a medium section heading, and a smaller sub-section heading, decreasing in size and prominence.",
+        "Three lines of identical large bold text, since all heading tags look the same.",
+        "The text appears italic because heading tags emphasize their content.",
+        "Nothing visible — heading tags only affect search engines, not what the browser shows."
+      ],
+      "answerIndex": 0,
+      "explanation": "Heading tags carry a hierarchy: <h1> is the top-level page title and renders largest, with <h2> and <h3> nesting beneath it at progressively smaller default sizes. The number signals how high-level the heading is to browsers, search engines, and screen readers alike."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This blog post is meant to have one main topic. What's wrong?",
+      "code": "<h1>All About Coffee</h1>\n<p>Coffee is a beloved morning ritual.</p>\n<h1>Brewing Methods</h1>\n<p>There are many ways to brew a cup.</p>",
+      "options": [
+        "The <p> tags should come before the headings.",
+        "There are two <h1> tags — a page should have only one <h1>, so \"Brewing Methods\" should be an <h2>.",
+        "The paragraphs are missing closing </p> tags.",
+        "Heading text must be wrapped in <strong> to appear bold."
+      ],
+      "answerIndex": 1,
+      "explanation": "Each page should use exactly one <h1> to represent its single main topic, like the title of a book. \"Brewing Methods\" is a major section within the page, so it belongs in an <h2>. Multiple <h1> tags confuse search engines and screen readers."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the tags so 'Warning:' is marked as important (bold) and 'loved' is marked as vocal stress (italic).",
+      "codeTemplate": "<p><{{blank}}>Warning:</strong> Never leave candles unattended.</p>\n<p>She did not just like it — she <{{blank}}>loved</em> it.</p>",
+      "blanks": [
+        { "answer": "strong", "accept": ["<strong>", "strong"] },
+        { "answer": "em", "accept": ["<em>", "em"] }
+      ],
+      "explanation": "<strong> marks text as important and renders bold by default, so it wraps the safety word 'Warning:'. <em> marks emphasized text and renders italic by default, matching the vocal stress on 'loved'. Choose these tags for their meaning, not just their appearance."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines so the address renders on separate lines inside a single paragraph.",
+      "lines": [
+        "<p>",
+        "  Acme Corporation<br>",
+        "  123 Main Street<br>",
+        "  Springfield, IL 62701",
+        "</p>"
+      ],
+      "explanation": "The whole address lives inside one <p>, and <br> ends each line without starting a new paragraph. <br> is a void element (self-closing), so the last line needs no <br> before the closing </p>. This is the correct use of <br> — intentional line breaks within content, not layout spacing."
+    }
+  ]
+}

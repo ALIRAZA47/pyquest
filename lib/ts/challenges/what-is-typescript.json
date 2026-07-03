@@ -1,0 +1,51 @@
+{
+  "slug": "what-is-typescript",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Type annotations are erased when TypeScript compiles to JavaScript. What does this snippet print at runtime?",
+      "code": "let username: string = \"alice\";\nlet age: number = 28;\nlet isLoggedIn: boolean = true;\n\nconsole.log(username);\nconsole.log(age);\nconsole.log(isLoggedIn);",
+      "options": [
+        "alice\n28\ntrue",
+        "string\nnumber\nboolean",
+        "alice: string\n28: number\ntrue: boolean",
+        "undefined\nundefined\nundefined"
+      ],
+      "answerIndex": 0,
+      "explanation": "The annotations (: string, : number, : boolean) are compile-time labels that the tsc compiler strips out entirely. What runs is plain JavaScript, so the actual stored values print normally: alice, 28, and true."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function greet(name: string): string {\n  return \"Hello, \" + name.toUpperCase();\n}\n\ngreet(42);",
+      "options": [
+        "greet is called with the number 42, but its parameter is annotated as string — TypeScript reports 'Argument of type number is not assignable to parameter of type string' before the code runs.",
+        "toUpperCase() does not exist on strings, so the function body itself is invalid.",
+        "The return type should be void because the function uses a plus sign to build the message.",
+        "A function can only be annotated on its parameters, never on its return value, so ': string' after the parentheses is illegal."
+      ],
+      "answerIndex": 0,
+      "explanation": "Annotating name as string tells TypeScript the argument must be a string. Passing the number 42 is caught instantly at compile time — the same mistake plain JavaScript would only reveal as a runtime TypeError when name.toUpperCase() runs."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the annotations so this function takes a string and returns a string, matching the lesson's greet example. Fill each blank with the correct type.",
+      "codeTemplate": "function greet(name: {{blank}}): {{blank}} {\n  return \"Hello, \" + name.toUpperCase();\n}",
+      "blanks": [
+        { "answer": "string", "accept": ["string ", "String"] },
+        { "answer": "string", "accept": ["string ", "String"] }
+      ],
+      "explanation": "A parameter annotation uses the colon syntax name: type, and the return type goes after the closing parenthesis: (name: string): string. Since greet receives text and returns text, both blanks are string."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these terminal commands into the correct order to install TypeScript and compile greet.ts into runnable JavaScript.",
+      "lines": [
+        "npm install -g typescript",
+        "tsc greet.ts",
+        "node greet.js"
+      ],
+      "explanation": "First you install the compiler with npm so the tsc command exists. Then tsc greet.ts type-checks your code and outputs plain greet.js. Finally node runs that compiled JavaScript — remember, Node.js only understands JavaScript, not TypeScript directly."
+    }
+  ]
+}

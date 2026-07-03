@@ -1,0 +1,51 @@
+{
+  "slug": "gradient-descent",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This runs a single gradient descent step on the lesson's loss f(x) = (x - 3)**2, starting from x = 5.0. What does it print?",
+      "code": "def loss(x):\n    return (x - 3) ** 2\n\ndef gradient(x):\n    return 2 * (x - 3)\n\nx = 5.0\nlr = 0.1\nx = x - lr * gradient(x)\nprint(f\"x = {x:.1f}, loss = {loss(x):.2f}\")",
+      "options": [
+        "x = 4.6, loss = 2.56",
+        "x = 5.4, loss = 5.76",
+        "x = 4.0, loss = 1.00",
+        "x = 3.0, loss = 0.00"
+      ],
+      "answerIndex": 0,
+      "explanation": "The gradient at x=5 is 2*(5-3) = 4. Because the gradient is positive, we step in the OPPOSITE direction: x = 5 - 0.1*4 = 4.6. The new loss is (4.6-3)**2 = 2.56. One step moves us toward the minimum at 3, but doesn't jump straight there."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "def loss(x):\n    return (x - 3) ** 2\n\ndef gradient(x):\n    return 2 * (x - 3)\n\nx = 8.0\nlr = 0.1\nfor _ in range(30):\n    x = x + lr * gradient(x)   # step\nprint(f\"final x = {x:.2f}\")",
+      "options": [
+        "The update adds the gradient instead of subtracting it, so x moves uphill and diverges.",
+        "The learning rate 0.1 is far too small to ever converge.",
+        "gradient(x) should return (x - 3) ** 2, not 2 * (x - 3).",
+        "range(30) is too few iterations to see any change in x."
+      ],
+      "answerIndex": 0,
+      "explanation": "Gradient descent steps in the OPPOSITE direction of the gradient, so the update must be x = x - lr * gradient(x). Using + climbs uphill: the loss grows every step and x runs away from the minimum at 3. Fixing the sign makes it converge."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the gradient descent update rule so x moves downhill toward the minimum of the loss.",
+      "codeTemplate": "def gradient(x):\n    return 2 * (x - 3)\n\nx = 8.0\nlr = 0.1\nfor _ in range(30):\n    x = x {{blank}} lr * gradient(x)",
+      "blanks": [
+        { "answer": "-", "accept": ["-", "minus", "- ", " -"] }
+      ],
+      "explanation": "To go downhill we move in the opposite direction of the gradient, so we SUBTRACT lr * gradient(x). If the gradient is positive we shrink x; if it's negative we grow x — either way we head toward the valley (the minimum loss)."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to build one full gradient descent step inside the loop (from the lesson's 5-step recipe).",
+      "lines": [
+        "grad = gradient(x)",
+        "x = x - lr * grad",
+        "current_loss = loss(x)",
+        "print(f\"loss = {current_loss:.4f}\")"
+      ],
+      "explanation": "Each iteration: first compute the gradient at the current x, then step downhill by subtracting lr * grad, then measure the new loss, then report it. Computing the loss before the update would report the OLD position, so the update must come before measuring progress."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "slug": "the-box-model",
+  "title": "The Box Model",
+  "category": "Layout",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Every element on the page is a box — and understanding its four layers (content, padding, border, margin) is the key to controlling layout with confidence.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Have you ever tried to space things out on a page and felt like the browser was playing tricks on you? Elements overlapping, gaps that seem wrong, sizes that don't add up. The culprit is almost always a misunderstanding of the **CSS Box Model** — and once you grasp it, layout starts to feel logical rather than mysterious.\n\nEvery single element on a web page — a heading, a button, a paragraph — is rendered by the browser as a rectangular box with **four distinct layers**: content, padding, border, and margin. Learning what they do is the single most important concept in CSS layout."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a framed painting on a wall",
+      "md": "- **Content** — the painting itself.\n- **Padding** — the white mat board between the painting and the frame, giving the artwork breathing room.\n- **Border** — the physical frame around the mat.\n- **Margin** — the empty wall space between this frame and the one hanging beside it.\n\nThe painting never touches the frame directly; the mat is in between. And the frame never touches the neighbouring painting; the wall gap separates them. That is exactly how CSS boxes work."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".card {\n  width: 300px;           /* content area width */\n  height: 150px;          /* content area height */\n  padding: 20px;          /* space inside, between content and border */\n  border: 2px solid #333; /* line drawn around the box */\n  margin: 24px;           /* space outside, pushing neighbours away */\n}",
+      "output": "A card with a 300x150 px content area, 20 px of inner breathing room, a dark border, and 24 px distance from surrounding elements.",
+      "caption": "Each of the four layers maps to its own CSS property. You can set all four independently."
+    },
+    {
+      "type": "heading",
+      "text": "What width Actually Controls (and Why It Surprises People)"
+    },
+    {
+      "type": "text",
+      "md": "By default, `width` and `height` set the size of the **content area only** — padding and border are added *on top*, making the element larger than you specified. With the styles below, the box occupies **250 px** of horizontal space on screen — not 200 px:"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".box {\n  width: 200px;\n  padding: 20px;\n  border: 5px solid black;\n}\n/* Rendered width: 200 + 20 + 20 + 5 + 5 = 250 px */",
+      "output": "The element is 250 px wide — 50 px more than the width value suggests.",
+      "caption": "Default (content-box) model: padding and border grow the outside of the element."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Add this reset at the very top of every stylesheet */\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\n.box {\n  width: 200px; /* now the true total rendered width */\n  padding: 20px;\n  border: 5px solid black;\n  /* content area shrinks to 150 px automatically */\n}",
+      "output": "The box is exactly 200 px wide. Padding and border carve into the content area instead of growing the outside.",
+      "caption": "box-sizing: border-box — padding and border are included in width. This is so useful that Tailwind CSS and Bootstrap apply it by default. Add it to every project you create."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always start with the border-box reset",
+      "md": "The `*, *::before, *::after { box-sizing: border-box; }` snippet is the first thing to put in every new stylesheet. Without it, adding padding or a border will silently grow your elements and break your layout in ways that are frustrating to debug."
+    },
+    {
+      "type": "heading",
+      "text": "Padding vs. Margin — and the Collapse Gotcha"
+    },
+    {
+      "type": "text",
+      "md": "Both create space, but they behave very differently:\n\n- **Padding** is *inside* the border — it shares the element's background colour, and clicking in the padded area still counts as clicking the element.\n- **Margin** is *outside* the border — always transparent, it pushes neighbouring elements away.\n\nYou can set each side independently, or use shorthand. Values go clockwise: top, right, bottom, left:\n\n```css\n.box {\n  padding: 10px 20px;  /* top+bottom 10px, left+right 20px */\n  margin: 16px 8px;    /* top+bottom 16px, left+right 8px  */\n}\n```"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Vertical margins collapse — they don't add up",
+      "md": "When two block elements are stacked vertically and both have vertical margins, CSS takes the **larger of the two** as the gap — not the sum. This is called **margin collapse**.\n\nIf a heading has `margin-bottom: 24px` and a paragraph below has `margin-top: 16px`, the actual gap is **24 px**, not 40 px.\n\n**Only vertical (top/bottom) margins collapse.** Left and right margins always add up normally.\n\n**Workaround:** use `padding` on a parent container, or switch to a flex or grid layout, which disables margin collapse between items."
+    },
+    {
+      "type": "quiz",
+      "question": "You set an element's width to 400px, padding to 30px, and border to 5px — with no box-sizing reset applied. How wide does the element appear on screen?",
+      "options": [
+        "400 px",
+        "430 px",
+        "460 px",
+        "470 px"
+      ],
+      "answerIndex": 3,
+      "explanation": "With the default content-box model, width covers only the content area. Total rendered width = 400 (content) + 30 + 30 (padding, both sides) + 5 + 5 (border, both sides) = 470 px. This is exactly why border-box is so widely used — it makes width mean the final visible size."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "*,\n*::before,\n*::after { box-sizing: border-box; }\n\n.card {\n  width: 320px;           /* total rendered width */\n  padding: 24px;          /* inner breathing room */\n  border: 1px solid #ddd; /* subtle outline */\n  margin: 32px auto;      /* centred, 32 px gap above and below */\n  background-color: white;\n  border-radius: 8px;\n}\n\n.card h2 {\n  margin-top: 0;     /* kill default top margin — padding handles it */\n  margin-bottom: 12px;\n}\n\n.card p { margin: 0; line-height: 1.6; }",
+      "output": "A 320 px wide white card, centred on the page, with comfortable inner padding and a light border. The heading and paragraph sit cleanly inside without unwanted extra gaps.",
+      "caption": "Putting it all together: a practical card using every layer of the box model deliberately."
+    }
+  ],
+  "keyTakeaways": [
+    "Every HTML element is a box with four layers from inside out: content, padding, border, and margin.",
+    "By default, width and height cover only the content area — padding and border are added on top, growing the element.",
+    "Add box-sizing: border-box globally so that width means the total rendered size. Do this on every project.",
+    "Padding is inside the border (shares the background); margin is outside (always transparent) and pushes neighbours away.",
+    "Vertical margins between block elements collapse — the larger value wins instead of both adding together."
+  ],
+  "exercise": {
+    "prompt": "Build a styled profile card using the full box model. Create a .profile-card element that: (1) applies box-sizing: border-box globally, (2) has a fixed width of 360px, (3) has 32px of padding on all sides, (4) has a 2px solid border in a colour of your choice, (5) is centred on the page horizontally using margin auto, and (6) has a border-radius of 12px. Inside the card, make sure the h2 has no top margin so it sits flush against the inner padding.",
+    "starterCode": "/* TODO 1: Apply border-box to every element */\n*,\n*::before,\n*::after {\n\n}\n\nbody {\n  background-color: #f5f5f5;\n  font-family: sans-serif;\n}\n\n.profile-card {\n  /* TODO 2: width 360px */\n\n  /* TODO 3: padding 32px */\n\n  /* TODO 4: 2px solid border */\n\n  /* TODO 5: centre horizontally with margin */\n\n  /* TODO 6: border-radius 12px */\n\n  background-color: white;\n}\n\n.profile-card h2 {\n  /* TODO 7: remove default top margin */\n  margin-bottom: 12px;\n}\n\n.profile-card p {\n  margin: 0;\n  line-height: 1.6;\n  color: #555;\n}",
+    "hint": "To centre a fixed-width block element, use margin: 40px auto — the auto on left and right divides the remaining horizontal space equally. Make sure box-sizing: border-box is set so your 360px width is the true rendered size including padding and border.",
+    "solution": "*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\nbody {\n  background-color: #f5f5f5;\n  font-family: sans-serif;\n}\n\n.profile-card {\n  width: 360px;\n  padding: 32px;\n  border: 2px solid #7eb8f7;\n  margin: 40px auto;\n  border-radius: 12px;\n  background-color: white;\n}\n\n.profile-card h2 {\n  margin-top: 0;\n  margin-bottom: 12px;\n  color: #1a1a2e;\n}\n\n.profile-card p {\n  margin: 0;\n  line-height: 1.6;\n  color: #555;\n}"
+  }
+}

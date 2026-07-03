@@ -1,8 +1,8 @@
 {
-  "name": "pyquest",
+  "name": "quest",
   "version": "1.0.0",
   "private": true,
-  "description": "PyQuest — the beautiful, beginner-friendly way to learn Python completely.",
+  "description": "Quest — the beautiful, beginner-friendly way to learn Python completely.",
   "scripts": {
     "gen": "node scripts/build-lessons.mjs",
     "predev": "node scripts/build-lessons.mjs",

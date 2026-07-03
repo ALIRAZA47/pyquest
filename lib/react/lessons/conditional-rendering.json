@@ -1,0 +1,106 @@
+{
+  "slug": "conditional-rendering",
+  "title": "Conditional Rendering",
+  "category": "State & Interaction",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to show, hide, or swap pieces of UI in React based on state — using &&, the ternary operator, and early returns.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Most apps don't look the same every second. A login page disappears once you sign in. An error message appears only when something goes wrong. A loading spinner shows while data is fetching, then vanishes the moment it arrives.\n\nThis is **conditional rendering** — the ability to show or hide parts of your UI based on some condition. In React it isn't a special feature you have to learn separately; it's just JavaScript, used right inside your JSX. Once it clicks, you'll wonder how you ever built UIs without it."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Velvet Rope at a Club",
+      "md": "Think of conditional rendering like a bouncer with a velvet rope. The bouncer checks a condition — \"Are you on the list?\" If yes, you get in (the element renders). If no, you stay outside (nothing renders). The rope itself is invisible to the people who sail through. Your UI works exactly the same way — only the elements that pass the condition make it onto the screen."
+    },
+    {
+      "type": "heading",
+      "text": "Pattern 1: && for Show or Hide"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function Inbox({ unreadCount }) {\n  return (\n    <div>\n      <h2>Inbox</h2>\n      {unreadCount > 0 && (\n        <p className=\"badge\">{unreadCount} unread messages</p>\n      )}\n    </div>\n  );\n}",
+      "output": "When unreadCount is 3: shows heading and \"3 unread messages\". When unreadCount is 0: shows only the heading.",
+      "caption": "The `&&` operator renders its right side when the left is truthy, and renders nothing when it is falsy. Use it for show-or-nothing situations."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Watch Out for 0",
+      "md": "`0` is falsy — but React will render the digit `0` on screen instead of nothing. This catches everyone at least once.\n\n```jsx\n// BUG: renders \"0\" when items.length is 0\n{items.length && <List items={items} />}\n\n// SAFE: compare explicitly\n{items.length > 0 && <List items={items} />}\n```\n\nWhenever the left side of `&&` might be a number, add a `> 0` comparison to convert it to a proper boolean."
+    },
+    {
+      "type": "heading",
+      "text": "Pattern 2: Ternary for Either/Or"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function UserCard({ isLoggedIn, username }) {\n  return (\n    <div>\n      {isLoggedIn ? (\n        <p>Welcome back, {username}!</p>\n      ) : (\n        <p>Please sign in to continue.</p>\n      )}\n      <button>{isLoggedIn ? 'Log out' : 'Log in'}</button>\n    </div>\n  );\n}",
+      "output": "Shows a personalised welcome and \"Log out\" button when logged in; a sign-in prompt and \"Log in\" button otherwise.",
+      "caption": "The ternary `condition ? valueIfTrue : valueIfFalse` lets you swap text, elements, or whole blocks of markup. Wrap multi-line branches in parentheses to keep things readable."
+    },
+    {
+      "type": "heading",
+      "text": "Pattern 3: Early Return"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "function Profile({ user, isLoading }) {\n  if (isLoading) return <p>Loading...</p>;\n  if (!user) return <p>No user found.</p>;\n\n  return (\n    <div>\n      <h2>{user.name}</h2>\n      <p>{user.bio}</p>\n    </div>\n  );\n}",
+      "output": "Shows \"Loading...\" while fetching, \"No user found.\" if user is null, or the full profile card when user data is present.",
+      "caption": "Return early (with null or a fallback) before reaching the main JSX. Guard clauses at the top keep the happy path clean and unindented — and you can stack as many as you need."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It Together: Rendering Based on State"
+    },
+    {
+      "type": "text",
+      "md": "Conditional rendering becomes really powerful when the condition is a piece of **state**. Changing state triggers a re-render, and the component recalculates which JSX to return — so the UI updates automatically, with no manual DOM work."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState } from 'react';\n\nfunction Spoiler({ text }) {\n  const [revealed, setRevealed] = useState(false);\n\n  return (\n    <div>\n      {revealed ? (\n        <p>{text}</p>\n      ) : (\n        <p style={{ filter: 'blur(6px)' }}>Hidden</p>\n      )}\n      <button onClick={() => setRevealed(prev => !prev)}>\n        {revealed ? 'Hide' : 'Reveal'}\n      </button>\n    </div>\n  );\n}",
+      "output": "A blurred placeholder and a \"Reveal\" button. Clicking it shows the real text and switches the button label to \"Hide\".",
+      "caption": "State drives the condition; the ternary drives the output. One click, two completely different UIs."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Extract Complex Conditions",
+      "md": "If your condition involves several checks, pull it into a named variable *above* the `return` — it keeps your JSX readable and makes the logic easy to scan.\n\n```jsx\nconst showWelcome = isLoggedIn && user !== null && !user.isBanned;\nreturn <div>{showWelcome && <WelcomeBanner />}</div>;\n```"
+    },
+    {
+      "type": "quiz",
+      "question": "You want to render a <Sale /> component only when a boolean `isSaleActive` is true, and render nothing otherwise. Which pattern is most appropriate?",
+      "options": [
+        "isSaleActive ? <Sale /> : <Sale />",
+        "isSaleActive && <Sale />",
+        "isSaleActive || <Sale />",
+        "if (isSaleActive) { return <Sale />; } written inside JSX"
+      ],
+      "answerIndex": 1,
+      "explanation": "The `&&` pattern is ideal for show-or-nothing: `isSaleActive && <Sale />` renders the component when true and nothing when false. Option A uses a ternary but renders <Sale /> in both branches — pointless. Option C uses `||`, which renders its right side when the left is falsy — the opposite of what you want. Option D is invalid: `if` statements cannot be placed directly inside JSX (only in the function body above the return statement)."
+    }
+  ],
+  "keyTakeaways": [
+    "Use `condition && <Element />` to show something or render nothing — always use `> 0` comparisons when the condition might be a number, to avoid accidentally rendering `0`.",
+    "Use `condition ? <A /> : <B />` to swap between two different elements, labels, or whole sections of markup.",
+    "Use an early `return null` (or a fallback) at the top of a component to bail out before the main UI when data is missing, loading, or in an error state.",
+    "Pairing conditional rendering with state means your UI updates automatically whenever the underlying data changes — no manual DOM work needed.",
+    "When conditions grow complex, extract them into clearly-named variables above your `return` statement to keep JSX readable."
+  ],
+  "exercise": {
+    "prompt": "Build a `PasswordInput` component. It should render a text input and a toggle button. When the button is clicked, it switches the input between `type=\"password\"` (text hidden) and `type=\"text\"` (text visible). The button label should say \"Show\" when the password is hidden and \"Hide\" when it is visible.",
+    "starterCode": "import { useState } from 'react';\n\nfunction PasswordInput() {\n  // TODO: add a boolean state variable called `isVisible` starting at false\n\n  return (\n    <div>\n      {/* TODO: render an <input> whose type changes based on isVisible */}\n      {/* TODO: render a button that toggles isVisible and shows \"Show\" or \"Hide\" */}\n    </div>\n  );\n}\n\nexport default PasswordInput;",
+    "hint": "Use `isVisible ? 'text' : 'password'` to set the input type, and `isVisible ? 'Hide' : 'Show'` for the button label. Toggle state with `setIsVisible(prev => !prev)` in the onClick handler.",
+    "solution": "import { useState } from 'react';\n\nfunction PasswordInput() {\n  const [isVisible, setIsVisible] = useState(false);\n\n  return (\n    <div>\n      <input\n        type={isVisible ? 'text' : 'password'}\n        placeholder=\"Enter your password\"\n      />\n      <button onClick={() => setIsVisible(prev => !prev)}>\n        {isVisible ? 'Hide' : 'Show'}\n      </button>\n    </div>\n  );\n}\n\nexport default PasswordInput;"
+  }
+}

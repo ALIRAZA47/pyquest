@@ -1,0 +1,52 @@
+{
+  "slug": "variables-and-data-types",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this code print? Remember the famous typeof quirk from the lesson.",
+      "code": "console.log(typeof \"Hello\");\nconsole.log(typeof 42);\nconsole.log(typeof null);",
+      "options": [
+        "string\nnumber\nobject",
+        "string\nnumber\nnull",
+        "text\nnumber\nobject",
+        "string\nnumber\nundefined"
+      ],
+      "answerIndex": 0,
+      "explanation": "typeof returns a string naming the type: \"string\" for text and \"number\" for numbers. typeof null returns \"object\" — a well-known bug from JavaScript's first version in 1995 that was never fixed to avoid breaking existing sites."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const score = 0;\nscore = 10;\nconsole.log(score);",
+      "options": [
+        "A const variable cannot be reassigned, so score = 10 throws a TypeError; use let instead.",
+        "console.log cannot print numbers, only strings.",
+        "The variable must be named with a capital letter.",
+        "You cannot assign 0 to a const variable."
+      ],
+      "answerIndex": 0,
+      "explanation": "const creates a fixed binding, so reassigning score = 10 throws 'TypeError: Assignment to constant variable'. Because this value is meant to change, it should be declared with let, which allows reassignment."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the declarations so each variable holds the correct primitive type. Fill the first blank with the keyword for a value that will stay fixed, and the second blank with the keyword whose value can change later.",
+      "codeTemplate": "{{blank}} siteName = \"Quest\";\n{{blank}} score = 0;\nscore = 10;\nconsole.log(siteName, score);",
+      "blanks": [
+        { "answer": "const", "accept": ["const "] },
+        { "answer": "let", "accept": ["let "] }
+      ],
+      "explanation": "Start with const by default — siteName never changes, so const is right. score gets reassigned to 10, so it must be let; using const there would throw a TypeError on reassignment."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines to declare a user's details and log a sentence like 'Alex is 30 years old and is a premium member: true' using a template literal.",
+      "lines": [
+        "const name = \"Alex\";",
+        "const age = 30;",
+        "const isPremium = true;",
+        "console.log(`${name} is ${age} years old and is a premium member: ${isPremium}`);"
+      ],
+      "explanation": "Each variable must be declared before it is used, so the three const declarations (a string, a number, and a boolean) come first. The template literal on the final line then embeds all three values with ${} placeholders to build the sentence."
+    }
+  ]
+}

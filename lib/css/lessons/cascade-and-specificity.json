@@ -1,0 +1,88 @@
+{
+  "slug": "cascade-and-specificity",
+  "title": "The Cascade & Specificity",
+  "category": "CSS Fundamentals",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Discover why some CSS rules win over others — and build a reliable mental model for debugging 'why isn't my style applying?'",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've written a CSS rule, refreshed the browser, and… nothing changed. This is one of the most common moments of confusion for CSS beginners, and it has a very logical explanation.\n\nCSS stands for **Cascading** Style Sheets. When two or more rules compete to style the same element, CSS uses a well-defined algorithm — the **cascade** — to pick the winner. The cascade considers three things in order: **specificity**, **source order**, and **!important**. Once you understand these, mysterious overrides stop feeling like magic and start feeling like a puzzle you can always solve."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The cascade is like a job interview panel",
+      "md": "Picture three judges scoring candidates. The first judge (Specificity) gives a score based on how precisely each rule targets the element. If scores are tied, the second judge (Source Order) picks whoever came last — that's why `p { color: tomato; }` wins over an earlier `p { color: steelblue; }` when selectors are identical. The third judge (!important) has veto power and overrides everything — but using that power carelessly causes chaos."
+    },
+    {
+      "type": "heading",
+      "text": "Specificity: The Score"
+    },
+    {
+      "type": "text",
+      "md": "Specificity is a score that measures how *precisely* a selector targets an element. CSS calculates it using three buckets — **(A, B, C)**:\n\n| Bucket | What counts | Example |\n|--------|-------------|-------|\n| **A** | ID selectors | `#hero` |\n| **B** | Class, attribute, pseudo-class | `.btn`, `[type]`, `:hover` |\n| **C** | Element / pseudo-element | `p`, `h1`, `::before` |\n\nCompare bucket by bucket, left to right. One ID **(1,0,0)** beats any number of classes **(0,99,0)**. And above all selectors sits the **inline style**, written directly on the element — it has no selector at all, so it auto-wins.\n\nFull ranking, lowest to highest:\n```\nelement selector < class/attribute/pseudo-class < ID < inline style\n```"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* (0,0,1) — one element */\np            { color: steelblue; }\n\n/* (0,1,0) — one class   */\n.intro       { color: goldenrod; }\n\n/* (1,0,0) — one ID      */\n#hero        { color: tomato; }",
+      "caption": "For <p id=\"hero\" class=\"intro\">, the ID rule wins: color is tomato."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "!important: avoid it — it's a trap",
+      "md": "Adding `!important` after a value (`color: seagreen !important;`) yanks that declaration above the entire specificity system — it even beats inline styles. It feels like a quick fix, but once you use it the only way to override it is with *another* `!important`, and you end up in an arms race. Prefer writing a more specific selector instead. Reserve `!important` for true utility classes like `.hidden { display: none !important; }` where an unconditional rule makes semantic sense."
+    },
+    {
+      "type": "heading",
+      "text": "Inheritance"
+    },
+    {
+      "type": "text",
+      "md": "Some CSS properties flow **down** from a parent element to its children automatically — this is **inheritance**. Text properties like `color`, `font-family`, and `line-height` inherit by default. Box-model properties like `margin`, `padding`, `border`, and `width` do **not**.\n\nInheritance is a feature: set `font-family` on `body` and every text element on the page picks it up without you writing a rule for each one. If you ever need to force a non-inheriting property to inherit, set its value to the keyword `inherit`."
+    },
+    {
+      "type": "heading",
+      "text": "A Mental Model for Debugging"
+    },
+    {
+      "type": "text",
+      "md": "When a style isn't applying, walk through this checklist:\n\n1. **Is the selector matching?** Open browser DevTools (F12 or right-click → Inspect). The Styles panel shows every competing rule — crossed-out declarations are the losers.\n2. **Is something more specific winning?** Look for an ID selector or inline style overriding your class.\n3. **Is source order the issue?** A later rule with the same specificity silently overwrites yours.\n4. **Is `!important` involved?** DevTools labels these clearly.\n5. **Is it an inherited property?** Check whether the property you expect to inherit actually does (text properties: yes; box properties: no).\n\nDevTools is your fastest path to answers — the winning value is shown in bold; everything else is struck through."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Specificity is per-rule, not cumulative",
+      "md": "Writing `.nav .nav .nav .nav` in four separate rules does not 'bank' specificity. Each rule is scored independently when the cascade runs. Only selectors *within a single rule* combine their scores."
+    },
+    {
+      "type": "quiz",
+      "question": "Given these two CSS rules, what colour will a paragraph with class='highlight' render in?\n\np { color: steelblue; }\n.highlight { color: goldenrod; }",
+      "options": [
+        "steelblue — because p appears first in the file",
+        "goldenrod — because .highlight has higher specificity than p",
+        "goldenrod — because class selectors always come last",
+        "steelblue — because element selectors override class selectors"
+      ],
+      "answerIndex": 1,
+      "explanation": "The class selector .highlight scores (0,1,0) while the element selector p scores (0,0,1). Specificity is compared before source order, so .highlight wins regardless of where it appears in the file."
+    }
+  ],
+  "keyTakeaways": [
+    "The cascade resolves conflicts using specificity first, then source order — later rules win ties.",
+    "Specificity is scored as (IDs, classes/attributes/pseudo-classes, elements) — a higher score wins regardless of order.",
+    "Inline styles beat any stylesheet selector; !important beats everything — use both sparingly.",
+    "Inheritable properties (color, font-*) flow from parent to child automatically; box-model properties do not.",
+    "Browser DevTools is the fastest debugging tool — look for crossed-out declarations to find what's overriding your rule."
+  ],
+  "exercise": {
+    "prompt": "The button below should have a green background. Three rules are competing for it. Make the .btn-primary rule win — without using !important or adding inline styles. You may rewrite or remove any existing rule.",
+    "starterCode": "/* Three competing rules — only .btn-primary should win */\n\n#submit {\n  background-color: crimson;\n}\n\n.btn-primary {\n  background-color: seagreen; /* TODO: make this rule win */\n}\n\nbutton {\n  background-color: steelblue;\n  color: white;\n  padding: 0.6rem 1.4rem;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 1rem;\n}",
+    "hint": "The ID selector #submit scores (1,0,0) which beats .btn-primary at (0,1,0). Try either removing the #submit rule entirely, or raising .btn-primary's specificity by combining it with an element selector: button.btn-primary.",
+    "solution": "/* Remove the higher-specificity ID rule so .btn-primary wins */\n\n.btn-primary {\n  background-color: seagreen;\n}\n\nbutton {\n  background-color: steelblue;\n  color: white;\n  padding: 0.6rem 1.4rem;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 1rem;\n}\n\n/* Alternative: raise .btn-primary's specificity instead of deleting #submit */\n/* button.btn-primary { background-color: seagreen; } */"
+  }
+}

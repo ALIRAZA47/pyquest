@@ -1,0 +1,143 @@
+{
+  "slug": "the-useeffect-hook",
+  "title": "The useEffect Hook",
+  "category": "Hooks",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how useEffect lets your React components reach outside themselves — fetching data, setting up timers, and cleaning up after themselves when they're done.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "React components have one job: take some data and return some UI. But real apps need to do more than that. They fetch data from a server. They set up a timer that ticks every second. They subscribe to a WebSocket that streams live updates. They update the browser tab's title.\n\nNone of these things fit neatly inside a `return` statement — they reach *outside* the component into the world beyond React. We call these **side effects**, and `useEffect` is the hook React gives you to manage them safely."
+    },
+    {
+      "type": "heading",
+      "text": "What Is a Side Effect?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A Chef Who Also Texts the Table",
+      "md": "Imagine a chef whose job is to cook a dish (return UI). But sometimes the chef also needs to do something *outside* the kitchen — text the table that the food is ready, order more ingredients, or turn off the stove after a timer.\n\nThose extra tasks are **side effects**: they happen as a consequence of cooking, but they aren't the dish itself. `useEffect` is React's way of saying: \"after you've cooked and served the dish, here's where you handle those extra tasks.\""
+    },
+    {
+      "type": "text",
+      "md": "Common side effects in React include:\n- **Fetching data** from an API after the component appears on screen\n- **Setting up a timer** with `setInterval` or `setTimeout`\n- **Subscribing** to an event or a WebSocket connection\n- **Updating the document title** shown in the browser tab\n- **Reading from localStorage**\n\nAll of these are jobs for `useEffect`."
+    },
+    {
+      "type": "heading",
+      "text": "The Basic Shape of useEffect"
+    },
+    {
+      "type": "text",
+      "md": "`useEffect` takes two arguments: a **callback function** where your side effect lives, and an optional **dependency array** that tells React when to re-run it."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState, useEffect } from 'react';\n\nfunction DocumentTitle() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    document.title = `You clicked ${count} times`;\n  });\n\n  return (\n    <button onClick={() => setCount(count + 1)}>\n      Click me ({count})\n    </button>\n  );\n}",
+      "output": "A button that increments a count. The browser tab title updates to match every time you click.",
+      "caption": "Without a dependency array, this effect runs after every single render."
+    },
+    {
+      "type": "text",
+      "md": "React runs the callback *after* the component renders and the DOM has updated. That timing is intentional — your effect always sees the most up-to-date values on screen."
+    },
+    {
+      "type": "heading",
+      "text": "The Dependency Array: Controlling When Effects Run"
+    },
+    {
+      "type": "text",
+      "md": "Running an effect after *every* render is often too much. If you're fetching data, you don't want to hit the network on every keystroke. The **dependency array** (the second argument) is how you tell React when to re-run the effect.\n\nThere are three cases:"
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "// 1. No array — runs after EVERY render\nuseEffect(() => {\n  console.log('Runs every time');\n});\n\n// 2. Empty array — runs ONCE after the first render\nuseEffect(() => {\n  console.log('Runs once on mount');\n}, []);\n\n// 3. Array with values — runs when those values change\nuseEffect(() => {\n  console.log('userId changed:', userId);\n}, [userId]);",
+      "caption": "Three dependency array patterns and what they mean."
+    },
+    {
+      "type": "text",
+      "md": "The empty array `[]` is your go-to for **data fetching** — you want to load data once when the component first appears, not on every update. The array with values is perfect for reacting to specific changes, like re-fetching a user's profile whenever their `userId` changes."
+    },
+    {
+      "type": "heading",
+      "text": "Fetching Data with useEffect"
+    },
+    {
+      "type": "text",
+      "md": "Here's a practical, complete example: fetching a user from an API when the component mounts."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState, useEffect } from 'react';\n\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    setLoading(true);\n    fetch(`https://api.example.com/users/${userId}`)\n      .then(res => res.json())\n      .then(data => {\n        setUser(data);\n        setLoading(false);\n      });\n  }, [userId]);\n\n  if (loading) return <p>Loading...</p>;\n  return <h2>Hello, {user.name}!</h2>;\n}",
+      "output": "Shows \"Loading...\" initially, then \"Hello, [name]!\" once the data arrives. Re-fetches if userId prop changes.",
+      "caption": "Fetch on mount and re-fetch whenever userId changes."
+    },
+    {
+      "type": "heading",
+      "text": "The Cleanup Function"
+    },
+    {
+      "type": "text",
+      "md": "Some effects need to be **undone** when the component leaves the screen (unmounts) or before the effect runs again. A timer needs to be cleared. A subscription needs to be cancelled. An event listener needs to be removed.\n\nYou handle this by **returning a function** from your effect — React calls it at the right moment automatically."
+    },
+    {
+      "type": "code",
+      "lang": "jsx",
+      "code": "import { useState, useEffect } from 'react';\n\nfunction Clock() {\n  const [seconds, setSeconds] = useState(0);\n\n  useEffect(() => {\n    const interval = setInterval(() => {\n      setSeconds(prev => prev + 1);\n    }, 1000);\n\n    // Cleanup: stop the timer when component unmounts\n    return () => clearInterval(interval);\n  }, []); // Empty array: set up once, clean up once\n\n  return <p>Elapsed: {seconds}s</p>;\n}",
+      "output": "Displays \"Elapsed: 0s\" then increments every second. The timer stops cleanly when the component is removed.",
+      "caption": "Always return a cleanup function when you create a timer or subscription."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "When Does Cleanup Run?",
+      "md": "React calls your cleanup function in two situations:\n1. **Before the effect runs again** — so the old setup is torn down before the new one starts.\n2. **When the component unmounts** — so you don't leave timers or listeners running in the background.\n\nThink of it as always tidying up before leaving the kitchen."
+    },
+    {
+      "type": "heading",
+      "text": "Common Pitfalls"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Infinite Loops: The Most Common useEffect Mistake",
+      "md": "If you set state inside an effect **without** a dependency array (or with a dependency that changes every render), you'll trigger an infinite loop:\n\n```jsx\n// DANGER: infinite loop!\nuseEffect(() => {\n  setCount(count + 1); // triggers re-render\n});                     // runs again after re-render... forever\n```\n\nThe fix is almost always adding a proper dependency array. If the effect should run once, use `[]`. If it should run when specific values change, list exactly those values."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Missing Dependencies",
+      "md": "If your effect *uses* a variable but you don't include it in the dependency array, your effect will run with a stale (out-of-date) copy of that value. This is called a **stale closure** and causes subtle bugs.\n\nIf you have ESLint's `eslint-plugin-react-hooks` installed (which Create React App and Vite include by default), it will warn you when you forget a dependency. Listen to those warnings — they're almost always right."
+    },
+    {
+      "type": "quiz",
+      "question": "You want to fetch data from an API exactly once when the component first appears on screen. Which useEffect call is correct?",
+      "options": [
+        "useEffect(() => { fetch('/api/data'); })",
+        "useEffect(() => { fetch('/api/data'); }, []);",
+        "useEffect(() => { fetch('/api/data'); }, [data]);",
+        "useEffect(fetch('/api/data'), []);"
+      ],
+      "answerIndex": 1,
+      "explanation": "The empty dependency array `[]` tells React to run the effect only once, after the first render. No array at all means it runs after every render — way too many requests. Including `[data]` would re-fetch every time `data` changes, which could cause infinite loops. The last option is incorrect syntax — useEffect needs a *function* as its first argument, not the result of calling fetch."
+    }
+  ],
+  "keyTakeaways": [
+    "`useEffect` is where you handle side effects — anything that reaches outside React, like fetching data, timers, or subscriptions.",
+    "The dependency array controls when the effect runs: no array means every render, `[]` means once on mount, `[value]` means when that value changes.",
+    "Return a cleanup function from your effect to cancel timers, remove listeners, or undo anything that would otherwise leak.",
+    "Missing a dependency in the array causes stale data bugs; including a frequently-changing value without care can cause infinite loops.",
+    "For data fetching, the pattern is: empty array to fetch once, state variables for loading/data/error, and cleanup to handle fast prop changes."
+  ],
+  "exercise": {
+    "prompt": "Build a `WindowWidth` component that displays the current width of the browser window in pixels. It should update in real time as the user resizes the window. Use `useEffect` to add a `resize` event listener, and clean it up when the component unmounts.",
+    "starterCode": "import { useState, useEffect } from 'react';\n\nfunction WindowWidth() {\n  // TODO: add state to track the window width (hint: window.innerWidth)\n\n  useEffect(() => {\n    // TODO: define a handler function that updates the width state\n    // TODO: add an event listener for 'resize' on window\n    // TODO: return a cleanup function that removes the listener\n  }, []); // Run once on mount\n\n  return (\n    <p>{/* TODO: display the current width */}</p>\n  );\n}\n\nexport default WindowWidth;",
+    "hint": "Use `window.addEventListener('resize', handler)` to listen for resize events, and `window.removeEventListener('resize', handler)` in the cleanup function. Initialize state with `window.innerWidth` so it shows the right value immediately.",
+    "solution": "import { useState, useEffect } from 'react';\n\nfunction WindowWidth() {\n  const [width, setWidth] = useState(window.innerWidth);\n\n  useEffect(() => {\n    const handleResize = () => {\n      setWidth(window.innerWidth);\n    };\n\n    window.addEventListener('resize', handleResize);\n\n    return () => {\n      window.removeEventListener('resize', handleResize);\n    };\n  }, []);\n\n  return (\n    <p>Window width: {width}px</p>\n  );\n}\n\nexport default WindowWidth;"
+  }
+}

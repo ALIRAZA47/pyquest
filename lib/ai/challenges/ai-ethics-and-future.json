@@ -1,0 +1,53 @@
+{
+  "slug": "ai-ethics-and-future",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This code measures accuracy separately for each group to surface hidden bias. What does it print?",
+      "code": "predictions = [\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n    {\"actual\": 0, \"predicted\": 1, \"group\": \"B\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n]\nfor grp in [\"A\", \"B\"]:\n    subset = [p for p in predictions if p[\"group\"] == grp]\n    correct = sum(1 for p in subset if p[\"actual\"] == p[\"predicted\"])\n    print(f\"Group {grp}: {100*correct//len(subset)}%\")",
+      "options": [
+        "Group A: 100%\nGroup B: 0%",
+        "Group A: 50%\nGroup B: 50%",
+        "Group A: 100%\nGroup B: 100%"
+      ],
+      "answerIndex": 0,
+      "explanation": "Group A gets all 3 predictions right (100%) while group B gets all 3 wrong (0%). An overall accuracy of 50% would completely hide this — which is exactly why the lesson stresses measuring disaggregated performance: accuracy for whom?"
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "data = [\n    {\"actual\": 1, \"predicted\": 1, \"group\": \"A\"},\n    {\"actual\": 0, \"predicted\": 0, \"group\": \"A\"},\n    {\"actual\": 1, \"predicted\": 0, \"group\": \"B\"},\n]\nfor grp in [\"A\", \"B\"]:\n    subset = [p for p in data if p[\"group\"] == grp]\n    correct = sum(1 for p in subset if p[\"actual\"] == p[\"predicted\"])\n    acc = correct / len(data)\n    print(f\"{grp}: {acc:.0%}\")",
+      "options": [
+        "It divides by len(data) (the total) instead of len(subset), so each group's accuracy is understated.",
+        "The comparison should be p[\"actual\"] != p[\"predicted\"] to count correct predictions.",
+        "The loop should iterate over data directly instead of the list [\"A\", \"B\"]."
+      ],
+      "answerIndex": 0,
+      "explanation": "Per-group accuracy must divide each group's correct count by that group's size (len(subset)), not by the whole dataset (len(data)). The bug shrinks every group's score and defeats the purpose of disaggregation — group A would print 67% instead of its true 100%."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the privacy technique described: train the model on users' own devices and share only the model updates back to the server — never the raw personal data itself.",
+      "codeTemplate": "# Privacy-preserving training strategy\nstrategy = \"{{blank}} learning\"\n# Raw data stays on-device; only model updates are sent to the server.",
+      "blanks": [
+        {
+          "answer": "federated",
+          "accept": ["Federated", "federated", "FEDERATED"]
+        }
+      ],
+      "explanation": "Federated learning keeps raw data on the user's device and only shares model updates (gradients/weights), so sensitive records like location or voice never leave the phone. It is one of the lesson's three key privacy ideas, alongside data minimization and differential privacy."
+    },
+    {
+      "type": "reorder",
+      "prompt": "The lesson lists practical habits for being a thoughtful builder. Put these steps in the order a responsible team would actually follow when shipping a model.",
+      "lines": [
+        "Document your data sources: where it came from and who might be missing.",
+        "Ask 'who could this harm?' before you ship, not after.",
+        "Measure disaggregated performance: check accuracy for every subgroup.",
+        "Build in feedback loops so affected people can report errors.",
+        "Say no if the application shouldn't be built, even if it's feasible."
+      ],
+      "explanation": "You start by documenting where your data comes from and who is represented, then ask who could be harmed, then measure accuracy per subgroup to catch hidden bias, then add feedback loops for real users, and finally be willing to say no. Ethics is a process woven through building, not a check at the end."
+    }
+  ]
+}

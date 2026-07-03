@@ -1,0 +1,105 @@
+{
+  "slug": "unions-and-narrowing",
+  "title": "Unions & Narrowing",
+  "category": "Structuring Types",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to express \"one of several types\" with union types, and how TypeScript's narrowing guards let you work safely with each possibility.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Real-world values rarely fit neatly into a single type. A form field might hold a `string` or be `null` when the user hasn't filled it in yet. A button might accept a size of `\"sm\"`, `\"md\"`, or `\"lg\"` — nothing else. TypeScript handles both situations with **union types**: the `|` operator that means *\"this OR that\"*. Once you know how to define a union, you'll also learn **narrowing** — TypeScript's way of zooming in on the specific type inside an `if` branch so you get full type safety, not just a best-guess."
+    },
+    {
+      "type": "heading",
+      "text": "Your First Union Type"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a USB-C port",
+      "md": "A USB-C port accepts power cables, data cables, and video cables — it doesn't care which one you plug in, as long as it's a valid USB-C connector. A union type is the same idea: write `|` between the types you want to allow, and TypeScript rejects everything else."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// A variable that can hold a string OR a number\nlet id: string | number;\n\nid = \"user-42\";   // ✅ fine\nid = 99;          // ✅ also fine\n// id = true;     // ❌ boolean is not in the union",
+      "caption": "Use | to combine types. TypeScript enforces that only the listed types are accepted."
+    },
+    {
+      "type": "heading",
+      "text": "Literal Unions — Locking Down Exact Values"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "type Size = \"sm\" | \"md\" | \"lg\";\ntype StatusCode = 200 | 404 | 500;\n\nfunction resize(size: Size): void {\n  console.log(`Resizing to: ${size}`);\n}\n\nresize(\"md\");    // ✅ valid\n// resize(\"xl\"); // ❌ \"xl\" is not assignable to type Size",
+      "output": "Resizing to: md",
+      "caption": "Literal unions are a hand-picked whitelist. TypeScript catches typos at compile time and your editor autocompletes the valid options."
+    },
+    {
+      "type": "heading",
+      "text": "Narrowing with typeof"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function formatId(id: string | number): string {\n  if (typeof id === \"string\") {\n    // TypeScript KNOWS id is a string inside this block\n    return id.toUpperCase();\n  }\n  // Down here, TypeScript KNOWS id is a number\n  return id.toFixed(0);\n}\n\nconsole.log(formatId(\"user-42\")); // USER-42\nconsole.log(formatId(7.9));       // 8",
+      "output": "USER-42\n8",
+      "caption": "typeof is a narrowing guard: inside the if block TypeScript narrows the union to just the matched type, unlocking type-specific methods."
+    },
+    {
+      "type": "heading",
+      "text": "Narrowing with in — Checking Object Shape"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "type Cat = { meow: () => void };\ntype Dog = { bark: () => void };\n\nfunction makeNoise(animal: Cat | Dog): void {\n  if (\"meow\" in animal) {\n    animal.meow(); // TypeScript knows: Cat\n  } else {\n    animal.bark(); // TypeScript knows: Dog\n  }\n}",
+      "caption": "The in operator checks whether a property key exists, letting TypeScript narrow between object shapes."
+    },
+    {
+      "type": "heading",
+      "text": "Handling null and undefined"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function greet(name: string | null): string {\n  if (name === null) {\n    return \"Hello, stranger!\";\n  }\n  return `Hello, ${name}!`; // TypeScript knows name is a string here\n}\n\nconsole.log(greet(\"Alice\")); // Hello, Alice!\nconsole.log(greet(null));    // Hello, stranger!",
+      "output": "Hello, Alice!\nHello, stranger!",
+      "caption": "A strict equality check against null is all TypeScript needs to narrow away the null possibility."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Truthiness checks silently swallow 0 and \"\"",
+      "md": "It's tempting to write `if (value)` to guard against `null`, but falsy values also include `0`, `\"\"` (empty string), and `false`. Those are often **valid** values you don't want to skip.\n\nUse `=== null` or `!== undefined` for precise null checks:\n\n```ts\nfunction double(n: number | null): number {\n  // BAD — skips when n is 0!\n  // if (n) { return n * 2; }\n\n  // GOOD — only guards against null\n  if (n !== null) { return n * 2; }\n  return 0;\n}\n```"
+    },
+    {
+      "type": "quiz",
+      "question": "You have a variable typed as string | number | null. You write: if (typeof value === \"string\") { ... }. Inside that block, what does TypeScript think the type of value is?",
+      "options": [
+        "string | number | null",
+        "string | null",
+        "string",
+        "number"
+      ],
+      "answerIndex": 2,
+      "explanation": "The typeof === \"string\" check is a narrowing guard. Inside the block TypeScript is certain the value is a string — the number and null possibilities have been ruled out by the check."
+    }
+  ],
+  "keyTakeaways": [
+    "The | operator creates a union type that accepts any of the listed types or literal values.",
+    "Literal unions like \"sm\" | \"md\" | \"lg\" act as a compile-time whitelist, catching typos and enabling autocomplete.",
+    "typeof, in, and equality checks narrow a union to a specific type inside a branch, unlocking type-safe operations.",
+    "Avoid bare truthiness checks when 0, \"\", or false are valid values — prefer explicit null or undefined comparisons.",
+    "Union types are how TypeScript models the messy, optional, multi-shape data that real applications deal with every day."
+  ],
+  "exercise": {
+    "prompt": "Write a TypeScript function called `describe` that accepts a parameter `value` typed as `string | number | boolean | null`. It should return a string:\n- If value is null → return \"nothing here\"\n- If value is a boolean → return \"flag: true\" or \"flag: false\"\n- If value is a number → return \"number: 42\" (with the actual number)\n- If value is a string → return \"text: hello\" (with the actual string)\n\nUse typeof and a null check to narrow the type in each branch.",
+    "starterCode": "type Primitive = string | number | boolean | null;\n\nfunction describe(value: Primitive): string {\n  // TODO: handle null first (=== null), then narrow with typeof\n  return \"\";\n}\n\n// Test your function:\nconsole.log(describe(null));    // \"nothing here\"\nconsole.log(describe(true));    // \"flag: true\"\nconsole.log(describe(42));      // \"number: 42\"\nconsole.log(describe(\"hello\")); // \"text: hello\"",
+    "hint": "Check for null with === null before using typeof, because typeof null returns \"object\" — a classic JavaScript quirk TypeScript inherits. Handle null first, then use typeof for the remaining branches.",
+    "solution": "type Primitive = string | number | boolean | null;\n\nfunction describe(value: Primitive): string {\n  if (value === null) {\n    return \"nothing here\";\n  }\n  if (typeof value === \"boolean\") {\n    return `flag: ${value}`;\n  }\n  if (typeof value === \"number\") {\n    return `number: ${value}`;\n  }\n  return `text: ${value}`;\n}\n\nconsole.log(describe(null));    // \"nothing here\"\nconsole.log(describe(true));    // \"flag: true\"\nconsole.log(describe(42));      // \"number: 42\"\nconsole.log(describe(\"hello\")); // \"text: hello\""
+  }
+}

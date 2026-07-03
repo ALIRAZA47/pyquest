@@ -1,0 +1,52 @@
+{
+  "slug": "what-is-ml",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the inference step from the lesson: the frozen threshold learned during training was 3. What does this code print?",
+      "code": "def predict_spam(marks, threshold):\n    return marks >= threshold\n\nbest_threshold = 3\nnew_emails = [(\"Hi\", 2), (\"WIN NOW!!!\", 4)]\nfor subject, marks in new_emails:\n    label = \"SPAM\" if predict_spam(marks, best_threshold) else \"OK\"\n    print(f\"{label}: '{subject}'\")",
+      "options": [
+        "OK: 'Hi'\nSPAM: 'WIN NOW!!!'",
+        "SPAM: 'Hi'\nOK: 'WIN NOW!!!'",
+        "OK: 'Hi'\nOK: 'WIN NOW!!!'"
+      ],
+      "answerIndex": 0,
+      "explanation": "Inference just applies the frozen rule 'spam if marks >= 3'. 2 is below 3 so 'Hi' is OK; 4 is at or above 3 so 'WIN NOW!!!' is SPAM. No learning happens here — the threshold is already fixed."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "The lesson says libraries like scikit-learn replace our hand-written search loop with two lines: one for the training phase and one for the inference phase. Complete the method names.",
+      "codeTemplate": "model.{{blank}}(X_train, y_train)   # training\npreds = model.{{blank}}(X_test)     # inference",
+      "blanks": [
+        { "answer": "fit", "accept": [".fit", "fit()"] },
+        { "answer": "predict", "accept": [".predict", "predict()"] }
+      ],
+      "explanation": "`fit` performs training: the model adjusts its internal parameters to minimise mistakes on the labelled data. `predict` performs inference: the frozen model produces predictions on new, unseen inputs. These two calls mirror the two phases every ML system has."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lines in the correct order to first LEARN a threshold from labelled data, then use it for inference on a new value. (The frozen threshold must exist before you predict with it.)",
+      "lines": [
+        "data = [(1, False), (4, True), (2, False), (5, True)]",
+        "best_t, best_acc = 0, 0",
+        "for t in range(0, 8):",
+        "    acc = sum((v >= t) == label for v, label in data) / len(data)",
+        "    if acc > best_acc: best_acc, best_t = acc, t",
+        "print(\"new value is spam?\", 6 >= best_t)"
+      ],
+      "explanation": "Training must finish before inference: you define the labelled data, search every threshold, keep the best one, and only then apply that frozen threshold to a brand-new value. Trying to predict before the loop learns `best_t` would use an untrained threshold."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to measure the model's training accuracy the way the lesson does. It has a bug — what's wrong?",
+      "code": "data = [(0, False), (5, True), (6, True), (1, False)]\nthreshold = 3\n\ncorrect = sum(1 for marks, spam in data if marks >= threshold)\nacc = correct / len(data)\nprint(f\"accuracy: {acc:.0%}\")",
+      "options": [
+        "It counts predictions that are 'spam' instead of predictions that MATCH the label; it should compare (marks >= threshold) == spam",
+        "range should be used to try every threshold before counting",
+        "len(data) is wrong; accuracy should divide by the number of spam emails"
+      ],
+      "answerIndex": 0,
+      "explanation": "Accuracy counts how often the prediction matches the true label, so the condition must be `(marks >= threshold) == spam`. As written it just counts how many emails the model calls spam, which ignores the labels entirely and is not accuracy at all."
+    }
+  ]
+}

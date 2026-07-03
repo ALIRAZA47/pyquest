@@ -1,0 +1,166 @@
+{
+  "slug": "events-and-listeners",
+  "title": "Events & Listeners",
+  "category": "The DOM & Events",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to make your web pages respond to user actions by wiring up event listeners, working with the event object, and understanding how events travel through the DOM.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "A static web page is like a brochure — it looks nice, but it doesn't react to you. The moment you want a button to do something when clicked, a form to validate before submitting, or a search box to filter results as you type, you need **events**. Events are the heartbeat of interactive web development. In this lesson you will learn how to listen for user actions and run your own code in response — this is where JavaScript truly comes alive."
+    },
+    {
+      "type": "heading",
+      "text": "What Is an Event?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The Doorbell Analogy",
+      "md": "Think of your browser as a house. When someone presses the doorbell, a signal fires. If you have set up a listener (you are standing near the door), you hear it and react — open the door, peek through the window, or ignore it. If no one is listening, the doorbell ring disappears into silence. An **event** is the doorbell press; an **event listener** is you, deciding what to do when it rings."
+    },
+    {
+      "type": "text",
+      "md": "The browser fires events constantly — when the user clicks, moves the mouse, presses a key, submits a form, or even just scrolls. Your job is to register a *listener* on a specific element so your function runs when that event occurs."
+    },
+    {
+      "type": "heading",
+      "text": "addEventListener — The Core API"
+    },
+    {
+      "type": "text",
+      "md": "`addEventListener` takes two required arguments: the **event name** (a string like `\"click\"`) and a **callback function** that runs when the event fires. You call it on any DOM element."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const button = document.querySelector('#myButton');\n\nbutton.addEventListener('click', function () {\n  console.log('Button was clicked!');\n});",
+      "output": "Button was clicked!",
+      "caption": "The callback runs every time the button is clicked."
+    },
+    {
+      "type": "text",
+      "md": "Arrow functions work just as well and are often shorter:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "button.addEventListener('click', () => {\n  console.log('Arrow function handler fires too!');\n});",
+      "output": "Arrow function handler fires too!",
+      "caption": "Named or arrow — both work. You can even attach multiple listeners to the same element."
+    },
+    {
+      "type": "heading",
+      "text": "Common Event Types"
+    },
+    {
+      "type": "text",
+      "md": "There are dozens of event types. Here are the ones you will reach for most often as a beginner:\n\n| Event name | When it fires |\n|---|---|\n| `click` | User clicks an element |\n| `input` | Value of an `<input>` or `<textarea>` changes |\n| `change` | Input loses focus after its value changed |\n| `submit` | A `<form>` is submitted |\n| `keydown` | A key is pressed |\n| `mouseover` | Mouse moves onto an element |"
+    },
+    {
+      "type": "heading",
+      "text": "The Event Object"
+    },
+    {
+      "type": "text",
+      "md": "Every time an event fires the browser automatically passes an **event object** to your callback. This object is packed with useful information: which key was pressed, which element was clicked, where the mouse was, and much more. You just name a parameter in your callback to receive it — by convention it is called `e` or `event`."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "button.addEventListener('click', (e) => {\n  console.log('Event type:', e.type);\n  console.log('Clicked element:', e.target);\n  console.log('Mouse X position:', e.clientX);\n});",
+      "output": "Event type: click\nClicked element: <button id=\"myButton\">Click me</button>\nMouse X position: 214",
+      "caption": "e.target is the element the user actually interacted with."
+    },
+    {
+      "type": "text",
+      "md": "For `input` events, `e.target.value` gives you the current text the user has typed — incredibly useful for live search or validation:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const searchBox = document.querySelector('#search');\n\nsearchBox.addEventListener('input', (e) => {\n  console.log('User typed:', e.target.value);\n});",
+      "output": "User typed: h\nUser typed: he\nUser typed: hel\nUser typed: hell\nUser typed: hello",
+      "caption": "Fires on every keystroke, giving you real-time feedback."
+    },
+    {
+      "type": "heading",
+      "text": "event.preventDefault — Stopping Default Browser Behaviour"
+    },
+    {
+      "type": "text",
+      "md": "Some HTML elements have built-in behaviour. Clicking a link navigates the page. Submitting a form reloads the page. Sometimes you want to **intercept** that action and handle it yourself with JavaScript. That is exactly what `event.preventDefault()` does."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const form = document.querySelector('#signupForm');\n\nform.addEventListener('submit', (e) => {\n  e.preventDefault(); // Stop the page from reloading\n\n  const name = document.querySelector('#nameInput').value;\n  if (name.trim() === '') {\n    console.log('Name cannot be empty!');\n  } else {\n    console.log('Form submitted with name:', name);\n  }\n});",
+      "output": "Form submitted with name: Alice",
+      "caption": "Without preventDefault() the page would reload and you'd lose the values."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Forgetting preventDefault on Forms",
+      "md": "This is one of the most common beginner mistakes. If you add a `submit` listener but forget `e.preventDefault()`, the browser will reload the page the instant the form is submitted — before your JavaScript has a chance to do anything useful. Always call it first thing inside a submit handler."
+    },
+    {
+      "type": "heading",
+      "text": "Event Bubbling — How Events Travel Upward"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Bubbles Rising in Water",
+      "md": "Imagine the DOM as a glass of water, with deeply nested elements at the bottom and `document` at the top. When an event fires on an element, it is like a bubble released at the bottom — it rises up through every ancestor element all the way to the top. Each ancestor that has a listener for that event will also have its handler called."
+    },
+    {
+      "type": "text",
+      "md": "Bubbling means a click on a `<button>` inside a `<div>` will trigger click listeners on the button AND on the div AND on the body AND on the document. This is usually fine, but it can cause surprising double-triggers when you have listeners on nested elements."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// HTML: <div id=\"outer\"><button id=\"inner\">Click</button></div>\n\nconst outer = document.querySelector('#outer');\nconst inner = document.querySelector('#inner');\n\nouter.addEventListener('click', () => console.log('Outer div fired!'));\ninner.addEventListener('click', () => console.log('Inner button fired!'));",
+      "output": "Inner button fired!\nOuter div fired!",
+      "caption": "Clicking the button fires inner first, then the event bubbles up to outer."
+    },
+    {
+      "type": "text",
+      "md": "If you want to stop an event from bubbling further, call `e.stopPropagation()` inside your handler. Use this sparingly — it can make code harder to reason about — but it is good to know it exists."
+    },
+    {
+      "type": "quiz",
+      "question": "What does event.preventDefault() do when called inside a form's submit listener?",
+      "options": [
+        "It deletes the form from the DOM.",
+        "It prevents the browser's default action — in this case, stopping the page from reloading on submit.",
+        "It stops the event from reaching any other listeners on the same element.",
+        "It removes all other event listeners from the form."
+      ],
+      "answerIndex": 1,
+      "explanation": "preventDefault() cancels the browser's built-in behaviour for that event. For a form submit, the default behaviour is a full page reload (or navigation). Calling e.preventDefault() lets your JavaScript take full control of what happens instead."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Removing a Listener When You No Longer Need It",
+      "md": "You can remove a listener with `element.removeEventListener('click', handlerFn)`. This requires a **named function** reference — anonymous arrow functions cannot be removed because there is no variable pointing at them. Name your handler if you ever need to clean it up (useful in single-page apps to avoid memory leaks)."
+    }
+  ],
+  "keyTakeaways": [
+    "Use addEventListener(eventName, callback) to respond to user actions on any DOM element.",
+    "The event object (e) is automatically passed to your callback and contains details like e.target, e.type, and e.target.value.",
+    "Call e.preventDefault() to stop the browser's built-in behaviour, such as a form reload on submit.",
+    "Events bubble up through ancestor elements by default — a click on a child also triggers listeners on its parents.",
+    "Common event types you will use daily: click, input, submit, keydown, and change."
+  ],
+  "exercise": {
+    "prompt": "Build a tiny live character counter. There is a textarea with id 'bio' and a paragraph with id 'count'. As the user types in the textarea, update the paragraph to show how many characters have been typed (e.g. '42 characters'). Also wire up a Reset button with id 'resetBtn' that clears the textarea and resets the counter to '0 characters' when clicked.",
+    "starterCode": "// Select the elements\nconst bio = document.querySelector('#bio');\nconst count = document.querySelector('#count');\nconst resetBtn = document.querySelector('#resetBtn');\n\n// TODO: Add an 'input' listener on bio that updates count's text\n// to show the number of characters currently in bio\n\n// TODO: Add a 'click' listener on resetBtn that clears bio.value\n// and resets count's text to '0 characters'",
+    "hint": "Inside the input listener, use e.target.value.length to get the character count. Set count.textContent to a string like `${length} characters`. For the reset, set bio.value = '' and update count.textContent manually.",
+    "solution": "const bio = document.querySelector('#bio');\nconst count = document.querySelector('#count');\nconst resetBtn = document.querySelector('#resetBtn');\n\nbio.addEventListener('input', (e) => {\n  const length = e.target.value.length;\n  count.textContent = `${length} characters`;\n});\n\nresetBtn.addEventListener('click', () => {\n  bio.value = '';\n  count.textContent = '0 characters';\n});"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "slug": "links-and-navigation",
+  "title": "Links & Navigation",
+  "category": "Content & Media",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to connect web pages together using anchor tags, build in-page navigation with IDs, and create a clean, accessible nav bar.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "The web is literally a *web* — billions of pages linked together. Every clickable link you have ever followed was created with one tiny HTML element: `<a>`. Mastering anchors unlocks the ability to guide your readers from one page to another, jump them to a section of a long document, or open an external resource in a new tab. By the end of this lesson you will understand how links work under the hood and be able to build a real navigation bar."
+    },
+    {
+      "type": "heading",
+      "text": "The Anchor Element"
+    },
+    {
+      "type": "text",
+      "md": "The `<a>` (anchor) element wraps any content — text, an image, even a button — and makes it a clickable hyperlink. The most important attribute is `href` (short for *hypertext reference*), which tells the browser *where* to go."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<a href=\"https://example.com\">Visit Example</a>",
+      "output": "Underlined, clickable text that reads \"Visit Example\"."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Links are like street signs",
+      "md": "An `<a>` tag is the sign post; the `href` is the address printed on it. Without the address the sign is just a piece of metal — it looks like a link but goes nowhere."
+    },
+    {
+      "type": "heading",
+      "text": "Absolute vs. Relative URLs"
+    },
+    {
+      "type": "text",
+      "md": "URLs come in two flavors: **absolute** and **relative**.\n\n- An **absolute URL** contains the full address, including the protocol (`https://`), the domain, and the path. Use these when linking to *another website*.\n- A **relative URL** describes a path *relative to the current page*. Use these when linking to pages *within your own site* — they automatically adjust when you move your project to a different server."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- Absolute: full address, links to another site -->\n<a href=\"https://developer.mozilla.org\">MDN Web Docs</a>\n\n<!-- Relative: links to about.html in the same folder -->\n<a href=\"about.html\">About Us</a>\n\n<!-- Relative: links to a file one folder up, then into blog/ -->\n<a href=\"../blog/post.html\">Latest Post</a>",
+      "caption": "Use absolute URLs for external sites; use relative URLs within your own project."
+    },
+    {
+      "type": "heading",
+      "text": "Opening Links in a New Tab"
+    },
+    {
+      "type": "text",
+      "md": "Adding `target=\"_blank\"` makes the link open in a new browser tab. This is common for external links so users do not lose their place on your site. However, it comes with a subtle security concern — the new page could access and manipulate the opener page. Always pair `target=\"_blank\"` with `rel=\"noopener noreferrer\"` to close that loophole."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<a\n  href=\"https://example.com\"\n  target=\"_blank\"\n  rel=\"noopener noreferrer\"\n>\n  Open in new tab\n</a>",
+      "output": "Clicking the link opens example.com in a new browser tab safely."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Never use target=\"_blank\" without rel=\"noopener\"",
+      "md": "Without `rel=\"noopener noreferrer\"`, the newly opened page can call `window.opener` and redirect your original page to a malicious URL — a classic phishing trick. Modern browsers have started patching this, but adding the attribute yourself is still best practice and required by most linters."
+    },
+    {
+      "type": "heading",
+      "text": "Linking Within a Page (Fragment Links)"
+    },
+    {
+      "type": "text",
+      "md": "Long pages benefit from *jump links* that scroll the reader directly to a section. You do this in two steps:\n\n1. Give the destination element a unique `id` attribute.\n2. Set the link's `href` to `#` followed by that id.\n\nWhen clicked, the browser scrolls smoothly to that element."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- The link that jumps -->\n<a href=\"#contact\">Jump to Contact</a>\n\n<!-- ... lots of content ... -->\n\n<!-- The destination -->\n<section id=\"contact\">\n  <h2>Contact Us</h2>\n  <p>Reach us at hello@example.com</p>\n</section>",
+      "output": "Clicking \"Jump to Contact\" scrolls the page to the Contact section."
+    },
+    {
+      "type": "heading",
+      "text": "Building a Navigation Bar"
+    },
+    {
+      "type": "text",
+      "md": "A navigation bar is usually a `<nav>` element containing an unordered list (`<ul>`) of links. The `<nav>` landmark helps screen readers and search engines understand that this group of links is site navigation — not just any list."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<nav>\n  <ul>\n    <li><a href=\"index.html\">Home</a></li>\n    <li><a href=\"about.html\">About</a></li>\n    <li><a href=\"#contact\">Contact</a></li>\n    <li>\n      <a\n        href=\"https://github.com\"\n        target=\"_blank\"\n        rel=\"noopener noreferrer\"\n      >GitHub</a>\n    </li>\n  </ul>\n</nav>",
+      "output": "A vertical list of four clickable links: Home, About, Contact, GitHub."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Mark the active page",
+      "md": "Add `aria-current=\"page\"` to the link that points to the current page. Screen readers announce it, and you can style it with CSS using `[aria-current='page'] { font-weight: bold; }`."
+    },
+    {
+      "type": "quiz",
+      "question": "Which link opens a page in a new browser tab AND prevents the opened page from accessing window.opener?",
+      "options": [
+        "<a href=\"https://example.com\" target=\"_blank\">Link</a>",
+        "<a href=\"https://example.com\" target=\"_blank\" rel=\"noopener noreferrer\">Link</a>",
+        "<a href=\"https://example.com\" rel=\"noopener noreferrer\">Link</a>",
+        "<a href=\"https://example.com\" target=\"_new\">Link</a>"
+      ],
+      "answerIndex": 1,
+      "explanation": "You need BOTH target=\"_blank\" (to open a new tab) AND rel=\"noopener noreferrer\" (to block the new page from accessing window.opener). Option A opens a new tab but is insecure; option C is secure but stays in the same tab; option D uses a non-standard target value."
+    }
+  ],
+  "keyTakeaways": [
+    "The <a href=\"...\"> anchor element is how every hyperlink on the web is made.",
+    "Use absolute URLs (with https://) for external sites and relative URLs for pages within your own project.",
+    "Always add rel=\"noopener noreferrer\" alongside target=\"_blank\" to prevent a security vulnerability.",
+    "Fragment links (#section-id) let users jump to any element on the same page — perfect for long articles.",
+    "Wrap your links in a <nav> element to give screen readers and search engines a clear navigation landmark."
+  ],
+  "exercise": {
+    "prompt": "Build a one-page site skeleton with a navigation bar at the top. The nav should have three links: one to an external site (opens in a new tab, safely), one that jumps to a #features section on the same page, and one relative link to about.html. Below the nav, add a section with id=\"features\" and a short heading inside it.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Site</title>\n</head>\n<body>\n\n  <!-- TODO: Add a <nav> with a <ul> containing three <li> items:\n       1. An external link that opens in a new tab (with rel=\"noopener noreferrer\")\n       2. A fragment link to #features below\n       3. A relative link to about.html\n  -->\n\n  <!-- TODO: Add a <section> with id=\"features\" and an <h2> heading inside -->\n\n</body>\n</html>",
+    "hint": "Remember: target=\"_blank\" needs a partner — rel=\"noopener noreferrer\". For the fragment link, the href should start with #, and the section below must have a matching id attribute.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Site</title>\n</head>\n<body>\n\n  <nav>\n    <ul>\n      <li>\n        <a\n          href=\"https://developer.mozilla.org\"\n          target=\"_blank\"\n          rel=\"noopener noreferrer\"\n        >MDN Web Docs</a>\n      </li>\n      <li><a href=\"#features\">Features</a></li>\n      <li><a href=\"about.html\">About</a></li>\n    </ul>\n  </nav>\n\n  <section id=\"features\">\n    <h2>Our Features</h2>\n    <p>Discover what makes our site special.</p>\n  </section>\n\n</body>\n</html>"
+  }
+}

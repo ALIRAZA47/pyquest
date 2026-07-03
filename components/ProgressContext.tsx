@@ -20,8 +20,9 @@ import {
 import { fireConfetti } from "./confetti";
 import { rankGlyph, badgeGlyph } from "./glyphs";
 
-const STORAGE_KEY = "pyquest:game:v1";
-const LEGACY_KEY = "pyquest:progress:v1";
+const STORAGE_KEY = "quest:game:v1";
+const OLD_GAME_KEY = "pyquest:game:v1"; // migrate progress from the previous app name
+const LEGACY_KEY = "pyquest:progress:v1"; // very old completed-only array
 
 interface GameData {
   completed: string[];
@@ -137,7 +138,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let loaded: GameData = { ...EMPTY };
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_GAME_KEY);
       if (raw) {
         loaded = { ...EMPTY, ...JSON.parse(raw) };
       } else {

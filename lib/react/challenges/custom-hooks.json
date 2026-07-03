@@ -1,0 +1,59 @@
+{
+  "slug": "custom-hooks",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function useToggle(initialValue = false) {\n  if (initialValue) {\n    const [value, setValue] = useState(true);\n    return [value, () => setValue(prev => !prev)];\n  }\n  const [value, setValue] = useState(false);\n  return [value, () => setValue(prev => !prev)];\n}",
+      "options": [
+        "It calls useState conditionally — hooks must run at the top level, unconditionally, in the same order every render",
+        "useState can only be used inside components, never inside a custom hook",
+        "The hook is missing the `use` prefix so React will not recognize it",
+        "A toggle must use useReducer instead of useState"
+      ],
+      "answerIndex": 0,
+      "explanation": "React tracks state by the order hooks are called, and that order must be identical on every render. Putting useState inside an `if` means it sometimes runs and sometimes doesn't, so React loses track of which state belongs to which hook. Call useState once at the top level and pass initialValue straight into it."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the toggle function so it flips the boolean based on its latest value. Fill in the parameter name used in the functional updater.",
+      "codeTemplate": "function useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n  const toggle = useCallback(() => {\n    setValue({{blank}} => !{{blank}});\n  }, []);\n  return [value, toggle];\n}",
+      "blanks": [
+        {
+          "answer": "prev",
+          "accept": ["prev", "prevValue", "p", "previous", "v"]
+        },
+        {
+          "answer": "prev",
+          "accept": ["prev", "prevValue", "p", "previous", "v"]
+        }
+      ],
+      "explanation": "Passing a function to the setter (the functional update form) hands you the latest state value, so `prev => !prev` always flips the current boolean. This is what useToggle used in the lesson — it avoids bugs from reading a stale `value` variable. The parameter name is your choice; `prev` is the common convention."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a correct useCounter custom hook that creates count state, defines an increment function, and returns them as an object.",
+      "lines": [
+        "function useCounter(initialValue = 0) {",
+        "  const [count, setCount] = useState(initialValue);",
+        "  const increment = useCallback(() => setCount(prev => prev + 1), []);",
+        "  return { count, increment };",
+        "}"
+      ],
+      "explanation": "A custom hook is just a `use`-prefixed function. First call useState at the top level to create the count, then define the increment helper (using the functional updater so it reads the latest value), and finally return the values the component needs. Here they are returned as an object so the caller can destructure `{ count, increment }`."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Two Accordion components each call the same useToggle hook. The first is toggled open; the second is left alone. What does the console.log print after the first is opened?",
+      "code": "function useToggle(initial = false) {\n  const [open, setOpen] = useState(initial);\n  const toggle = () => setOpen(prev => !prev);\n  console.log(open);\n  return [open, toggle];\n}\n\n// <Accordion /> A: user clicks toggle once\n// <Accordion /> B: never clicked",
+      "options": [
+        "A logs true, B logs false — each component gets its own independent state",
+        "Both log true, because they share the hook's single state",
+        "Both log false, because state is reset on every render",
+        "It throws, because a hook cannot be reused by two components"
+      ],
+      "answerIndex": 0,
+      "explanation": "A custom hook is a recipe, not a shared singleton. Every component that calls useToggle gets its own fresh useState slot, so toggling A's state has no effect on B. Sharing logic does not mean sharing state — A logs true while B still logs false."
+    }
+  ]
+}

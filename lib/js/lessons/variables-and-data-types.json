@@ -1,0 +1,129 @@
+{
+  "slug": "variables-and-data-types",
+  "title": "Variables & Data Types",
+  "category": "JavaScript Foundations",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how to store and label information in JavaScript using let and const, and meet the five primitive types your programs will use every day.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every useful program needs to remember things. A shopping cart has to remember what you added. A login form has to remember your username. A score counter has to remember the current score. In JavaScript, we store those remembered values in **variables**.\n\nIn this lesson you will learn how to create variables the modern way, discover the different kinds of values JavaScript understands, and pick up a handy trick called the **template literal** that makes building strings a breeze."
+    },
+    {
+      "type": "heading",
+      "text": "What Is a Variable?"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Variables are labelled boxes",
+      "md": "Picture a row of cardboard boxes in a storage room. Each box has a sticky-note label on it — \"username\", \"score\", \"isLoggedIn\" — and something stored inside. A variable is exactly that: a **named container** that holds a value. You can look inside the box, replace what's in it, or read the label to find the right box later."
+    },
+    {
+      "type": "text",
+      "md": "JavaScript gives you two modern keywords for creating variables: `let` and `const`. You will almost never need the older `var` keyword — we will explain why in a moment."
+    },
+    {
+      "type": "heading",
+      "text": "let vs const"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// let — the value can change later\nlet score = 0;\nscore = 10;   // reassigning is fine\nconsole.log(score);\n\n// const — the value is fixed (constant)\nconst siteName = \"Quest\";\nconsole.log(siteName);",
+      "output": "10\nQuest",
+      "caption": "Use let when the value will change; use const when it should stay fixed."
+    },
+    {
+      "type": "text",
+      "md": "The rule of thumb is simple: **start with `const`**. If you later realise the value needs to change, switch it to `let`. This habit prevents accidental overwrites and makes your code easier to reason about at a glance."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Why not var?",
+      "md": "`var` is the old way of declaring variables. It has confusing scoping rules — a `var` declared inside an `if` block leaks out of that block, which causes hard-to-spot bugs. `let` and `const` follow block scoping rules that match what you would expect. Modern JavaScript (ES6+) replaced `var` with `let` and `const`, and you should use those exclusively."
+    },
+    {
+      "type": "heading",
+      "text": "Primitive Data Types"
+    },
+    {
+      "type": "text",
+      "md": "JavaScript has five primitive types you will work with constantly. \"Primitive\" just means a single, simple value — not a collection or an object."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// 1. string — text, wrapped in quotes\nconst greeting = \"Hello, world!\";\n\n// 2. number — integers and decimals alike\nconst age = 28;\nconst price = 9.99;\n\n// 3. boolean — only two possible values\nconst isOnline = true;\nconst hasError = false;\n\n// 4. null — intentionally empty\nconst selectedUser = null;\n\n// 5. undefined — a variable declared but not yet assigned\nlet pendingValue;\nconsole.log(pendingValue);",
+      "output": "undefined",
+      "caption": "The five primitives you will encounter in almost every JavaScript program."
+    },
+    {
+      "type": "text",
+      "md": "A quick note on `null` vs `undefined`: **`null`** means \"there is nothing here *on purpose*\" — you explicitly set it. **`undefined`** means \"there is nothing here because no value has been assigned yet\" — JavaScript sets it automatically. Both represent emptiness, but for different reasons."
+    },
+    {
+      "type": "heading",
+      "text": "Checking Types with typeof"
+    },
+    {
+      "type": "text",
+      "md": "JavaScript lets you inspect the type of any value at runtime using the `typeof` operator. It returns a string describing the type. This is useful for debugging and for writing code that behaves differently depending on what it receives."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "console.log(typeof \"Hello\");     // string\nconsole.log(typeof 42);          // number\nconsole.log(typeof true);        // boolean\nconsole.log(typeof undefined);   // undefined\nconsole.log(typeof null);        // object  ← famous quirk!",
+      "output": "string\nnumber\nboolean\nundefined\nobject",
+      "caption": "typeof returns a string name for each type — with one famous exception."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "typeof null is \"object\" — a 26-year-old bug",
+      "md": "You read that right. `typeof null` returns `\"object\"`, which is technically wrong — `null` is a primitive, not an object. This is a well-known bug that dates back to the very first version of JavaScript in 1995. It was never fixed because fixing it would break millions of websites. Just remember: if `typeof` returns `\"object\"` and you're suspicious, double-check whether the value might be `null`."
+    },
+    {
+      "type": "heading",
+      "text": "Template Literals — a Better Way to Build Strings"
+    },
+    {
+      "type": "text",
+      "md": "Joining strings and variables together with `+` works, but it gets messy fast. Template literals (introduced in ES6) use backtick quotes and `${}` placeholders to embed values directly inside a string — much cleaner."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const name = \"Alice\";\nconst score = 42;\n\n// Old way — hard to read\nconsole.log(\"Player \" + name + \" scored \" + score + \" points.\");\n\n// Modern way — template literal\nconsole.log(`Player ${name} scored ${score} points.`);",
+      "output": "Player Alice scored 42 points.\nPlayer Alice scored 42 points.",
+      "caption": "Backtick strings let you embed any expression inside ${ }."
+    },
+    {
+      "type": "quiz",
+      "question": "What will the following code print?\n\nconst x = 5;\nx = 10;\nconsole.log(x);",
+      "options": [
+        "10",
+        "5",
+        "undefined",
+        "It throws a TypeError"
+      ],
+      "answerIndex": 3,
+      "explanation": "x is declared with const, which means its value cannot be reassigned. Attempting to do so throws a TypeError: Assignment to constant variable. If you need to reassign, use let instead."
+    }
+  ],
+  "keyTakeaways": [
+    "Use const by default and let when you know the value needs to change — avoid var entirely.",
+    "The five primitives are string, number, boolean, null, and undefined — they cover the vast majority of simple values in JavaScript.",
+    "typeof tells you the type of a value at runtime, but remember: typeof null returns \"object\" due to a historical bug.",
+    "Template literals (backtick strings with ${}) are the clearest way to embed variable values inside text."
+  ],
+  "exercise": {
+    "prompt": "Create three variables that describe a user: their name (a string), their age (a number), and whether they are a premium member (a boolean). Then use a template literal to log a sentence like: \"Alex is 30 years old and is a premium member: true\".",
+    "starterCode": "// TODO: declare a name variable with const\n\n// TODO: declare an age variable with const\n\n// TODO: declare an isPremium variable with const\n\n// TODO: use a template literal to log the sentence\nconsole.log(/* your template literal here */);",
+    "hint": "Remember that template literals use backticks (`) and embed values with ${ }. For example: `Hello, ${name}!`",
+    "solution": "const name = \"Alex\";\nconst age = 30;\nconst isPremium = true;\n\nconsole.log(`${name} is ${age} years old and is a premium member: ${isPremium}`);"
+  }
+}

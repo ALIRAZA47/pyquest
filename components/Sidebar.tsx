@@ -29,16 +29,22 @@ const QUICK_LINKS: Record<string, QuickLink[]> = {
     { href: "/learn/profile", icon: "trophy", label: "Stats" },
   ],
   ml: [
-    { href: "/", icon: "compass", label: "Courses" },
+    { href: "/tracks/core", icon: "compass", label: "Courses" },
     { href: "/learn/playground", icon: "flask", label: "Play" },
     { href: "/learn/profile", icon: "trophy", label: "Stats" },
   ],
   ai: [
-    { href: "/", icon: "compass", label: "Courses" },
+    { href: "/tracks/core", icon: "compass", label: "Courses" },
     { href: "/learn/playground", icon: "flask", label: "Play" },
     { href: "/learn/profile", icon: "trophy", label: "Stats" },
   ],
 };
+
+// Web courses (no Python runner) — link to the web track + the shared profile.
+const WEB_QUICK_LINKS: QuickLink[] = [
+  { href: "/tracks/web", icon: "compass", label: "Courses" },
+  { href: "/learn/profile", icon: "trophy", label: "Stats" },
+];
 
 export function Sidebar({
   mobileOpen,
@@ -62,7 +68,7 @@ export function Sidebar({
     : "";
 
   const courseDone = info.course.allSlugs.filter((s) => isComplete(s)).length;
-  const quickLinks = QUICK_LINKS[courseId] ?? QUICK_LINKS.python;
+  const quickLinks = QUICK_LINKS[courseId] ?? WEB_QUICK_LINKS;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -89,7 +95,7 @@ export function Sidebar({
             <Glyph name="snake" className="h-5 w-5" />
           </span>
           <span className="text-xl font-black tracking-tight">
-            <span className="text-gradient">PyQuest</span>
+            <span className="text-gradient">Quest</span>
           </span>
         </Link>
         <span className="ml-1 flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-faint">

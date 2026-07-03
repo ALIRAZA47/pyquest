@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-// A cohesive, custom line-icon set for PyQuest — replaces emojis everywhere.
+// A cohesive, custom line-icon set for Quest — replaces emojis everywhere.
 // Every glyph is a 24×24 stroke icon that inherits `currentColor`, so it
 // themes with light/dark and can be tinted with the accent color.
 
@@ -564,6 +564,41 @@ export const GLYPHS: Record<string, (p: P) => JSX.Element> = {
       <path d="M9.5 16h5M3.5 11v3M20.5 11v3" />
     </S>
   ),
+  browser: (p) => (
+    <S {...p}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 9h18" />
+      {dot(6, 7, 0.7)}
+      {dot(8.5, 7, 0.7)}
+    </S>
+  ),
+  brush: (p) => (
+    <S {...p}>
+      <path d="M9.5 15.5 18.2 6.8a2 2 0 0 0-2.8-2.8L6.7 12.6" />
+      <path d="M4 20c1-3.2 2.4-4.2 4-4 1.4.2 2.2 1.4 2 2.8-.2 1.6-2 2.2-6 1.2z" />
+    </S>
+  ),
+  atom: (p) => (
+    <S {...p}>
+      {dot(12, 12, 1.5)}
+      <ellipse cx="12" cy="12" rx="9" ry="3.6" />
+      <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)" />
+      <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)" />
+    </S>
+  ),
+  hexagon: (p) => (
+    <S {...p}>
+      <path d="M12 3l7.5 4.5v9L12 21l-7.5-4.5v-9L12 3z" />
+      <path d="M8.5 14.5V9.5l3.5 2 3.5-2v5" />
+    </S>
+  ),
+  image: (p) => (
+    <S {...p}>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" />
+      <circle cx="8.5" cy="10" r="1.6" />
+      <path d="M4 17l5-4 4 3 3-2.5 4 3.5" />
+    </S>
+  ),
 };
 
 export type GlyphName = keyof typeof GLYPHS;
@@ -606,6 +641,31 @@ export const CATEGORY_ICON: Record<string, string> = {
   "Games & Adversarial Search": "branch",
   "Learning Machines": "network",
   "Modern AI": "wand",
+  // HTML
+  "Getting Started with HTML": "browser",
+  "Content & Media": "image",
+  "Forms & Semantics": "list",
+  // CSS
+  "CSS Fundamentals": "brush",
+  Layout: "layers",
+  "Responsive & Motion": "wand",
+  // JavaScript
+  "JavaScript Foundations": "bolt",
+  "Data & Logic": "hash",
+  "The DOM & Events": "network",
+  "Asynchronous JavaScript": "loop",
+  // TypeScript
+  "TypeScript Basics": "tag",
+  "Structuring Types": "puzzle",
+  "Advanced TypeScript": "cpu",
+  // React
+  "React Basics": "atom",
+  "State & Interaction": "loop",
+  Hooks: "pin",
+  // Node
+  "Node.js Basics": "hexagon",
+  "Building a Server": "store",
+  "APIs & Async": "network",
 };
 
 export const RANK_ICON: Record<string, string> = {
@@ -731,6 +791,65 @@ export const LESSON_ICON: Record<string, string> = {
   "nlp-and-llms": "comment",
   "computer-vision": "target",
   "ai-ethics-and-future": "shield",
+  // HTML
+  "what-is-html": "browser",
+  "how-the-web-works": "globe",
+  "html-document-structure": "file",
+  "headings-and-text": "quote",
+  "links-and-navigation": "link",
+  "images-and-media": "image",
+  "forms-and-inputs": "keyboard",
+  "semantic-html": "layers",
+  // CSS
+  "what-is-css": "brush",
+  "css-selectors": "target",
+  "colors-and-units": "palette",
+  "cascade-and-specificity": "layers",
+  "the-box-model": "box",
+  flexbox: "columns",
+  "css-grid": "blocks",
+  "responsive-design": "browser",
+  "transitions-and-animations": "wand",
+  // JavaScript
+  "what-is-javascript": "bolt",
+  "variables-and-data-types": "inbox",
+  "operators-and-expressions": "operators",
+  arrays: "list",
+  objects: "braces",
+  conditionals: "branch",
+  loops: "loop",
+  "javascript-functions": "puzzle",
+  "the-dom": "network",
+  "events-and-listeners": "target",
+  "promises-and-async": "loop",
+  "the-event-loop": "loop",
+  // TypeScript
+  "what-is-typescript": "tag",
+  "basic-types": "tag",
+  "typing-functions": "puzzle",
+  "interfaces-and-types": "braces",
+  "unions-and-narrowing": "branch",
+  generics: "cpu",
+  "typescript-with-react": "atom",
+  // React
+  "what-is-react": "atom",
+  jsx: "braces",
+  "components-and-props": "blocks",
+  "state-with-usestate": "loop",
+  "handling-events": "target",
+  "conditional-rendering": "branch",
+  "lists-and-keys": "list",
+  "the-useeffect-hook": "pin",
+  "custom-hooks": "pin",
+  // Node
+  "what-is-nodejs": "hexagon",
+  "modules-and-npm": "box",
+  "the-node-runtime": "loop",
+  "the-file-system": "folder",
+  "http-server": "store",
+  "express-and-routing": "network",
+  "building-a-rest-api": "network",
+  "async-in-node": "loop",
 };
 
 export function categoryGlyph(name: string): string {

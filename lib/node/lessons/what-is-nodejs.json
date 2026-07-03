@@ -1,0 +1,102 @@
+{
+  "slug": "what-is-nodejs",
+  "title": "What is Node.js?",
+  "category": "Node.js Basics",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Discover how Node.js lets you run JavaScript outside the browser — on servers, in terminals, and everywhere in between.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know that JavaScript makes web pages interactive. But here is a question worth sitting with: **why should JavaScript only run inside a browser?** The logic you write — loops, functions, data manipulation — has nothing inherently \"browsery\" about it. Node.js is the technology that answered that question back in 2009, and it changed what JavaScript developers could build forever. With Node.js, the same language you use to animate a button can also power a web server, read files from your hard drive, talk to a database, or build a command-line tool. One language, everywhere."
+    },
+    {
+      "type": "heading",
+      "text": "JavaScript Needs an Engine"
+    },
+    {
+      "type": "text",
+      "md": "JavaScript is just text — a list of instructions written for humans to read. For a computer to actually *run* those instructions, something needs to translate them into machine code. In browsers, that translator is called a **JavaScript engine**. Google Chrome uses one called **V8**, and it is blazingly fast.\n\nNode.js takes that exact same V8 engine and packages it so you can run it straight from your terminal — no browser required. When you type `node myfile.js`, V8 springs to life, reads your file, and executes it."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "V8 is like a universal translator",
+      "md": "Imagine you wrote a letter in French. A French person (the browser) can read it, but so can a French translator living in another country (Node.js). The letter — your JavaScript — is the same. Only the *reader* changed. Node.js is that translator living outside the browser, able to deliver your message to entirely different audiences: a server, a database, a file system."
+    },
+    {
+      "type": "text",
+      "md": "## What You Can Build with Node.js\n\nNode.js shines wherever a program needs to handle **lots of simultaneous connections or I/O operations** (I/O means reading and writing — files, networks, databases). Common use cases:\n\n- **Web servers and REST APIs** — the backend your React app talks to\n- **Command-line tools (CLIs)** — automation scripts you run in the terminal\n- **Real-time applications** — chat apps, live dashboards, collaborative editors\n- **Build tools** — bundlers like Webpack and Vite are Node.js programs\n- **Serverless functions** — small units of server logic deployed to the cloud\n\nNetflix, LinkedIn, and Uber run significant parts of their infrastructure on Node.js."
+    },
+    {
+      "type": "heading",
+      "text": "Running a File with the node Command"
+    },
+    {
+      "type": "code",
+      "lang": "bash",
+      "code": "# Check that Node.js is installed\nnode --version\n\n# Run a JavaScript file\nnode hello.js",
+      "output": "v20.11.0\nHello from Node.js!\nGreetings, world."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// hello.js\nconsole.log(\"Hello from Node.js!\");\n\nconst name = \"world\";\nconsole.log(`Greetings, ${name}.`);",
+      "output": "Hello from Node.js!\nGreetings, world.",
+      "caption": "Identical JavaScript syntax — the same console.log you already know — just running outside the browser."
+    },
+    {
+      "type": "heading",
+      "text": "No DOM — A Different Set of APIs"
+    },
+    {
+      "type": "text",
+      "md": "In the browser, JavaScript comes pre-loaded with the **DOM** — APIs like `document.querySelector` and `addEventListener`. Node.js has no browser, so it has no DOM. Instead, it ships with **built-in modules** suited for server-side work: `fs` (files), `http` (web servers), `path` (file paths), and `os` (operating system info). You load them with `require`. Here is what reading a file looks like:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// Reading a file from disk — impossible in a plain browser script\nconst fs = require(\"fs\");\n\nconst contents = fs.readFileSync(\"hello.js\", \"utf8\");\nconsole.log(contents);",
+      "caption": "The built-in 'fs' module lets Node read, write, and delete files — something the browser deliberately prevents for security."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Browser APIs do not exist in Node.js",
+      "md": "`document`, `window`, `localStorage`, and `alert` are all browser-only. If you paste browser code into a Node file and run it, you will get `ReferenceError: document is not defined`. Always ask: \"Am I writing this for a browser or for Node?\" The answer changes which APIs are available to you."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// server.js — the smallest possible web server\nconst http = require(\"http\");\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { \"Content-Type\": \"text/plain\" });\n  res.end(\"Hello from my Node server!\\n\");\n});\n\nserver.listen(3000, () => {\n  console.log(\"Server running at http://localhost:3000\");\n});",
+      "output": "Server running at http://localhost:3000",
+      "caption": "Run with 'node server.js', then open http://localhost:3000 in your browser. You will see your message."
+    },
+    {
+      "type": "quiz",
+      "question": "You try to run `document.querySelector('#app')` inside a Node.js script. What happens?",
+      "options": [
+        "It works the same as in the browser",
+        "It returns null because there is no HTML file loaded",
+        "Node.js throws a ReferenceError because there is no DOM",
+        "Node.js opens a browser window to find the element"
+      ],
+      "answerIndex": 2,
+      "explanation": "Node.js has no DOM at all — `document` simply does not exist in the Node environment. Accessing an undefined global throws a ReferenceError. The DOM is a browser-only concept; server-side code interacts with files, networks, and databases instead."
+    }
+  ],
+  "keyTakeaways": [
+    "Node.js runs JavaScript outside the browser using Google's V8 engine.",
+    "There is no DOM in Node.js — instead you get file system, network, and OS APIs.",
+    "You run a JavaScript file with Node by typing `node filename.js` in your terminal.",
+    "Node.js is used to build web servers, REST APIs, CLIs, real-time apps, and build tools.",
+    "All the JavaScript syntax you already know works exactly the same in Node.js."
+  ],
+  "exercise": {
+    "prompt": "Create a Node.js script that prints a friendly server startup message. It should: (1) read a port value from `process.env.PORT`, defaulting to 3000 if that variable is not set, (2) print a message saying the server would start on that port, and (3) also print the current Node.js version using `process.version`. No actual server is needed — just the console output.",
+    "starterCode": "// startup.js\n// TODO: Read the port from process.env.PORT, default to 3000 if not set\nconst port = /* your code here */;\n\n// TODO: Print a startup message that includes the port number\nconsole.log(/* your message */);\n\n// TODO: Print the Node.js version using process.version\nconsole.log(/* node version message */);",
+    "hint": "process.env.PORT gives you the environment variable as a string (or undefined). Use the || operator to fall back to 3000. process.version is a built-in string like 'v20.11.0' — no require needed.",
+    "solution": "// startup.js\nconst port = process.env.PORT || 3000;\n\nconsole.log(`Server would start on http://localhost:${port}`);\nconsole.log(`Running on Node.js ${process.version}`);"
+  }
+}

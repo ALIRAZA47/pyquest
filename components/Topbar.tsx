@@ -63,7 +63,7 @@ export function Topbar({
           </kbd>
         </button>
         <Link
-          href="/"
+          href={`/tracks/${info.track}`}
           className="hidden rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-accent sm:block"
         >
           Courses

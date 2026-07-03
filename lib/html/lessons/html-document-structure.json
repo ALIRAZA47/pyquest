@@ -1,0 +1,129 @@
+{
+  "slug": "html-document-structure",
+  "title": "HTML Document Structure",
+  "category": "Getting Started with HTML",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn the essential skeleton every HTML page needs, from the DOCTYPE declaration to the head and body sections.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every web page you have ever visited — from a simple blog post to a complex online store — is built on the same foundational skeleton. Before a browser can display anything, it needs to understand *what kind of document* it is reading and *how the pieces are organized*. In this lesson you will learn exactly what that skeleton looks like, why each piece exists, and how to write it confidently from memory."
+    },
+    {
+      "type": "heading",
+      "text": "The Full Boilerplate at a Glance"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Hello, World!</h1>\n    <p>This is my first web page.</p>\n  </body>\n</html>",
+      "output": "A white page showing a large heading 'Hello, World!' followed by the paragraph text.",
+      "caption": "This is the complete boilerplate — every HTML file you write starts here."
+    },
+    {
+      "type": "text",
+      "md": "Looks a little intimidating? Do not worry. We will walk through every single line and you will see that each one has a clear, simple job."
+    },
+    {
+      "type": "heading",
+      "text": "Line 1: <!DOCTYPE html>"
+    },
+    {
+      "type": "text",
+      "md": "The very first line is not actually an HTML element — it is a **declaration**. It tells the browser: *\"This file follows the modern HTML5 standard.\"* Without it, some browsers fall back into a quirky legacy rendering mode that can make your carefully designed page look broken in unexpected ways."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a language label on a letter",
+      "md": "Imagine mailing a letter to a translator. Before they start translating, they need to know which language it is written in. `<!DOCTYPE html>` is that label — it tells the browser which rulebook to use before it reads a single word of your content."
+    },
+    {
+      "type": "heading",
+      "text": "The <html> Element: the Root"
+    },
+    {
+      "type": "text",
+      "md": "Everything else lives *inside* the `<html>` element. It is the root — the outermost container for your entire page. Notice the `lang=\"en\"` attribute. This tells screen readers and search engines what language the page is written in, which improves accessibility and SEO. Always include it."
+    },
+    {
+      "type": "heading",
+      "text": "The <head>: Behind-the-Scenes Information"
+    },
+    {
+      "type": "text",
+      "md": "The `<head>` section holds **metadata** — information *about* the page rather than content *on* the page. Users never see this section directly, but browsers and search engines rely on it heavily. Let's look at its three most important children:"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<head>\n  <!-- 1. Character encoding -->\n  <meta charset=\"UTF-8\" />\n\n  <!-- 2. Responsive viewport -->\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  <!-- 3. Tab title -->\n  <title>My First Page</title>\n</head>",
+      "caption": "The three essential tags inside <head> and what each one does."
+    },
+    {
+      "type": "text",
+      "md": "**`<meta charset=\"UTF-8\">`** — Sets the character encoding so the browser knows how to decode the bytes in your file. UTF-8 covers virtually every character in every language, including emoji. Without this, accented letters or special symbols might display as garbled nonsense.\n\n**`<meta name=\"viewport\" ...>`** — Tells mobile browsers *not* to zoom out and shrink your page. Without it, your site will appear tiny on a phone. This single line is the entry point to making sites work on mobile.\n\n**`<title>`** — Sets the text that appears in the browser tab and in search engine results. It is the only `<head>` element users actually see (in the tab bar)."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The <title> is NOT the same as an <h1>",
+      "md": "A very common beginner mistake is to assume the `<title>` in the head shows up on the page. It does not — it only appears in the **browser tab** and in search results. To display a visible heading on the page, you need an `<h1>` element inside `<body>`."
+    },
+    {
+      "type": "heading",
+      "text": "The <body>: What Users Actually See"
+    },
+    {
+      "type": "text",
+      "md": "Everything inside `<body>` is the **visible content** of your page — headings, paragraphs, images, buttons, links, and everything else. This is where you will spend most of your time as an HTML author. The `<head>` is configuration; the `<body>` is the show."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<body>\n  <h1>Welcome to My Site</h1>\n  <p>I am learning HTML and loving it.</p>\n</body>",
+      "output": "A large bold heading followed by a paragraph of text on the page."
+    },
+    {
+      "type": "heading",
+      "text": "Nesting and Indentation"
+    },
+    {
+      "type": "text",
+      "md": "HTML elements can live *inside* other elements — this is called **nesting**. The structure forms a tree:\n\n- `<html>` contains `<head>` and `<body>`\n- `<head>` contains `<meta>` and `<title>`\n- `<body>` contains your content elements\n\nProper **indentation** (two or four spaces per level) makes that tree visible at a glance. It does not change how the browser renders the page, but it makes your code vastly easier to read, debug, and share."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Indent consistently and your future self will thank you",
+      "md": "Pick either 2 or 4 spaces (or a tab) and stick to it throughout a file. Most code editors let you configure this and even auto-format for you. Good indentation is a sign of a thoughtful developer."
+    },
+    {
+      "type": "quiz",
+      "question": "Which part of an HTML document contains the visible content that users see on the page?",
+      "options": [
+        "The <!DOCTYPE html> declaration",
+        "The <head> element",
+        "The <body> element",
+        "The <meta> element"
+      ],
+      "answerIndex": 2,
+      "explanation": "The <body> element holds everything the user sees rendered in the browser — text, images, headings, and more. The <head> holds metadata that the browser and search engines use behind the scenes, and <!DOCTYPE html> is just a declaration, not a container for content."
+    }
+  ],
+  "keyTakeaways": [
+    "Every HTML file must start with <!DOCTYPE html> to enable modern browser rendering.",
+    "The <head> holds invisible metadata (charset, viewport, title) — the <body> holds visible content.",
+    "Always set charset=\"UTF-8\" and the viewport meta tag so text renders correctly and your page is mobile-friendly.",
+    "The <title> tag controls the browser tab text, not any visible heading on the page.",
+    "Consistent indentation makes nested HTML readable and easier to debug."
+  ],
+  "exercise": {
+    "prompt": "Build a complete HTML document from scratch. Give the page a meaningful <title>, add an <h1> heading inside the body, and write a short <p> paragraph introducing yourself. Make sure you include the charset and viewport meta tags.",
+    "starterCode": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <!-- TODO: add charset meta tag -->\n    <!-- TODO: add viewport meta tag -->\n    <!-- TODO: add a descriptive title -->\n  </head>\n  <body>\n    <!-- TODO: add an h1 heading -->\n    <!-- TODO: add a paragraph about yourself -->\n  </body>\n</html>",
+    "hint": "The charset meta tag looks like: <meta charset=\"UTF-8\" />. The viewport meta tag looks like: <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />. Your <title> text goes between opening and closing tags, just like <title>Your Title Here</title>.",
+    "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>About Me</title>\n  </head>\n  <body>\n    <h1>Hi, I'm Alex!</h1>\n    <p>I am learning HTML and excited to build my first web page from scratch.</p>\n  </body>\n</html>"
+  }
+}

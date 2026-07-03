@@ -1,0 +1,55 @@
+{
+  "slug": "bfs-and-dfs",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This BFS explores a graph level by level from the start node. What does it print?",
+      "code": "from collections import deque\n\ngraph = {\n    'S': ['A', 'B'],\n    'A': ['C'],\n    'B': ['C'],\n    'C': []\n}\n\ndef bfs(graph, start):\n    visited = set([start])\n    queue = deque([start])\n    order = []\n    while queue:\n        node = queue.popleft()\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                visited.add(nb)\n                queue.append(nb)\n    return order\n\nprint(bfs(graph, 'S'))",
+      "options": [
+        "['S', 'A', 'B', 'C']",
+        "['S', 'A', 'C', 'B']",
+        "['S', 'A', 'B', 'C', 'C']",
+        "['S', 'C', 'B', 'A']"
+      ],
+      "answerIndex": 0,
+      "explanation": "BFS uses a queue (FIFO), so it finishes distance 1 (A, then B) before distance 2 (C). Even though both A and B point to C, the visited set means C is enqueued only once — that's why C appears a single time, not twice."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "from collections import deque\n\ndef bfs(graph, start):\n    visited = set([start])\n    queue = deque([start])\n    order = []\n    while queue:\n        node = queue.pop()          # take the next node\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                visited.add(nb)\n                queue.append(nb)\n    return order",
+      "options": [
+        "queue.pop() removes from the right (LIFO), turning this into DFS — it should be queue.popleft() for true FIFO/BFS order",
+        "visited should be updated after the while loop, not inside it",
+        "deque cannot be used as a queue; you must use a plain list",
+        "order.append(node) should come after the for loop, not before it"
+      ],
+      "answerIndex": 0,
+      "explanation": "A deque's .pop() removes the newest (rightmost) item — that's stack/LIFO behaviour, which produces a DFS traversal, not BFS. BFS needs .popleft() so the oldest node leaves first (FIFO), keeping the level-by-level ripple that guarantees the shortest path."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this DFS. It should dive deep by always processing the most recently added node — the newest item on the stack.",
+      "codeTemplate": "def dfs(graph, start):\n    visited = set([start])\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.{{blank}}()   # LIFO: newest node first\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                visited.add(nb)\n                stack.append(nb)\n    return order",
+      "blanks": [
+        {
+          "answer": "pop",
+          "accept": ["pop()", ".pop", "list.pop"]
+        }
+      ],
+      "explanation": "For DFS the frontier is a stack (LIFO). A plain list's .pop() removes the last element — the newest node — so the search plunges down one branch before backtracking. Swapping this for a deque with .popleft() would turn the exact same code into BFS."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to reconstruct the shortest path once BFS reaches the goal, by walking backwards through the parent dictionary.",
+      "lines": [
+        "path, n = [], goal",
+        "while n is not None:",
+        "    path.append(n)",
+        "    n = parent[n]",
+        "return list(reversed(path))"
+      ],
+      "explanation": "You start at the goal and follow each node's parent back toward the start (whose parent is None), collecting nodes along the way. Because you built the path from goal to start, you reverse it at the end so it reads start-to-goal — the shortest path BFS found."
+    }
+  ]
+}

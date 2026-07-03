@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Exercise as ExerciseType } from "@/lib/types";
 import { CodeBlock } from "./CodeBlock";
 import { PyRunner } from "./PyRunner";
+import { WebSandbox } from "./WebSandbox";
+import { webRunMode } from "@/lib/websandbox";
 import { Markdown } from "./Markdown";
 import { useProgress } from "./ProgressContext";
 import { XP } from "@/lib/gamification";
@@ -14,18 +16,27 @@ import { FlameIcon, ChevronDown, LightbulbIcon } from "./Icons";
 export function Exercise({
   exercise,
   slug,
+  runnable = true,
+  webRun = false,
+  lang = "py",
 }: {
   exercise: ExerciseType;
   slug: string;
+  runnable?: boolean;
+  webRun?: boolean;
+  lang?: string;
 }) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const { awardXp, hasEvent } = useProgress();
 
+  const webMode = webRun ? webRunMode(lang) : null;
   const starter =
     exercise.starterCode && exercise.starterCode.trim()
       ? exercise.starterCode
-      : "# Write your solution here, then press Run ▶\n";
+      : webMode
+      ? ""
+      : "# Write your solution here\n";
 
   return (
     <section className="mt-10 overflow-hidden rounded-2xl border border-python/30 bg-gradient-to-br from-python/[0.06] to-transparent">
@@ -39,7 +50,7 @@ export function Exercise({
           </div>
           <div className="font-semibold text-fg">Practice exercise</div>
         </div>
-        {hasEvent(`exrun:${slug}`) && (
+        {(runnable || webMode) && hasEvent(`exrun:${slug}`) && (
           <span className="ml-auto rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-500">
             +{XP.EXERCISE_RUN} XP earned
           </span>
@@ -52,16 +63,45 @@ export function Exercise({
         </div>
 
         <div className="mt-2">
-          <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-faint">
-            <Glyph name="pencil" className="h-3.5 w-3.5" />
-            Try it live — edit the code and hit Run to execute real Python:
-          </p>
-          <PyRunner
-            initialCode={starter}
-            caption="solution.py"
-            minRows={5}
-            onFirstRun={() => awardXp(`exrun:${slug}`, XP.EXERCISE_RUN)}
-          />
+          {runnable ? (
+            <>
+              <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-faint">
+                <Glyph name="pencil" className="h-3.5 w-3.5" />
+                Try it live — edit the code and hit Run to execute real Python:
+              </p>
+              <PyRunner
+                initialCode={starter}
+                caption="solution.py"
+                minRows={5}
+                onFirstRun={() => awardXp(`exrun:${slug}`, XP.EXERCISE_RUN)}
+              />
+            </>
+          ) : webMode ? (
+            <>
+              <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-faint">
+                <Glyph name="pencil" className="h-3.5 w-3.5" />
+                {webMode === "js" || webMode === "ts"
+                  ? "Try it live — edit the code and hit Run to see the output:"
+                  : "Try it live — edit the code and hit Run to see it rendered:"}
+              </p>
+              <WebSandbox
+                initialCode={starter}
+                mode={webMode}
+                lang={lang}
+                caption={`solution.${lang}`}
+                minRows={5}
+                onFirstRun={() => awardXp(`exrun:${slug}`, XP.EXERCISE_RUN)}
+              />
+            </>
+          ) : (
+            <>
+              <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-faint">
+                <Glyph name="pencil" className="h-3.5 w-3.5" />
+                Try it yourself — a starting point to build on:
+              </p>
+              <CodeBlock code={starter} caption={`starter.${lang}`} lang={lang} />
+            </>
+          )}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2.5">
@@ -113,7 +153,7 @@ export function Exercise({
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <CodeBlock code={exercise.solution} caption="one solution" />
+              <CodeBlock code={exercise.solution} caption="one solution" lang={lang} />
             </motion.div>
           )}
         </AnimatePresence>

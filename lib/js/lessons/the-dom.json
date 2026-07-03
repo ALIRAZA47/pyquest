@@ -1,0 +1,106 @@
+{
+  "slug": "the-dom",
+  "title": "The DOM",
+  "category": "The DOM & Events",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how the browser turns your HTML into a live tree of objects that JavaScript can read, update, and style on the fly.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have written HTML. You have styled it with CSS. But so far your pages sit still — same text, same colours, every single load. JavaScript changes that. The moment a browser parses your HTML, it converts every element, every piece of text, and every attribute into a **live object in memory**. That living data structure is called the **Document Object Model**, or the **DOM**. Once you can reach into the DOM with JavaScript, your pages can respond to users, update content without reloading, and come alive in ways that plain HTML never could."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a family tree",
+      "md": "Your HTML is a family tree. `<html>` is the great-grandparent at the top. Inside it are two children: `<head>` and `<body>`. Inside `<body>` there might be an `<h1>`, a `<p>`, a `<ul>` with several `<li>` children, and so on. Every element is a **node** — a box in that tree — and JavaScript can walk up, down, or sideways through the whole family. When you write `document` in JavaScript, you hold a reference to the root of this tree — the entire page."
+    },
+    {
+      "type": "heading",
+      "text": "Finding Elements: querySelector and querySelectorAll"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// querySelector returns the FIRST match\nconst title = document.querySelector('#title');\nconsole.log(title.tagName); // \"H1\"\n\n// querySelectorAll returns ALL matches as a NodeList\nconst items = document.querySelectorAll('.item');\nconsole.log(items.length); // 3",
+      "output": "H1\n3",
+      "caption": "Both methods accept any CSS selector — #id, .class, element, [attr], or combinations"
+    },
+    {
+      "type": "heading",
+      "text": "Reading and Changing Text"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const title = document.querySelector('#title');\n\nconsole.log(title.textContent); // \"Hello, world\"\n\ntitle.textContent = 'Hello, DOM!';\nconsole.log(title.textContent); // \"Hello, DOM!\"",
+      "output": "Hello, world\nHello, DOM!",
+      "caption": "textContent reads or replaces the plain text inside any element — no HTML tags involved"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "innerHTML: powerful, but handle with care",
+      "md": "`innerHTML` lets you set HTML markup as a string — great for inserting `<strong>bold</strong>` or entire chunks of structure. But **never put user-supplied text into innerHTML** without sanitising it first. A malicious string could inject a `<script>` tag and run arbitrary code. When you only need text, always prefer `textContent`. Use `innerHTML` only when you need real HTML and you fully control the content."
+    },
+    {
+      "type": "heading",
+      "text": "Toggling Classes with classList"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const card = document.querySelector('.card');\n\ncard.classList.add('highlight');      // add a class\ncard.classList.remove('highlight');   // remove it\ncard.classList.toggle('highlight');   // add if absent, remove if present\n\nconsole.log(card.classList.contains('highlight')); // true or false",
+      "output": "false",
+      "caption": "Keep visual states in CSS; let JavaScript only add or remove class names. add / remove / toggle / contains are the four methods you will reach for constantly."
+    },
+    {
+      "type": "heading",
+      "text": "Reading and Changing Attributes"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const link = document.querySelector('a');\n\nconsole.log(link.getAttribute('href')); // \"https://example.com\"\n\nlink.setAttribute('href', 'https://mozilla.org');\nlink.setAttribute('target', '_blank');  // open in new tab",
+      "output": "https://example.com",
+      "caption": "getAttribute reads any attribute; setAttribute sets or creates it — works on src, alt, disabled, data-* and more"
+    },
+    {
+      "type": "heading",
+      "text": "Looping Over Multiple Elements"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const items = document.querySelectorAll('.item');\n\n// NodeList supports forEach just like an array\nitems.forEach((item, index) => {\n  item.textContent = `${index + 1}. ${item.textContent}`;\n});\n// Produces: \"1. Apples\", \"2. Bananas\", \"3. Cherries\"",
+      "caption": "querySelectorAll returns a NodeList; call forEach on it to visit each match in order"
+    },
+    {
+      "type": "quiz",
+      "question": "You want to add the CSS class 'active' to a button if it does not already have it, and remove it if it does — in a single call. Which method does this?",
+      "options": [
+        "btn.classList.add('active')",
+        "btn.setAttribute('class', 'active')",
+        "btn.classList.toggle('active')",
+        "btn.style.active = true"
+      ],
+      "answerIndex": 2,
+      "explanation": "classList.toggle('active') adds the class when absent and removes it when present — exactly the behaviour described, in one call. setAttribute('class', ...) would overwrite all other existing classes, and style.active is not a valid CSS property."
+    }
+  ],
+  "keyTakeaways": [
+    "The DOM is the browser's live, in-memory representation of your HTML as a tree of nodes — JavaScript can read and change it at any time.",
+    "document.querySelector(selector) finds the first match; querySelectorAll finds all matches, using the same syntax as CSS selectors.",
+    "Use textContent to safely read or replace text; use innerHTML only when you need real HTML markup and you control the content.",
+    "classList.add / remove / toggle keeps visual logic in CSS — JavaScript just switches classes on and off.",
+    "getAttribute and setAttribute let you read and update any HTML attribute, from href and src to disabled and custom data attributes."
+  ],
+  "exercise": {
+    "prompt": "You have a profile card with a name heading, a bio paragraph, and an avatar image. Write JavaScript that: (1) changes the heading text to your own name, (2) adds the CSS class 'featured' to the card element, (3) updates the image's alt attribute to describe the avatar, and (4) loops over all paragraph elements inside the card and prepends the text 'Bio: ' to each one.",
+    "starterCode": "// The HTML structure:\n// <div id=\"card\">\n//   <img src=\"avatar.png\" alt=\"\" />\n//   <h2 id=\"name\">Jane Doe</h2>\n//   <p>Loves hiking and open source.</p>\n//   <p>Based in Nairobi.</p>\n// </div>\n\n// 1. Select the card, heading, and image\nconst card    = document.querySelector(/* TODO */);\nconst heading = document.querySelector(/* TODO */);\nconst avatar  = document.querySelector(/* TODO */);\n\n// 2. Change the heading text to your name\n// TODO\n\n// 3. Add the 'featured' class to the card\n// TODO\n\n// 4. Update the image alt attribute\n// TODO\n\n// 5. Loop over every <p> inside the card and prepend 'Bio: '\nconst paragraphs = card.querySelectorAll(/* TODO */);\nparagraphs.forEach(p => {\n  // TODO\n});",
+    "hint": "For step 5, read p.textContent and set it to 'Bio: ' + the original value. Call querySelectorAll on the card element (not on document) so it only finds paragraphs inside the card.",
+    "solution": "const card    = document.querySelector('#card');\nconst heading = document.querySelector('#name');\nconst avatar  = document.querySelector('img');\n\nheading.textContent = 'Alex Rivera';\n\ncard.classList.add('featured');\n\navatar.setAttribute('alt', 'Profile photo of Alex Rivera');\n\nconst paragraphs = card.querySelectorAll('p');\nparagraphs.forEach(p => {\n  p.textContent = 'Bio: ' + p.textContent;\n});"
+  }
+}

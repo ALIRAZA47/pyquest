@@ -1,0 +1,48 @@
+{
+  "slug": "history-of-ai",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson's expert system scores symptoms with explicit if/then rules: +2 for a high fever, +2 for muscle aches, +1 for a runny nose, and diagnoses \"Likely Flu\" when the score is 3 or more. What does this snippet print?",
+      "code": "def diagnose(fever, muscle_aches, runny_nose):\n    score = 0\n    if fever > 38.5:  score += 2\n    if muscle_aches:  score += 2\n    if runny_nose:    score += 1\n    return \"Likely Flu\" if score >= 3 else \"Likely Cold\"\n\nprint(diagnose(fever=38.0, muscle_aches=False, runny_nose=True))",
+      "options": ["Likely Cold", "Likely Flu", "1", "Likely Cold and Flu"],
+      "answerIndex": 0,
+      "explanation": "The fever is 38.0, which is not greater than 38.5, so the first rule doesn't fire. muscle_aches is False, so that rule is skipped too. Only the runny_nose rule fires, giving score = 1. Since 1 is less than 3, the system returns \"Likely Cold\". This shows how a rule-based expert system is fully determined by its explicit thresholds."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong? It is meant to compute how much AlexNet improved on the previous best ImageNet error rate (the lesson says the old best was ~26% and AlexNet cut it to 15.3%).",
+      "code": "old_error = 26.0     # % error, previous best\nalexnet_error = 15.3 # % error, AlexNet 2012\n\n# how many percentage points did AlexNet improve?\nimprovement = alexnet_error - old_error\nprint(f\"Improved by {improvement} points\")",
+      "options": [
+        "The subtraction is backwards: it should be old_error - alexnet_error, otherwise the improvement comes out negative.",
+        "You cannot subtract two floats in Python, so this raises a TypeError.",
+        "The values should be divided, not subtracted, to get percentage points.",
+        "alexnet_error should be 15 because error rates must be whole numbers."
+      ],
+      "answerIndex": 0,
+      "explanation": "An improvement means the error went down, so you subtract the new (smaller) value from the old one: 26.0 - 15.3 = 10.7 points. Writing alexnet_error - old_error gives -10.7, wrongly implying AlexNet got worse. The order of operands matters whenever you measure a decrease."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the lesson's core idea about machine learning. Unlike an expert system where a human writes the rules, a machine learning model ______ the rules directly from data (for example, from thousands of labeled spam emails).",
+      "codeTemplate": "# Expert system: a human hand-writes the rules.\n# Machine learning: the model {{blank}} the rules from labeled data.\nmodel.fit(training_emails, spam_labels)",
+      "blanks": [
+        { "answer": "learns", "accept": ["learn", "learned", "discovers", "infers"] }
+      ],
+      "explanation": "The lesson's key contrast is that instead of hand-writing rules, machine learning algorithms learn patterns from data. Feed a system enough labeled spam and non-spam emails and it figures out the filtering rules on its own — which is why ML scaled to messy real-world problems that brittle expert systems could not."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these AI milestones in chronological order, from earliest to latest, matching the timeline described in the lesson.",
+      "lines": [
+        "(1950, \"Turing proposes the Turing Test\")",
+        "(1956, \"Dartmouth workshop names the field 'Artificial Intelligence'\")",
+        "(1997, \"Deep Blue defeats Kasparov at chess\")",
+        "(2012, \"AlexNet wins ImageNet, igniting deep learning\")",
+        "(2016, \"AlphaGo defeats Lee Sedol at Go\")",
+        "(2017, \"The Transformer architecture unlocks large language models\")"
+      ],
+      "explanation": "The lesson traces AI's history in this order: Turing's 1950 thought experiment, the 1956 Dartmouth workshop that coined the name, Deep Blue's brute-force chess win in 1997, the 2012 ImageNet earthquake with AlexNet, AlphaGo's 2016 reinforcement-learning victory in Go, and the 2017 Transformer that made modern LLMs possible."
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "PyQuest — Learn Python, Beautifully",
+  title: "Quest — Learn Python, Beautifully",
   description:
     "A gorgeous, beginner-friendly way to learn Python from zero to confident. Interactive lessons, quizzes, and hands-on exercises across 60+ topics.",
   keywords: [
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "coding",
     "programming course",
   ],
-  authors: [{ name: "PyQuest" }],
+  authors: [{ name: "Quest" }],
 };
 
 export const viewport: Viewport = {

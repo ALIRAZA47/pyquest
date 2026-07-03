@@ -1,0 +1,65 @@
+{
+  "slug": "data-and-features",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This dataset holds house feature vectors. What does the code print?",
+      "code": "X = [\n    [1200, 3, 10],\n    [850,  2, 25],\n    [2100, 5, 3 ],\n]\n\nprint(\"Number of samples:\", len(X))\nprint(\"Number of features:\", len(X[0]))",
+      "options": [
+        "Number of samples: 3\nNumber of features: 3",
+        "Number of samples: 3\nNumber of features: 9",
+        "Number of samples: 9\nNumber of features: 3"
+      ],
+      "answerIndex": 0,
+      "explanation": "Each row is one sample, so len(X) counts the rows (3 houses). Each column is one feature, so len(X[0]) counts the values in a single feature vector (3 features: size, rooms, age). The total number of cells is not the count of samples or features."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Min-max normalization squeezes values into the [0, 1] range. What does this print?",
+      "code": "def min_max_scale(values):\n    mn, mx = min(values), max(values)\n    return [(v - mn) / (mx - mn) for v in values]\n\nrooms = [3, 2, 5, 1]\nprint([round(v, 2) for v in min_max_scale(rooms)])",
+      "options": [
+        "[0.5, 0.25, 1.0, 0.0]",
+        "[3.0, 2.0, 5.0, 1.0]",
+        "[0.6, 0.4, 1.0, 0.2]"
+      ],
+      "answerIndex": 0,
+      "explanation": "Min-max subtracts the minimum (1) then divides by (max - min) = (5 - 1) = 4. So 3 becomes (3-1)/4 = 0.5, the smallest value (1) maps to 0.0, and the largest (5) maps to 1.0. The transform only rescales the axis; it never changes which value is largest or smallest."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code separates features (X) from the label (y) for house-price data. It has a bug — what's wrong?",
+      "code": "sample = {\"size_sqft\": 1200, \"num_rooms\": 3, \"age_years\": 10, \"price_k\": 250}\n\nfeatures = {k: v for k, v in sample.items()}\nlabel    = sample[\"price_k\"]\n\nprint(\"X:\", features, \"-> y:\", label)",
+      "options": [
+        "The features dict still includes price_k, so the label leaks into X",
+        "sample[\"price_k\"] should be sample[3] because dicts are indexed by position",
+        "You cannot loop over a dictionary with .items()"
+      ],
+      "answerIndex": 0,
+      "explanation": "The label column (price_k) must be excluded from the features, otherwise the model can just read the answer directly from its inputs. The fix is to filter it out: {k: v for k, v in sample.items() if k != \"price_k\"}. Dicts are keyed by name, not position, and .items() is the correct way to iterate."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "We are splitting a shuffled dataset into test, validation, and train slices. Fill in the slice that takes the FIRST n_test items as the test set.",
+      "codeTemplate": "random.shuffle(shuffled)\nn = len(shuffled)\nn_test = int(n * 0.15)\nn_val  = int(n * 0.15)\n\ntest  = shuffled[{{blank}}]\nval   = shuffled[n_test:n_test + n_val]\ntrain = shuffled[n_test + n_val:]",
+      "blanks": [
+        {
+          "answer": ":n_test",
+          "accept": ["0:n_test", ": n_test", ":n_test "]
+        }
+      ],
+      "explanation": "The test set takes the first n_test elements, which is the slice [:n_test]. The validation set picks up right after it, and the training set gets everything remaining. Shuffling before slicing is essential so rare examples don't all land in one bucket."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these steps in the correct order to prepare data before training a model.",
+      "lines": [
+        "Load the raw dataset and inspect it for missing or wrong values",
+        "Separate each row into a feature vector X and a label y",
+        "Shuffle the data, then split into train, validation, and test sets",
+        "Fit feature scaling on the training set and apply it",
+        "Lock the test set away and train the model on the training set"
+      ],
+      "explanation": "You must clean and understand data first (garbage in, garbage out), then separate features from the label, then shuffle and split so you have a sealed test set. Scaling is fit only on training data to avoid leaking test information, and finally the test set stays untouched until the very end for an honest score."
+    }
+  ]
+}

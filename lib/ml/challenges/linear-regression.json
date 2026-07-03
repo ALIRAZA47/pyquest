@@ -1,0 +1,53 @@
+{
+  "slug": "linear-regression",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This model has already learned its slope and intercept. What does it print for the new input?",
+      "code": "w, b = 14, 60\nx = 25\nprint(w * x + b)",
+      "options": [
+        "410",
+        "350",
+        "99"
+      ],
+      "answerIndex": 0,
+      "explanation": "Prediction in linear regression is just y = w * x + b. Here that's 14 * 25 + 60 = 350 + 60 = 410. Multiply the input by the slope first, then add the intercept."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the Mean Squared Error calculation. We square each residual, then average them. Fill in the operator that squares each error.",
+      "codeTemplate": "residuals   = [a - p for a, p in zip(ys, preds)]\nsquared_err = [r {{blank}} 2 for r in residuals]\nmse         = sum(squared_err) / len(squared_err)",
+      "blanks": [
+        {
+          "answer": "**",
+          "accept": ["** ", " **", "pow"]
+        }
+      ],
+      "explanation": "MSE squares each residual so big errors are penalized more and positive/negative errors don't cancel out. In Python, r ** 2 raises r to the power of 2. Using r * 2 would just double it, not square it."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the correct order to compute the MSE for a candidate line, following the lesson's from-scratch approach.",
+      "lines": [
+        "preds     = [w * x + b for x in xs]",
+        "residuals = [a - p for a, p in zip(ys, preds)]",
+        "sq_errors = [r ** 2 for r in residuals]",
+        "mse       = sum(sq_errors) / len(sq_errors)",
+        "print(mse)"
+      ],
+      "explanation": "The pipeline flows in one direction: first predict with w*x+b, then measure each residual (actual - predicted), then square the residuals, then average them into the MSE, and finally print it. Each step depends on the list produced by the step before it."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code is meant to predict a price with a trained line, but it gives the wrong answer. What's wrong?",
+      "code": "w, b = 14, 60\nx = 20\nprediction = w + x * b\nprint(prediction)",
+      "options": [
+        "The formula is wrong: it should be w * x + b, not w + x * b",
+        "w and b are swapped and should be b, w = 14, 60",
+        "You cannot multiply an int by an int in Python"
+      ],
+      "answerIndex": 0,
+      "explanation": "The line is y = w * x + b: the slope multiplies the input, then the intercept is added. The buggy code computes 14 + 20 * 60 = 1214 instead of the correct 14 * 20 + 60 = 340. The order of the multiply and add matters."
+    }
+  ]
+}

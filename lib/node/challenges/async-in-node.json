@@ -1,0 +1,55 @@
+{
+  "slug": "async-in-node",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson shows that fs.readFile is asynchronous. What does this program print?",
+      "code": "const fs = require('fs');\n\nfs.readFile('hello.txt', 'utf8', function (err, data) {\n  console.log('Inside callback');\n});\n\nconsole.log('After readFile');",
+      "options": [
+        "Inside callback\nAfter readFile",
+        "After readFile\nInside callback",
+        "After readFile",
+        "Inside callback"
+      ],
+      "answerIndex": 1,
+      "explanation": "fs.readFile hands the slow file read off to the OS and returns immediately, so 'After readFile' runs synchronously first. The callback only fires later, once the file contents are delivered — exactly the 'great waiter' behaviour from the lesson."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const fs = require('fs').promises;\n\nasync function readAndPrint() {\n  const data = fs.readFile('hello.txt', 'utf8');\n  console.log('Contents:', data);\n}\n\nreadAndPrint();",
+      "options": [
+        "readFile needs a callback as its third argument",
+        "The await keyword is missing before fs.readFile, so data is a Promise, not the file contents",
+        "You cannot call an async function without .then()",
+        "console.log cannot print a variable named data"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without await, fs.readFile returns a Promise object rather than the resolved string, so this logs '[object Promise]'. As the lesson warns, forgetting await is a silent killer — the fix is 'const data = await fs.readFile(...)'."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this async function so it pauses until the file is read and handles any error, matching the lesson's try/catch pattern.",
+      "codeTemplate": "async function readSafely(filename) {\n  try {\n    const data = {{blank}} fs.readFile(filename, 'utf8');\n    console.log('Contents:', data);\n  } {{blank}} (err) {\n    console.error('Could not read file:', err.message);\n  }\n}",
+      "blanks": [
+        { "answer": "await", "accept": ["await"] },
+        { "answer": "catch", "accept": ["catch"] }
+      ],
+      "explanation": "Inside an async function you use await to pause until the Promise settles, and catch to receive any error thrown by the awaited call — the same try/catch structure the lesson uses for error handling."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a working async function that fetches a user's name and score in parallel with Promise.all, as taught in the lesson.",
+      "lines": [
+        "async function loadUser() {",
+        "  const [name, score] = await Promise.all([",
+        "    fetchName(),",
+        "    fetchScore()",
+        "  ]);",
+        "  console.log(name, score);",
+        "}"
+      ],
+      "explanation": "Promise.all takes an array of Promises and resolves once all of them finish, so both fetches run at the same time. Destructuring the awaited result pulls each value out cleanly — total time is about as long as the slowest task, not the sum."
+    }
+  ]
+}

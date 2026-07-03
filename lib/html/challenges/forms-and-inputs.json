@@ -1,0 +1,52 @@
+{
+  "slug": "forms-and-inputs",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this label/input pairing so that clicking the label focuses the text box and the value is sent to the server as 'username'. Fill in the attribute that connects the label to the input.",
+      "codeTemplate": "<label {{blank}}=\"username\">Username</label>\n<input type=\"text\" id=\"username\" name=\"username\">",
+      "blanks": [
+        { "answer": "for", "accept": ["for", "FOR", "for="] }
+      ],
+      "explanation": "A <label> connects to an input with the for attribute, which must match the input's id. This lets screen readers announce the label and lets users click the label to focus the input. (Note: name is what gets sent to the server, but for is what links label to input.)"
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — the two radio buttons let the user select BOTH at once instead of only one. What's wrong?",
+      "code": "<input type=\"radio\" id=\"cat\" name=\"catPet\" value=\"cat\">\n<label for=\"cat\">Cat person</label>\n\n<input type=\"radio\" id=\"dog\" name=\"dogPet\" value=\"dog\">\n<label for=\"dog\">Dog person</label>",
+      "options": [
+        "The two inputs have different name values, so the browser treats them as separate groups instead of one",
+        "The two inputs have different id values, so they cannot be grouped",
+        "The value attributes are different, which breaks the group",
+        "Radio buttons must use type=\"checkbox\" to be grouped"
+      ],
+      "answerIndex": 0,
+      "explanation": "Radio buttons become a single-choice group only when they share the same name (e.g. name=\"pet\" on both). Because these use catPet and dogPet, the browser sees two separate one-button groups, so both can be checked. Each button still needs its own unique id and its own value."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines to build a valid form skeleton: a form that posts to /signup, containing a labelled email field, then a submit button.",
+      "lines": [
+        "<form action=\"/signup\" method=\"post\">",
+        "  <label for=\"email\">Email</label>",
+        "  <input type=\"email\" id=\"email\" name=\"email\">",
+        "  <button type=\"submit\">Sign Up</button>",
+        "</form>"
+      ],
+      "explanation": "The <form> opens the container (with action telling the browser where to send data and method how to send it). The label comes before the input it describes, the input's id matches the label's for, and the submit button goes inside the form so clicking it sends the data. The </form> closes the container last."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "How does the browser display and behave for this snippet?",
+      "code": "<label for=\"bio\">Short bio</label>\n<textarea id=\"bio\" name=\"bio\" rows=\"4\"\n          placeholder=\"Tell us about yourself...\"></textarea>",
+      "options": [
+        "A single-line text box, because textarea is self-closing and rows is ignored",
+        "A multi-line text box about 4 rows tall, showing ghost hint text until the user types",
+        "Nothing renders, because <textarea> must have a value attribute to appear",
+        "A dropdown menu, because textarea creates a list of options"
+      ],
+      "answerIndex": 1,
+      "explanation": "<textarea> renders a multi-line text box; rows=\"4\" sets its visible height to about four lines, and placeholder shows greyed-out hint text that disappears once the user types. Unlike <input>, textarea is NOT self-closing — it needs an explicit closing </textarea> tag."
+    }
+  ]
+}

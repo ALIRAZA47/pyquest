@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { ReadingProgress } from "./ReadingProgress";
+import { courseFor } from "@/lib/courses";
 
 export function CourseShell({
   courseId,
@@ -13,9 +14,18 @@ export function CourseShell({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const info = courseFor(courseId);
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen"
+      style={
+        {
+          "--accent": info.accent,
+          "--accent-2": info.accent2,
+        } as React.CSSProperties
+      }
+    >
       <ReadingProgress />
       <Sidebar
         courseId={courseId}

@@ -1,0 +1,52 @@
+{
+  "slug": "interfaces-and-types",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The Product interface marks description as optional. What does this print?",
+      "code": "interface Product {\n  readonly id: string;\n  name: string;\n  price: number;\n  description?: string;\n}\n\nconst shirt: Product = { id: \"p-42\", name: \"Linen Shirt\", price: 49 };\nconst label = shirt.description ?? \"No description yet\";\nconsole.log(label);",
+      "options": [
+        "No description yet",
+        "undefined",
+        "Linen Shirt",
+        "Error: description is missing"
+      ],
+      "answerIndex": 0,
+      "explanation": "description is optional (?), so the object is valid without it and shirt.description is undefined. The ?? operator supplies the fallback whenever the left side is null or undefined, so the label becomes \"No description yet\". Interfaces are erased at runtime, so nothing throws."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "interface Product {\n  readonly id: string;\n  name: string;\n  price: number;\n}\n\nconst shirt: Product = { id: \"p-42\", name: \"Linen Shirt\", price: 49 };\nshirt.id = \"p-99\";",
+      "options": [
+        "id is a readonly property, so it can't be reassigned after creation",
+        "The id value must be a number, not a string",
+        "You can't reassign shirt.name either, so both lines fail",
+        "The Product interface is missing a description field"
+      ],
+      "answerIndex": 0,
+      "explanation": "readonly lets you set a property once when the object is created, then blocks any later reassignment — like a printed receipt. shirt.name (not readonly) could still be changed; only the shirt.id = \"p-99\" line is the error."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the interface so Dog inherits name and age from Animal while adding its own breed field.",
+      "codeTemplate": "interface Animal {\n  name: string;\n  age: number;\n}\n\ninterface Dog {{blank}} Animal {\n  breed: string;\n}\n\nconst rex: Dog = { name: \"Rex\", age: 3, breed: \"Labrador\" };",
+      "blanks": [
+        { "answer": "extends", "accept": ["extends "] }
+      ],
+      "explanation": "The extends keyword builds a richer interface from a simpler base: Dog inherits every field from Animal (name and age) and adds breed, so rex must supply all three."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines to define two shapes and merge them into one Person type using intersection, then use it.",
+      "lines": [
+        "type HasName = { name: string };",
+        "type HasAge = { age: number };",
+        "type Person = HasName & HasAge;",
+        "const dana: Person = { name: \"Dana\", age: 28 };",
+        "console.log(`${dana.name}, age ${dana.age}`);"
+      ],
+      "explanation": "type can name any type expression. The two object shapes must be declared before Person can reference them with the & (intersection) operator, which requires the result to satisfy both. Only then can dana be typed as Person and used."
+    }
+  ]
+}

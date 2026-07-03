@@ -1,0 +1,59 @@
+{
+  "slug": "lists-and-keys",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const users = [\n  { id: 1, name: 'Aiko Tanaka' },\n  { id: 2, name: 'Marcus Bell' },\n];\n\nfunction UserList() {\n  return (\n    <ul>\n      {users.map((user) => (\n        <li>{user.name}</li>\n      ))}\n    </ul>\n  );\n}",
+      "options": [
+        "Each <li> is missing a key prop, so React can't track items across re-renders",
+        "You can't put .map() inside JSX curly braces",
+        "The users array must be wrapped in useState before you can map it",
+        "<li> elements must be returned from a separate component, not inline"
+      ],
+      "answerIndex": 0,
+      "explanation": "When you render a list with .map(), React needs a key prop on each element so it can match items by identity across re-renders. Here each <li> should be <li key={user.id}>. Without it, React still renders the list but logs a warning, and it must fall back to comparing elements by position."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the .map() so each user card gets a stable, unique key. Use the object field the lesson recommends — not the display name and not the array index.",
+      "codeTemplate": "<ul>\n  {users.map((user) => (\n    <li key={user.{{blank}}}>{user.name}</li>\n  ))}\n</ul>",
+      "blanks": [
+        {
+          "answer": "id",
+          "accept": ["id", "ID", "Id"]
+        }
+      ],
+      "explanation": "The object's id field is stable (it doesn't change when the list is reordered) and unique (no two users share an id), which is exactly what a key needs to be. The display name might not be unique, and the array index shifts when items are added or removed."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The UserCard child logs props.key when it renders. Given the code below, what does the console print for the first item?",
+      "code": "function UserCard({ user }) {\n  console.log(props.key);\n  return <li>{user.name}</li>;\n}\n\nfunction UserList({ users }) {\n  return users.map((user) => (\n    <UserCard key={user.id} user={user} />\n  ));\n}",
+      "options": [
+        "undefined — key is intercepted by React and never passed as a prop",
+        "The user's id value, since key is just a normal prop",
+        "The string \"key\"",
+        "The full user object"
+      ],
+      "answerIndex": 0,
+      "explanation": "Even though you write key={...} like a prop, React consumes it internally to track the element and never forwards it to the component. Reading props.key inside UserCard gives undefined. If the child genuinely needs the id, pass it as a separate prop, e.g. id={user.id}."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a correct TodoList component that renders a reorderable todo list using a stable key from each item's id.",
+      "lines": [
+        "function TodoList({ todos }) {",
+        "  return (",
+        "    <ul>",
+        "      {todos.map((todo) => (",
+        "        <li key={todo.id}>{todo.text}</li>",
+        "      ))}",
+        "    </ul>",
+        "  );",
+        "}"
+      ],
+      "explanation": "The component takes a todos array as a prop, returns a single <ul>, and inside it maps each todo to an <li>. Because the list can be reordered, the key must be the stable todo.id — using the array index here would let UI state attach to the wrong item after a reorder."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "slug": "components-and-props",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The Label component uses a default prop value. What does this render when used as <Label /> with no props?",
+      "code": "function Label({ text = 'Default' }) {\n  return <span>{text}</span>;\n}\n\n// Used as:\n<Label />",
+      "options": [
+        "<span>Default</span>",
+        "<span></span> (empty)",
+        "An error, because text is undefined",
+        "<span>text</span>"
+      ],
+      "answerIndex": 0,
+      "explanation": "The `= 'Default'` in the destructuring provides a fallback used whenever the prop is omitted. Since no text prop is passed, text falls back to 'Default', so the component renders <span>Default</span>."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "function Badge({ label }) {\n  label = label.toUpperCase();\n  return <span>{label}</span>;\n}",
+      "options": [
+        "It mutates the prop directly — props are read-only, so derive a new value instead",
+        "toUpperCase is not a real string method",
+        "The component is missing a key prop",
+        "label should be wrapped in curly braces when destructured"
+      ],
+      "answerIndex": 0,
+      "explanation": "Props flow one direction, from parent to child, and are read-only. Reassigning `label` mutates a prop. Instead, derive a new value: `const display = label.toUpperCase();` and render that. Reassignment breaks React's data-flow expectations even though it may appear to work."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "TeamRoster maps over an array to render one MemberCard per member. React needs one special prop on each mapped element so it can track items across re-renders. Fill in the prop name.",
+      "codeTemplate": "{team.map((member) => (\n  <MemberCard {{blank}}={member.name} {...member} />\n))}",
+      "blanks": [
+        {
+          "answer": "key",
+          "accept": ["key", "Key"]
+        }
+      ],
+      "explanation": "When you .map() over an array to render components, React needs a `key` prop on each item to identify which element is which when the list changes. Use something stable and unique like an ID or name — not the array index."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a correct ProductCard component that destructures its props and renders the name, formatted price, and stock status.",
+      "lines": [
+        "function ProductCard({ name, price, inStock }) {",
+        "  return (",
+        "    <div>",
+        "      <h3>{name}</h3>",
+        "      <p>${price.toFixed(2)}</p>",
+        "      <p>{inStock ? 'In stock' : 'Sold out'}</p>",
+        "    </div>",
+        "  );",
+        "}"
+      ],
+      "explanation": "Props are destructured in the function signature ({ name, price, inStock }), then the component returns a single wrapping <div>. Strings and computed values go inside curly braces in JSX — including the ternary that chooses between 'In stock' and 'Sold out' based on the boolean inStock prop."
+    }
+  ]
+}

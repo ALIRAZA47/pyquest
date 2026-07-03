@@ -1,0 +1,54 @@
+{
+  "slug": "intelligent-agents",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the vacuum robot's agent function from the lesson, run over a full cycle of percepts. What does it print?",
+      "code": "def vacuum_agent(location, status):\n    if status == \"dirty\":\n        return \"suck\"\n    elif location == \"A\":\n        return \"move_right\"\n    else:\n        return \"move_left\"\n\npercepts = [(\"B\", \"dirty\"), (\"B\", \"clean\"), (\"A\", \"clean\")]\nfor loc, stat in percepts:\n    print(vacuum_agent(loc, stat))",
+      "options": [
+        "suck\nmove_left\nmove_right",
+        "suck\nmove_right\nmove_left",
+        "move_left\nsuck\nmove_right",
+        "suck\nsuck\nmove_right"
+      ],
+      "answerIndex": 0,
+      "explanation": "The agent function checks status first: any 'dirty' percept returns 'suck' regardless of location. Only when the room is clean does it fall through to the location check — room B moves left, room A moves right. This is a simple reflex agent: it maps the current percept straight to an action with no memory of past percepts."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This thermostat agent is supposed to turn on the heat when the room is below the target of 70F. It has a bug — what's wrong?",
+      "code": "def thermostat_agent(temperature, target=70):\n    if temperature < target:\n        return \"turn_off_heat\"\n    else:\n        return \"turn_on_heat\"\n\nprint(thermostat_agent(65))",
+      "options": [
+        "The branches are swapped: when temperature < target it should return \"turn_on_heat\", not \"turn_off_heat\"",
+        "target should not have a default value; it must be passed in every call",
+        "The comparison should be temperature <= target instead of temperature < target",
+        "The function is missing a return for the case when temperature equals target"
+      ],
+      "answerIndex": 0,
+      "explanation": "The agent function inverts its goal. The performance measure is keeping the room near 70F, so a cold room (below target) must trigger 'turn_on_heat'. As written, a 65F reading turns the heat off — driving the room further from the goal. A rational agent chooses the action expected to maximize its performance measure, which means heating when it's too cold."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the percept-action loop that runs the thermostat agent over a list of readings. The loop should feed each temperature (the percept) into the agent function to choose an action.",
+      "codeTemplate": "def thermostat_agent(temperature, target=70):\n    if temperature < target:\n        return \"turn_on_heat\"\n    else:\n        return \"turn_off_heat\"\n\nreadings = [65, 70, 72]\nfor temp in readings:\n    action = {{blank}}(temp)\n    print(f\"Percept: {temp}F -> Action: {action}\")",
+      "blanks": [
+        {
+          "answer": "thermostat_agent",
+          "accept": ["thermostat_agent()", "thermostat_agent(temp)"]
+        }
+      ],
+      "explanation": "The agent function is the 'brain' that maps each percept to an action. Inside the loop, every reading is passed to thermostat_agent, which returns the chosen action. Perceive (read temp), decide (call the agent function), act (the returned action) — that's one turn of the percept-action loop, repeated for each reading."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in order to run one full turn of the percept-action loop inside a while loop, following the lesson's steps: perceive the current state, decide an action, act on it, then repeat.",
+      "lines": [
+        "while not at_goal:",
+        "    percept = read_environment()",
+        "    action = agent_function(percept)",
+        "    at_goal = act(action)"
+      ],
+      "explanation": "The percept-action loop is: perceive (read the environment into a percept), decide (run the percept through the agent function to pick an action), act (execute it, which changes the world and may reach the goal), then loop back. The condition is checked at the top so the agent keeps cycling until its goal is met — agents don't act once and walk away."
+    }
+  ]
+}

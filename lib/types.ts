@@ -1,4 +1,4 @@
-// Core content model for PyQuest lessons.
+// Core content model for Quest lessons.
 // Content is authored as structured "blocks" so the UI can render every
 // concept consistently and beautifully.
 
@@ -9,7 +9,7 @@ export type CalloutVariant = "tip" | "warning" | "note" | "analogy" | "gotcha";
 export type Block =
   | { type: "text"; md: string }
   | { type: "heading"; text: string }
-  | { type: "code"; code: string; output?: string; caption?: string }
+  | { type: "code"; code: string; output?: string; caption?: string; lang?: string }
   | { type: "callout"; variant: CalloutVariant; title: string; md: string }
   | {
       type: "quiz";

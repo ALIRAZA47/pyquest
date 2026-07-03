@@ -1,0 +1,49 @@
+{
+  "slug": "types-of-ml",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This is the lesson's from-scratch linear regression. Given the training points, what does it print?",
+      "code": "points = [(10, 200), (15, 280), (20, 350)]\n\nn = len(points)\nsum_x  = sum(x for x, y in points)\nsum_y  = sum(y for x, y in points)\nsum_xy = sum(x * y for x, y in points)\nsum_xx = sum(x * x for x, y in points)\n\nslope     = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x ** 2)\nintercept = (sum_y - slope * sum_x) / n\n\nprint(f\"slope = {slope}\")\nprint(f\"size 18 -> ${slope * 18 + intercept:.0f}k\")",
+      "options": [
+        "slope = 15.0\nsize 18 -> $322k",
+        "slope = 15.0\nsize 18 -> $320k",
+        "slope = 10.0\nsize 18 -> $280k"
+      ],
+      "answerIndex": 0,
+      "explanation": "The best-fit line has slope 15.0 (each +1 in size adds $15k) and intercept 51.67. Plugging in size=18 gives 15*18 + 51.67 = 321.67, which rounds to $322k. Regression is supervised learning that predicts a continuous number."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "In K-Nearest Neighbors, a new point is classified by a majority vote among its K closest neighbors. Complete the line that returns the winning label from the collected votes.",
+      "codeTemplate": "votes = [\"orange\", \"orange\", \"apple\"]\nwinner = max(set(votes), key=votes.{{blank}})\nprint(winner)  # -> orange",
+      "blanks": [
+        { "answer": "count", "accept": ["count()", ".count", "votes.count"] }
+      ],
+      "explanation": "max(set(votes), key=votes.count) picks the label that appears most often — that is the majority vote at the heart of KNN classification. set(votes) removes duplicates so each candidate label is scored once by how many times it appears."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the four steps of the K-Means clustering algorithm (as taught in the lesson) into the correct order.",
+      "lines": [
+        "Randomly place K centroids in the data",
+        "Assign every point to its nearest centroid",
+        "Move each centroid to the average of its assigned points",
+        "Repeat the assign-and-move steps until centroids stop moving"
+      ],
+      "explanation": "K-Means starts by placing K centroids, then repeatedly assigns points to the nearest centroid and recomputes each centroid as the mean of its points. It stops when the centroids no longer move. It is unsupervised — it finds structure with no labels."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "# Group 10 million users into personas from raw listening data.\n# No user has been manually tagged into a category.\nfrom sklearn.linear_model import LinearRegression\n\nmodel = LinearRegression()\nmodel.fit(user_features, user_persona_labels)",
+      "options": [
+        "There are no labels, so a supervised regressor is the wrong tool — this needs unsupervised clustering (e.g. K-Means)",
+        "LinearRegression should be imported from sklearn.cluster instead of sklearn.linear_model",
+        "The bug is only that fit() needs a third argument for the number of personas"
+      ],
+      "answerIndex": 0,
+      "explanation": "The data has no labels ('no user has been manually tagged'), so there is no target to supervise on. Discovering natural groupings from unlabeled data is unsupervised clustering, such as K-Means — not supervised regression. Always ask first: do I have labels?"
+    }
+  ]
+}

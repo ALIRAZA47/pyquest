@@ -1,0 +1,48 @@
+{
+  "slug": "transitions-and-animations",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This hover animation is janky and stutters on a laptop. Based on the lesson's most important performance rule, what's wrong?",
+      "code": ".card {\n  position: relative;\n  transition: left 0.25s ease-out, width 0.25s ease-out;\n}\n\n.card:hover {\n  left: -6px;\n  width: 102%;\n}",
+      "options": [
+        "It animates left and width, which force a layout reflow every frame — animate transform: translateX() and scale() instead so it runs on the GPU",
+        "The transition duration of 0.25s is too short, so the browser skips frames — raise it to 1s",
+        "ease-out is the wrong easing for a hover effect — linear would render more smoothly"
+      ],
+      "answerIndex": 0,
+      "explanation": "Animating left and width makes the browser recalculate layout (reflow) on every frame, which is expensive and causes jank. transform and opacity are handled by the GPU and never trigger reflow, so translateX(-6px) and scale() give the same visual lift buttery-smooth."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this @keyframes entrance animation so the card fades and slides up into place. Fill in the property that moves and resizes an element without affecting layout.",
+      "codeTemplate": "@keyframes slide-in {\n  from { opacity: 0; {{blank}}: translateY(24px); }\n  to   { opacity: 1; {{blank}}: translateY(0);    }\n}\n\n.card {\n  animation: slide-in 0.4s ease-out forwards;\n}",
+      "blanks": [
+        { "answer": "transform", "accept": ["Transform"] },
+        { "answer": "transform", "accept": ["Transform"] }
+      ],
+      "explanation": "transform visually moves an element (here with translateY) without touching the document layout, and paired with opacity it runs on the GPU with no reflow. Combined with 'forwards', the element keeps its final styles after the animation ends instead of snapping back."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What visual result does this @keyframes animation produce on the .badge element?",
+      "code": "@keyframes pulse {\n  0%, 100% { transform: scale(1);    opacity: 1;   }\n  50%      { transform: scale(1.08); opacity: 0.75; }\n}\n\n.badge {\n  animation: pulse 1.6s ease-in-out infinite;\n}",
+      "options": [
+        "The badge gently breathes — growing and fading at the midpoint, then returning — in a seamless, endless loop",
+        "The badge grows and fades once, then freezes at 1.08x scale and 0.75 opacity",
+        "The badge jumps instantly between full size and 1.08x with no smooth motion in between"
+      ],
+      "answerIndex": 0,
+      "explanation": "Because 0% and 100% are identical, the end of each cycle matches its start, so 'infinite' loops seamlessly with no visible jump. The 50% keyframe scales up and fades, and ease-in-out makes the growth and return feel smooth and breath-like."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "A user has enabled 'reduce motion' in their OS settings. Complete the media query feature name the lesson uses to detect this and switch off animations.",
+      "codeTemplate": "@media (prefers-reduced-motion: {{blank}}) {\n  .notification-dot {\n    animation: none;\n  }\n}",
+      "blanks": [
+        { "answer": "reduce", "accept": ["Reduce"] }
+      ],
+      "explanation": "The prefers-reduced-motion: reduce query matches when a user has asked their OS to minimize motion, often due to a vestibular disorder. Wrapping your animations in it lets you disable or shorten them, making the site accessible at no cost to other users."
+    }
+  ]
+}

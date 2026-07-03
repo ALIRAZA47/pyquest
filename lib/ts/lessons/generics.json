@@ -1,0 +1,106 @@
+{
+  "slug": "generics",
+  "title": "Generics",
+  "category": "Advanced TypeScript",
+  "difficulty": "Advanced",
+  "emoji": "",
+  "summary": "Learn how to write flexible, reusable functions and containers that stay fully type-safe by using type parameters — the angle-bracket superpower of TypeScript.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You have probably written a function that works perfectly for one type of data and then thought, \"I wish I could reuse this exact logic with a different type.\" The tempting fix is to reach for `any` — it works at runtime, but quietly throws away everything TypeScript promises you. Generics are the better answer. They let you write code *once* and reuse it with *any* type, while TypeScript still tracks exactly what type flows through at every step. In this lesson you will learn how type parameters work, why they beat `any`, how to use them on functions and interfaces, and how to add constraints so TypeScript can give you even more help."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Generics are like a labelling machine",
+      "md": "Imagine a labelling machine at a warehouse. You feed it a box, it prints a label that says exactly what is inside, and that label travels with the box forever. `any` is a box marked \"stuff\" — nobody knows what's in it. A generic is the labelling machine: whatever type you put in, the correct label comes out the other side."
+    },
+    {
+      "type": "heading",
+      "text": "The Problem: When any Is a Trap"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function identity(value: any): any {\n  return value;\n}\n\nconst result = identity(42);\n// result is typed as `any` — TypeScript has forgotten it is a number\n// This would not catch a bug if value were a string:\nconsole.log(result.toFixed(2));",
+      "output": "42.00",
+      "caption": "any works at runtime but loses type information — TypeScript cannot help you after the function returns"
+    },
+    {
+      "type": "heading",
+      "text": "Type Parameters: The <T> Syntax"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "function identity<T>(value: T): T {\n  return value;\n}\n\nconst num = identity(42);       // TypeScript infers T = number\nconst str = identity(\"hello\");  // TypeScript infers T = string\n\nconsole.log(num.toFixed(2));    // OK: num is number\nconsole.log(str.toUpperCase()); // OK: str is string\n// str.toFixed(2);              // Error: string has no toFixed",
+      "output": "42.00\nHELLO",
+      "caption": "Declare T between angle brackets, use it as the parameter and return type. TypeScript infers the actual type from each call — no explicit type annotation needed on the caller's side. You can write identity<number>(42) but almost never have to."
+    },
+    {
+      "type": "heading",
+      "text": "Generic Interfaces and Array Helpers"
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "// Generic interface\ninterface Box<T> {\n  label: string;\n  value: T;\n}\nconst scoreBox: Box<number> = { label: \"score\", value: 99 };\n\n// Generic array helper — returns the first element or undefined\nfunction first<T>(arr: T[]): T | undefined {\n  return arr[0];\n}\n\nconst top = first([98, 75, 60]); // type: number | undefined\nconsole.log(top);                // 98\nconsole.log(first([]));          // undefined",
+      "output": "98\nundefined",
+      "caption": "Box<T> and first<T> each work for any type while remaining fully typed"
+    },
+    {
+      "type": "heading",
+      "text": "Constraints with extends"
+    },
+    {
+      "type": "text",
+      "md": "Sometimes you do not want *any* type — you need one that has at least certain properties. The `extends` keyword adds a **constraint** to `T`. TypeScript then lets you safely access those properties inside the function, while still accepting any compatible type."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "code": "interface HasLength {\n  length: number;\n}\n\nfunction logLength<T extends HasLength>(item: T): T {\n  console.log(`Length: ${item.length}`);\n  return item;\n}\n\nlogLength(\"typescript\"); // Length: 10\nlogLength([1, 2, 3]);    // Length: 3\n// logLength(42);        // Error: number has no .length",
+      "output": "Length: 10\nLength: 3",
+      "caption": "T extends HasLength accepts strings, arrays, or anything else that has a length property"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "extends in a constraint is not inheritance",
+      "md": "In a class, `extends` means \"inherits from\". In a generic constraint, it means \"must satisfy this shape\". `T extends HasLength` means: T must have at least a `length: number` property — not that T must be a subclass of anything."
+    },
+    {
+      "type": "quiz",
+      "question": "What does TypeScript infer as the type of `result` in this call?\n\n```ts\nfunction identity<T>(value: T): T { return value; }\nconst result = identity(true);\n```",
+      "options": [
+        "any",
+        "boolean",
+        "T",
+        "unknown"
+      ],
+      "answerIndex": 1,
+      "explanation": "TypeScript sees the argument `true` is a `boolean`, substitutes `boolean` for `T`, and types `result` as `boolean`. T is only a placeholder at declaration time — by the time identity is called, it is resolved to the real type."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Start without constraints, add them when TypeScript asks",
+      "md": "Write your generic with just `<T>` first. If TypeScript reports \"Property X does not exist on type T\", that is the signal to add an `extends` constraint. This keeps your generics as flexible as possible and only narrows them when the code actually needs it."
+    }
+  ],
+  "keyTakeaways": [
+    "A type parameter `<T>` is a placeholder that TypeScript replaces with the real type at each call site — giving you reuse without losing safety.",
+    "Generics preserve type information through functions and containers; `any` throws it away.",
+    "TypeScript usually infers `T` from your arguments, so you rarely need to write the type argument explicitly.",
+    "Use `extends` to constrain `T` to types that have certain properties, unlocking access to those properties inside your function.",
+    "Generic interfaces like `Box<T>` let you build reusable data structures that remain fully typed for any content type."
+  ],
+  "exercise": {
+    "prompt": "Write a generic function called `lastItem` that accepts an array of any type and returns the last element, or `undefined` if the array is empty. Then write a generic interface `Pair<T, U>` that holds two values of potentially different types — `first` and `second`. Finally, create a `Pair` where `first` is a `number` and `second` is a `string`.",
+    "starterCode": "// TODO 1: Write the generic lastItem function\n// It should accept T[] and return T | undefined\nfunction lastItem(/* add <T> and parameters */) {\n  // TODO: return the last element, or undefined\n}\n\n// TODO 2: Define the generic Pair interface with two type parameters\ninterface Pair /* add <T, U> */ {\n  // TODO: add first and second properties with correct types\n}\n\n// TODO 3: Create a Pair<number, string>\nconst myPair: Pair</* fill in */> = {\n  // fill in values\n};\n\nconsole.log(lastItem([10, 20, 30]));\nconsole.log(lastItem([]));\nconsole.log(myPair);",
+    "hint": "For lastItem: `function lastItem<T>(arr: T[]): T | undefined`. Access the last element with `arr[arr.length - 1]`. For Pair: `interface Pair<T, U>` with properties `first: T` and `second: U`.",
+    "solution": "function lastItem<T>(arr: T[]): T | undefined {\n  return arr[arr.length - 1];\n}\n\ninterface Pair<T, U> {\n  first: T;\n  second: U;\n}\n\nconst myPair: Pair<number, string> = {\n  first: 42,\n  second: \"hello\",\n};\n\nconsole.log(lastItem([10, 20, 30])); // 30\nconsole.log(lastItem([]));           // undefined\nconsole.log(myPair);                 // { first: 42, second: 'hello' }"
+  }
+}

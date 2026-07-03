@@ -1,0 +1,53 @@
+{
+  "slug": "images-and-media",
+  "challenges": [
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this image tag so it has the two attributes every image needs: one that points to the file, and one that describes it.",
+      "codeTemplate": "<img {{blank}}=\"cat.jpg\" {{blank}}=\"A ginger cat sleeping on a windowsill\">",
+      "blanks": [
+        { "answer": "src", "accept": ["src", "SRC"] },
+        { "answer": "alt", "accept": ["alt", "ALT"] }
+      ],
+      "explanation": "The <img> tag always needs src (where the image file is) and alt (what it shows). src makes the image appear; alt is read aloud by screen readers and displayed as a fallback when the file is missing or slow to load."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "<img src=\"logo.png\" alt=\"Quest logo\"></img>",
+      "options": [
+        "The alt text is not descriptive enough",
+        "<img> is a void element, so it has no closing </img> tag",
+        "src and alt should be swapped",
+        "It needs a type attribute like the <source> tag"
+      ],
+      "answerIndex": 1,
+      "explanation": "The <img> tag is a void element — it has no content of its own, so it never gets a closing </img> tag. You just write the single opening tag with its attributes. The src and alt here are actually fine."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The HTML file lives in the folder 'site/'. The image file lives at 'site/images/photo.jpg'. What does this tag do in the browser?",
+      "code": "<img src=\"photo.jpg\" alt=\"A sunset over the sea\">",
+      "options": [
+        "The photo loads correctly from the images subfolder",
+        "The image is broken; the browser looks for photo.jpg next to the HTML file, but it is inside images/",
+        "The image loads but appears at zero width",
+        "The browser automatically searches every subfolder until it finds photo.jpg"
+      ],
+      "answerIndex": 1,
+      "explanation": "A relative path with no folder means 'look next to the HTML file'. Since the image actually lives in the images/ subfolder, the correct path is src=\"images/photo.jpg\". This mismatch is one of the most common causes of a broken-image icon."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines into a valid <audio> element that offers two formats and a fallback message.",
+      "lines": [
+        "<audio controls>",
+        "  <source src=\"podcast.mp3\" type=\"audio/mpeg\">",
+        "  <source src=\"podcast.ogg\" type=\"audio/ogg\">",
+        "  Your browser does not support audio.",
+        "</audio>"
+      ],
+      "explanation": "The <audio> element opens with controls so the play/volume UI appears, then lists one or more <source> tags (offering mp3 and ogg improves browser compatibility), then the fallback text that shows only if no source works, and finally the closing </audio> tag."
+    }
+  ]
+}

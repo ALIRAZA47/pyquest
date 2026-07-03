@@ -1,0 +1,105 @@
+{
+  "slug": "the-file-system",
+  "title": "The File System",
+  "category": "Building a Server",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "Learn how to read and write files in Node.js using the fs module — and why doing it asynchronously keeps your server fast.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "One of the first superpowers Node.js gives you that a browser never could is **direct access to the file system**. Your server can open files, read their contents, write new data, and delete things — all from JavaScript. This is how servers save uploaded photos, write log files, read configuration, and persist data without a full database. The module that makes all of this possible is called **`fs`** — short for File System — and it ships with every installation of Node.js, no `npm install` required.\n\nBring it in with a single line at the top of your file:"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "// CommonJS style — works in all Node.js versions\nconst fs = require('fs');\n\n// Access the Promise-based API (we'll use this a lot)\nconst fsPromises = require('fs').promises;",
+      "caption": "The fs module is built-in — no installation needed. The .promises sub-object unlocks modern async/await style."
+    },
+    {
+      "type": "heading",
+      "text": "Sync vs Async: Why It Matters"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A coffee shop, not a DMV",
+      "md": "Imagine a coffee shop with one barista. The **synchronous** approach: the barista takes your order, then stands frozen until your espresso finishes pulling — refusing to help anyone else in line. The **asynchronous** approach: the barista starts the machine, immediately takes the next order, and hands the espresso over when the timer dings. Node.js runs on a single thread, just like that one barista — async keeps the line flowing."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "Sync is fine at startup — dangerous at runtime",
+      "md": "Using `readFileSync` or `writeFileSync` before your server starts is fine — nothing is waiting on you yet. But calling them **inside a request handler** means every concurrent request stalls while one user's file loads. On a busy server, this causes a pile-up. Always reach for async inside handlers."
+    },
+    {
+      "type": "heading",
+      "text": "Reading Files"
+    },
+    {
+      "type": "text",
+      "md": "There are three styles for reading a file. The **sync** style is a blocking one-liner. The **callback** style is the classic async approach — you pass a function that Node calls when the file is ready. The **promises** style is the modern favourite: it pairs with `async/await` and reads almost like synchronous code while remaining fully non-blocking."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs');\nconst fsP = require('fs').promises;\n\n// 1. Sync (blocks the event loop)\nconst data = fs.readFileSync('notes.txt', 'utf8');\n\n// 2. Callback (non-blocking, classic style)\nfs.readFile('notes.txt', 'utf8', (err, data) => {\n  if (err) return console.error(err.message);\n  console.log(data);\n});\n\n// 3. Promises + async/await (non-blocking, modern style)\nasync function readNote() {\n  const data = await fsP.readFile('notes.txt', 'utf8');\n  console.log(data);\n}",
+      "caption": "All three read the same file. Only the sync version blocks. Prefer style 3 in new code."
+    },
+    {
+      "type": "heading",
+      "text": "Writing and Appending Files"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\nconst path = require('path');\n\nconst logFile = path.join(__dirname, 'app.log');\n\nasync function logEvent(message) {\n  const line = `[${new Date().toISOString()}] ${message}\\n`;\n  // appendFile adds to the end; writeFile replaces the whole file\n  await fs.appendFile(logFile, line, 'utf8');\n  console.log('Logged:', message);\n}\n\nlogEvent('Server started');",
+      "output": "Logged: Server started",
+      "caption": "appendFile adds to the end of a file — perfect for logs. writeFile replaces the entire file — right for saving updated state."
+    },
+    {
+      "type": "heading",
+      "text": "Getting Paths Right with path.join"
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\nconst path = require('path');\n\n// __dirname is always the folder this file lives in\nconst configPath = path.join(__dirname, 'config.json');\n\nasync function loadConfig() {\n  try {\n    const raw = await fs.readFile(configPath, 'utf8');\n    return JSON.parse(raw);\n  } catch (err) {\n    console.error('Config not found, using defaults.');\n    return { port: 3000 };\n  }\n}\n\nloadConfig().then(cfg => console.log('Port:', cfg.port));",
+      "output": "Port: 3000",
+      "caption": "path.join handles forward/backslashes automatically so your code works on macOS, Linux, and Windows. A path like 'config.json' is relative to wherever you ran node — __dirname is always the folder the current file lives in, making it safe regardless of where you run the script."
+    },
+    {
+      "type": "quiz",
+      "question": "You call `fs.readFile` inside an HTTP request handler. What is the main advantage over using `fs.readFileSync`?",
+      "options": [
+        "readFile is faster because it skips error checking",
+        "readFile does not block the event loop, so other requests can still be handled while the file loads",
+        "readFile can read larger files than readFileSync",
+        "readFile automatically caches the file contents for future requests"
+      ],
+      "answerIndex": 1,
+      "explanation": "Node.js runs on a single thread. readFileSync blocks that thread — no other code runs until the disk responds. readFile (async) hands the I/O work to the OS and lets Node continue handling other requests in the meantime. When the file is ready, the callback fires or the promise resolves. This is why async I/O is essential in any server handling more than one user."
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "code": "const fs = require('fs').promises;\nconst path = require('path');\n\nconst dataFile = path.join(__dirname, 'users.json');\n\n// Real pattern: read the file, modify the data, write it back\nasync function addUser(name) {\n  let users = [];\n  try {\n    const raw = await fs.readFile(dataFile, 'utf8');\n    users = JSON.parse(raw);\n  } catch (_) {\n    // File doesn't exist yet — start with an empty list\n  }\n  users.push({ id: users.length + 1, name });\n  await fs.writeFile(dataFile, JSON.stringify(users, null, 2), 'utf8');\n  console.log(`Saved ${users.length} user(s).`);\n}\n\naddUser('Ada');",
+      "output": "Saved 1 user(s).",
+      "caption": "A complete read-modify-write cycle. The catch block handles the first run gracefully when the file doesn't exist yet."
+    }
+  ],
+  "keyTakeaways": [
+    "The built-in `fs` module gives Node.js full access to the file system — no install needed.",
+    "Sync methods (readFileSync, writeFileSync) block the event loop — fine at startup, dangerous inside request handlers.",
+    "`fs.promises` with async/await is the modern, readable, non-blocking approach — prefer it.",
+    "Use `path.join(__dirname, 'filename')` to build reliable absolute paths that work on any OS.",
+    "Wrap all file reads in try/catch (or an `err` check) — files can be missing, locked, or unreadable."
+  ],
+  "exercise": {
+    "prompt": "Write an async function called `saveNote(title, content)` that: (1) builds a safe absolute path to a file called `note.txt` in the same directory as the script using `path.join` and `__dirname`, (2) formats a string like `\"Title: <title>\\nContent: <content>\\n\"`, (3) writes that string to the file using `fs.promises.writeFile`, and (4) logs `'Note saved!'` when done. Call it with a title and content of your choice.",
+    "starterCode": "const fs = require('fs').promises;\nconst path = require('path');\n\n// TODO: Build an absolute path to 'note.txt' in this directory\nconst notePath = /* your code here */;\n\nasync function saveNote(title, content) {\n  // TODO: Format the note text\n  const text = /* your code here */;\n\n  // TODO: Write text to notePath\n  await /* your code here */;\n\n  console.log('Note saved!');\n}\n\n// Call your function\nsaveNote('Shopping List', 'Eggs, milk, coffee');",
+    "hint": "path.join(__dirname, 'note.txt') builds the absolute path. Template literals make formatting easy: `Title: ${title}\\nContent: ${content}\\n`. Pass the formatted string as the second argument to fs.writeFile, and 'utf8' as the third.",
+    "solution": "const fs = require('fs').promises;\nconst path = require('path');\n\nconst notePath = path.join(__dirname, 'note.txt');\n\nasync function saveNote(title, content) {\n  const text = `Title: ${title}\\nContent: ${content}\\n`;\n  await fs.writeFile(notePath, text, 'utf8');\n  console.log('Note saved!');\n}\n\nsaveNote('Shopping List', 'Eggs, milk, coffee');"
+  }
+}

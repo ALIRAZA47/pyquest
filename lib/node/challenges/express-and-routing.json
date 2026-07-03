@@ -1,0 +1,51 @@
+{
+  "slug": "express-and-routing",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A client sends a GET request to /users/42. What does this route print to the console?",
+      "code": "app.get(\"/users/:id\", (req, res) => {\n  const userId = req.params.id;\n  console.log(userId);\n  console.log(typeof userId);\n  res.json({ id: userId });\n});",
+      "options": [
+        "42\nnumber",
+        "42\nstring",
+        "undefined\nundefined",
+        "\"42\"\nobject"
+      ],
+      "answerIndex": 1,
+      "explanation": "Route parameters capture whatever appears at that position in the URL and place it on req.params under the name after the colon. Even though the URL segment looks numeric, req.params.id is always the string \"42\", so typeof reports \"string\". console.log prints the raw string value without quotes."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This route should return the book whose id matches the URL, but it always returns 404 even for /books/1. What's wrong?",
+      "code": "const books = [{ id: 1, title: \"Dune\" }];\n\napp.get(\"/books/:id\", (req, res) => {\n  const id = req.params.id;\n  const book = books.find((b) => b.id === id);\n  if (!book) {\n    return res.status(404).json({ error: \"Book not found\" });\n  }\n  res.json(book);\n});",
+      "options": [
+        "req.params.id should be req.query.id",
+        "req.params.id is the string \"1\", so b.id === id compares 1 === \"1\", which is false; it must be converted with Number()",
+        "app.get cannot be used with route parameters like :id",
+        "find() returns a boolean, so book is never an object"
+      ],
+      "answerIndex": 1,
+      "explanation": "Route params are always strings, so req.params.id is \"1\", not 1. The strict comparison b.id === id evaluates 1 === \"1\", which is false, so find never matches. Convert first with const id = Number(req.params.id) so the numeric comparison works."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the response so it sends the user object back as JSON with an HTTP 201 (Created) status code.",
+      "codeTemplate": "app.post(\"/users\", (req, res) => {\n  const newUser = req.body;\n  res.status(201).{{blank}}(newUser);\n});",
+      "blanks": [
+        { "answer": "json", "accept": ["json", "res.json", ".json"] }
+      ],
+      "explanation": "res.json() serialises its argument to JSON and sets the Content-Type header to application/json automatically. Because status() returns the response object, you can chain .json() after it: res.status(201).json(...). Prefer res.json() over res.send() when building an API."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put these lines in the right order to build a minimal Express server that responds on the / route.",
+      "lines": [
+        "const express = require(\"express\");",
+        "const app = express();",
+        "app.get(\"/\", (req, res) => res.send(\"Hello from Express!\"));",
+        "app.listen(3000, () => console.log(\"Server running\"));"
+      ],
+      "explanation": "The four-step pattern from the lesson: first require Express, then create the app instance, then define your routes, and finally call app.listen at the very end to start accepting connections. Routes must be registered before listen, since the convention is to define everything the server can do before it opens its doors."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "slug": "css-grid",
+  "title": "CSS Grid",
+  "category": "Layout",
+  "difficulty": "Intermediate",
+  "emoji": "",
+  "summary": "CSS Grid gives you true two-dimensional control over layouts — place things in rows AND columns at the same time, no more nesting hacks required.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you are designing a magazine spread. You want a big photo in the top-left corner, a headline stretching across the top, body text on the right, and a caption in the bottom-left. With older CSS you would fight floats and nested divs all day. **CSS Grid** was built to solve this problem.\n\nGrid gives you a real coordinate system: rows and columns that you define, and items you can place precisely — or let the browser arrange automatically. It is the most powerful layout tool CSS has ever had."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of it like a spreadsheet",
+      "md": "A spreadsheet has columns (A, B, C…) and rows (1, 2, 3…). Any cell — or a merged group of cells — can hold content. CSS Grid works the same way. You define how many columns and rows exist, and each element snaps into a cell or spans across several cells. The browser handles the math; you just say *where things go*."
+    },
+    {
+      "type": "heading",
+      "text": "Activating the Grid and Defining Columns"
+    },
+    {
+      "type": "text",
+      "md": "Grid is activated on the **parent container** with `display: grid`. Its children automatically become grid items. Use `grid-template-columns` to describe the columns — each space-separated value defines one column's width.\n\nPixel widths are rigid and can overflow small screens, so Grid introduces the **`fr` unit** (short for *fraction*). `1fr` means \"one share of the available space.\" Think of slicing a pizza: `1fr 1fr 1fr` is three equal slices; `2fr 1fr` gives one slice twice as wide as the other.\n\nThe `gap` property adds consistent gutters between all rows and columns at once, never at the outer edges. And `repeat(n, size)` saves repetition — `repeat(4, 1fr)` is identical to `1fr 1fr 1fr 1fr`."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".three-col {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 24px;\n}\n\n.sidebar-layout {\n  display: grid;\n  grid-template-columns: 1fr 3fr; /* sidebar : main = 1 : 3 */\n  gap: 24px;\n}\n\n.gallery {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 16px;\n}",
+      "output": "Three examples: equal three-column grid; a narrow sidebar with a wider content area; a four-column gallery. All columns grow and shrink with the container.",
+      "caption": "fr distributes available space proportionally after gap widths are subtracted — no margin arithmetic needed."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The one-liner responsive grid",
+      "md": "`repeat(auto-fill, minmax(200px, 1fr))` is the most practical single line in all of CSS Grid:\n- **`auto-fill`** — create as many columns as fit in the container\n- **`minmax(200px, 1fr)`** — each column is at least 200 px wide and can grow to fill space\n\nOn a wide screen you get 4 or 5 columns; on a phone you get 1. **No media queries at all.** This one line handles the majority of card-grid layouts in real projects."
+    },
+    {
+      "type": "heading",
+      "text": "Explicit Rows and Placing Items Precisely"
+    },
+    {
+      "type": "text",
+      "md": "`grid-template-rows` works exactly like `grid-template-columns` but vertically. Most of the time you can leave rows *implicit* — Grid creates them automatically. Define them explicitly only when you need fixed heights like a header or footer band.\n\nTo place an item in a specific cell — or span it across several — use `grid-column` and `grid-row`. Grid counts the invisible **lines** between cells, starting at 1. A three-column grid has four column lines (1 through 4). The special value `-1` always means the last line, so `grid-column: 1 / -1` spans all columns without hard-coding the count."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": ".page {\n  display: grid;\n  grid-template-columns: 240px 1fr;\n  grid-template-rows: 64px 1fr 48px; /* header, content, footer */\n  min-height: 100vh;\n  gap: 16px;\n}\n\n/* Hero banner spans every column */\n.hero {\n  grid-column: 1 / -1;\n}\n\n/* Starts at column 2, spans two columns */\n.wide-card {\n  grid-column: 2 / span 2;\n}",
+      "output": "A full-page layout with a 64 px header, flexible content area, and 48 px footer. The hero fills the full width; the wide-card occupies the right two columns.",
+      "caption": "Lines are numbered from 1. The shorthand / span N counts forward from the start line — often easier than calculating the end line."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Line numbers start at 1, not 0",
+      "md": "This catches almost everyone coming from zero-indexed languages. A grid with 3 columns has **4 column lines** (1 through 4). `grid-column: 1 / 2` places an item in column one only. `grid-column: 1 / 4` spans all three columns — same as writing `1 / -1` on a three-column grid."
+    },
+    {
+      "type": "heading",
+      "text": "Grid vs. Flexbox — When to Use Which"
+    },
+    {
+      "type": "text",
+      "md": "Grid and Flexbox are complementary, not competitors:\n\n- **Flexbox** — items in **one direction** (a row of nav links, a stack of cards, a button group). The container adapts to fit the items.\n- **Grid** — a **two-dimensional structure** you define first, then content fills it (a dashboard, a photo gallery, a full-page layout).\n\nIn real projects you will nest them constantly: Grid handles the overall page structure, Flexbox aligns items *inside* each grid cell."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* Grid for the overall page structure */\n.page {\n  display: grid;\n  grid-template-columns: 240px 1fr;\n  grid-template-rows: 64px 1fr;\n  min-height: 100vh;\n}\n\n/* Flexbox inside the header cell */\n.header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0 24px;\n}",
+      "output": "A two-column page with a fixed header row. Inside the header, the logo and nav links sit on opposite ends.",
+      "caption": "Grid for structure, Flexbox for alignment within cells. They work together constantly in every real project."
+    },
+    {
+      "type": "quiz",
+      "question": "You want a photo gallery where as many columns as possible fit, each at least 180 px wide, growing to fill remaining space — with no media queries. Which value achieves this?",
+      "options": [
+        "grid-template-columns: repeat(3, 1fr)",
+        "grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))",
+        "grid-template-columns: 180px 180px 180px",
+        "display: flex; flex-wrap: wrap; width: 180px"
+      ],
+      "answerIndex": 1,
+      "explanation": "repeat(auto-fill, minmax(180px, 1fr)) tells Grid to pack in as many columns as possible (auto-fill), each at least 180 px wide and free to grow (minmax). It adapts to any viewport automatically. The fixed-pixel options are rigid and overflow on small screens; the flex approach behaves differently and requires extra properties to match this behavior."
+    }
+  ],
+  "keyTakeaways": [
+    "display: grid on the parent turns its children into grid items — columns and rows are defined on the container, not the items.",
+    "The fr unit distributes available space proportionally, making layouts far more flexible than fixed pixel or percentage widths.",
+    "repeat(auto-fill, minmax(min, 1fr)) is the most practical one-liner in CSS Grid — a fully responsive column layout with zero media queries.",
+    "Use grid-column and grid-row to place items across multiple cells; line numbers start at 1, and -1 always means the last line.",
+    "Grid owns two-dimensional layout; Flexbox owns one-dimensional alignment — use them together, Grid for page structure and Flexbox inside each cell."
+  ],
+  "exercise": {
+    "prompt": "Build a classic blog-page layout using CSS Grid. The page should have a full-width header, a wide main content area, a narrower sidebar, and a full-width footer. Use fr units for columns (main gets 3 shares, sidebar gets 1 share), add a gap between areas, and make the header and footer span all columns.",
+    "starterCode": ".page {\n  display: grid;\n  /* TODO: define two columns — main content gets 3fr, sidebar gets 1fr */\n  grid-template-columns: ;\n  /* TODO: define three rows — header (auto), content (fills space), footer (auto) */\n  grid-template-rows: ;\n  gap: 24px;\n  min-height: 100vh;\n  padding: 24px;\n}\n\n.header {\n  /* TODO: span across both columns */\n  background: #dbeafe;\n  padding: 16px;\n}\n\n.main {\n  background: #dcfce7;\n  padding: 16px;\n}\n\n.sidebar {\n  background: #fef9c3;\n  padding: 16px;\n}\n\n.footer {\n  /* TODO: span across both columns */\n  background: #dbeafe;\n  padding: 16px;\n}",
+    "hint": "To make the header and footer span all columns, set grid-column: 1 / -1 on them. The value -1 always refers to the last column line, so this works regardless of how many columns you define.",
+    "solution": ".page {\n  display: grid;\n  grid-template-columns: 3fr 1fr;\n  grid-template-rows: auto 1fr auto;\n  gap: 24px;\n  min-height: 100vh;\n  padding: 24px;\n}\n\n.header {\n  grid-column: 1 / -1;\n  background: #dbeafe;\n  padding: 16px;\n}\n\n.main {\n  background: #dcfce7;\n  padding: 16px;\n}\n\n.sidebar {\n  background: #fef9c3;\n  padding: 16px;\n}\n\n.footer {\n  grid-column: 1 / -1;\n  background: #dbeafe;\n  padding: 16px;\n}"
+  }
+}

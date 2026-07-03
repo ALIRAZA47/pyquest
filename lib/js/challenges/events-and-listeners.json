@@ -1,0 +1,54 @@
+{
+  "slug": "events-and-listeners",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson shows that events bubble up from the clicked element to its ancestors. If the user clicks the inner button, what gets logged?",
+      "code": "// HTML: <div id=\"outer\"><button id=\"inner\">Click</button></div>\n\nconst outer = document.querySelector('#outer');\nconst inner = document.querySelector('#inner');\n\nouter.addEventListener('click', () => console.log('Outer div fired!'));\ninner.addEventListener('click', () => console.log('Inner button fired!'));",
+      "options": [
+        "Inner button fired!\nOuter div fired!",
+        "Outer div fired!\nInner button fired!",
+        "Inner button fired!",
+        "Outer div fired!"
+      ],
+      "answerIndex": 0,
+      "explanation": "The event fires on the actual target first (the inner button), then bubbles upward through its ancestors. So the inner handler runs before the outer handler. Both fire because both elements have a click listener and the click bubbles from inner up to outer."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const form = document.querySelector('#signupForm');\n\nform.addEventListener('submit', (e) => {\n  const name = document.querySelector('#nameInput').value;\n  console.log('Form submitted with name:', name);\n});",
+      "options": [
+        "The handler is missing e.preventDefault(), so the page reloads on submit before your code is useful",
+        "You cannot attach a 'submit' listener to a form; use 'click' on the submit button instead",
+        "The callback must be a named function, not an arrow function, to handle submit events",
+        "e should be spelled 'event' — the event object is only passed if the parameter is named event"
+      ],
+      "answerIndex": 0,
+      "explanation": "A form's default submit behaviour is to reload (or navigate) the page, which throws away your work before it matters. As the lesson warns, always call e.preventDefault() first thing inside a submit handler so your JavaScript stays in control. The parameter name (e or event) is just a label, and arrow functions work fine as handlers."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this live search box. On every keystroke it should log exactly what the user has typed so far. Fill in the event name and the property that holds the input's current text.",
+      "codeTemplate": "const searchBox = document.querySelector('#search');\n\nsearchBox.addEventListener('{{blank}}', (e) => {\n  console.log('User typed:', e.target.{{blank}});\n});",
+      "blanks": [
+        { "answer": "input", "accept": ["'input'", "\"input\"", "input event"] },
+        { "answer": "value", "accept": [".value", "value;"] }
+      ],
+      "explanation": "The 'input' event fires on every keystroke as the value of an <input> or <textarea> changes, which is what makes live search feel instant. Inside the handler, e.target is the element that fired the event, and e.target.value gives you the current text it contains."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the lines in order to build a form handler that stops the page reloading, reads the typed name, and logs it. The submit listener should be fully assembled in the correct sequence.",
+      "lines": [
+        "const form = document.querySelector('#signupForm');",
+        "form.addEventListener('submit', (e) => {",
+        "  e.preventDefault();",
+        "  const name = document.querySelector('#nameInput').value;",
+        "  console.log('Form submitted with name:', name);",
+        "});"
+      ],
+      "explanation": "You must select the form before adding a listener to it, so that line comes first. Inside the handler, e.preventDefault() should be the very first statement so the page never reloads, then you read the input's value, and finally log it. The closing }); ends the callback and the addEventListener call."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "operators-and-expressions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The lesson describes % as the remainder (modulo) operator. What does this code log?",
+      "code": "console.log(17 % 5);",
+      "options": [
+        "3.4",
+        "2",
+        "3",
+        "12"
+      ],
+      "answerIndex": 1,
+      "explanation": "Modulo (%) gives the remainder after division, not the quotient. 17 divided by 5 is 3 with 2 left over, so 17 % 5 is 2. This is why n % 2 === 0 is a handy even/odd check."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This code has a bug — what's wrong?",
+      "code": "const input = \"0\";\n\nif (input == false) {\n  console.log(\"No input given.\");\n} else {\n  console.log(\"Got input: \" + input);\n}",
+      "options": [
+        "You cannot compare a string to a boolean in JavaScript",
+        "It uses == which coerces types, so \"0\" == false is true and the wrong branch runs; use === instead",
+        "The if condition should be input = false",
+        "console.log cannot join a string with + here"
+      ],
+      "answerIndex": 1,
+      "explanation": "== performs type coercion before comparing, and \"0\" == false coerces both sides to 0, giving true — so the \"No input given.\" branch runs even though input actually holds \"0\". Using === (which checks value AND type) makes \"0\" === false false, avoiding the surprise."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the template literal so it logs: Hello, Priya! Score: 190",
+      "codeTemplate": "const name = \"Priya\";\nconst score = 95;\n\nconsole.log(`Hello, ${name}! Score: ${score {{blank}} 2}`);",
+      "blanks": [
+        {
+          "answer": "*",
+          "accept": ["*"]
+        }
+      ],
+      "explanation": "Any JavaScript expression can go inside ${} in a template literal, including arithmetic. score * 2 evaluates to 190, so the multiplication operator * fills the blank. Template literals use backticks and ${} to weave values and expressions into strings."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Arrange these lines so score starts at 0, gains 10 points, loses 3, and then logs 7 using compound assignment operators.",
+      "lines": [
+        "let score = 0;",
+        "score += 10;",
+        "score -= 3;",
+        "console.log(score);"
+      ],
+      "explanation": "First score must be declared and initialized to 0. Then score += 10 updates it to 10 (shorthand for score = score + 10), and score -= 3 brings it to 7 (shorthand for score = score - 3). Logging last prints the final value, 7. Compound assignment operators update a variable in one concise step."
+    }
+  ]
+}

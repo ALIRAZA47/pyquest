@@ -1,0 +1,147 @@
+{
+  "slug": "what-is-css",
+  "title": "What is CSS?",
+  "category": "CSS Fundamentals",
+  "difficulty": "Beginner",
+  "emoji": "",
+  "summary": "Learn how CSS gives your HTML pages color, fonts, spacing, and layout — and the three ways to connect CSS to your HTML.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Imagine you just built a house out of plain grey concrete — every wall, floor, and ceiling the exact same colour with no decoration at all. That's HTML on its own: solid structure, but visually a bit grim. **CSS (Cascading Style Sheets)** is the interior designer that walks in and adds paint, wallpaper, lighting, and furniture. It's the language that makes web pages look good.\n\nIn this lesson you'll learn what CSS actually does, how a CSS rule is written, and the three different ways you can attach CSS to an HTML page — plus which way you should almost always choose."
+    },
+    {
+      "type": "heading",
+      "text": "What Does CSS Do?"
+    },
+    {
+      "type": "text",
+      "md": "CSS controls the **visual presentation** of HTML elements. Anything you can see on a web page — colours, fonts, sizes, spacing, borders, backgrounds, and how things are arranged — is handled by CSS. HTML tells the browser *what* the content is; CSS tells the browser *how to display it*."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "HTML is the skeleton; CSS is the outfit",
+      "md": "Think of HTML as the bones and muscles of a person — the underlying structure that gives everything shape and meaning. CSS is the clothing, hair, and accessories. The person (structure) is the same underneath, but CSS completely changes how they look to the world."
+    },
+    {
+      "type": "heading",
+      "text": "Anatomy of a CSS Rule"
+    },
+    {
+      "type": "text",
+      "md": "CSS is written as **rules**. Every rule has three parts:\n\n1. **Selector** — which HTML element(s) to style\n2. **Property** — which aspect to change (e.g. colour, font size)\n3. **Value** — what to change it to\n\nThe syntax looks like this:"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "selector {\n  property: value;\n  property: value;\n}",
+      "caption": "The skeleton of every CSS rule. The curly braces wrap one or more property-value pairs, each ending with a semicolon."
+    },
+    {
+      "type": "text",
+      "md": "Here is a real example that turns every `<h1>` heading dark blue and sets its font size to 32 pixels:"
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "h1 {\n  color: darkblue;\n  font-size: 32px;\n}",
+      "output": "All <h1> elements appear in dark blue at 32 px — larger and coloured instead of the browser default black.",
+      "caption": "A rule targeting the h1 element with two declarations."
+    },
+    {
+      "type": "heading",
+      "text": "Three Ways to Add CSS to HTML"
+    },
+    {
+      "type": "text",
+      "md": "There are three places you can write CSS. Each has its own trade-offs."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- 1. Inline: style attribute on a single element -->\n<p style=\"color: red; font-size: 18px;\">Hello!</p>",
+      "output": "The paragraph text 'Hello!' appears in red at 18 px.",
+      "caption": "Inline CSS — styles live directly on the element using the style attribute."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- 2. Internal: <style> tag inside <head> -->\n<!DOCTYPE html>\n<html>\n  <head>\n    <style>\n      p {\n        color: red;\n        font-size: 18px;\n      }\n    </style>\n  </head>\n  <body>\n    <p>Hello!</p>\n  </body>\n</html>",
+      "output": "Same red paragraph — but now all <p> elements on the page share these styles.",
+      "caption": "Internal CSS — a <style> block inside the HTML <head> applies styles to the whole page."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!-- 3. External: a separate .css file linked with <link> -->\n<!DOCTYPE html>\n<html>\n  <head>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n  </head>\n  <body>\n    <p>Hello!</p>\n  </body>\n</html>",
+      "caption": "External CSS — the HTML links to a separate styles.css file. That file can be shared across every page of a website."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* styles.css */\np {\n  color: red;\n  font-size: 18px;\n}",
+      "output": "Every <p> element across all pages that link to styles.css turns red at 18 px.",
+      "caption": "The separate styles.css file. Comments in CSS start with /* and end with */."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Always prefer external stylesheets",
+      "md": "External CSS is the professional standard because:\n- **One change, many pages** — update `styles.css` and every page on the site updates instantly.\n- **Clean separation** — your HTML stays focused on content; your CSS stays focused on looks.\n- **Browser caching** — the browser downloads the file once and reuses it, making your site faster.\n\nUse inline or internal styles only for quick experiments or very special one-off overrides."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The href path must match your file location",
+      "md": "If your CSS file is in a folder called `css/`, the link tag must reflect that:\n\n```html\n<link rel=\"stylesheet\" href=\"css/styles.css\">\n```\n\nA wrong path means the browser silently loads no styles at all — your page will look completely unstyled and there will be no error on screen. Always double-check the path when styles aren't showing up."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of the following correctly describes a CSS rule?",
+      "options": [
+        "selector: property { value }",
+        "selector { property: value; }",
+        "property { selector: value; }",
+        "<style selector=\"property\">value</style>"
+      ],
+      "answerIndex": 1,
+      "explanation": "A CSS rule is written as selector { property: value; } — the selector identifies what to style, curly braces wrap the declarations, and each declaration ends with a semicolon. The other options mix up the order or use incorrect syntax."
+    },
+    {
+      "type": "heading",
+      "text": "Putting It All Together"
+    },
+    {
+      "type": "text",
+      "md": "Here is a minimal but complete example: an HTML page linked to an external stylesheet that styles a heading and a paragraph. This is the pattern you will use in almost every real project."
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>My Styled Page</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n  </head>\n  <body>\n    <h1>Welcome to CSS!</h1>\n    <p>CSS makes the web beautiful.</p>\n  </body>\n</html>",
+      "caption": "index.html — clean HTML with a single <link> to load all styles."
+    },
+    {
+      "type": "code",
+      "lang": "css",
+      "code": "/* styles.css */\nh1 {\n  color: #2c3e50;\n  font-family: Georgia, serif;\n}\n\np {\n  color: #555;\n  font-size: 18px;\n  line-height: 1.6;\n}",
+      "output": "The heading appears in dark charcoal using a serif font. The paragraph is medium grey, slightly larger than default, with comfortable line spacing.",
+      "caption": "styles.css — all visual decisions live here, separate from the HTML."
+    }
+  ],
+  "keyTakeaways": [
+    "CSS controls how HTML looks — colours, fonts, spacing, and layout.",
+    "Every CSS rule follows the pattern: selector { property: value; }",
+    "You can add CSS inline, internally, or via an external file — external is almost always the right choice.",
+    "Link an external stylesheet using <link rel=\"stylesheet\" href=\"styles.css\"> inside the <head>.",
+    "If your styles aren't showing up, the first thing to check is the href path in your <link> tag."
+  ],
+  "exercise": {
+    "prompt": "Create a small stylesheet that styles a web page about your favourite hobby. Your styles.css file should: (1) set the <body> background colour to any colour you like, (2) make the <h1> a different colour and increase its font-size to at least 36px, and (3) give the <p> elements a comfortable font-size of 18px and a line-height of 1.6. Then link the stylesheet to the provided HTML file.",
+    "starterCode": "/* styles.css */\n\n/* TODO 1: Style the body — set a background-color */\nbody {\n\n}\n\n/* TODO 2: Style the h1 — set color and font-size (at least 36px) */\nh1 {\n\n}\n\n/* TODO 3: Style paragraphs — set font-size to 18px and line-height to 1.6 */\np {\n\n}",
+    "hint": "Remember: colour values can be a named colour like \"coral\", a hex code like \"#3498db\", or rgb() notation. Font sizes use units like px. Make sure your HTML file has <link rel=\"stylesheet\" href=\"styles.css\"> inside the <head>.",
+    "solution": "/* styles.css */\n\nbody {\n  background-color: #f0f4f8;\n}\n\nh1 {\n  color: #e74c3c;\n  font-size: 40px;\n}\n\np {\n  font-size: 18px;\n  line-height: 1.6;\n}"
+  }
+}
