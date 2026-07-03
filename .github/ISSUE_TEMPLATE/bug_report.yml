@@ -1,0 +1,60 @@
+name: 🐛 Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a bug! Please fill in what you can.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected instead.
+      placeholder: When I clicked Run on the CSS Flexbox lesson, the preview stayed blank…
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to '/css/flexbox'
+        2. Click 'Edit & preview'
+        3. Click 'Run preview'
+        4. See the issue
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area?
+      options:
+        - A lesson / content
+        - Running code (Python / Pyodide)
+        - Running code (web sandbox — HTML/CSS/JS/TS/React)
+        - Challenges or slides
+        - Gamification (XP / badges / streaks)
+        - Navigation / search / command palette
+        - Theming / layout / mobile
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: course
+    attributes:
+      label: Course & lesson (if applicable)
+      placeholder: css / flexbox
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: |
+        - Browser: Chrome 126
+        - OS: macOS 15
+        - Device: desktop
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors (optional)
+      description: Paste any errors from the browser dev-tools console.
+      render: shell
