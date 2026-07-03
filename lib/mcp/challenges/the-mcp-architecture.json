@@ -1,0 +1,51 @@
+{
+  "slug": "the-mcp-architecture",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the four MCP layers in order, from the app the user interacts with down to the real resource.",
+      "lines": [
+        "Host — the app the user interacts with; embeds the LLM",
+        "MCP Client — speaks JSON-RPC 2.0, one client per server",
+        "MCP Server — your connector code; validates and executes",
+        "Data / Service — the DB, API, or filesystem behind the server"
+      ],
+      "explanation": "Requests flow down this chain: the Host's model decides to call a tool, the MCP Client relays it as JSON-RPC to the MCP Server, and the server queries the Data/Service. Results flow back up the same path."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "This is the JSON-RPC message the agent's MCP client sends to the server. Which layer actually runs the SQL and produces the result content?",
+      "code": "{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"name\": \"query_sales\",\n    \"arguments\": { \"metric\": \"revenue\", \"groupBy\": \"customer\", \"limit\": 3 } } }",
+      "options": [
+        "The MCP Server — it validates the inputs and executes the real work against the data.",
+        "The MCP Client — it runs the query as it relays the message.",
+        "The Host's LLM — it queries the database directly.",
+        "The Data/Service — it decides which tool to call."
+      ],
+      "answerIndex": 0,
+      "explanation": "The client only relays the tools/call message. The MCP Server is the layer that validates the arguments and executes the real work — here, running the query against the database (the Data/Service) it gatekeeps."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "A host is wired to a server with this config. Fill in the top-level key the host reads to find the servers it should launch.",
+      "codeTemplate": "{\n  \"{{blank}}\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/server.js\"]\n    }\n  }\n}",
+      "blanks": [
+        { "answer": "mcpServers", "accept": ["mcpServers", "\"mcpServers\""] }
+      ],
+      "explanation": "The host (e.g. Claude Desktop) reads the mcpServers object, launches each entry with its command + args, and opens an MCP client connection to each one — one client per server."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate describes the architecture like this. What's the mistake?",
+      "code": "\"The LLM connects straight to the database, and the\n MCP server decides when each tool should be called.\"",
+      "options": [
+        "Nothing — that's exactly how the chain works.",
+        "It's backwards: the model (host) decides *when* a tool is called, and the LLM never touches the database — the server is the gatekeeper.",
+        "The MCP client, not the server, connects to the database.",
+        "The database decides when tools are called, not the server."
+      ],
+      "answerIndex": 1,
+      "explanation": "Two things are wrong. The model/agent in the host decides *when* a tool is called; the server only defines *what* each tool does. And the LLM never touches the data source directly — every request goes through the server, which acts as the gatekeeper for the DB, API, or filesystem."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "slug": "dataclasses",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "from dataclasses import dataclass\n\n@dataclass\nclass P:\n    x: int\n    y: int = 0\n\nprint(P(3))",
+      "options": ["P(x=3, y=0)", "P(3)", "<P object at 0x...>", "P(x=3)"],
+      "answerIndex": 0,
+      "explanation": "@dataclass generates __init__ (y defaults to 0) and a readable __repr__, so P(3) prints as P(x=3, y=0)."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "from dataclasses import dataclass\n\n@dataclass\nclass P:\n    x: int\n    y: int\n\nprint(P(1, 2) == P(1, 2))",
+      "options": ["True", "False", "None", "an error"],
+      "answerIndex": 0,
+      "explanation": "@dataclass generates __eq__ that compares by field values, so two P instances with the same x and y are equal → True. (A plain class would compare by identity and print False.)"
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the line so instances are immutable.",
+      "codeTemplate": "@dataclass({{blank}}=True)\nclass Point:\n    x: int",
+      "blanks": [{ "answer": "frozen", "accept": ["frozen "] }],
+      "explanation": "@dataclass(frozen=True) makes instances immutable — assigning to a field afterward raises FrozenInstanceError (and instances become hashable)."
+    }
+  ]
+}

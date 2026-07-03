@@ -1,0 +1,33 @@
+{
+  "slug": "streams-and-buffers",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "For a 5 GB file, which approach keeps memory usage low?",
+      "code": "// A: fs.readFile('big', cb)\n// B: fs.createReadStream('big').on('data', chunk => ...)",
+      "options": [
+        "B — a stream processes small chunks over time",
+        "A — readFile is optimized for large files",
+        "Both use the same memory",
+        "Neither can open a 5 GB file"
+      ],
+      "answerIndex": 0,
+      "explanation": "readFile buffers the entire file in memory at once (5 GB!). A read stream emits small chunks, so memory stays flat regardless of file size."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the idiomatic way to copy one file to another chunk-by-chunk.",
+      "codeTemplate": "fs.createReadStream('a').{{blank}}(fs.createWriteStream('b'));",
+      "blanks": [{ "answer": "pipe", "accept": ["PIPE"] }],
+      "explanation": "pipe() connects a readable to a writable, moving data chunk-by-chunk and handling backpressure automatically."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does a Readable stream emit when the source has no more data?",
+      "code": "stream.on('????', () => console.log('finished reading'));",
+      "options": ["the 'end' event", "the 'close' event only", "the 'data' event with null", "the 'stop' event"],
+      "answerIndex": 0,
+      "explanation": "A readable stream emits 'data' for each chunk and 'end' once the source is exhausted (and 'error' on failure). Listen for 'end' to know reading is complete."
+    }
+  ]
+}

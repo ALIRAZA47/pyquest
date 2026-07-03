@@ -1,0 +1,31 @@
+{
+  "slug": "es-modules",
+  "title": "ES Modules",
+  "emoji": "📤",
+  "category": "Async & Modern JS",
+  "difficulty": "Intermediate",
+  "summary": "Split code across files with import and export — named exports, default exports, and how modules keep scope clean.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "As programs grow you split them across files. **ES Modules** are the standard way to share code between files with `export` and `import`. Each module has its own scope — nothing leaks into the global namespace unless you export it." },
+    { "type": "code", "lang": "js", "caption": "math.js — named exports", "code": "export const PI = 3.14159;\n\nexport function add(a, b) {\n  return a + b;\n}\n\nexport function square(x) {\n  return x * x;\n}" },
+    { "type": "code", "lang": "js", "caption": "app.js — import what you need", "code": "import { add, PI } from './math.js';\n\nconsole.log(add(2, 3)); // 5\nconsole.log(PI);        // 3.14159" },
+    { "type": "text", "md": "**Named exports** are imported by their exact name inside braces. You can rename on import with `as`: `import { add as sum } from './math.js'`." },
+    { "type": "heading", "text": "Default exports" },
+    { "type": "code", "lang": "js", "caption": "one main export per module", "code": "// logger.js\nexport default function log(msg) {\n  console.log('[app]', msg);\n}\n\n// app.js — no braces, you pick the name\nimport log from './logger.js';\nlog('ready');" },
+    { "type": "callout", "variant": "tip", "title": "Named vs default", "md": "Use **named exports** when a file exposes several things (utilities, constants). Use a **default export** for a module's single main thing (a component, a class). A file can have many named exports and at most one default." },
+    { "type": "quiz", "question": "How do you import a default export from './Button.js'?", "options": ["import { Button } from './Button.js'", "import Button from './Button.js'", "import * as Button from './Button.js'", "require('./Button.js')"], "answerIndex": 1, "explanation": "Default exports are imported without braces, and you choose the local name: `import Button from './Button.js'`. Braces are for named exports." }
+  ],
+  "keyTakeaways": [
+    "Modules have their own scope — share code only via `export`.",
+    "Named exports import by name in braces: `import { add } from './math.js'` (rename with `as`).",
+    "A default export imports without braces and you name it yourself.",
+    "A file can have many named exports but only one default export.",
+    "In browsers, use `<script type=\"module\">`; in Node, `.mjs` or `\"type\": \"module\"`."
+  ],
+  "exercise": {
+    "prompt": "In `utils.js`, export a named function `capitalize(s)` and a default function `slugify(s)`. Then write the two import lines in `app.js` to bring both in.",
+    "hint": "Named: `export function capitalize...`. Default: `export default function slugify...`. Import default without braces, named with braces.",
+    "solution": "// utils.js\nexport function capitalize(s) { return s[0].toUpperCase() + s.slice(1); }\nexport default function slugify(s) { return s.toLowerCase().replace(/\\s+/g, '-'); }\n\n// app.js\nimport slugify, { capitalize } from './utils.js';"
+  }
+}

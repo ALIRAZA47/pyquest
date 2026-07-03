@@ -1,0 +1,30 @@
+{
+  "slug": "typescript-basics",
+  "title": "TypeScript: Adding Types",
+  "emoji": "🔷",
+  "category": "Advanced: TypeScript",
+  "difficulty": "Advanced",
+  "summary": "TypeScript is JavaScript with a type checker — annotate values, let inference do the rest, and catch whole classes of bugs before you run.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "**TypeScript (TS)** is a superset of JavaScript: every valid JS file is valid TS, plus you can add **type annotations**. A compiler checks those types and flags mistakes *before* the code runs, then strips the types away to produce plain JavaScript." },
+    { "type": "code", "lang": "ts", "caption": "annotations + inference", "code": "let title: string = \"Quest\";\nlet count: number = 3;\nlet done: boolean = false;\n\n// inference: TS already knows this is a number\nlet score = 10;      // score: number\n\nfunction double(n: number): number {\n  return n * 2;\n}\n\nconsole.log(double(score));", "output": "20" },
+    { "type": "text", "md": "You rarely annotate everything — TypeScript **infers** most types. You mostly annotate function parameters and tricky spots; the compiler propagates the rest." },
+    { "type": "heading", "text": "Catching bugs early" },
+    { "type": "code", "lang": "ts", "caption": "the checker complains — before runtime", "code": "function greet(name: string) {\n  return \"Hi, \" + name.toUpperCase();\n}\n\ngreet(\"Ada\");   // ✅ fine\n// greet(42);   // ❌ TS error: number is not assignable to string\n//              (a real bug caught before the code ever runs)\nconsole.log(greet(\"Ada\"));", "output": "Hi, ADA" },
+    { "type": "callout", "variant": "note", "title": "Types vanish at runtime", "md": "TypeScript types exist only during development and compilation. The emitted JavaScript has **no types** — so TS adds zero runtime cost. (When you Run this lesson's code, the types are stripped and the plain JS executes.)" },
+    { "type": "quiz", "question": "What is the main benefit of TypeScript over plain JavaScript?", "options": ["It runs faster at runtime", "It catches type errors at compile time, before the code runs", "It adds new syntax the browser understands natively", "It replaces the need for functions"], "answerIndex": 1, "explanation": "TypeScript's checker finds type mistakes (wrong argument types, typos, null misuse) during development — before you run or ship. The types are erased when compiling to JS, so there's no runtime speed change." }
+  ],
+  "keyTakeaways": [
+    "TypeScript = JavaScript + a compile-time type checker.",
+    "Annotate with `name: type` (`string`, `number`, `boolean`, arrays, etc.).",
+    "TS infers most types — you mainly annotate function parameters.",
+    "Type errors are caught before running; types are stripped from the emitted JS (no runtime cost)."
+  ],
+  "exercise": {
+    "prompt": "Annotate this function so it only accepts two numbers and returns a number:\n\n```ts\nfunction add(a, b) {\n  return a + b;\n}\n```",
+    "starterCode": "function add(a, b) {\n  return a + b;\n}\nconsole.log(add(2, 3));",
+    "hint": "Give each parameter `: number` and the function a `: number` return type.",
+    "solution": "function add(a: number, b: number): number {\n  return a + b;\n}\nconsole.log(add(2, 3)); // 5"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "slug": "classes",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "class Cat {\n  constructor(name) { this.name = name; }\n  greet() { return 'meow, ' + this.name; }\n}\nconsole.log(new Cat('Lu').greet());",
+      "options": ["meow, Lu", "meow, undefined", "undefined", "meow, name"],
+      "answerIndex": 0,
+      "explanation": "new Cat('Lu') runs the constructor, setting this.name = 'Lu'. greet() returns 'meow, ' + this.name → 'meow, Lu'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This subclass throws 'must call super constructor'. Why?",
+      "code": "class Animal { constructor(name) { this.name = name; } }\nclass Dog extends Animal {\n  constructor(name) {\n    this.legs = 4;\n  }\n}",
+      "options": [
+        "You must call super(name) before using this in a subclass constructor",
+        "Dog can't extend Animal",
+        "legs must be declared outside the constructor",
+        "Animal needs a speak() method"
+      ],
+      "answerIndex": 0,
+      "explanation": "In a subclass constructor you must call super(...) (which runs the parent constructor and sets up `this`) before you touch `this`. Add `super(name);` as the first line."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the line that creates an instance of the Timer class.",
+      "codeTemplate": "const t = {{blank}} Timer(60);",
+      "blanks": [{ "answer": "new", "accept": ["NEW"] }],
+      "explanation": "Classes must be instantiated with the `new` keyword, which creates the object and runs the constructor. Calling `Timer(60)` without `new` throws a TypeError."
+    }
+  ]
+}

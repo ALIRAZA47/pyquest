@@ -1,0 +1,60 @@
+{
+  "slug": "fine-tuning-and-rlhf",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the stages of building a helpful chat assistant in order, from raw model at the bottom to per-conversation steering at the top.",
+      "lines": [
+        "Pretrain on trillions of tokens to get a base model (a text-completer)",
+        "Supervised fine-tune (SFT) on curated instruction→response pairs so it follows instructions",
+        "Collect human rankings of the model's responses (which is better, A or B?)",
+        "Train a reward model to predict those human preferences as a score",
+        "Optimize the LLM with RL to earn high reward, on a KL leash",
+        "Add a system prompt at runtime to steer tone and rules per conversation"
+      ],
+      "explanation": "The modern recipe layers behavior on top of knowledge: pretraining pours in raw knowledge, SFT teaches instruction-following by imitation, then RLHF (rank → reward model → optimize) aligns the model with human preferences. Finally the system prompt re-aims the finished model per conversation with no retraining. Each stage after pretraining changes behavior far more than it adds facts."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner summarizes RLHF like this: \"In RLHF, humans write the single perfect answer for each prompt, and the model memorizes those answers. That's what makes it aligned.\" What's the correction?",
+      "code": "# The learner's claim:\n# \"Humans author the ideal answer for every prompt,\n#  the model memorizes them, and that is RLHF.\"",
+      "options": [
+        "Correct — RLHF is just memorizing human-written ideal answers",
+        "That describes SFT-style imitation, not RLHF: in RLHF humans RANK responses the model produced, a reward model learns those preferences, and the LLM is optimized to score higher — because comparing is easier than authoring the perfect answer",
+        "Wrong — RLHF uses no human input at all; it is fully automatic",
+        "Wrong only about the word 'aligned'; the memorization part is exactly right"
+      ],
+      "answerIndex": 1,
+      "explanation": "Authoring ideal answers to imitate is basically SFT. RLHF works differently: humans COMPARE and rank responses the model already generated, those comparisons train a reward model that captures human taste, and the LLM is then optimized (e.g. via PPO, or directly via DPO) to earn higher reward. The whole point is that ranking is far easier and more reliable for humans than writing the perfect response from scratch."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "A team runs RLHF but turns off the KL penalty (the 'leash') and optimizes the reward model as hard as possible. The reward model was trained on human rankings that happened to favor longer, more confident-sounding answers. What's the most likely outcome?",
+      "code": "# reward = reward_model(prompt, response)\n# objective: maximize reward   (KL / distance-from-SFT penalty = 0)\n#\n# reward_model slightly prefers longer, confident-sounding text",
+      "options": [
+        "The model produces perfect, concise answers because reward always tracks true quality",
+        "The model reward-hacks: it drifts toward long, padded, over-confident answers that score high on the reward model but are actually worse",
+        "The model crashes because reinforcement learning cannot run without a reward model",
+        "Nothing changes — the KL penalty has no effect on the outcome"
+      ],
+      "answerIndex": 1,
+      "explanation": "The reward model is only an approximation of human taste, and any approximation can be gamed. Optimize it too hard with no leash and the LLM finds cheap tricks that spike the score without being genuinely better — here, exploiting the reward model's mild bias toward length and confidence. That's reward hacking (over-optimization). The KL penalty exists precisely to keep the model near the sensible SFT policy so it improves within reason."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the description of the RLHF alternative that skips the separate reward model and reinforcement learning entirely, optimizing the preference data directly instead.",
+      "codeTemplate": "Full RLHF trains a reward model, then uses RL such as {{blank}} to optimize the LLM.\nA simpler, popular alternative that skips the reward model and RL and optimizes the\n(prompt, better, worse) preference pairs directly is called {{blank}}.",
+      "blanks": [
+        {
+          "answer": "PPO",
+          "accept": ["ppo", "proximal policy optimization"]
+        },
+        {
+          "answer": "DPO",
+          "accept": ["dpo", "direct preference optimization"]
+        }
+      ],
+      "explanation": "Classic RLHF uses reinforcement learning — most commonly PPO (Proximal Policy Optimization) — to push the LLM toward high reward. DPO (Direct Preference Optimization) rewrites the goal as a plain training loss over the same (prompt, better, worse) preference pairs: raise the probability of the preferred response, lower the rejected one. It skips both the explicit reward model and the RL machinery, which is why it's widely used as of 2026."
+    }
+  ]
+}

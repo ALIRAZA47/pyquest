@@ -1,0 +1,52 @@
+{
+  "slug": "build-a-node-server",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the four steps of building the Node.js MCP server in the order they appear in server.ts.",
+      "lines": [
+        "Create the server: new McpServer({ name: \"sales-connector\", version: \"1.0.0\" })",
+        "Register a tool: server.registerTool(\"query_sales\", { inputSchema, ... }, handler)",
+        "Register a resource: server.registerResource(\"schema\", \"schema://shop\", ...)",
+        "Connect over stdio: await server.connect(new StdioServerTransport())"
+      ],
+      "explanation": "Every SDK-based server follows this shape: create the McpServer, register the tools and resources you want to expose, then attach a transport and connect. Nothing flows over the wire until that final connect call."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "In the query_sales handler, the agent sends arguments { metric: \"revenue\", groupBy: \"customer\", limit: 3 }. Which SQL does the server build and run?",
+      "code": "const sql =\n  groupBy === \"month\"\n    ? `SELECT strftime('%Y-%m', created_at) AS month,\n         SUM(amount) AS revenue\n       FROM orders GROUP BY month ORDER BY month LIMIT ?`\n    : `SELECT c.name AS customer, SUM(o.amount) AS total\n       FROM orders o JOIN customers c ON c.id = o.customer_id\n       GROUP BY c.name ORDER BY total DESC LIMIT ?`;\nconst rows = db.prepare(sql).all(limit);",
+      "options": [
+        "The month branch, grouping revenue by month",
+        "The customer branch, joining orders to customers and grouping by c.name",
+        "Both queries, one after the other",
+        "Neither — the handler throws because groupBy isn't \"month\""
+      ],
+      "answerIndex": 1,
+      "explanation": "groupBy is \"customer\", not \"month\", so the ternary falls to the else branch: the customer query that joins orders to customers, groups by name, and orders by total spend. The agent chose the arguments; the server chose which SQL those arguments map to."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the two calls that finish the server: attach a stdio transport and start listening.",
+      "codeTemplate": "// 4. Connect over stdio and start listening for the agent.\nconst transport = new {{blank}}();\nawait server.{{blank}}(transport);",
+      "blanks": [
+        { "answer": "StdioServerTransport", "accept": ["StdioServerTransport"] },
+        { "answer": "connect", "accept": ["connect"] }
+      ],
+      "explanation": "A server needs a transport to speak the protocol. StdioServerTransport carries MCP over standard input/output — what a host expects from a launched subprocess — and server.connect(transport) wires them together and starts listening."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate rewrites the query_sales handler so the agent can run any query it wants. What's wrong with this design?",
+      "code": "// query_sales handler (WRONG for MCP)\ninputSchema: { rawSql: z.string() },\n...\nasync ({ rawSql }) => {\n  const rows = db.prepare(rawSql).all();\n  return { content: [{ type: \"text\", text: JSON.stringify(rows) }] };\n}",
+      "options": [
+        "z.string() should be z.text() for SQL strings",
+        "It hands the agent the ability to run arbitrary SQL, collapsing the safety boundary — the server should accept structured arguments (metric, groupBy, limit) and build the SQL itself",
+        "It's missing an await before db.prepare",
+        "The content type should be \"json\" instead of \"text\""
+      ],
+      "answerIndex": 1,
+      "explanation": "The whole point of the server is that it owns the SQL. Accepting a rawSql string lets the model run anything against the database, throwing away the controlled surface. Instead, expose structured, validated arguments and translate them to SQL server-side — the agent decides *when* to call the tool, your code decides *what* it does."
+    }
+  ]
+}

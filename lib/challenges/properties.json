@@ -1,0 +1,33 @@
+{
+  "slug": "properties",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "class Box:\n    def __init__(self, w, h):\n        self.w, self.h = w, h\n    @property\n    def area(self):\n        return self.w * self.h\n\nb = Box(3, 4)\nprint(b.area)",
+      "options": ["12", "<property object>", "a TypeError (missing parentheses)", "0"],
+      "answerIndex": 0,
+      "explanation": "@property lets you access area like an attribute — b.area (no parentheses) runs the method and returns 3 * 4 = 12."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "Calling `c.area()` fails with 'float object is not callable'. Why?",
+      "code": "class C:\n    def __init__(self, r): self.r = r\n    @property\n    def area(self): return 3.14 * self.r ** 2\n\nc = C(2)\nprint(c.area())",
+      "options": [
+        "A @property is accessed WITHOUT parentheses — use c.area, not c.area()",
+        "You must call C.area(c)",
+        "area needs a setter first",
+        "r must be a float"
+      ],
+      "answerIndex": 0,
+      "explanation": "A property is accessed like an attribute (c.area). c.area already returns the number; adding () tries to call that number, which fails."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the decorator that validates the value when `name` is assigned.",
+      "codeTemplate": "    @name.{{blank}}\n    def name(self, value):\n        self._name = value.strip()",
+      "blanks": [{ "answer": "setter", "accept": ["setter()"] }],
+      "explanation": "@<prop>.setter defines the code that runs when the property is assigned (obj.name = ...), letting you validate or transform the value before storing it."
+    }
+  ]
+}

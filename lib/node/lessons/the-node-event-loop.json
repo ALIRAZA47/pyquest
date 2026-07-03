@@ -1,0 +1,116 @@
+{
+  "slug": "the-node-event-loop",
+  "title": "The Node.js Event Loop",
+  "emoji": "♻️",
+  "category": "The Event Loop",
+  "difficulty": "Intermediate",
+  "summary": "How one thread runs thousands of things at once — the phases, the queues, and the exact order your callbacks fire.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Node runs your JavaScript on **a single thread** — yet it can juggle thousands of network connections without breaking a sweat. The trick is the **event loop**: instead of *waiting* for slow work (a timer, a file read, a network response), Node hands that work off, keeps running, and comes back to the result later via a **callback**.\n\nUnderstanding the loop is the difference between guessing what order things run in and *knowing*. Use the interactive visualizer below to build a program and watch it run, one honest step at a time."
+    },
+    {
+      "type": "heading",
+      "text": "One thread, never blocking"
+    },
+    {
+      "type": "text",
+      "md": "Your JavaScript runs on one call stack. If you block it with slow, synchronous work, **everything** stops — no other requests, no timers, nothing. So Node's whole design is about *never blocking*: slow operations (I/O, timers) are delegated to the system (via a C library called **libuv**) and their callbacks are queued to run later, when the stack is free."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Think of a barista",
+      "md": "A good barista doesn't stand and watch one espresso pour before taking the next order. They start the pour, take three more orders, steam some milk, then come back when the shot is ready. One person (one thread), lots of work in flight — because nothing blocks."
+    },
+    {
+      "type": "heading",
+      "text": "The phases of the loop"
+    },
+    {
+      "type": "text",
+      "md": "Each turn of the loop (a **tick**) moves through a fixed set of phases. Each phase has its own queue of callbacks to run:"
+    },
+    {
+      "type": "code",
+      "lang": "text",
+      "caption": "one tick of the event loop",
+      "code": "┌───────────────────────────┐\n│  timers        setTimeout / setInterval callbacks\n│  pending       some deferred system callbacks\n│  poll          retrieve I/O events; run I/O callbacks\n│  check         setImmediate callbacks\n│  close         'close' event callbacks\n└───────────────────────────┘\n        ↑ repeat every tick ↑"
+    },
+    {
+      "type": "text",
+      "md": "The two you'll reason about most are **timers** (where `setTimeout(cb, 0)` callbacks land) and **check** (where `setImmediate(cb)` callbacks land)."
+    },
+    {
+      "type": "heading",
+      "text": "Microtasks jump the queue"
+    },
+    {
+      "type": "text",
+      "md": "Two special queues are drained **between every phase (and after every callback)**, before the loop moves on:\n\n1. **`process.nextTick`** callbacks — highest priority, run first.\n2. **Promise** callbacks (`.then` / `await` continuations) — the microtask queue.\n\nBecause they drain before the next phase, a promise or `nextTick` always runs **before** a `setTimeout` that was scheduled at the same time."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "`setTimeout(fn, 0)` is not immediate",
+      "md": "A `0`ms timeout doesn't run *now* — it runs in the **timers** phase of a **future** tick, after the current synchronous code finishes and after all microtasks drain. \"0\" just means \"as soon as the loop can get to the timers phase.\""
+    },
+    {
+      "type": "code",
+      "lang": "js",
+      "caption": "guess the order",
+      "code": "console.log('1: sync');\n\nsetTimeout(() => console.log('2: timeout'), 0);\nsetImmediate(() => console.log('3: immediate'));\n\nPromise.resolve().then(() => console.log('4: promise'));\nprocess.nextTick(() => console.log('5: nextTick'));\n\nconsole.log('6: sync');",
+      "output": "1: sync\n6: sync\n5: nextTick\n4: promise\n2: timeout\n3: immediate"
+    },
+    {
+      "type": "text",
+      "md": "Read the output top to bottom: **all synchronous code first** (`1`, `6`), then the microtasks with `nextTick` ahead of promises (`5`, `4`), then the loop's phases — timers (`2`) and finally check (`3`). The visualizer below animates exactly this."
+    },
+    {
+      "type": "quiz",
+      "question": "Which callback runs FIRST after the synchronous code finishes?",
+      "options": [
+        "The setTimeout callback (it was scheduled with 0ms)",
+        "The setImmediate callback (check phase)",
+        "The process.nextTick callback",
+        "Whichever was written first in the file"
+      ],
+      "answerIndex": 2,
+      "explanation": "process.nextTick has the highest priority of all — its queue drains before the promise microtasks and before any loop phase, so it runs first once the call stack is clear."
+    },
+    {
+      "type": "quiz",
+      "question": "Why doesn't setTimeout(fn, 0) run immediately?",
+      "options": [
+        "Because 0 milliseconds is rounded up to 1 second",
+        "Because its callback is queued for the timers phase of a later tick, after sync code and microtasks",
+        "Because setTimeout is deprecated in Node",
+        "Because timers only run when the CPU is idle"
+      ],
+      "answerIndex": 1,
+      "explanation": "The callback can't run until the call stack is empty and microtasks have drained; then the loop reaches the timers phase on a future tick. '0' just means 'as soon as possible', not 'now'."
+    },
+    {
+      "type": "heading",
+      "text": "Why it matters"
+    },
+    {
+      "type": "text",
+      "md": "This model is why Node is great at **I/O-heavy** work (servers, APIs, proxies) and why one blocking loop or a giant synchronous computation can freeze an entire server. Keep the loop free: do slow work asynchronously, and never block the thread."
+    }
+  ],
+  "keyTakeaways": [
+    "Node runs your JS on one thread and stays responsive by never blocking — slow work is delegated and its callback is queued.",
+    "Each tick runs phases in order: timers → pending → poll (I/O) → check (setImmediate) → close.",
+    "Microtasks drain between every phase: process.nextTick first, then Promise callbacks — so they beat setTimeout(0).",
+    "setTimeout(fn, 0) means 'as soon as the timers phase is reached', not 'immediately'.",
+    "Blocking the loop with heavy synchronous work stalls every other request — keep it free."
+  ],
+  "exercise": {
+    "prompt": "Predict the console output of this program, then check with the visualizer:\n\n```js\nconsole.log('A');\nprocess.nextTick(() => console.log('B'));\nPromise.resolve().then(() => console.log('C'));\nsetTimeout(() => console.log('D'), 0);\nconsole.log('E');\n```",
+    "hint": "Sync code runs first (in written order). Then microtasks drain — nextTick before promises. Timers come last.",
+    "solution": "Output order: A, E, B, C, D.\n\n- 'A' and 'E' are synchronous → run first, in order.\n- 'B' is process.nextTick → highest-priority microtask.\n- 'C' is a promise → microtask, after nextTick.\n- 'D' is setTimeout → runs in the timers phase, last."
+  }
+}

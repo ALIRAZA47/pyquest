@@ -1,0 +1,30 @@
+{
+  "slug": "error-handling",
+  "title": "Error Handling",
+  "emoji": "🧯",
+  "category": "Async & Modern JS",
+  "difficulty": "Intermediate",
+  "summary": "Catch and recover from failures with try/catch/finally, throw your own errors, and handle rejected promises.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Things go wrong — bad input, a failed network request, a missing file. **Error handling** lets your program respond gracefully instead of crashing. The core tool is `try...catch`." },
+    { "type": "code", "lang": "js", "caption": "try / catch / finally", "code": "try {\n  const data = JSON.parse(userInput); // may throw\n  console.log(data.name);\n} catch (err) {\n  console.log('Could not parse:', err.message);\n} finally {\n  console.log('This always runs, error or not.');\n}" },
+    { "type": "text", "md": "Code in `try` runs normally; if anything **throws**, control jumps to `catch` with the error object. `finally` runs either way — perfect for cleanup." },
+    { "type": "heading", "text": "Throwing your own errors" },
+    { "type": "code", "lang": "js", "caption": "throw when something is invalid", "code": "function withdraw(balance, amount) {\n  if (amount > balance) {\n    throw new Error('Insufficient funds');\n  }\n  return balance - amount;\n}\n\ntry {\n  withdraw(50, 100);\n} catch (e) {\n  console.log(e.message); // Insufficient funds\n}" },
+    { "type": "callout", "variant": "gotcha", "title": "try/catch doesn't catch async callbacks", "md": "A `try/catch` only catches errors thrown **synchronously** in its block. For promises, either use `.catch()`, or `await` inside a `try/catch` block (async/await makes rejected promises throwable). A plain `setTimeout` callback that throws won't be caught by an outer try/catch." },
+    { "type": "code", "lang": "js", "caption": "with async/await", "code": "async function load() {\n  try {\n    const res = await fetch('/api/user');\n    if (!res.ok) throw new Error('HTTP ' + res.status);\n    return await res.json();\n  } catch (e) {\n    console.log('Load failed:', e.message);\n    return null;\n  }\n}" },
+    { "type": "quiz", "question": "When does the `finally` block run?", "options": ["Only when no error was thrown", "Only when an error was thrown", "Always — whether or not an error was thrown", "Never, unless you call it manually"], "answerIndex": 2, "explanation": "finally always runs after try/catch complete, regardless of whether an error occurred — which makes it ideal for cleanup like closing a file or hiding a spinner." }
+  ],
+  "keyTakeaways": [
+    "`try` runs code; if it throws, `catch (err)` handles the error; `finally` always runs.",
+    "Use `throw new Error('message')` to signal an invalid situation.",
+    "The caught error object has a `.message` (and `.name`, `.stack`).",
+    "Plain try/catch only catches synchronous throws — use `.catch()` or `await` in try/catch for promises."
+  ],
+  "exercise": {
+    "prompt": "Write `safeParse(text)` that returns the parsed JSON, or `null` if parsing fails (instead of throwing).",
+    "hint": "Wrap JSON.parse in try/catch; return the result in try, return null in catch.",
+    "solution": "function safeParse(text) {\n  try {\n    return JSON.parse(text);\n  } catch {\n    return null;\n  }\n}"
+  }
+}

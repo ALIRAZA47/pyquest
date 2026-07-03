@@ -1,0 +1,113 @@
+{
+  "slug": "next-token-prediction",
+  "title": "Next-Token Prediction",
+  "emoji": "🎯",
+  "category": "Inside the Model",
+  "difficulty": "Intermediate",
+  "summary": "How an LLM writes: it predicts one token at a time, appends it, and feeds everything back in — a loop that turns a probability distribution into fluent text.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Under all the magic, a large language model does exactly **one thing**: given some text, it guesses what comes next. Not the next word, not the next sentence — the next **token** (a word, a word-piece, or a punctuation mark). Everything an LLM produces, from a haiku to a working program, is that single guess repeated over and over. This lesson opens up that loop and shows you the machinery."
+    },
+    {
+      "type": "heading",
+      "text": "From the last layer to a number per token"
+    },
+    {
+      "type": "text",
+      "md": "Your prompt flows up through the transformer stack. What comes out the top is a vector for the **final position** in the sequence — a compressed summary of \"everything I've read so far.\" One last matrix multiply (the *output head*) turns that vector into a list of raw scores called **logits** — exactly one score for every token in the model's vocabulary. Modern vocabularies are big: often 100,000 to 200,000+ tokens, so this is a very long list."
+    },
+    {
+      "type": "code",
+      "code": "# One logit per vocabulary token — higher = the model likes it more\nlogits = model(prompt)[-1]   # take the LAST position's scores\n\n# vocab of ~128,000 -> a list of ~128,000 raw numbers\nlogits  # e.g. [ ... , 8.2 (\"mat\"), 6.1 (\"rug\"), 1.3 (\"banana\"), ... ]",
+      "lang": "py",
+      "caption": "The output head emits a raw score (logit) for every token."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Logits are like applause meters",
+      "md": "Picture every token in the vocabulary as a contestant on a stage. The logit is how loudly the model claps for each one. `mat` gets thunderous applause (8.2), `banana` gets a polite pat (1.3). Logits can be any real number — positive, negative, huge, tiny. They aren't probabilities *yet*; they're just relative enthusiasm."
+    },
+    {
+      "type": "heading",
+      "text": "Softmax: turning scores into probabilities"
+    },
+    {
+      "type": "text",
+      "md": "Raw logits are hard to reason about. **Softmax** converts them into a proper probability distribution: every value lands between 0 and 1, and they all add up to exactly 1. It works by exponentiating each logit (so bigger scores pull ahead sharply) and then dividing by the total. The result is the model's honest answer to \"what fraction of the time should each token come next?\""
+    },
+    {
+      "type": "code",
+      "code": "logits = [8.2, 6.1, 1.3]        # \"mat\", \"rug\", \"banana\"\n\n# softmax: exponentiate, then normalize so it sums to 1\n#   e^8.2 = 3641,  e^6.1 = 446,  e^1.3 = 3.7   (total = 4091)\nprobs  = [0.890, 0.109, 0.001]  # \"mat\" 89%, \"rug\" 11%, \"banana\" 0.1%",
+      "lang": "text",
+      "caption": "Softmax squashes any list of logits into probabilities that sum to 1."
+    },
+    {
+      "type": "quiz",
+      "question": "A model's top three logits are 8.2, 6.1, and 1.3. After softmax, what must be true of the resulting probabilities?",
+      "options": [
+        "They are the same three numbers, just shifted to be positive",
+        "They all fall between 0 and 1 and together sum to 1",
+        "The largest one is always exactly 1.0",
+        "They sum to the number of tokens in the vocabulary"
+      ],
+      "answerIndex": 1,
+      "explanation": "Softmax is defined to produce a valid probability distribution: each output is in (0, 1) and the whole set sums to 1. The biggest logit becomes the biggest probability, but it is never forced to 1.0 — other tokens always keep some share, however tiny."
+    },
+    {
+      "type": "heading",
+      "text": "Picking a token, then looping: autoregressive generation"
+    },
+    {
+      "type": "text",
+      "md": "Now the model has a probability for every possible next token and must **choose one**. The simplest strategy is **greedy decoding**: always take the highest-probability token — the `argmax`, which for our numbers is always `mat`. Greedy is deterministic (same prompt → same output every time) and cheap; `next_token = argmax(probs)`. (It's not the only option — a model can also *sample* so lower-probability tokens sometimes win, controlled by a **temperature** knob. That's the next lesson; here, just remember **greedy = argmax**.)\n\nHere's the crucial move. The model doesn't predict a whole sentence at once. It predicts one token, glues it onto the end of the text, and then feeds the *entire* new sequence back in to predict the token after that. Because each prediction depends on everything generated so far — including the model's own previous outputs — this is called **autoregressive** generation. The word 'auto' means 'self': the model conditions on its own past."
+    },
+    {
+      "type": "code",
+      "code": "tokens = tokenize(\"The cat sat on the\")\n\nwhile True:\n    logits = model(tokens)[-1]     # scores for the next token\n    probs  = softmax(logits)       # -> a probability distribution\n    nxt    = argmax(probs)         # greedy pick (the top token)\n\n    tokens.append(nxt)             # append it to the running sequence\n    if nxt == END_OF_TEXT or len(tokens) >= MAX_LEN:\n        break                      # stop token OR length limit\n\n# tokens now reads: \"The cat sat on the mat\"",
+      "lang": "py",
+      "caption": "The generation loop — repeat until a stop token or length limit."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The model never plans ahead",
+      "md": "Think of it as phone-keyboard autocomplete cranked to genius level — but instead of forgetting, it re-reads the *whole* message every step before suggesting the next piece. It's tempting to imagine the model drafting a full answer and then typing it out. It doesn't. At each step it sees only the tokens so far and commits to **one** next token with no ability to revise. A coherent paragraph emerges purely because each locally-good token, chained together, tends to stay on track — which is also why an early wrong turn can snowball, since the model keeps conditioning on its own mistake."
+    },
+    {
+      "type": "quiz",
+      "question": "In autoregressive generation, what happens immediately after the model picks a token?",
+      "options": [
+        "It predicts the remaining tokens of the sentence in parallel",
+        "It appends the token to the sequence and feeds everything back in to predict the next one",
+        "It erases the prompt and starts fresh from the new token",
+        "It waits for the user to approve the token before continuing"
+      ],
+      "answerIndex": 1,
+      "explanation": "Each new token is appended to the running sequence, and the whole updated sequence is fed back through the model to produce the next distribution. That feedback loop — conditioning on its own output — is exactly what 'autoregressive' means."
+    },
+    {
+      "type": "heading",
+      "text": "Knowing when to stop"
+    },
+    {
+      "type": "text",
+      "md": "A loop needs an exit. Generation halts on whichever comes first: (1) the model emits a special **stop token** (often called `end-of-text` or `end-of-turn`) — its learned way of saying \"I'm done,\" or (2) it hits a **maximum length** cap set by the caller (like `max_tokens`). This is why a response can end naturally with a period, or get abruptly chopped off mid-word when it runs into a length limit.\n\nWant to *see* the loop breathe? Use the interactive visualizer below to step through the probabilities and watch a sentence write itself one token at a time."
+    }
+  ],
+  "keyTakeaways": [
+    "An LLM does one thing repeatedly: predict the next token given all the text so far.",
+    "The output head produces a logit for every token in the vocabulary; softmax turns those logits into a probability distribution that sums to 1.",
+    "Greedy decoding always picks the highest-probability token (the argmax) — deterministic and simple.",
+    "Generation is autoregressive: pick a token, append it, feed the whole sequence back in, and repeat.",
+    "The loop stops at a special stop token or when it hits a maximum-length limit."
+  ],
+  "exercise": {
+    "prompt": "Trace the loop by hand.\n\nA tiny model has a **3-token vocabulary**: `A`, `B`, `<END>`. Its behavior is fully described by this rule table — given the current last token, here are the next-token logits it produces:\n\n| Last token | logit(A) | logit(B) | logit(\\<END\\>) |\n|---|---|---|---|\n| (start) | 3.0 | 1.0 | 0.0 |\n| A | 0.5 | 4.0 | 0.5 |\n| B | 0.5 | 0.5 | 5.0 |\n\nUsing **greedy decoding** (always take the argmax), start from `(start)` and write out the full sequence the model generates, stopping when it emits `<END>`. You do NOT need to compute exact softmax values — argmax of the probabilities is the same as argmax of the logits, so you can just pick the largest logit in each row.",
+    "hint": "Softmax is monotonic: the token with the biggest logit also has the biggest probability. So greedy decoding just means 'pick the row's largest logit each step.' Start at the (start) row, generate a token, then jump to the row for that token and repeat.",
+    "solution": "**Result: `A`, `B`, `<END>`.**\n\nStep 1 — current context is `(start)`. Logits are A=3.0, B=1.0, END=0.0. Largest is **A** (3.0). Append `A`.\n\nStep 2 — last token is now `A`. Logits are A=0.5, B=4.0, END=0.5. Largest is **B** (4.0). Append `B`.\n\nStep 3 — last token is now `B`. Logits are A=0.5, B=0.5, END=5.0. Largest is **`<END>`** (5.0). Emit the stop token — the loop halts.\n\nFinal generated sequence: **A B `<END>`**. Notice how each step conditions only on the current last token, and the sequence ends the moment `<END>` wins the argmax. Because greedy is deterministic, running this again from `(start)` would produce the exact same output every time."
+  }
+}

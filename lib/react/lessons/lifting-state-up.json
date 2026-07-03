@@ -1,0 +1,29 @@
+{
+  "slug": "lifting-state-up",
+  "title": "Lifting State Up",
+  "emoji": "🛗",
+  "category": "State & Interaction",
+  "difficulty": "Intermediate",
+  "summary": "When two components need the same data, move that state to their closest common parent and pass it down as props.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Sometimes two sibling components need to share the same piece of data — a filter and a list, or two inputs that should stay in sync. Since data flows **down** in React (parent → child via props), the fix is to **lift the state up** to their closest common parent." },
+    { "type": "heading", "text": "The pattern" },
+    { "type": "text", "md": "1. Move the `useState` into the common parent.\n2. Pass the value down to children as props.\n3. Pass a setter (or a callback) down so children can request changes.\n\nThe parent owns the state; children become simpler, controlled by their props." },
+    { "type": "code", "lang": "jsx", "caption": "parent owns the state, children share it", "code": "function App() {\n  const [query, setQuery] = useState('');\n  return (\n    <>\n      <SearchBox query={query} onChange={setQuery} />\n      <Results query={query} />\n    </>\n  );\n}\n\nfunction SearchBox({ query, onChange }) {\n  return <input value={query} onChange={e => onChange(e.target.value)} />;\n}\n\nfunction Results({ query }) {\n  return <p>Searching for: {query || '…'}</p>;\n}" },
+    { "type": "text", "md": "`SearchBox` and `Results` don't hold the state — `App` does. When you type, `SearchBox` calls `onChange`, `App` updates `query`, and both children re-render with the new value. One source of truth, always in sync." },
+    { "type": "callout", "variant": "tip", "title": "How high should it go?", "md": "Lift state only as high as the **closest common ancestor** of the components that need it — no higher. Lifting too far makes unrelated components re-render and adds prop-drilling. When many distant components need it, reach for Context instead." },
+    { "type": "quiz", "question": "Two sibling components need to share a value. Where should that state live?", "options": ["Duplicated in both siblings", "In a global variable outside React", "In their closest common parent, passed down as props", "In whichever sibling renders first"], "answerIndex": 2, "explanation": "Lift the state to the closest common parent and pass it (plus a setter/callback) down as props. That keeps a single source of truth and keeps the siblings in sync." }
+  ],
+  "keyTakeaways": [
+    "Data flows down via props, so shared state belongs in a common parent.",
+    "Pass the value down as a prop and a setter/callback down to request changes.",
+    "Lift only to the closest common ancestor — not higher.",
+    "For state needed by many distant components, use Context instead of deep prop-drilling."
+  ],
+  "exercise": {
+    "prompt": "Two `<TemperatureInput>` components (Celsius and Fahrenheit) should stay in sync. Where does the shared temperature state belong, and what do the inputs receive?",
+    "hint": "Think about the closest common parent and what it passes down.",
+    "solution": "Put the shared temperature state in their common parent (e.g. a <Calculator> component). Pass each input the current value as a prop plus an onChange callback, so a change in one input updates the parent's state and both inputs re-render in sync."
+  }
+}

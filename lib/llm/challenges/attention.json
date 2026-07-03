@@ -1,0 +1,52 @@
+{
+  "slug": "attention",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A token's attention weights are computed with softmax over the query-key scores. Given these final weights for the query token \"it\", which token contributes MOST to its updated representation?",
+      "code": "# query token: \"it\"\n# attention weights (already softmaxed, sum = 1.0)\nweights = {\n    \"The\":     0.05,\n    \"cat\":     0.61,\n    \"sat\":     0.10,\n    \"because\": 0.08,\n    \"it\":      0.16,\n}\n# updated_it = sum(weight * value for each token)",
+      "options": [
+        "\"cat\" — it has the highest weight (0.61), so its value dominates the blend",
+        "\"it\" — a token always attends most to itself",
+        "\"The\" — the first token always gets the most attention",
+        "They all contribute equally because softmax makes them uniform"
+      ],
+      "answerIndex": 0,
+      "explanation": "The updated vector is a weighted average of every token's value, using these weights. \"cat\" has the largest weight (0.61), so its value contributes most — which is exactly how the model resolves that \"it\" means the cat. A token does not automatically attend most to itself, and softmax normalizes scores to sum to 1 but does NOT make them uniform."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner explains self-attention. One statement contains a misconception about how the mechanism works. Which one is WRONG?",
+      "code": "# Claims about self-attention:\n# A) Each token builds a Query, and every token exposes a Key and a Value.\n# B) Attention weights come from matching a token's Query against other tokens' Keys.\n# C) The output for a token is a weighted blend of the Values it attended to.\n# D) A token compares its Query directly against other tokens' Values to get weights.",
+      "options": [
+        "Claim A is wrong",
+        "Claim D is wrong",
+        "Claim B is wrong",
+        "Claim C is wrong"
+      ],
+      "answerIndex": 1,
+      "explanation": "Weights are produced by comparing the Query against the Keys, not the Values. The Values are only used afterward: once the weights exist, they blend the Values into the output. Mixing up Keys and Values is the classic beginner slip — Keys are for matching, Values are the payload that gets combined."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the sentence about the constraint used in the decoder models you chat with, which prevents a token from looking at words that come after it.",
+      "codeTemplate": "In {{blank}} attention, a token may attend only to itself and\nearlier tokens; the weights for all FUTURE tokens are forced to zero.\nThis is what makes left-to-right generation possible.",
+      "blanks": [
+        { "answer": "causal", "accept": ["Causal", "masked", "Masked", "causal (masked)"] }
+      ],
+      "explanation": "Causal (also called masked) attention masks out future positions so a token can only see the past and present. Without it, a model would peek at tokens it hasn't generated yet, and next-token prediction as a training objective would break."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of computing self-attention for a single token in the correct order.",
+      "lines": [
+        "Project the token's embedding into a Query vector, and every token into Key and Value vectors",
+        "Score the Query against every token's Key (e.g. with a dot product)",
+        "Apply the causal mask so future tokens get a score of -infinity",
+        "Run softmax over the scores to get weights that sum to 1.0",
+        "Blend the Values using those weights to produce the token's new vector"
+      ],
+      "explanation": "First you produce Q, K, and V from the embeddings. Then the query is scored against every key. Before normalizing, the causal mask zeroes out the future (by sending those scores to -infinity). Softmax turns the remaining scores into a probability-like weight distribution, and finally those weights blend the values into the token's updated, context-aware representation."
+    }
+  ]
+}

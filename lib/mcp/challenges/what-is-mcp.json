@@ -1,0 +1,51 @@
+{
+  "slug": "what-is-mcp",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Your team has 4 AI agents and 5 tools. WITHOUT MCP, every agent needs bespoke glue code for every tool. How many integrations must you build and maintain?",
+      "code": "agents = 4\ntools  = 5\n\n# Without MCP: every agent needs custom code for every tool.\nintegrations = agents ??? tools\nprint(integrations)",
+      "options": [
+        "9  (you add them: 4 + 5)",
+        "20  (you multiply them: 4 × 5)",
+        "5  (only one per tool)",
+        "1  (one shared protocol)"
+      ],
+      "answerIndex": 1,
+      "explanation": "Without MCP the integrations are pairwise: each of the 4 agents needs custom glue for each of the 5 tools, so 4 × 5 = 20. This M×N product is the combinatorial explosion MCP was created to eliminate."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the classic one-line analogy for MCP.",
+      "codeTemplate": "MCP is a {{blank}} port for AI — one connector for every tool and data source.",
+      "blanks": [
+        { "answer": "USB-C", "accept": ["usb-c", "USB C", "usb c", "USBC", "usbc"] }
+      ],
+      "explanation": "MCP is a 'USB-C port for AI': just as USB-C gave every device one connector for power and data, MCP gives every AI agent one connector for tools and information."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate is describing MCP's server surface area in a design doc. One line is wrong. Which statement should be fixed?",
+      "code": "An MCP server exposes exactly three primitives:\n\n1. Tools     -> actions the model can invoke\n2. Resources -> read-only context\n3. Prompts   -> the model's trained weights",
+      "options": [
+        "Line 1 — Tools are not actions the model can invoke.",
+        "Line 2 — Resources are not read-only context.",
+        "Line 3 — Prompts are reusable templates, not the model's trained weights.",
+        "Nothing is wrong; all three lines are correct."
+      ],
+      "answerIndex": 2,
+      "explanation": "The three server primitives are Tools (actions), Resources (read-only context), and Prompts (reusable templates). Model weights live inside the model, not the server — MCP is deliberately model-agnostic, so a server never carries weights."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the reasoning behind MCP in logical order — from the problem, to the standard, to the payoff.",
+      "lines": [
+        "Before MCP, every agent needed custom glue code for every tool (M agents × N tools).",
+        "Adding one tool meant rewriting the integration for every single agent.",
+        "MCP defines one open protocol that each agent and each tool implements just once.",
+        "Now any MCP-aware agent can talk to any MCP server — add a tool and every agent can use it instantly."
+      ],
+      "explanation": "The story runs: the M×N explosion is the problem, its cost is felt whenever you add a tool, MCP replaces pairwise glue with a single shared protocol (M + N), and the payoff is that any agent instantly reaches any tool."
+    }
+  ]
+}

@@ -18,6 +18,8 @@ const HIGHLIGHTS: Record<string, string[]> = {
   python: ["63 lessons", "Live code + projects"],
   ml: ["Animated algorithms", "See models learn"],
   ai: ["Animated algorithms", "Neural nets & search"],
+  llm: ["Tokens, attention & sampling", "Every mechanism animated"],
+  mcp: ["Tools, Resources & Prompts", "Build a real connector"],
   html: ["Beginner-friendly", "Semantic & accessible"],
   css: ["Box model & Flexbox", "Grid & responsive"],
   js: ["The DOM & events", "Async & the event loop"],

@@ -1,0 +1,27 @@
+{
+  "slug": "encapsulation",
+  "title": "Encapsulation",
+  "emoji": "🔒",
+  "category": "Objects & Classes",
+  "difficulty": "Intermediate",
+  "summary": "Hide an object's internals behind a clean interface using private #fields and getters/setters, so state can't be corrupted from outside.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "**Encapsulation** means bundling data with the methods that operate on it, and hiding the internal details. Callers use a small, safe interface; they can't reach in and put the object into a broken state. Modern JS supports true privacy with `#` fields." },
+    { "type": "code", "lang": "js", "caption": "private #fields", "code": "class BankAccount {\n  #balance = 0;               // truly private — # marks it\n\n  deposit(amount) {\n    if (amount <= 0) throw new Error('must be positive');\n    this.#balance += amount;\n  }\n  get balance() {             // controlled read access\n    return this.#balance;\n  }\n}\n\nconst acc = new BankAccount();\nacc.deposit(100);\nconsole.log(acc.balance);   // 100\n// console.log(acc.#balance) // SyntaxError — private outside the class" },
+    { "type": "text", "md": "`#balance` can only be touched by code inside the class. Outsiders go through `deposit()` (which validates) and the `balance` getter (read-only). There's no way to set a negative balance from outside." },
+    { "type": "callout", "variant": "note", "title": "Before # fields: the _underscore convention", "md": "Older code marks 'private' fields with a leading underscore (`this._balance`) — but that's only a *convention*; nothing stops access. The `#` prefix is real, enforced privacy. Closures are another classic way to hide state (a variable captured in a factory function, as in the Closures lesson)." },
+    { "type": "quiz", "question": "What happens if you try to read `acc.#balance` from outside the class?", "options": ["It returns the value normally", "It returns undefined", "It's a SyntaxError — # fields are only accessible inside the class", "It logs a warning but works"], "answerIndex": 2, "explanation": "Private #fields are genuinely inaccessible outside their class — attempting it is a SyntaxError. That's the difference from the _underscore convention, which offers no real protection." }
+  ],
+  "keyTakeaways": [
+    "Encapsulation hides internals behind a small, safe public interface.",
+    "`#field` declares a truly private field — inaccessible outside the class.",
+    "Expose controlled access with methods and get/set, validating on the way in.",
+    "The old `_name` underscore is convention only; closures are another way to keep state private."
+  ],
+  "exercise": {
+    "prompt": "Give a `Counter` class a private `#count` starting at 0, an `increment()` method, and a read-only `value` getter. Calling increment twice then reading `value` should give 2.",
+    "hint": "Declare #count = 0; increment() does this.#count++; add get value() { return this.#count; }",
+    "solution": "class Counter {\n  #count = 0;\n  increment() { this.#count++; }\n  get value() { return this.#count; }\n}\nconst c = new Counter();\nc.increment(); c.increment();\nconsole.log(c.value); // 2"
+  }
+}

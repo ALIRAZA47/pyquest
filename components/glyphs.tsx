@@ -599,6 +599,21 @@ export const GLYPHS: Record<string, (p: P) => JSX.Element> = {
       <path d="M4 17l5-4 4 3 3-2.5 4 3.5" />
     </S>
   ),
+  plug: (p) => (
+    <S {...p}>
+      <path d="M9 2v5M15 2v5" />
+      <path d="M7 7h10v3a5 5 0 0 1-10 0V7z" />
+      <path d="M12 15v3" />
+      <path d="M12 18h4a3 3 0 0 1 3 3" />
+    </S>
+  ),
+  brain: (p) => (
+    <S {...p}>
+      <path d="M12 5.5a2.6 2.6 0 0 0-4.9-1.2A2.6 2.6 0 0 0 4 7a2.6 2.6 0 0 0-.7 4.6A2.7 2.7 0 0 0 4 16a2.6 2.6 0 0 0 3.4 2.5A2.6 2.6 0 0 0 12 18z" />
+      <path d="M12 5.5a2.6 2.6 0 0 1 4.9-1.2A2.6 2.6 0 0 1 20 7a2.6 2.6 0 0 1 .7 4.6A2.7 2.7 0 0 1 20 16a2.6 2.6 0 0 1-3.4 2.5A2.6 2.6 0 0 1 12 18z" />
+      <path d="M12 5.5V18" />
+    </S>
+  ),
 };
 
 export type GlyphName = keyof typeof GLYPHS;

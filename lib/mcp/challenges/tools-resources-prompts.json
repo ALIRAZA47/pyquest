@@ -1,0 +1,51 @@
+{
+  "slug": "tools-resources-prompts",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The model wants to run work: aggregate revenue by customer. Which primitive does it reach for, and how does that call travel on the wire?",
+      "code": "// The model decides to aggregate revenue by customer.\n// It has these three primitives available from the server:\n//   - Tool:     query_sales\n//   - Resource: schema://shop\n//   - Prompt:   /summarize-sales",
+      "options": [
+        "It reads the Resource schema://shop, because that returns the data",
+        "It invokes the Tool query_sales via a tools/call message",
+        "It triggers the Prompt /summarize-sales on the user's behalf",
+        "It cannot act until the user types a slash-command"
+      ],
+      "answerIndex": 1,
+      "explanation": "Running work is a Tool — it's model-controlled, so the model issues a tools/call for query_sales. A Resource is read-only context, and a Prompt is user-triggered, so neither is how the model performs the action."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the Node SDK call that exposes a read-only database schema as context the model can pull in.",
+      "codeTemplate": "server.{{blank}}(\n  \"schema\",\n  \"schema://shop\",\n  { title: \"Database schema\", mimeType: \"text/plain\" },\n  async (uri) => ({\n    contents: [{ uri: uri.href, text: \"orders(id, customer_id, amount, created_at)\" }],\n  })\n);",
+      "blanks": [
+        { "answer": "registerResource", "accept": ["registerresource"] }
+      ],
+      "explanation": "Read-only context addressed by a URI (schema://shop) is a Resource, registered with server.registerResource. Actions would use server.registerTool instead."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This connector is supposed to let the model SEND a Slack message. Something about how it's exposed is wrong. What's the fix?",
+      "code": "server.registerResource(\n  \"send_slack_message\",\n  \"slack://send\",\n  { title: \"Send a Slack message\" },\n  async () => {\n    await slack.postMessage(channel, text);\n    return { contents: [{ uri: \"slack://send\", text: \"sent\" }] };\n  }\n);",
+      "options": [
+        "Nothing — sending a message is fine as a Resource",
+        "Sending a message is an action, so it must be a Tool: use server.registerTool with an inputSchema",
+        "Change the URI from slack://send to file:///send",
+        "Add a mimeType field to the Resource metadata"
+      ],
+      "answerIndex": 1,
+      "explanation": "Resources are read-only context (like GET). Sending a message is a side-effecting action (like POST), so it belongs to the model-controlled Tool primitive — register it with server.registerTool and declare an inputSchema for the channel and text."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the JSON-RPC exchange in the order it happens when a model uses the query_sales tool.",
+      "lines": [
+        "→ Client asks what tools exist: { \"method\": \"tools/list\" }",
+        "← Server advertises query_sales with its input schema",
+        "→ Model calls the tool: { \"method\": \"tools/call\", \"params\": { \"name\": \"query_sales\", \"arguments\": { ... } } }",
+        "← Server runs the query and returns { \"result\": { \"content\": [...] } }"
+      ],
+      "explanation": "Discovery comes first (tools/list -> the server's advertisement), then invocation (tools/call -> the result). The model can only call a tool after it has discovered the tool's name and schema."
+    }
+  ]
+}

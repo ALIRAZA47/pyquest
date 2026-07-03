@@ -1,0 +1,51 @@
+{
+  "slug": "the-wire-protocol",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the four JSON-RPC messages of a tool call in the order they travel across the wire.",
+      "lines": [
+        "→ client sends { \"method\": \"tools/list\" }",
+        "← server returns the tool catalog (name + inputSchema)",
+        "→ model sends { \"method\": \"tools/call\", \"params\": { name, arguments } }",
+        "← server returns { \"result\": { \"content\": [...] } }"
+      ],
+      "explanation": "The client first discovers tools with tools/list. The server advertises each tool's name and inputSchema. Armed with that schema, the model issues a tools/call with concrete arguments, and the server returns the result content."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The client just sent this request. Which message will the server send back?",
+      "code": "{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"name\": \"query_sales\",\n    \"arguments\": { \"metric\": \"revenue\", \"limit\": 3 } } }",
+      "options": [
+        "A response with \"id\": 1 containing the list of tools",
+        "A response with \"id\": 2 containing \"result\": { \"content\": [...] }",
+        "A new \"method\": \"tools/list\" request",
+        "Nothing — tools/call does not return a response"
+      ],
+      "answerIndex": 1,
+      "explanation": "tools/call runs the tool and returns a result. The response reuses the request's id (2) so the client can pair them, and it carries result.content with the tool's output."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the server's reply. The client must be able to match this response to the request it answered.",
+      "codeTemplate": "// → { \"jsonrpc\": \"2.0\", \"id\": 7, \"method\": \"tools/list\" }\n// ← server responds\n{ \"jsonrpc\": \"2.0\", \"{{blank}}\": 7, \"result\": { \"tools\": [] } }",
+      "blanks": [
+        { "answer": "id", "accept": ["\"id\""] }
+      ],
+      "explanation": "JSON-RPC pairs a response to its request by the id field. The request used id 7, so the response must echo id: 7."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This tools/call request fails — the model can't invoke the tool. What's wrong?",
+      "code": "{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"arguments\": { \"metric\": \"revenue\", \"limit\": 3 } } }",
+      "options": [
+        "It should use \"method\": \"call/tools\" instead",
+        "The params is missing the tool's \"name\"",
+        "\"jsonrpc\" should be \"1.0\"",
+        "arguments must be a JSON string, not an object"
+      ],
+      "answerIndex": 1,
+      "explanation": "A tools/call params object needs both the tool's name and its arguments. Without name, the server has no idea which tool to run. The arguments object here is fine — it's the missing name that breaks the call."
+    }
+  ]
+}

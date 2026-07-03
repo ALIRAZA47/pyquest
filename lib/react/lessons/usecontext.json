@@ -1,0 +1,28 @@
+{
+  "slug": "usecontext",
+  "title": "The useContext Hook",
+  "emoji": "🌐",
+  "category": "Hooks",
+  "difficulty": "Intermediate",
+  "summary": "Share data across a whole component tree without threading props through every level — the fix for prop-drilling.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "When a value (the theme, the current user, a language) is needed by many components at different depths, passing it down as props through every layer — **prop-drilling** — gets painful. **Context** lets a parent broadcast a value to any descendant that asks for it." },
+    { "type": "heading", "text": "Three steps" },
+    { "type": "code", "lang": "jsx", "caption": "create · provide · consume", "code": "import { createContext, useContext, useState } from 'react';\n\n// 1. create the context\nconst ThemeContext = createContext('light');\n\nfunction App() {\n  const [theme, setTheme] = useState('dark');\n  // 2. provide a value to the subtree\n  return (\n    <ThemeContext.Provider value={theme}>\n      <Toolbar />\n    </ThemeContext.Provider>\n  );\n}\n\nfunction Toolbar() { return <ThemedButton />; }\n\nfunction ThemedButton() {\n  // 3. consume it — no props needed, at any depth\n  const theme = useContext(ThemeContext);\n  return <button className={theme}>I'm {theme}</button>;\n}" },
+    { "type": "text", "md": "`ThemedButton` reads `theme` directly with `useContext`, even though `Toolbar` never received or passed it. Any component inside the Provider can grab the value." },
+    { "type": "callout", "variant": "gotcha", "title": "Context isn't a state manager", "md": "Context handles *distribution*, not *storage*. You still hold the value in `useState`/`useReducer` and pass it (and its setters) as the Provider's `value`. Also, every consumer re-renders when the Provider's value changes — so don't put rapidly-changing, unrelated values in one big context." },
+    { "type": "quiz", "question": "What problem does Context primarily solve?", "options": ["Making network requests", "Passing data to deeply nested components without prop-drilling through every level", "Replacing useState entirely", "Styling components"], "answerIndex": 1, "explanation": "Context lets a Provider share a value with any descendant via useContext, avoiding the need to thread props through intermediate components that don't use them (prop-drilling)." }
+  ],
+  "keyTakeaways": [
+    "Context shares a value with a whole subtree without prop-drilling.",
+    "Three steps: createContext, wrap with <Context.Provider value={...}>, read with useContext.",
+    "Any descendant inside the Provider can consume the value at any depth.",
+    "Context distributes data; you still store it in state. Consumers re-render when the value changes."
+  ],
+  "exercise": {
+    "prompt": "You have a `user` object in <App> that a deeply nested <Avatar> needs. Outline how to deliver it with Context instead of passing `user` through every component in between.",
+    "hint": "createContext, provide the user at the top, useContext in Avatar.",
+    "solution": "1) const UserContext = createContext(null);\n2) In App: <UserContext.Provider value={user}>…</UserContext.Provider>\n3) In Avatar: const user = useContext(UserContext);\nNow Avatar reads user directly — no intermediate component needs to know about it."
+  }
+}

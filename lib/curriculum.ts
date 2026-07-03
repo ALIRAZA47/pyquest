@@ -98,6 +98,9 @@ export const CURRICULUM: CategoryMeta[] = [
       "encapsulation",
       "polymorphism",
       "dunder-methods",
+      "class-and-static-methods",
+      "properties",
+      "dataclasses",
     ],
   },
   {

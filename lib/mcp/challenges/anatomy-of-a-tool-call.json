@@ -1,0 +1,54 @@
+{
+  "slug": "anatomy-of-a-tool-call",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the five steps of the MCP request loop in the order they happen for the question \"Who are our top 3 customers by total spend?\"",
+      "lines": [
+        "User asks in plain English: \"Who are our top 3 customers by total spend?\"",
+        "Agent reasons: it should call the query_sales tool the server exposes",
+        "Agent sends a JSON-RPC tools/call for query_sales with { metric: \"revenue\", groupBy: \"customer\", limit: 3 }",
+        "The MCP server runs real SQL against the database and gets rows back",
+        "The agent turns the rows into a friendly answer for the user"
+      ],
+      "explanation": "Every MCP interaction follows this loop: ask in plain English, the agent reasons about which tool fits, it sends a tools/call, the server runs the actual query, and the agent turns the returned rows into a human-friendly answer."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The agent decides to answer \"Who are our top 3 customers by total spend?\". What does it send over the MCP protocol?",
+      "code": "// The user asked a plain-English question.\n// The agent has reasoned about which tool to use.\n// What goes on the wire next?",
+      "options": [
+        "The raw SQL string: SELECT c.name ... GROUP BY c.name ORDER BY total_spend DESC LIMIT 3;",
+        "A JSON-RPC tools/call with name \"query_sales\" and arguments { metric: \"revenue\", groupBy: \"customer\", limit: 3 }",
+        "A direct SQLite connection to the orders table",
+        "The finished sentence naming Northwind, Globex, and Initech"
+      ],
+      "answerIndex": 1,
+      "explanation": "The agent speaks the protocol, not SQL. It sends a tools/call naming the tool (query_sales) and structured arguments. Writing and running the SQL is the server's job — that's exactly why the server is the safety boundary."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the JSON-RPC request the agent sends to run the top-customers query.",
+      "codeTemplate": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 7,\n  \"method\": \"tools/{{blank}}\",\n  \"params\": {\n    \"name\": \"{{blank}}\",\n    \"arguments\": { \"metric\": \"revenue\", \"groupBy\": \"customer\", \"limit\": {{blank}} }\n  }\n}",
+      "blanks": [
+        { "answer": "call", "accept": ["call"] },
+        { "answer": "query_sales", "accept": ["query_sales"] },
+        { "answer": "3", "accept": ["3"] }
+      ],
+      "explanation": "To invoke a tool, the client uses the tools/call method. params.name selects the tool (query_sales) and params.arguments carries the structured inputs — here limit: 3 to get the top three customers."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate claims this is how the agent should query the database for the top customers. What's the fundamental problem?",
+      "code": "// Agent code (WRONG for MCP)\nconst db = openDatabase(\"sales.db\");\nconst rows = db.run(\n  `SELECT c.name AS customer, SUM(o.amount) AS total_spend\n   FROM orders o JOIN customers c ON c.id = o.customer_id\n   GROUP BY c.name ORDER BY total_spend DESC LIMIT 3;`\n);",
+      "options": [
+        "The SQL has a syntax error in the JOIN clause",
+        "The agent should not open the database or write SQL at all — it sends a tools/call to the MCP server, which owns the connection and runs the SQL. The server is the safety boundary.",
+        "It should use LIMIT 5 instead of LIMIT 3",
+        "It needs to close the database connection at the end"
+      ],
+      "answerIndex": 1,
+      "explanation": "In MCP the agent never touches the database directly. It speaks the protocol — a tools/call for query_sales — and the server holds the connection, validates arguments, and runs the SQL. That controlled boundary is the entire safety model; letting the agent open the DB and author SQL throws it away."
+    }
+  ]
+}

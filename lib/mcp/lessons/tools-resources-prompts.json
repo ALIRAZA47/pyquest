@@ -1,0 +1,117 @@
+{
+  "slug": "tools-resources-prompts",
+  "title": "Tools, Resources & Prompts",
+  "emoji": "🛠️",
+  "category": "How MCP Works",
+  "difficulty": "Beginner",
+  "summary": "The three primitives an MCP server can expose — Tools, Resources, and Prompts — and who controls each one.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "An MCP server is a **connector**: it advertises capabilities to a host, validates inputs, and executes the real work. But it can only expose three kinds of things. Learn these three **primitives** and you understand almost everything a server can do."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The three things a server can expose",
+      "md": "The most important distinction isn't what each returns — it's **who controls when it fires**:\n\n- **Tools** are *model-controlled* — the LLM decides when to call them.\n- **Resources** are *app-controlled* — the host app pulls them in as context.\n- **Prompts** are *user-controlled* — a person triggers them (think slash-commands)."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these are MCP server 'primitives'?",
+      "options": [
+        "Weights, biases, and gradients",
+        "Tools, Resources, and Prompts",
+        "GET, POST, and DELETE",
+        "Tables, rows, and columns"
+      ],
+      "answerIndex": 1,
+      "explanation": "Servers expose Tools (actions the model can invoke), Resources (read-only context/data), and Prompts (reusable templated interactions)."
+    },
+    {
+      "type": "heading",
+      "text": "Tools — model-controlled actions"
+    },
+    {
+      "type": "text",
+      "md": "**Tools** are actions the model can invoke — run a query, send an email, create a file. Like **POST endpoints with a schema**. The agent decides *when* to call a tool; your code decides *what* it does. Every tool declares an input schema so the model knows how to call it correctly. Common examples: `\"query_sales\"`, `\"send_slack_message\"`."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "caption": "server.ts — registering a tool",
+      "code": "// 2. Expose a TOOL. The agent decides *when* to call it;\n//    your code decides *what* it does. The agent never sees the DB directly.\nserver.registerTool(\n  \"query_sales\",\n  {\n    title: \"Query sales\",\n    description: \"Aggregate revenue by customer or by month.\",\n    inputSchema: {\n      metric: z.enum([\"revenue\", \"recency\"]),\n      groupBy: z.enum([\"customer\", \"month\"]).optional(),\n      limit: z.number().int().max(50).default(5),\n    },\n  },\n  async ({ groupBy, limit }) => {\n    const sql =\n      groupBy === \"month\"\n        ? `SELECT strftime('%Y-%m', created_at) AS month,\n             SUM(amount) AS revenue\n           FROM orders GROUP BY month ORDER BY month LIMIT ?`\n        : `SELECT c.name AS customer, SUM(o.amount) AS total\n           FROM orders o JOIN customers c ON c.id = o.customer_id\n           GROUP BY c.name ORDER BY total DESC LIMIT ?`;\n\n    const rows = db.prepare(sql).all(limit);\n    return { content: [{ type: \"text\", text: JSON.stringify(rows, null, 2) }] };\n  }\n);"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The schema is the contract",
+      "md": "The `inputSchema` (here written with Zod) is what the model reads to figure out how to call the tool. You **declare** the shape; the SDK handles discovery, validation, and transport. The function body is ordinary code — that's where your logic lives."
+    },
+    {
+      "type": "heading",
+      "text": "Resources — app-controlled context"
+    },
+    {
+      "type": "text",
+      "md": "**Resources** are read-only data the model can pull in as context — a schema, a document, a config file. Like **GET endpoints**. They're *app-controlled*: the host application decides what context to attach, rather than the model triggering a side effect. Each resource is addressed by a URI. Common examples: `\"schema://shop\"`, `\"file:///report.pdf\"`."
+    },
+    {
+      "type": "code",
+      "lang": "ts",
+      "caption": "server.ts — registering a resource",
+      "code": "// 3. Expose a RESOURCE — read-only context the agent can pull in.\nserver.registerResource(\n  \"schema\",\n  \"schema://shop\",\n  { title: \"Database schema\", mimeType: \"text/plain\" },\n  async (uri) => ({\n    contents: [{ uri: uri.href, text: \"orders(id, customer_id, amount, created_at)\" }],\n  })\n);"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Tools do, Resources describe",
+      "md": "A quick gut-check: if it **changes something or runs work**, it's a Tool. If it's just **read-only data you'd want as context**, it's a Resource. The sales connector exposes both — a `query_sales` tool and a `schema://shop` resource that tells the model what columns exist to reason over."
+    },
+    {
+      "type": "heading",
+      "text": "Prompts — user-controlled templates"
+    },
+    {
+      "type": "text",
+      "md": "**Prompts** are reusable, parameterized templates a user can trigger — a slash-command that pre-fills a rich interaction. They're *user-controlled*: a person invokes them intentionally, and they can take arguments to fill in the blanks. Common examples: `\"/summarize-sales\"`, `\"/review-pr\"`."
+    },
+    {
+      "type": "code",
+      "lang": "json",
+      "caption": "Prompts show up to the user as invokable templates",
+      "code": "{\n  \"prompts\": [\n    {\n      \"name\": \"summarize-sales\",\n      \"description\": \"Summarize sales for a time window\",\n      \"arguments\": [\n        { \"name\": \"month\", \"description\": \"e.g. 2026-06\", \"required\": true }\n      ]\n    },\n    {\n      \"name\": \"review-pr\",\n      \"description\": \"Review an open pull request\",\n      \"arguments\": [\n        { \"name\": \"pr\", \"description\": \"PR number or URL\", \"required\": true }\n      ]\n    }\n  ]\n}"
+    },
+    {
+      "type": "quiz",
+      "question": "A user types `/review-pr 482` in their chat app to kick off a code review. Which primitive is that?",
+      "options": [
+        "A Tool — the model chose to call it",
+        "A Resource — it's read-only data",
+        "A Prompt — the user triggered a parameterized template",
+        "None of these; slash-commands aren't part of MCP"
+      ],
+      "answerIndex": 2,
+      "explanation": "A slash-command that a person invokes with an argument (the PR number) is a Prompt — a user-controlled, parameterized template. Contrast with Tools (model-controlled) and Resources (app-controlled, read-only context)."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "\"Prompt\" here doesn't mean your chat message",
+      "md": "In MCP, a **Prompt** is a named, reusable template the *server* exposes for the *user* to trigger — not the free-text message you type into the model. Different concept, same word. When in doubt, ask *who controls it*: model (Tool), app (Resource), or user (Prompt)."
+    }
+  ],
+  "keyTakeaways": [
+    "An MCP server exposes exactly three primitives: Tools, Resources, and Prompts.",
+    "Tools are model-controlled actions (like POST) — the model decides when to call; your code decides what happens.",
+    "Resources are app-controlled, read-only context (like GET), addressed by a URI such as `schema://shop`.",
+    "Prompts are user-controlled, parameterized templates — slash-commands like `/review-pr` that a person triggers.",
+    "The clearest way to tell them apart is to ask who controls when it fires: model, app, or user."
+  ],
+  "exercise": {
+    "prompt": "You're designing an MCP connector for a project-management tool (think Jira or Linear). Sketch **one of each primitive** for it:\n\n1. A **Tool** — name it and give it a one-line description plus 1-2 input fields.\n2. A **Resource** — give it a URI and say what read-only context it returns.\n3. A **Prompt** — name the slash-command and its argument(s).\n\nFor each, state **who controls it** (model / app / user) and one sentence justifying why it belongs in that category rather than the other two.",
+    "hint": "Actions that *do* something (create a ticket, transition a status) are Tools. Read-only context you'd want the model to reason over (the list of statuses, a board's config) is a Resource. A person-triggered template (`/standup`, `/triage`) is a Prompt.",
+    "solution": "One reasonable design:\n\n1. **Tool** — `create_issue` — \"Create a new issue in a project.\" Inputs: `project` (string), `title` (string), `priority` (enum). Model-controlled: it performs a write/side-effect, and the model decides when creating a ticket is warranted, so it's a Tool (a POST-like action), not read-only data.\n\n2. **Resource** — `board://engineering/config` — returns the read-only board configuration (columns, workflow states, labels). App-controlled: it's context the host attaches so the model knows valid statuses; it changes nothing, so it's a Resource (GET-like), not a Tool.\n\n3. **Prompt** — `/triage-backlog` with argument `project`. User-controlled: a person intentionally kicks off a pre-built triage interaction; it's a reusable template the user triggers, not something the model spontaneously calls or a passive piece of data."
+  }
+}

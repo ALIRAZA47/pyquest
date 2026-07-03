@@ -1,0 +1,51 @@
+{
+  "slug": "context-windows",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A model has a 100,000-token context window. The prompt below is assembled and sent. Roughly how many tokens are left for the model's reply?",
+      "code": "System prompt:       2,000 tokens\nPasted document:    85,000 tokens\nChat history:       11,000 tokens\nNew user question:   1,500 tokens\n\nContext window:    100,000 tokens",
+      "options": [
+        "About 100,000 — the reply gets its own separate budget",
+        "About 500 — the input already uses 99,500 of the 100,000, so almost nothing is left",
+        "About 15,000 — only the document counts against the window",
+        "Zero, and always — replies never fit"
+      ],
+      "answerIndex": 1,
+      "explanation": "Input and output share one budget. Input totals 2,000 + 85,000 + 11,000 + 1,500 = 99,500 tokens, leaving only 100,000 - 99,500 = 500 tokens for the reply. That's barely a sentence or two — a classic sign the context is over-stuffed and you should trim what you send."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A developer is explaining why their chatbot 'forgets' the start of long conversations. One line is a misconception. Which one should be corrected?",
+      "code": "1. The model has no memory between turns; the app re-sends\n   the whole conversation each turn.\n2. The prompt and the model's reply share one token budget.\n3. The model permanently deleted the early messages from its\n   weights, so they are gone forever.\n4. When the transcript exceeds the window, the app drops the\n   oldest messages to make room.",
+      "options": [
+        "Line 1 — models actually keep a private memory of every past turn",
+        "Line 3 — the model's weights aren't changed; the early messages simply weren't sent because they no longer fit in the window",
+        "Line 2 — input and output have completely separate budgets",
+        "Line 4 — overflow never drops messages; it always errors"
+      ],
+      "answerIndex": 1,
+      "explanation": "Line 3 is the misconception. Chatting never edits a model's weights. LLMs are stateless — 'forgetting' happens because the growing transcript no longer fits in the context window, so the oldest tokens are dropped before the prompt is sent. Lines 1, 2, and 4 are all accurate descriptions of how context windows work."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the definition of a context window.",
+      "codeTemplate": "A context window is the maximum number of {{blank}} a model can attend to at once, shared by both the prompt and the reply.",
+      "blanks": [
+        { "answer": "tokens", "accept": ["token"] }
+      ],
+      "explanation": "Context windows are measured in tokens (not words or characters). A '200K context' means 200,000 tokens, and that single budget must hold the system prompt, the conversation, any pasted documents, and the model's generated reply all at once."
+    },
+    {
+      "type": "reorder",
+      "prompt": "A chat app is at the edge of its context window. Put the events in the order they happen when the user sends one more message that would overflow the window.",
+      "lines": [
+        "The user sends a new message, pushing the total over the context-window limit",
+        "The app drops the oldest messages from the transcript to make room",
+        "The trimmed transcript (now within the limit) is sent to the model as the prompt",
+        "The model replies using only the tokens it can currently see, unaware of the dropped early messages"
+      ],
+      "explanation": "Overflow triggers a sliding window: the new message tips the transcript past the limit, so the app trims from the oldest end, sends the trimmed prompt, and the model answers based only on what remains in view. The dropped early turns are invisible to it — which is exactly why long chats seem to forget their beginnings."
+    }
+  ]
+}

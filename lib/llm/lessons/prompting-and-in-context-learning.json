@@ -1,0 +1,129 @@
+{
+  "slug": "prompting-and-in-context-learning",
+  "title": "Prompting & In-Context Learning",
+  "emoji": "💬",
+  "category": "Using LLMs",
+  "difficulty": "Beginner",
+  "summary": "The prompt is the only steering wheel you have at inference time — no weights change — and by choosing what you put in the context, from a bare question to a few worked examples, you can dramatically shape what the model does through a phenomenon called in-context learning.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "A trained LLM is frozen. Its billions of weights don't budge when you talk to it — every conversation starts from the exact same model. So how do you get it to translate, summarize, write SQL, or answer in a specific format, all without retraining anything?\n\nThe answer is the **prompt**. The prompt is the text you feed in, and at inference time it is the *only* thing you control. You aren't teaching the model new facts; you're arranging the **context** so that the most likely continuation is the answer you want. Learning to do that well is the single highest-leverage skill in using LLMs — and it's the whole subject of this lesson."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The model is a piano, the prompt is what you play",
+      "md": "A piano already contains every song it will ever play — the notes are all built in. It doesn't learn a new song when you sit down; *you* select which keys to strike and in what order. The LLM is the same: all its capability is baked into the frozen weights. The prompt is you at the keyboard, choosing which of those capabilities to bring out. Change the prompt and you play a different song — with the exact same instrument."
+    },
+    {
+      "type": "heading",
+      "text": "Zero-shot: just ask"
+    },
+    {
+      "type": "text",
+      "md": "The simplest prompt is **zero-shot**: you state the task in plain language and give **zero examples**. You're relying entirely on what the model absorbed during training — and for common tasks that's often plenty.\n\n'Zero-shot' comes from machine learning, where a 'shot' means a labeled example. Zero shots = no examples, just the instruction."
+    },
+    {
+      "type": "code",
+      "code": "Classify the sentiment of this review as positive or negative.\n\nReview: \"The battery dies in an hour and support ignored me.\"\nSentiment:",
+      "lang": "text",
+      "caption": "A zero-shot prompt: the task is described, but no examples are shown. The model continues with `negative`."
+    },
+    {
+      "type": "heading",
+      "text": "Few-shot: show, don't just tell"
+    },
+    {
+      "type": "text",
+      "md": "When zero-shot is shaky — the task is unusual, the format is picky, or the model keeps drifting — you switch to **few-shot**: you put a handful of worked **examples** right in the prompt before the real question. The model reads your examples, infers the pattern, and applies it to the new input.\n\nThe striking part: the model has *not* been retrained. Those examples live only in the context window for this one request, and they vanish the moment the request ends. Yet within that single prompt, the model behaves as if it just learned your task on the spot. That effect has a name."
+    },
+    {
+      "type": "code",
+      "code": "Classify the sentiment as positive or negative.\n\nReview: \"Fast shipping and works great.\"      Sentiment: positive\nReview: \"Broke after two days, total waste.\"    Sentiment: negative\nReview: \"Exactly what I needed, love it.\"        Sentiment: positive\nReview: \"The battery dies in an hour.\"           Sentiment:",
+      "lang": "text",
+      "caption": "A few-shot prompt: three labeled examples establish the pattern, then the real input. The model continues with `negative` — and matches your exact one-word format."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "In-context learning: 'learning' without learning",
+      "md": "When a model picks up a task from examples **in the prompt** — no weight updates, no training run — that's **in-context learning**. It feels like learning because behavior changes, but nothing about the model is permanently altered: the 'lesson' exists only inside this one context window. It's less like a student who studied overnight and more like a session musician who nails the tune after hearing you hum a few bars — then walks out having changed nothing about themselves. Close the chat and the model is exactly as it was."
+    },
+    {
+      "type": "quiz",
+      "question": "You give a model three input→output examples in your prompt and it suddenly formats its answer correctly. What actually changed inside the model?",
+      "options": [
+        "Its weights were fine-tuned on your three examples",
+        "Nothing permanent — it inferred the pattern from the examples in this context, and it's forgotten once the request ends",
+        "It saved your examples to a database for next time",
+        "It downloaded a new skill from the internet"
+      ],
+      "answerIndex": 1,
+      "explanation": "This is in-context learning. The examples live only in the prompt for this single request; the model conditions on them to predict a matching continuation, but no weights are updated. Start a fresh request without those examples and the effect is gone — the model is stateless and unchanged."
+    },
+    {
+      "type": "heading",
+      "text": "Roles: system, user, assistant"
+    },
+    {
+      "type": "text",
+      "md": "Chat models don't see one flat block of text — the conversation is structured into **messages**, each tagged with a **role**:\n\n- **system** — sets the model's overall behavior, persona, and rules for the whole conversation. It's the standing instruction, written once, that everything else obeys.\n- **user** — that's you: your questions and requests.\n- **assistant** — the model's own replies. Previous assistant turns stay in the context so the model can see what it already said.\n\nUnder the hood these roles are just special tokens wrapped around the text, but they carry real weight: the system message is where you say 'You are a terse SQL assistant; reply with a query and nothing else,' and it colors every answer that follows."
+    },
+    {
+      "type": "code",
+      "code": "[\n  {\"role\": \"system\",    \"content\": \"You are a terse assistant. Reply in one sentence, no preamble.\"},\n  {\"role\": \"user\",      \"content\": \"Why is the sky blue?\"},\n  {\"role\": \"assistant\", \"content\": \"Air scatters short blue wavelengths more than red ones.\"},\n  {\"role\": \"user\",      \"content\": \"And at sunset?\"}\n]",
+      "lang": "json",
+      "caption": "A chat is a list of role-tagged messages. The system message steers tone for every turn; prior turns give the model memory of the conversation."
+    },
+    {
+      "type": "heading",
+      "text": "Prompt patterns that reliably work"
+    },
+    {
+      "type": "text",
+      "md": "A few habits do most of the heavy lifting. None require anything fancy — they just reduce the model's guesswork:\n\n- **Be specific.** 'Summarize this' is vague. 'Summarize this in 3 bullet points for a busy executive, no jargon' pins down length, audience, and style.\n- **Show the format you want.** If you need JSON, show one example of the exact JSON. Models mirror the shape you give them far more reliably than a shape you merely describe.\n- **Give relevant context.** Paste the actual document, error message, or data. The model can only use what's in the window — it can't consult a file you didn't include.\n- **Break the task into steps.** For anything with reasoning, ask the model to work through it step by step instead of blurting a final answer."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "\"Let's think step by step\"",
+      "md": "For multi-step problems — math, logic, debugging — telling the model to **reason step by step** before answering measurably improves accuracy. Because each token is predicted from the ones before it, letting the model 'write out its work' gives it intermediate tokens to build on, instead of forcing the whole answer into one leap. This is called **chain-of-thought** prompting. (Note: many 2026 *reasoning* models now do this internally by default, so you may not need to ask — but for standard chat models, the phrase still earns its keep.)"
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "More examples isn't always better",
+      "md": "Few-shot is powerful, but examples aren't free: each one eats context-window tokens, adds cost and latency on every call, and — worst of all — a *sloppy* example teaches the wrong pattern. Three clean, consistent examples usually beat ten noisy ones. And if a crisp zero-shot instruction already works, adding examples can be pure overhead. Reach for few-shot to fix a specific failure (wrong format, misread task), not as a reflex."
+    },
+    {
+      "type": "quiz",
+      "question": "You want the model to always reply with strict JSON like {\"name\": \"...\", \"age\": 0}. Which prompt change is most likely to get reliable JSON?",
+      "options": [
+        "Politely ask 'please use good formatting'",
+        "Raise the temperature so it's more creative",
+        "Show one or two examples of the exact JSON shape you want in the prompt",
+        "Make the prompt as short as possible so it has less to read"
+      ],
+      "answerIndex": 2,
+      "explanation": "Models mirror concrete patterns far better than vague descriptions. Demonstrating the exact JSON shape (a mini few-shot for format) gives the model a template to copy. Vague politeness is unreliable, higher temperature makes output less consistent, and brevity alone doesn't specify the shape."
+    },
+    {
+      "type": "text",
+      "md": "Put it all together and the picture is simple: you can't change the model, but you own the context. Start zero-shot; if the model stumbles, add a few clean examples (few-shot / in-context learning); set the ground rules in the system message; and be specific about task, format, and steps. Everything else in prompt engineering is variations on those moves."
+    }
+  ],
+  "keyTakeaways": [
+    "The model's weights are frozen at inference time — the prompt is the only thing you control, so prompting is the act of arranging context to make the answer you want the most likely continuation.",
+    "Zero-shot means asking with no examples; few-shot means showing a handful of worked examples in the prompt so the model infers the pattern.",
+    "In-context learning is the model picking up a task from prompt examples with no weight updates — the effect lives only in that one context window and vanishes when the request ends.",
+    "Chat prompts are structured by role: the system message sets behavior and persona, user messages are your input, and assistant messages are the model's prior replies.",
+    "Reliable patterns: be specific, demonstrate the exact output format, include the relevant context, and ask the model to reason step by step for multi-step problems."
+  ],
+  "exercise": {
+    "prompt": "A teammate is building a feature that extracts a person's **name** and **city** from a messy sentence and returns strict JSON like `{\"name\": \"...\", \"city\": \"...\"}`. Their current **zero-shot** prompt is:\n\n> `Extract the name and city: \"Yesterday Priya flew from her home in Lagos to a conference.\"`\n\nThe model keeps replying with chatty prose like *\"Sure! The person is Priya and the city is Lagos.\"* instead of clean JSON, and sometimes it grabs the conference city instead of the home city.\n\n**Part A.** Explain, in terms of what the model is doing, *why* the zero-shot prompt produces inconsistent, chatty output.\n\n**Part B.** Rewrite the prompt using **few-shot** examples so the model reliably returns the exact JSON shape. Show at least two examples plus the real input.\n\n**Part C.** Where would you put the rule *\"Always output only JSON, no explanation\"* — in a system message or a user message — and why? Is this few-shot fix changing the model's weights?",
+    "hint": "The model predicts the most likely continuation given the context. With no examples and no format shown, 'most likely' for a chatty chat model is friendly prose. Few-shot works by demonstrating the exact input→output mapping so the model copies the pattern. Remember which role is meant for standing rules that apply to every turn — and recall what in-context learning does and does not change.",
+    "solution": "**Part A.** The model isn't 'deciding' to be chatty — it's predicting the most likely continuation of the text you gave it. A bare instruction with no demonstrated format leaves the target underspecified, so the model falls back on its default helpful-chat style (prose, preamble like 'Sure!'). And nothing in the prompt distinguishes *home* city from *conference* city, so it sometimes picks the wrong one. Vague input → high-variance output.\n\n**Part B.** Show the exact mapping with a couple of clean examples, ending on the real input so the model continues the pattern:\n\n```\nExtract the person's name and their HOME city as JSON.\n\nText: \"Tom, who lives in Oslo, is visiting Rome this week.\"\nJSON: {\"name\": \"Tom\", \"city\": \"Oslo\"}\n\nText: \"Currently in Tokyo for work, Ana misses her flat in Madrid.\"\nJSON: {\"name\": \"Ana\", \"city\": \"Madrid\"}\n\nText: \"Yesterday Priya flew from her home in Lagos to a conference.\"\nJSON:\n```\n\nThe two examples pin down the exact JSON shape *and* teach the home-vs-visiting distinction, so the model outputs `{\"name\": \"Priya\", \"city\": \"Lagos\"}`.\n\n**Part C.** Put the rule *\"Always output only JSON, no explanation\"* in the **system message**. The system role is for standing instructions that govern every turn of the conversation, so the constraint keeps applying no matter what the user types next. And no — this is **in-context learning**, not training. The examples and rule live only in the prompt/context for these requests; they condition the output but never touch the frozen weights. Start a fresh conversation without them and the model is exactly as it was before."
+  }
+}

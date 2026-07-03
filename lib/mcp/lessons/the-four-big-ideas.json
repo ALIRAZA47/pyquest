@@ -1,0 +1,112 @@
+{
+  "slug": "the-four-big-ideas",
+  "title": "The Four Big Ideas",
+  "emoji": "💡",
+  "category": "MCP Foundations",
+  "difficulty": "Beginner",
+  "summary": "The four ideas that make MCP click: one protocol instead of N integrations, three simple primitives, a safe boundary around your data, and total model- and vendor-independence.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You already know the one-liner: MCP is a **USB-C port for AI** — one connector for tools and information. But why does that matter, and why is everyone excited about it? It comes down to four ideas. Once these click, the rest of MCP is just details."
+    },
+    {
+      "type": "heading",
+      "text": "Idea 1 — One protocol, not N integrations"
+    },
+    {
+      "type": "text",
+      "md": "Before MCP, every agent needed custom code for every tool. Three agents times four tools meant twelve bespoke integrations — and adding a new tool meant rewriting glue for *all* of them. Integrations exploded combinatorially.\n\nMCP is a single open standard. Write a connector **once**, and any MCP-aware agent can use it. Each side implements MCP one time; after that, any agent talks to any tool through the same protocol."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The M×N problem",
+      "md": "**Before MCP:** M agents × N tools = chaos. Every pairing needs bespoke glue.\n\n**With MCP:** everyone speaks one protocol. Add a tool and every agent can use it instantly — no new glue."
+    },
+    {
+      "type": "heading",
+      "text": "Idea 2 — Three simple primitives"
+    },
+    {
+      "type": "text",
+      "md": "A server's entire surface area is just three things:\n\n- **Tools** — actions the model can invoke (run a query, send a message, create a file).\n- **Resources** — read-only context the agent can pull in (a schema, a doc, config).\n- **Prompts** — reusable templates for common interactions.\n\nThat's it. That's the whole surface area. Here's a real server exposing a tool and a resource — the two you'll use most. Note the split of responsibility: the **agent** decides *when* to call `query_sales`; your **code** decides *what* it does, and the agent never touches the database directly."
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "caption": "server.py",
+      "code": "from mcp.server.fastmcp import FastMCP\nimport sqlite3\n\ndb = sqlite3.connect(\"shop.db\", check_same_thread=False)\n\n# 1. Create the server — your MCP \"connector\".\nmcp = FastMCP(\"sales-connector\")\n\n\n# 2. Expose a TOOL. The decorator + type hints become the schema\n#    the agent reads to know how to call this function.\n@mcp.tool()\ndef query_sales(metric: str, group_by: str = \"customer\", limit: int = 5) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    if group_by == \"month\":\n        sql = (\"SELECT strftime('%Y-%m', created_at) AS month, \"\n               \"SUM(amount) AS revenue FROM orders \"\n               \"GROUP BY month ORDER BY month LIMIT ?\")\n    else:\n        sql = (\"SELECT c.name AS customer, SUM(o.amount) AS total \"\n               \"FROM orders o JOIN customers c ON c.id = o.customer_id \"\n               \"GROUP BY c.name ORDER BY total DESC LIMIT ?\")\n\n    cur = db.execute(sql, (limit,))\n    cols = [d[0] for d in cur.description]\n    return [dict(zip(cols, row)) for row in cur.fetchall()]\n\n\n# 3. Expose a RESOURCE — read-only context the agent can pull in.\n@mcp.resource(\"schema://shop\")\ndef schema() -> str:\n    \"\"\"The database schema the model can reason over.\"\"\"\n    return \"orders(id, customer_id, amount, created_at)\"\n\n\n# 4. Run over stdio so a host like Claude can launch and talk to it.\nif __name__ == \"__main__\":\n    mcp.run()"
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these is the complete set of MCP server primitives?",
+      "options": [
+        "GET, POST, and DELETE",
+        "Tools, Resources, and Prompts",
+        "Weights, biases, and gradients",
+        "Tables, rows, and columns"
+      ],
+      "answerIndex": 1,
+      "explanation": "Servers expose Tools (actions the model can invoke), Resources (read-only context/data), and Prompts (reusable templated interactions). Those three are the entire surface area."
+    },
+    {
+      "type": "heading",
+      "text": "Idea 3 — A safe boundary"
+    },
+    {
+      "type": "text",
+      "md": "This is the idea that makes MCP safe to put in front of real systems. The model **never holds your credentials**. Your server sits in the middle as a controlled boundary: it validates every input, can enforce read-only access, scope which tables are visible, and audit every call.\n\nEven an \"escape hatch\" tool that lets the model write raw SQL stays safe, because *the server is the boundary* — it inspects and rejects anything dangerous before it ever touches the database:"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "caption": "server.py (excerpt)",
+      "code": "@mcp.tool()\ndef run_sql(sql: str) -> str:\n    \"\"\"Escape hatch: run a single read-only SELECT. The server is the boundary.\"\"\"\n    clean = sql.strip().rstrip(\";\")\n    if not clean.lower().startswith(\"select\") or \";\" in clean:\n        return \"Error: only a single read-only SELECT is allowed.\"\n    try:\n        return _rows(db.execute(clean))\n    except sqlite3.Error as exc:  # pragma: no cover - defensive\n        return f\"Error: {exc}\""
+    },
+    {
+      "type": "quiz",
+      "question": "Why is exposing a database through an MCP server safer than handing the model the raw DB credentials?",
+      "options": [
+        "It isn't — it's exactly the same thing.",
+        "Because JSON-RPC messages are inherently encrypted.",
+        "The server mediates access: it can enforce read-only queries, validate inputs, scope tables, and audit every call — and the model never holds the credentials.",
+        "Because the model memorizes the whole database first, so it never needs to connect."
+      ],
+      "answerIndex": 2,
+      "explanation": "The MCP server is a controlled boundary. You decide what tools exist, validate every argument, can enforce read-only access, and audit each call. The model only sees the tools you advertise — it never holds the credentials or talks to the database directly."
+    },
+    {
+      "type": "heading",
+      "text": "Idea 4 — Model- & vendor-agnostic"
+    },
+    {
+      "type": "text",
+      "md": "Because MCP is an open protocol, the same server works with **Claude, an IDE, or your own homegrown agent**. You can swap the model without rewriting a single connector. To connect it, you just point a host at the server — the host launches it and the connection is live:"
+    },
+    {
+      "type": "code",
+      "lang": "json",
+      "caption": "claude_desktop_config.json",
+      "code": "{\n  \"mcpServers\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/server.js\"]\n    },\n    \"sales-connector-python\": {\n      \"command\": \"uv\",\n      \"args\": [\"run\", \"server.py\"]\n    }\n  }\n}"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The payoff",
+      "md": "Write your connector once (Idea 1), expose it through three primitives (Idea 2), keep your data behind a validating boundary (Idea 3), and plug it into any model or tool you like (Idea 4). That's the whole promise of MCP."
+    }
+  ],
+  "keyTakeaways": [
+    "MCP is one open protocol: write a connector once and any MCP-aware agent can use it, instead of building M×N bespoke integrations.",
+    "A server's entire surface area is three primitives — Tools (actions), Resources (read-only context), and Prompts (reusable templates).",
+    "The server is a safe boundary: the model never holds your credentials, and your code validates inputs, enforces read-only access, scopes visibility, and audits every call.",
+    "MCP is model- and vendor-agnostic — the same server works with Claude, an IDE, or your own agent, so you can swap the model without rewriting the connector."
+  ],
+  "exercise": {
+    "prompt": "You're designing an MCP connector for a company's HR system. Sketch (in prose or pseudo-config) how you'd apply all four big ideas:\n\n1. **One protocol** — name one MCP-aware host that could reuse this connector without any custom glue.\n2. **Three primitives** — list one Tool, one Resource, and one Prompt you would expose.\n3. **Safe boundary** — describe one input your server would validate or reject, and one thing it would keep read-only or hidden from the model.\n4. **Vendor-agnostic** — explain what you'd have to change to swap the underlying model from Claude to your own agent.",
+    "hint": "For the safe boundary, remember the run_sql example: the server inspects the request and rejects anything that isn't allowed before it touches the real system. HR data is sensitive — think about which fields (salaries? SSNs?) the model should never see even through a tool.",
+    "solution": "A strong answer might look like:\n\n1. **One protocol** — Claude Desktop, an IDE like VS Code, or a custom agent could all load this same `hr-connector` via an `mcpServers` config entry; no per-host code needed.\n2. **Three primitives** — Tool: `lookup_time_off(employee_id)` (an action). Resource: `schema://hr` or an `hr-policy://handbook` doc (read-only context). Prompt: a reusable `onboarding_summary` template.\n3. **Safe boundary** — Validate that `employee_id` matches the requesting user (or is one the caller is authorized to see) and reject anything else; keep salary and SSN columns out of every tool's output so the model never receives them, and enforce read-only access so no tool can mutate records.\n4. **Vendor-agnostic** — Nothing about the server changes. You only point a different host at the same server: swap Claude for your own agent that speaks MCP (JSON-RPC 2.0), and the connector runs unchanged."
+  }
+}

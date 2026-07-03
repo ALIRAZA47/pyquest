@@ -1,0 +1,32 @@
+{
+  "slug": "streams-and-buffers",
+  "title": "Streams & Buffers",
+  "emoji": "🌊",
+  "category": "Core Modules",
+  "difficulty": "Intermediate",
+  "summary": "Process data piece by piece instead of all at once — the key to handling big files and network data efficiently.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "What if you need to read a 5 GB file? Loading it fully into memory would blow up. **Streams** let you process data in small **chunks** as it arrives — constant memory, no matter the size. They're everywhere in Node: files, HTTP requests/responses, compression, and more." },
+    { "type": "heading", "text": "Buffers: raw bytes" },
+    { "type": "text", "md": "A **Buffer** is a fixed-length chunk of raw binary data (bytes). Streams hand you Buffers; you turn them into text with `.toString()` or an encoding. Binary data (images, video, network packets) lives in Buffers." },
+    { "type": "code", "lang": "js", "caption": "reading a file as a stream", "code": "const fs = require('node:fs');\n\nconst stream = fs.createReadStream('big.log', 'utf8');\n\nstream.on('data', (chunk) => {\n  console.log('got', chunk.length, 'chars');\n});\nstream.on('end', () => console.log('done'));\nstream.on('error', (err) => console.error(err));" },
+    { "type": "text", "md": "Instead of one giant read, you get many `'data'` events, each a manageable chunk. `'end'` fires when the source is exhausted; `'error'` if something fails. This is a **Readable** stream — data flows out of it." },
+    { "type": "heading", "text": "Piping" },
+    { "type": "code", "lang": "js", "caption": "pipe a readable into a writable", "code": "const fs = require('node:fs');\n\n// copy a file chunk-by-chunk, with automatic backpressure\nfs.createReadStream('input.txt')\n  .pipe(fs.createWriteStream('output.txt'));" },
+    { "type": "callout", "variant": "tip", "title": "pipe() handles backpressure", "md": "`.pipe()` connects a Readable to a Writable and automatically manages **backpressure** — if the destination can't keep up, it pauses the source. It's the idiomatic, safe way to move stream data (a web server streaming a file to a client is exactly this)." },
+    { "type": "quiz", "question": "Why use a stream to read a very large file instead of fs.readFile?", "options": ["Streams are always faster for tiny files", "Streams process the file in small chunks, keeping memory usage low regardless of file size", "readFile doesn't work on large files", "Streams encrypt the data"], "answerIndex": 1, "explanation": "fs.readFile loads the entire file into memory at once. A stream delivers small chunks over time, so memory stays low even for huge files — essential for large files and network data." }
+  ],
+  "keyTakeaways": [
+    "Streams process data in chunks over time, keeping memory usage flat for any size.",
+    "A Buffer is a fixed block of raw bytes; use .toString(encoding) to read it as text.",
+    "Readable streams emit 'data', 'end', and 'error' events.",
+    "`.pipe()` connects a readable to a writable and handles backpressure automatically.",
+    "Files, HTTP, and compression are all built on streams."
+  ],
+  "exercise": {
+    "prompt": "Using streams, how would you copy 'a.txt' to 'b.txt' without ever holding the whole file in memory? Write the one-liner.",
+    "hint": "createReadStream(...).pipe(createWriteStream(...)).",
+    "solution": "const fs = require('node:fs');\nfs.createReadStream('a.txt').pipe(fs.createWriteStream('b.txt'));\n// data flows chunk-by-chunk with automatic backpressure."
+  }
+}

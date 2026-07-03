@@ -1,0 +1,109 @@
+{
+  "slug": "the-mcp-architecture",
+  "title": "The MCP Architecture",
+  "emoji": "🧩",
+  "category": "How MCP Works",
+  "difficulty": "Beginner",
+  "summary": "Trace the four-layer chain — Host, MCP Client, MCP Server, and Data/Service — and learn exactly what each piece does when an agent calls a tool.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "When an agent uses a tool, the request doesn't magically leap from the model to your database. It travels down a short, well-defined chain and the answer travels back up the same way. Understanding this chain is the single most useful mental model in all of MCP: once you can name the four layers, everything else — the wire protocol, the primitives, the safety boundary — snaps into place.\n\nThe chain has exactly **four layers**. Data flows both ways: a request goes left-to-right (the model wants something) and the result comes back right-to-left."
+    },
+    {
+      "type": "code",
+      "code": "Host  ⇄  MCP Client  ⇄  MCP Server  ⇄  Data / Service",
+      "lang": "text",
+      "caption": "The four-layer chain — one conversation, four hops"
+    },
+    {
+      "type": "heading",
+      "text": "Layer 1 — The Host"
+    },
+    {
+      "type": "text",
+      "md": "The **Host** is the app the user actually interacts with — think **Claude Desktop, an IDE, or your own agent**. It embeds the LLM and one MCP client per server it connects to. If your host talks to three servers, it spins up three clients.\n\nThe host is where the *thinking* happens. The model reads the user's request, decides a tool is needed, and picks which one."
+    },
+    {
+      "type": "heading",
+      "text": "Layer 2 — The MCP Client"
+    },
+    {
+      "type": "text",
+      "md": "The **MCP Client** lives inside the host. It speaks **JSON-RPC 2.0**, maintains the connection, and relays tool calls and results. The key rule to remember: **one client talks to exactly one server** (1 client ↔ 1 server). The client is the diplomat — it doesn't decide anything, it just carries messages faithfully in both directions."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The client is a phone line, not a brain",
+      "md": "The host (with its LLM) is the person deciding what to say. The MCP client is the phone line carrying the words. The server is the person on the other end who actually does something. The client never has opinions — it just keeps the line open and passes messages faithfully in JSON-RPC."
+    },
+    {
+      "type": "heading",
+      "text": "Layer 3 — The MCP Server"
+    },
+    {
+      "type": "text",
+      "md": "The **MCP Server** is **what you build** — your connector code. It advertises **Tools, Resources & Prompts**, validates inputs, and executes the real work. This is where your logic lives: which tables are visible, what a tool is allowed to do, how inputs are checked before anything touches the data.\n\nCrucially, the server defines *what* each tool does. It does **not** decide *when* a tool runs — that's the host's job."
+    },
+    {
+      "type": "quiz",
+      "question": "Who decides *when* a tool gets called?",
+      "options": [
+        "The MCP server, on a fixed schedule.",
+        "The database administrator.",
+        "The model/agent (the host), based on the user's request.",
+        "The end user must call it manually every time."
+      ],
+      "answerIndex": 2,
+      "explanation": "The agent reasons about the request and chooses which tool to call. Your server only defines *what* each tool does and validates the inputs."
+    },
+    {
+      "type": "heading",
+      "text": "Layer 4 — The Data / Service"
+    },
+    {
+      "type": "text",
+      "md": "The bottom layer is the **Data / Service** — the actual resource behind the server: a **database, a SaaS API, or local files**. The server is its **gatekeeper**. The model never touches this layer directly and never holds its credentials. Every request has to pass through your server first, which is exactly what makes MCP a safe boundary."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The model never sees the raw data source",
+      "md": "The agent can't reach the database, the API keys, or the filesystem on its own. It can only ask the server, and the server decides what to allow. That gatekeeper position is why you can enforce read-only access, scope which tables are visible, and audit every single call."
+    },
+    {
+      "type": "heading",
+      "text": "Putting the chain together"
+    },
+    {
+      "type": "text",
+      "md": "So a single tool call travels the whole chain: the **host's** model decides to call a tool, the **MCP client** wraps that decision as a JSON-RPC message and sends it to the **MCP server**, the server validates the inputs and queries the **data/service**, and the result flows back up the same path into the model's context. Four layers, one conversation.\n\nBecause the client speaks a standard protocol, the same server works with any MCP-aware host — you can swap Claude Desktop for an IDE or your own agent without changing a line of your connector. That's the payoff of the four-layer design: clean boundaries mean each piece can change independently."
+    },
+    {
+      "type": "quiz",
+      "question": "How many MCP clients does a host run if it connects to three different MCP servers?",
+      "options": [
+        "One shared client that multiplexes all three servers.",
+        "Three — one client per server (1 client ↔ 1 server).",
+        "None — the LLM talks to servers directly.",
+        "Three servers share a single client and a single connection."
+      ],
+      "answerIndex": 1,
+      "explanation": "The relationship is always one client to one server. A host that connects to three servers embeds three MCP clients, each maintaining its own JSON-RPC connection."
+    }
+  ],
+  "keyTakeaways": [
+    "The MCP chain has four layers: Host → MCP Client → MCP Server → Data/Service, with requests flowing down and results flowing back up.",
+    "The Host embeds the LLM and one MCP client per server; the model decides *when* a tool is called.",
+    "The MCP Client speaks JSON-RPC 2.0 and maintains one connection per server (1 client ↔ 1 server) — it relays, it doesn't decide.",
+    "The MCP Server is the code you write: it advertises Tools/Resources/Prompts, validates inputs, and executes the real work.",
+    "The Data/Service (DB, API, or filesystem) sits behind the server, which acts as its gatekeeper — the model never touches it directly."
+  ],
+  "exercise": {
+    "prompt": "You're designing an MCP connector for a company's Google Calendar. Trace the four-layer chain for the request \"What meetings do I have tomorrow?\" For each of the four layers (Host, MCP Client, MCP Server, Data/Service), write one sentence describing what that specific layer is and what it does in this scenario. Then answer: which layer holds the OAuth credentials for the calendar, and why should it NOT be the model?",
+    "hint": "Map each layer onto the calendar example: the Host is the app the user is chatting in; the MCP Client is the JSON-RPC relay inside it; the MCP Server is your calendar connector code; the Data/Service is the Google Calendar API. Remember the server is the gatekeeper — credentials live where the real work happens, not in the model.",
+    "solution": "Host: the app the user chats in (e.g. Claude Desktop or an IDE). Its embedded LLM reads \"What meetings do I have tomorrow?\", decides a calendar tool is needed, and picks it — and it runs one MCP client for the calendar server.\n\nMCP Client: lives inside the host, speaks JSON-RPC 2.0 over a single connection to the calendar server, and relays the tool call (e.g. list_events with a date range) and the result back — 1 client ↔ 1 server.\n\nMCP Server: the connector code you write. It advertises a tool like list_events, validates the requested date range, and executes the real work by calling the Google Calendar API.\n\nData/Service: the Google Calendar API itself, holding the actual events. The server is its gatekeeper — the model never queries it directly.\n\nThe OAuth credentials live in the MCP Server (the gatekeeper), NOT the model. If the model held them, a bad or manipulated request could use them however it wanted; keeping them in the server lets you validate every call, enforce read-only access, and audit what's happening."
+  }
+}

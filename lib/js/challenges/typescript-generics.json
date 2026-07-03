@@ -1,0 +1,33 @@
+{
+  "slug": "typescript-generics",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What type does `x` have?",
+      "code": "function identity<T>(v: T): T { return v; }\nconst x = identity('hello');",
+      "options": ["string (T is inferred as string)", "any", "T", "unknown"],
+      "answerIndex": 0,
+      "explanation": "Calling identity('hello') infers T = string, so the return type — and x — is string, not any. That's the type safety generics preserve."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "Why prefer this generic over the `any` version `function first(arr: any[]): any`?",
+      "code": "function first<T>(arr: T[]): T {\n  return arr[0];\n}",
+      "options": [
+        "The generic keeps the element's real type; `any` discards all type info and disables checking",
+        "The generic runs faster",
+        "any is a syntax error",
+        "There's no difference"
+      ],
+      "answerIndex": 0,
+      "explanation": "With any, TS stops checking the result (no autocomplete, no errors). The generic remembers the actual element type, so first([1,2,3]) returns number and stays type-safe."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the type parameter declaration.",
+      "codeTemplate": "function wrap{{blank}}(value: T): { value: T } {\n  return { value };\n}",
+      "blanks": [{ "answer": "<T>", "accept": ["< T >"] }],
+      "explanation": "`<T>` after the function name declares a type parameter that the caller's argument fills in, letting the same function work with any type while keeping it typed."
+    }
+  ]
+}

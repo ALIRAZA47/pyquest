@@ -1,0 +1,111 @@
+{
+  "slug": "attention",
+  "title": "Attention",
+  "emoji": "👀",
+  "category": "Inside the Model",
+  "difficulty": "Intermediate",
+  "summary": "How each token decides which other tokens to look at — the self-attention mechanism at the heart of every transformer.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Read this sentence: **\"The cat sat down because it was tired.\"** What does *it* refer to? Obviously the cat. But *how* does a model know that? The word `it` on its own is nearly meaningless — its meaning is borrowed entirely from another word nearby. **Attention** is the mechanism that lets a token reach back through the sentence, find the words that matter, and pull their meaning into itself. It is the single most important idea inside a transformer."
+    },
+    {
+      "type": "heading",
+      "text": "The question every token asks"
+    },
+    {
+      "type": "text",
+      "md": "After tokenization and embeddings, every token is just a vector — a list of numbers capturing what it means. But that meaning starts out **context-free**: the embedding for `it` is the same whether it refers to a cat, a car, or a country. Attention fixes this. For each token, the model asks one question:\n\n> **\"Given everything I've read so far, which other tokens should I look at to understand *this* one — and how much?\"**\n\nIt then builds an updated representation of the token by **mixing in information from the tokens it chose to look at**, weighted by how relevant each one is. After attention, the vector for `it` is no longer generic — it now carries a strong dose of `cat`."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A room full of people",
+      "md": "Imagine each token is a person in a room, and everyone is trying to figure out what they mean *in this particular conversation*. Each person holds up a little sign describing **what they're looking for** (a query). Everyone else holds up a sign describing **what they offer** (a key). You scan the room, find the people whose \"offer\" best matches your \"looking for,\" and lean in to hear what they actually have to say (their value). Attention is that whole glance-and-listen loop, done by every token at once."
+    },
+    {
+      "type": "heading",
+      "text": "Query, Key, Value: the three roles"
+    },
+    {
+      "type": "text",
+      "md": "Attention gives every token three different vectors, each produced by multiplying the token's embedding by a learned weight matrix:\n\n- **Query (Q)** — *what am I looking for?* This is the token doing the searching.\n- **Key (K)** — *what do I offer / what am I about?* Every token advertises itself with a key.\n- **Value (V)** — *the actual information I'll hand over* if someone attends to me.\n\nSo the recipe for a single token is: **compare my query to every key → turn those scores into weights that add up to 1 → take a weighted blend of all the values.** That blend becomes the token's new, context-aware vector."
+    },
+    {
+      "type": "code",
+      "code": "# Attention for ONE token (light pseudo-code)\n#   q     : this token's query vector\n#   K, V  : keys and values for every token in the context\n\nscores  = [ dot(q, k) for k in K ]     # how well q matches each key\nweights = softmax(scores)              # normalize -> sums to 1.0\noutput  = sum(w * v for w, v in zip(weights, V))\n#\n# `output` is this token's meaning AFTER it has looked around.\n# High-weight tokens contribute most to it.",
+      "lang": "py",
+      "caption": "Query compares to keys -> weights -> weighted blend of values."
+    },
+    {
+      "type": "text",
+      "md": "The raw match scores can be any numbers, so **softmax** squashes them into positive weights that sum to exactly 1.0 — a token's fixed budget of 100% attention, divided up however the scores dictate. With that in mind, watch it play out. Back to **\"The cat sat because it was tired.\"** When `it` runs attention, its query strongly matches the key of `cat`, so `cat` gets a big weight and its value dominates the blend. The updated `it` vector now effectively means \"it (= the cat).\" Later, when the token `tired` looks around, it attends back to `it` — and through it, to `cat` — so the model understands *who* is tired. This chaining of glances is how meaning propagates across a whole sentence.\n\n**Use the interactive visualizer below** to try this yourself: click any word to make it the *query* and watch which words it attends to. Notice how clicking `it` lights up `cat`."
+    },
+    {
+      "type": "quiz",
+      "question": "In self-attention, what determines how much one token contributes to another token's updated representation?",
+      "options": [
+        "How similar the two tokens' surface spellings are",
+        "The match between the looking token's query and the other token's key",
+        "How close the two tokens are in alphabetical order",
+        "Purely the distance between them in the sentence"
+      ],
+      "answerIndex": 1,
+      "explanation": "Attention weights come from comparing a token's query against every other token's key. A strong query-key match means high relevance and a high weight, so that token's value contributes more to the blend. Position can influence learned keys, but the mechanism itself is driven by query-key similarity, not spelling or alphabetical order."
+    },
+    {
+      "type": "heading",
+      "text": "Causal attention: no peeking ahead"
+    },
+    {
+      "type": "text",
+      "md": "The models you chat with are **decoders**: they generate text one token at a time, left to right. So when the model is processing a token, it must **not** look at tokens that come *after* it — those haven't been generated yet, and letting the model peek would be cheating during training. This is **causal (masked) attention**: each token can attend to itself and everything *before* it, but the weights for all future tokens are forced to zero."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Causal masking is not optional",
+      "md": "It's tempting to think a model \"reads the whole sentence at once.\" During generation it can only ever see the past. If `it` appeared *before* `cat` in the sentence, `it` could not attend to `cat` at all — the meaning would have to be resolved some other way. This left-to-right constraint is exactly why next-token prediction works as a training objective, and why prompt ordering matters."
+    },
+    {
+      "type": "code",
+      "code": "# Causal mask: a token at position i may only attend to positions <= i.\n# Scores to FUTURE tokens are set to -infinity before softmax,\n# so their weights become 0.\n\n#            attends to ->\n#            The  cat  sat  because  it\n#  The   [   ok   x    x     x       x  ]\n#  cat   [   ok   ok   x     x       x  ]\n#  sat   [   ok   ok   ok    x       x  ]\n#  because[  ok   ok   ok    ok      x  ]\n#  it    [   ok   ok   ok    ok      ok ]\n#\n#  ok = allowed    x = masked (weight forced to 0)",
+      "lang": "text",
+      "caption": "Each row is one token's allowed view: only itself and the past."
+    },
+    {
+      "type": "heading",
+      "text": "Multi-head attention: many glances at once"
+    },
+    {
+      "type": "text",
+      "md": "One set of Q/K/V vectors captures **one kind** of relationship. But language has many at once: grammar (which noun goes with which verb), reference (what `it` points to), tone, topic. So transformers run **several attention operations in parallel**, each with its own learned Q/K/V matrices. These are the **heads**.\n\nEach head learns to specialize — one might track subject-verb agreement, another might resolve pronouns, another might follow the topic. Their outputs are concatenated and combined, so the token ends up enriched by many different perspectives in a single layer. \"Multi-head\" just means: look several ways at the same time, then merge what you found."
+    },
+    {
+      "type": "quiz",
+      "question": "Why do transformers use MULTIPLE attention heads instead of just one?",
+      "options": [
+        "To make the model run faster on the same hardware",
+        "So different heads can specialize in different kinds of relationships (grammar, reference, topic) at the same time",
+        "Because a single head cannot use softmax",
+        "So the model can finally look at future tokens without a mask"
+      ],
+      "answerIndex": 1,
+      "explanation": "A single attention pattern captures one type of relationship at a time. Running several heads in parallel lets each learn its own Q/K/V and specialize — one on subject-verb agreement, another on pronoun reference, another on topic — and their outputs are merged. Multiple heads are about richer representations, not speed, and they do not remove the causal mask."
+    }
+  ],
+  "keyTakeaways": [
+    "Self-attention lets each token ask \"which other tokens should I look at?\" and mix in their information, turning context-free embeddings into context-aware ones.",
+    "It works with three learned vectors per token: a Query (what I'm looking for), Keys (what each token offers), and Values (the information handed over); query-key matches become softmax weights over the values.",
+    "The classic payoff is reference resolution — attention is how the model figures out that \"it\" refers to \"the cat.\"",
+    "Causal (masked) attention lets each token see only itself and earlier tokens, never the future — this is what makes left-to-right generation possible.",
+    "Multi-head attention runs several attention patterns in parallel so the model can capture grammar, reference, topic, and more all at once."
+  ],
+  "exercise": {
+    "prompt": "Consider the sentence:\n\n**\"The trophy did not fit in the suitcase because it was too big.\"**\n\n1. Which word does **it** refer to — the *trophy* or the *suitcase*? Explain how you decided.\n2. Describe, in terms of Query / Key / Value, what has to happen inside attention for the model to resolve this correctly. Which token holds the query? Which key should win?\n3. Now change one word so that **it** should refer to the *other* noun instead, and explain why the attention weights would shift.",
+    "hint": "The reasoning that resolves 'it' here is about physical size and fitting — the thing that is 'too big' is the thing that fails to fit. Attention doesn't reason on its own, but query-key matches (learned over huge amounts of text) push the weight toward whichever noun makes the sentence coherent.",
+    "solution": "1. **it = the trophy.** The trophy failed to fit *because it (the trophy) was too big*. If the suitcase were the problem you'd say 'too small,' not 'too big.'\n\n2. The token **`it`** produces the **query** — it's the token searching for its referent. Both `trophy` and `suitcase` advertise **keys**. To resolve correctly, `it`'s query must match the key of **`trophy`** more strongly, giving `trophy` the largest attention weight; the model then blends in `trophy`'s **value**, so the updated `it` vector effectively means 'the trophy.' The adjective `big` provides the crucial context that tilts the match toward the larger-object interpretation.\n\n3. Change **\"big\"** to **\"small\"**: 'because it was too *small*.' Now the thing that fails to hold the trophy is the suitcase, so **it = the suitcase.** The word `small` reshapes the context, so `it`'s query now aligns more with the key of **`suitcase`**, shifting the attention weight (and therefore the blended value) from `trophy` to `suitcase`. Same sentence structure, one word flipped, opposite attention pattern — which is exactly why these Winograd-style sentences are a classic test of whether a model's attention truly understands reference."
+  }
+}

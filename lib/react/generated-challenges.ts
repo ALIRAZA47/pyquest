@@ -2,21 +2,27 @@
 import REACTC_components_and_props from "./challenges/components-and-props.json";
 import REACTC_conditional_rendering from "./challenges/conditional-rendering.json";
 import REACTC_custom_hooks from "./challenges/custom-hooks.json";
+import REACTC_forms_and_controlled_inputs from "./challenges/forms-and-controlled-inputs.json";
 import REACTC_handling_events from "./challenges/handling-events.json";
 import REACTC_jsx from "./challenges/jsx.json";
+import REACTC_lifting_state_up from "./challenges/lifting-state-up.json";
 import REACTC_lists_and_keys from "./challenges/lists-and-keys.json";
 import REACTC_state_with_usestate from "./challenges/state-with-usestate.json";
 import REACTC_the_useeffect_hook from "./challenges/the-useeffect-hook.json";
+import REACTC_usecontext from "./challenges/usecontext.json";
 import REACTC_what_is_react from "./challenges/what-is-react.json";
 
 export const RAW_REACT_CHALLENGES: Record<string, unknown> = {
   "components-and-props": REACTC_components_and_props,
   "conditional-rendering": REACTC_conditional_rendering,
   "custom-hooks": REACTC_custom_hooks,
+  "forms-and-controlled-inputs": REACTC_forms_and_controlled_inputs,
   "handling-events": REACTC_handling_events,
   "jsx": REACTC_jsx,
+  "lifting-state-up": REACTC_lifting_state_up,
   "lists-and-keys": REACTC_lists_and_keys,
   "state-with-usestate": REACTC_state_with_usestate,
   "the-useeffect-hook": REACTC_the_useeffect_hook,
+  "usecontext": REACTC_usecontext,
   "what-is-react": REACTC_what_is_react,
 };

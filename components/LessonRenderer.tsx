@@ -134,9 +134,14 @@ export function LessonRenderer({
   courseId?: string;
 }) {
   const runnable = runtime === "python";
-  // Web courses run in a sandboxed iframe — except Node, whose require/fs/http
-  // APIs have no browser runtime, so it stays display-only.
-  const webRun = runtime === "web" && courseId !== "node";
+  // Web courses run in a sandboxed iframe — except display-only courses: Node
+  // (require/fs/http have no browser runtime) and MCP (server code needs stdio,
+  // the MCP SDK, and a real host, so its examples are read-only).
+  const webRun =
+    runtime === "web" &&
+    courseId !== "node" &&
+    courseId !== "mcp" &&
+    courseId !== "llm";
   const { isComplete, toggle, markComplete, celebrate } = useProgress();
   const done = isComplete(lesson.slug);
 

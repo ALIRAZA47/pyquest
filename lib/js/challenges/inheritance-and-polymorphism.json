@@ -1,0 +1,33 @@
+{
+  "slug": "inheritance-and-polymorphism",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "class A { greet() { return 'A'; } }\nclass B extends A { greet() { return 'B'; } }\nconsole.log(new B().greet());",
+      "options": ["B", "A", "A B", "undefined"],
+      "answerIndex": 0,
+      "explanation": "B overrides greet(), and the override on the instance's own class wins, so new B().greet() returns 'B'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This subclass constructor throws \"Must call super constructor\". Fix?",
+      "code": "class Animal { constructor(name){ this.name = name; } }\nclass Dog extends Animal {\n  constructor(name) {\n    this.legs = 4;\n    super(name);\n  }\n}",
+      "options": [
+        "Call super(name) BEFORE using this — move it to the first line of the constructor",
+        "Remove extends Animal",
+        "Rename legs to #legs",
+        "Delete the Dog constructor entirely"
+      ],
+      "answerIndex": 0,
+      "explanation": "In a subclass constructor you must call super(...) before touching `this`. Move super(name) above this.legs = 4."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the line so the subclass extends Shape.",
+      "codeTemplate": "class Circle {{blank}} Shape {\n  area() { return 3.14 * this.r ** 2; }\n}",
+      "blanks": [{ "answer": "extends", "accept": ["EXTENDS"] }],
+      "explanation": "`extends` establishes inheritance: Circle inherits Shape's members and can override or add its own, like area()."
+    }
+  ]
+}

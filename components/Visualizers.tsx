@@ -19,6 +19,35 @@ import {
   PerceptronViz,
   NextTokenViz,
 } from "./viz-ai";
+import {
+  NxMViz,
+  McpArchitectureViz,
+  WireProtocolViz,
+  ToolCallViz,
+  PrimitivesViz,
+} from "./viz-mcp";
+import {
+  TokenizerViz,
+  EmbeddingViz,
+  TransformerViz,
+  AttentionViz,
+  LlmNextTokenViz,
+  SamplingTemperatureViz,
+  ContextWindowViz,
+} from "./viz-llm";
+import { EventLoopBrowserViz, EventLoopNodeViz } from "./viz-eventloop";
+import {
+  ArrayMethodsViz,
+  ClosureViz,
+  PrototypeChainViz,
+  CoercionViz,
+  HoistingViz,
+} from "./viz-js";
+import {
+  StateReRenderViz,
+  KeysReconciliationViz,
+  EffectLifecycleViz,
+} from "./viz-react";
 
 // ============================================================
 // String slicing — s[start:stop:step] with live index labels
@@ -548,6 +577,131 @@ const VISUALIZERS: Record<
     title: "Predict the next token",
     subtitle: "Pick tokens from the probabilities and watch a sentence form.",
     node: NextTokenViz,
+  },
+
+  // ---- Model Context Protocol ----
+  "what-is-mcp": {
+    title: "The N×M problem → one hub",
+    subtitle: "Watch bespoke integrations explode, then collapse into a single protocol.",
+    node: NxMViz,
+  },
+  "the-mcp-architecture": {
+    title: "Follow the message",
+    subtitle: "Trace one request through Host → Client → Server → Data and back.",
+    node: McpArchitectureViz,
+  },
+  "tools-resources-prompts": {
+    title: "The three primitives",
+    subtitle: "See who controls Tools, Resources, and Prompts — model, app, or user.",
+    node: PrimitivesViz,
+  },
+  "the-wire-protocol": {
+    title: "The JSON-RPC handshake",
+    subtitle: "Step through the messages that flow between the client and your server.",
+    node: WireProtocolViz,
+  },
+  "anatomy-of-a-tool-call": {
+    title: "The full round-trip",
+    subtitle: "One question → reasoning → tool call → SQL → rows → answer.",
+    node: ToolCallViz,
+  },
+
+  // ---- Large Language Models ----
+  "what-is-an-llm": {
+    title: "Predict the next token",
+    subtitle: "The one thing an LLM does — score the next token and repeat.",
+    node: LlmNextTokenViz,
+  },
+  "tokens-and-tokenization": {
+    title: "Text → tokens",
+    subtitle: "Type anything and watch it break into the tokens a model sees.",
+    node: TokenizerViz,
+  },
+  embeddings: {
+    title: "Meaning as geometry",
+    subtitle: "Similar words sit close together — click two to compare vectors.",
+    node: EmbeddingViz,
+  },
+  "the-transformer": {
+    title: "Through the stack",
+    subtitle: "Watch a signal rise layer by layer into a next-token prediction.",
+    node: TransformerViz,
+  },
+  attention: {
+    title: "Where a token looks",
+    subtitle: "Pick a word and see which other words it pays attention to.",
+    node: AttentionViz,
+  },
+  "next-token-prediction": {
+    title: "One token at a time",
+    subtitle: "Step through the probabilities as a sentence writes itself.",
+    node: LlmNextTokenViz,
+  },
+  "sampling-and-temperature": {
+    title: "The temperature dial",
+    subtitle: "Slide temperature and watch the distribution sharpen or spread.",
+    node: SamplingTemperatureViz,
+  },
+  "context-windows": {
+    title: "The sliding window",
+    subtitle: "See old tokens fall out of context as the conversation grows.",
+    node: ContextWindowViz,
+  },
+
+  // ---- The event loop (JavaScript & Node.js) ----
+  "the-event-loop": {
+    title: "The event loop — build & run it",
+    subtitle: "Assemble a program, hit Play, and watch the exact order it runs.",
+    node: EventLoopBrowserViz,
+  },
+  "the-node-event-loop": {
+    title: "The Node.js event loop — build & run it",
+    subtitle: "Add nextTick, promises, timers & setImmediate, then watch the phases fire.",
+    node: EventLoopNodeViz,
+  },
+
+  // ---- JavaScript concepts ----
+  arrays: {
+    title: "map / filter / reduce",
+    subtitle: "Step through an array pipeline and watch each method transform the data.",
+    node: ArrayMethodsViz,
+  },
+  "javascript-functions": {
+    title: "Closures, live",
+    subtitle: "Two counters, each with its own private captured variable.",
+    node: ClosureViz,
+  },
+  objects: {
+    title: "The prototype chain",
+    subtitle: "Look up a property and watch JS walk the __proto__ chain to find it.",
+    node: PrototypeChainViz,
+  },
+  "operators-and-expressions": {
+    title: "== vs === ",
+    subtitle: "Compare any two values and see how loose equality coerces types.",
+    node: CoercionViz,
+  },
+  "variables-and-data-types": {
+    title: "Hoisting & the TDZ",
+    subtitle: "Toggle var vs let to see why one gives undefined and the other throws.",
+    node: HoistingViz,
+  },
+
+  // ---- React concepts ----
+  "state-with-usestate": {
+    title: "What re-renders?",
+    subtitle: "Click setState and watch exactly which components re-render (and which don't).",
+    node: StateReRenderViz,
+  },
+  "lists-and-keys": {
+    title: "Why keys matter",
+    subtitle: "Add to the top with stable keys vs index keys — watch reconciliation differ.",
+    node: KeysReconciliationViz,
+  },
+  "the-useeffect-hook": {
+    title: "The effect lifecycle",
+    subtitle: "Step through mount → effect → cleanup → re-run → unmount.",
+    node: EffectLifecycleViz,
   },
 };
 

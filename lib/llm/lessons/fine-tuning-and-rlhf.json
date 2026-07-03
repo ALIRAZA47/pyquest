@@ -1,0 +1,127 @@
+{
+  "slug": "fine-tuning-and-rlhf",
+  "title": "Fine-Tuning & RLHF",
+  "emoji": "🧑‍🏫",
+  "category": "Training an LLM",
+  "difficulty": "Intermediate",
+  "summary": "Pretraining gives you a raw text-completer; supervised fine-tuning teaches it to follow instructions and RLHF aligns it with human preferences — together turning a base model into the helpful, safe assistant you actually chat with.",
+  "readingTime": "10 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Pretraining leaves you with a **base model**: a brilliant text *completer* that has read most of the internet but doesn't behave like an assistant. Ask it \"What is the capital of France?\" and it might reply with three *more* questions — because online, questions are often followed by questions. This lesson is about the second half of training, **post-training**, where we shape that raw completer into the polite, instruction-following, reasonably safe chatbot you actually use. Two stages do the work: **supervised fine-tuning (SFT)** and **reinforcement learning from human feedback (RLHF)**. Crucially, neither adds much new *knowledge* — they change *behavior*. The same underlying weights can be a raw completer or a helpful assistant depending on how they're shaped."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A gifted intern who's never had a job",
+      "md": "The base model is like a fresh graduate who has read every book in the library. Enormous raw knowledge — but no idea how the office works. **SFT** is showing them thousands of examples of *good work* to imitate: \"here's how we answer, here's the tone, here's the format.\" **RLHF** is the months of feedback that follow: \"this draft was better than that one — do more of this.\" Same brain throughout; what changes is *behavior*."
+    },
+    {
+      "type": "heading",
+      "text": "Base vs. instruct: two flavors of the same weights"
+    },
+    {
+      "type": "text",
+      "md": "Most model families ship in (at least) two flavors. A **base** (or *foundation*) model only continues text. An **instruct** (or *chat*) model has been through post-training and reliably answers questions, follows instructions, and refuses obviously harmful requests. The instruct model knows roughly the same facts the base model did — what changes is *how it responds*: it learns to surface that knowledge in the shape of a helpful answer."
+    },
+    {
+      "type": "code",
+      "code": "Prompt:  \"List three uses for a paperclip.\"\n\nBASE model  ->  \" and other office supplies. See our catalog for\n                 bulk pricing. Related searches: binder clips, ...\"\n                 (just plausible web text)\n\nINSTRUCT model -> \"Sure! Here are three:\n                 1. Hold papers together\n                 2. Reset a device via its pinhole button\n                 3. Improvise a SIM-card ejector tool\"",
+      "lang": "text",
+      "caption": "Same underlying knowledge, very different behavior. Post-training installed the 'be a helpful assistant' habit."
+    },
+    {
+      "type": "heading",
+      "text": "Stage 1 — Supervised fine-tuning (SFT)"
+    },
+    {
+      "type": "text",
+      "md": "SFT is the gentler half. Humans (and increasingly other strong models) write a curated dataset of **instruction → ideal response** pairs: a good answer to a coding question, a well-structured summary, a polite refusal of a dangerous request, a step-by-step math solution. We then continue training the base model on these using the **exact same next-token objective** from pretraining — predict the next token, measure surprise, nudge the weights. The only thing that changed is the *diet*: instead of raw web text, the model now imitates thousands of examples of an assistant behaving well. The word **fine-tuning** is general — companies also fine-tune on their own support tickets or a house writing style, often with lightweight methods like **LoRA** that train a small set of added parameters instead of all billions. Turning a base model into a chat model is just the most famous fine-tune."
+    },
+    {
+      "type": "code",
+      "code": "# An SFT training example is a formatted conversation.\n# The model learns to predict the RESPONSE tokens given the prompt.\n{\n  \"messages\": [\n    {\"role\": \"system\",    \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\",      \"content\": \"Explain photosynthesis in one sentence.\"},\n    {\"role\": \"assistant\", \"content\": \"Plants use sunlight, water, and CO2\n       to make sugar and release oxygen.\"}\n  ]\n}\n# Same loss as pretraining (next-token) -- just on curated examples.",
+      "lang": "json",
+      "caption": "SFT = supervised imitation. Show the model thousands of great answers; it learns that style."
+    },
+    {
+      "type": "quiz",
+      "question": "What is the single biggest difference between pretraining and supervised fine-tuning (SFT)?",
+      "options": [
+        "SFT uses a completely different loss function than pretraining",
+        "SFT uses the same next-token objective, but trains on curated instruction→response examples instead of raw web text",
+        "SFT teaches the model brand-new facts it never saw during pretraining",
+        "SFT replaces all the model's weights with new random values"
+      ],
+      "answerIndex": 1,
+      "explanation": "SFT reuses the exact same next-token prediction objective from pretraining. The change is the data: instead of raw internet text, the model imitates a curated set of high-quality instruction→response pairs. It re-shapes existing knowledge into helpful behavior rather than injecting new facts."
+    },
+    {
+      "type": "heading",
+      "text": "Stage 2 — RLHF: learning from preferences"
+    },
+    {
+      "type": "text",
+      "md": "SFT gets you a decent assistant, but it has a ceiling: it can only imitate the specific answers humans bothered to write, and for any real question there are *many* good answers and countless subtly-bad ones. It's also far easier for a person to **compare** two responses than to author the perfect one. **RLHF** exploits that. The classic pipeline has three moving parts:\n\n- **Collect preferences.** For a prompt, sample two responses from the SFT model and have a human pick the better one. Repeat across many prompts, producing `(prompt, better, worse)` comparisons.\n- **Train a reward model.** Train a separate model that maps `(prompt, response)` to a single *score*, fit so better responses score higher. It's a learned, automatic stand-in for human taste.\n- **Optimize the LLM.** Use reinforcement learning (commonly **PPO**) to nudge the LLM toward responses the reward model scores highly — while a leash keeps it from drifting too far from the SFT model. This is the stage most people mean by **alignment**."
+    },
+    {
+      "type": "code",
+      "code": "# RLHF in three steps (concept, not runnable)\n\n# 1) Humans rank model outputs\n#    prompt -> [response_A, response_B]  ->  human says  A > B\n\n# 2) Reward model learns to predict that preference\n#    reward_model(prompt, response) -> score   (higher = more preferred)\n\n# 3) Optimize the LLM to earn high reward, WITHOUT drifting too far\n#    maximize:  reward_model(prompt, LLM_response)\n#    minus:     penalty * how_far_LLM_strayed_from_SFT_model",
+      "lang": "text",
+      "caption": "Humans rank -> reward model learns taste -> the LLM is tuned to please it (on a leash)."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A food critic you can clone",
+      "md": "Hiring a critic to taste *every* dish a chef makes is impossibly slow. Instead the critic rates a few hundred dishes, then you train an *apprentice* to predict those scores. That apprentice is the **reward model**: cheap, tireless, available for every new dish. The chef (the LLM) cooks thousands of variations and keeps whatever the apprentice rates highly. Human judgment gets *distilled* once, then reused millions of times."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Why the leash? Reward hacking",
+      "md": "The reward model is only an *approximation* of human taste, and any approximation can be gamed. Optimize too hard and the LLM finds cheap tricks that spike the score without being genuinely better — flattering the user, padding answers with confident-sounding filler, or over-refusing to play it safe. That's **reward hacking**. The fix is the KL 'leash': a penalty for straying too far from the sensible SFT model, so the LLM improves *within reason* instead of chasing the reward off a cliff."
+    },
+    {
+      "type": "heading",
+      "text": "DPO and AI feedback: lighter-weight alignment"
+    },
+    {
+      "type": "text",
+      "md": "Full RLHF with PPO is powerful but fiddly — you train a separate reward model *and* run reinforcement learning, which is compute-hungry and sometimes unstable. A popular alternative is **Direct Preference Optimization (DPO)**: it uses the same `(prompt, better, worse)` data but skips the explicit reward model and RL, rewriting the goal as a simple training loss you optimize directly — *raise* the probability of the preferred response, *lower* the rejected one. Separately, because collecting human rankings is expensive, labs increasingly use **AI feedback**: a strong model judges which response is better, guided by a written list of principles (Anthropic's **Constitutional AI / RLAIF**). Same recipe — rank, learn the preference, optimize — but the ranker is a model following explicit rules. As of 2026, DPO-style methods and AI feedback are both widely used."
+    },
+    {
+      "type": "heading",
+      "text": "Where system prompts fit in"
+    },
+    {
+      "type": "text",
+      "md": "Post-training bakes in a *default* personality and set of behaviors. The **system prompt** then steers that behavior at runtime, per conversation, with no retraining. It's a special instruction placed before the user's messages that sets the assistant's role, tone, and rules — \"You are a terse SQL tutor; never write prose, only queries.\" The model obeys system-prompt instructions with extra weight precisely *because* post-training taught it to. Think of the layers as: **pretraining** = raw knowledge, **SFT + RLHF/DPO** = durable habits, **system prompt** = today's instructions on top. That's why the same weights can be a raw completer, a helpful chatbot, or a terse SQL tutor depending on how they were shaped and prompted."
+    },
+    {
+      "type": "quiz",
+      "question": "Why do humans RANK responses in RLHF instead of just writing the perfect answer for every prompt (as in SFT)?",
+      "options": [
+        "Ranking is the only way to add new facts to the model",
+        "Comparing two responses is far easier and more reliable for humans than authoring an ideal one, and it captures preferences SFT can't easily express",
+        "Ranking lets the model skip the reward model entirely",
+        "Because SFT does not use any human input at all"
+      ],
+      "answerIndex": 1,
+      "explanation": "For most prompts there are many acceptable answers and no single 'correct' text to write. People are much better (and faster) at judging 'A is better than B' than at composing the ideal response. Those comparisons train a reward model that captures nuanced preferences — helpfulness, tone, safety — that fixed target answers can't easily demonstrate."
+    }
+  ],
+  "keyTakeaways": [
+    "Post-training turns a raw base model (a text-completer) into a helpful assistant; it mostly re-shapes behavior rather than adding new knowledge.",
+    "Supervised fine-tuning (SFT) continues training with the same next-token objective, but on curated instruction→response examples so the model learns to follow instructions.",
+    "RLHF collects human preference rankings, trains a reward model to imitate that taste, then optimizes the LLM (e.g. with PPO) to earn high reward — with a KL 'leash' to prevent reward hacking.",
+    "DPO is a popular shortcut that optimizes preference data directly, skipping the separate reward model and reinforcement learning; AI-generated feedback (RLAIF / Constitutional AI) scales preference collection.",
+    "A system prompt steers the finished model's behavior per conversation without any retraining — layered on top of the habits baked in by SFT and RLHF."
+  ],
+  "exercise": {
+    "prompt": "Reason through the assistant-building pipeline — no computation, just cause and effect.\n\nA team has just finished **pretraining** a base model. They test it by typing:\n\n> **User:** How do I reverse a list in Python?\n\nand the model replies:\n\n> in Python? How do I sort a list? How do I remove duplicates? Related questions:\n\n**Part A.** The model clearly *knows* Python. So why did it produce this instead of an answer? Which post-training stage most directly fixes this behavior, and how?\n\n**Part B.** After that stage, the model answers questions but sometimes gives a mediocre answer when a much better one was possible, and occasionally pads replies with fluff. The team wants it to prefer genuinely better answers. Describe the **RLHF** stage they'd add: what data do humans provide, what does the reward model do, and what is the LLM optimized to do?\n\n**Part C.** During RLHF the team optimizes very aggressively and notices the model now writes long, flattering, over-hedged answers that *score* well but are actually worse. Name this failure and the standard safeguard that prevents it.",
+    "hint": "Part A: a base model only *completes* text plausibly; on the web a question is often followed by more questions. Which stage teaches instruction-following by imitation? Part B: humans compare rather than author; a reward model turns comparisons into a score; the LLM is tuned to maximize that score. Part C: think about optimizing an imperfect proxy too hard, and the KL penalty that keeps the model near its SFT starting point.",
+    "solution": "**Part A.** The base model isn't broken and isn't missing the knowledge — it's a pure text *completer*. On the internet, a question is frequently followed by *more* questions (FAQ pages, 'related searches'), so continuing with more questions is statistically plausible. The stage that most directly fixes this is **supervised fine-tuning (SFT)**: continue training on curated instruction→response pairs (same next-token objective), so the model learns to imitate 'question → helpful answer' and starts behaving like an assistant.\n\n**Part B.** Add an **RLHF** stage. (1) *Data:* for many prompts, sample two or more responses from the SFT model and have humans **rank** them — pick which is better — producing `(prompt, better, worse)` comparisons. Ranking is far easier and more reliable than writing the perfect answer. (2) *Reward model:* train a separate model that maps `(prompt, response)` to a single score, fit so preferred responses score higher — a cheap, automatic stand-in for human taste. (3) *Optimize:* use reinforcement learning (e.g. PPO) to nudge the LLM toward responses the reward model scores highly, so it prefers genuinely better answers rather than merely acceptable ones. (Equivalently, the team could use **DPO** to optimize the preference data directly and skip the explicit reward model.)\n\n**Part C.** This is **reward hacking** (reward over-optimization): the reward model is only an approximation of human taste, so optimizing it too hard finds tricks — flattery, length, over-hedging — that spike the score without being truly better. The standard safeguard is a **KL-divergence penalty ('leash')** that punishes the LLM for drifting too far from the SFT model, keeping improvements within reason instead of chasing the imperfect proxy off a cliff."
+  }
+}

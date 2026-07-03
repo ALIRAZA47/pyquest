@@ -1,0 +1,33 @@
+{
+  "slug": "arrow-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "const triple = n => n * 3;\nconsole.log(triple(4));",
+      "options": ["12", "undefined", "n * 3", "NaN"],
+      "answerIndex": 0,
+      "explanation": "A single-expression arrow implicitly returns its expression, so triple(4) returns 4 * 3 = 12."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This arrow function should return an object literal, but it returns undefined. Why?",
+      "code": "const makeUser = name => { name: name };\nconsole.log(makeUser('Ada'));",
+      "options": [
+        "Arrow functions can't return objects",
+        "The braces are read as a function body, not an object — wrap the object in parentheses: name => ({ name })",
+        "You must use the return keyword with objects",
+        "'name' is a reserved word"
+      ],
+      "answerIndex": 1,
+      "explanation": "With an implicit return, `{ ... }` is parsed as a block, so `name: name` becomes a label statement and nothing is returned. Wrap the object in parentheses: `name => ({ name: name })`."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the arrow function so it keeps only positive numbers.",
+      "codeTemplate": "const positives = nums.filter(n {{blank}} n > 0);",
+      "blanks": [{ "answer": "=>", "accept": ["= >"] }],
+      "explanation": "The arrow `=>` separates the parameter list from the body. `n => n > 0` returns true for positive numbers, which filter() keeps."
+    }
+  ]
+}

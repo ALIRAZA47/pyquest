@@ -1,0 +1,55 @@
+{
+  "slug": "sampling-and-temperature",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "These are the model's next-token probabilities. You call it with greedy decoding (temperature effectively 0). Which token comes out?",
+      "code": "probs = {\n    \"blue\":   0.52,\n    \"green\":  0.31,\n    \"red\":    0.14,\n    \"plaid\":  0.03,\n}\n\n# greedy decoding: no randomness\nnext_token = argmax(probs)",
+      "options": [
+        "\"blue\" — greedy always takes the highest-probability token, every run",
+        "It varies between runs because sampling is random",
+        "\"plaid\" — low-probability tokens are chosen to add variety",
+        "\"green\" — greedy picks the second choice to avoid loops"
+      ],
+      "answerIndex": 0,
+      "explanation": "Greedy decoding takes the argmax with no randomness at all. `blue` has the highest probability (0.52), so it wins on every single run. That determinism is greedy's whole point — and also why it can get repetitive."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate is tuning a customer-support bot that must give accurate, consistent answers. They wrote this note. One line is a real misconception. Which one is WRONG?",
+      "code": "# Notes on decoding settings:\n\n1. Temperature rescales the logits before softmax.\n2. Lower temperature sharpens the distribution toward the top token.\n3. For factual, reproducible answers, we should use a HIGH temperature.\n4. Top-p keeps the smallest set of tokens summing to p, then samples from those.",
+      "options": [
+        "Line 1 — temperature does rescale logits before softmax",
+        "Line 2 — lower temperature does sharpen toward the top token",
+        "Line 3 — for factual answers you want LOW temperature, not high",
+        "Line 4 — top-p does keep the smallest set summing to p"
+      ],
+      "answerIndex": 2,
+      "explanation": "Line 3 is backwards. High temperature flattens the distribution and hands probability to less-likely (often wrong) tokens — the opposite of what a support bot needs. For accurate, consistent answers you want LOW temperature, which sharpens the distribution toward the single most likely token."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the description of how temperature reshapes the distribution.",
+      "codeTemplate": "Temperature divides every logit by T {{blank}} softmax.\nA LOW T stretches the gaps apart, which {{blank}} the distribution toward the top token.\nA HIGH T squishes the gaps together, which {{blank}} the distribution toward uniform.",
+      "blanks": [
+        { "answer": "before", "accept": ["prior to", "ahead of"] },
+        { "answer": "sharpens", "accept": ["concentrates", "peaks", "focuses"] },
+        { "answer": "flattens", "accept": ["flatten", "spreads", "smooths", "levels"] }
+      ],
+      "explanation": "The recipe is: divide each logit by T, THEN apply softmax. Small T (e.g. 0.3) widens the gaps between logits so the top token dominates — the distribution sharpens. Large T (e.g. 2.0) shrinks the gaps so probability leaks into the tail — the distribution flattens toward uniform."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of temperature-scaled nucleus (top-p) sampling in the correct order, starting from the raw logits.",
+      "lines": [
+        "Start with the raw logits from the model's output head",
+        "Divide every logit by the temperature T",
+        "Apply softmax to get a probability distribution",
+        "Sort tokens high-to-low and keep the smallest set whose probabilities sum to p (top-p)",
+        "Renormalize the kept tokens so their probabilities sum to 1",
+        "Sample one token from that truncated distribution"
+      ],
+      "explanation": "Temperature is applied to the logits first (divide by T), then softmax turns them into probabilities. Top-p then truncates the tail — keep the nucleus of top tokens summing to p — and renormalize so the survivors form a valid distribution. Finally you roll the weighted dice and sample one token from that pruned, reshaped set."
+    }
+  ]
+}

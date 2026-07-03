@@ -1,0 +1,101 @@
+{
+  "slug": "what-is-mcp",
+  "title": "What Is MCP?",
+  "emoji": "🔌",
+  "category": "MCP Foundations",
+  "difficulty": "Beginner",
+  "summary": "MCP is an open standard — a 'USB-C port for AI' — that lets any AI agent connect to any tool or data source through one protocol instead of N custom integrations.",
+  "readingTime": "6 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "AI agents like Claude are great at reasoning, but on their own they're sealed off from the world. They can't read your database, open your files, or call your APIs. To be useful, an agent needs to **connect** to the tools and data where your work actually lives.\n\nThe **Model Context Protocol (MCP)** is the open standard that makes those connections possible — safely and consistently."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "MCP is a USB-C port for AI",
+      "md": "Think of MCP as a **USB-C port for AI**. Just like USB-C gave every device one connector for power and data, MCP gives every AI agent one connector for tools and information.\n\nBefore USB-C, every gadget had its own charger and its own cable. One universal port replaced that mess. MCP does the same thing for AI: one connector any agent can use to reach any tool."
+    },
+    {
+      "type": "heading",
+      "text": "The N×M integration problem"
+    },
+    {
+      "type": "text",
+      "md": "Before MCP, every agent needed **custom code for every tool**. If you had **M** agents and **N** tools, you were on the hook for roughly **M×N** bespoke integrations — and it got worse over time.\n\nAdd a new tool and you have to rewrite the glue for *every* agent. Add a new agent and you have to reconnect it to *every* tool. Integrations exploded combinatorially."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Before vs. with MCP",
+      "md": "**Before MCP:** M agents × N tools = chaos. Every agent needed bespoke glue for every tool.\n\n**With MCP:** Everyone speaks one protocol. Each side implements MCP once. Any agent talks to any tool through the same protocol — add a tool and every agent can use it instantly."
+    },
+    {
+      "type": "text",
+      "md": "MCP collapses that M×N explosion into **M + N**. Each agent implements the protocol once. Each tool implements the protocol once. Now any MCP-aware agent can talk to any MCP server — no per-pairing glue code required."
+    },
+    {
+      "type": "quiz",
+      "question": "In one sentence, what problem does MCP solve?",
+      "options": [
+        "It makes language models generate text faster.",
+        "It's a universal, standard way to connect AI agents to tools and data — one protocol instead of N custom integrations.",
+        "It replaces SQL databases with a vector store.",
+        "It compresses model weights for cheaper inference."
+      ],
+      "answerIndex": 1,
+      "explanation": "MCP is the 'USB-C for AI' — a single open protocol so any agent can talk to any tool or data source without bespoke glue code for each pairing."
+    },
+    {
+      "type": "heading",
+      "text": "So what exactly is MCP?"
+    },
+    {
+      "type": "text",
+      "md": "MCP is an **open standard**, introduced by Anthropic in **November 2024**, that lets AI agents like Claude plug into your **databases, files, and APIs** — safely and consistently.\n\nBecause it's a shared standard, you write a **connector once** and any MCP-aware agent can use it. Here are the ideas that make it click."
+    },
+    {
+      "type": "text",
+      "md": "**One protocol, not N integrations.** Before MCP, every agent needed custom code for every tool. MCP is a single open standard — write a connector once, and any MCP-aware agent can use it.\n\n**Three simple primitives.** Servers expose **Tools** (actions the model can invoke), **Resources** (read-only context), and **Prompts** (reusable templates). That's the whole surface area.\n\n**A safe boundary.** The model never holds your credentials. Your server validates every input, can enforce read-only access, scope which tables are visible, and audit every call.\n\n**Model- and vendor-agnostic.** The same server works with Claude, an IDE, or your own homegrown agent. Swap the model without rewriting a single connector."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The safe boundary is the whole point",
+      "md": "Because your MCP server sits between the model and your data, **the model never holds your credentials.** The server validates every input, can enforce read-only access, scope which tables are visible, and audit every call. You decide exactly what an agent is allowed to see and do."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these is NOT one of the three MCP server primitives?",
+      "options": [
+        "Tools — actions the model can invoke",
+        "Resources — read-only context",
+        "Prompts — reusable templates",
+        "Weights — the model's trained parameters"
+      ],
+      "answerIndex": 3,
+      "explanation": "An MCP server's entire surface area is Tools, Resources, and Prompts. Model weights live inside the model, not the server — the whole point of MCP is that the server is model-agnostic."
+    },
+    {
+      "type": "heading",
+      "text": "Where you'll meet MCP"
+    },
+    {
+      "type": "text",
+      "md": "MCP servers run as separate processes and talk to a **host** (like Claude Desktop, an IDE, or your own agent) over a transport such as stdio. In later lessons you'll read real Node.js and Python server code and wire it into a host — but the mental model to hold onto now is simple: **one open protocol, so any agent can reach any tool.**"
+    }
+  ],
+  "keyTakeaways": [
+    "MCP is an open standard (introduced by Anthropic, Nov 2024) that lets AI agents like Claude plug into databases, files, and APIs safely and consistently.",
+    "It's the 'USB-C for AI': one universal connector for tools and data instead of a different cable for every pairing.",
+    "It solves the N×M integration problem — implement the protocol once per side (M + N) instead of writing bespoke glue for every agent-tool pair (M × N).",
+    "A server's whole surface area is three primitives: Tools (actions), Resources (read-only context), and Prompts (reusable templates).",
+    "MCP is a safe, model-agnostic boundary: the model never holds your credentials, and the same server works with Claude, an IDE, or your own agent."
+  ],
+  "exercise": {
+    "prompt": "Imagine your team has **3 AI agents** (Claude Desktop, a VS Code assistant, and a homegrown support bot) and **4 tools** (a Postgres database, a GitHub API, a filesystem, and a Slack API).\n\n1. Without MCP, how many bespoke integrations would you need to connect every agent to every tool? Show the arithmetic.\n2. With MCP, how many implementations are needed instead? Explain why the number drops.\n3. Your boss now wants to add a 5th tool (a Jira API). Describe what work is required in each world (without MCP vs. with MCP).",
+    "hint": "The 'without MCP' count is a product (agents × tools). The 'with MCP' count is a sum (each side implements the protocol once). Adding a tool changes a product very differently than a sum.",
+    "solution": "**1. Without MCP:** every agent needs custom glue for every tool, so it's a product: 3 agents × 4 tools = **12 bespoke integrations**.\n\n**2. With MCP:** each side implements the protocol once, so it's a sum: 3 agents + 4 tools = **7 implementations**. The number drops because agents and tools no longer connect *pairwise* — they all speak one shared protocol, so any agent reaches any tool through it.\n\n**3. Adding a 5th tool (Jira):**\n- *Without MCP:* you must write a new integration for the Jira API in **each of the 3 agents** — 3 more pieces of glue (and the total jumps from 12 to 15).\n- *With MCP:* you write **one** MCP server for Jira. All 3 agents can use it instantly, with zero changes to the agents. The total goes from 7 to 8, and the new tool is available everywhere the moment it exists. This is exactly why MCP turns a combinatorial M×N explosion into a linear M + N."
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "slug": "the-four-big-ideas",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A user asks the agent for churn-risk customers. The agent sends this over the wire to your server. Which primitive is being used, and who decided to send it?",
+      "code": "{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"name\": \"query_sales\",\n    \"arguments\": { \"metric\": \"recency\", \"limit\": 3 } } }",
+      "options": [
+        "A Resource read — the server decided to push it on a schedule.",
+        "A Tool call — the agent (host) decided when to call it, based on the user's request.",
+        "A Prompt template — the database administrator triggered it.",
+        "A raw SQL connection — the model connected to the DB directly."
+      ],
+      "answerIndex": 1,
+      "explanation": "The method is tools/call, so this is a Tool — an action the model can invoke. The agent decides *when* to call it based on the user's request; your server code decides *what* it does. The model never touches the database directly."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This run_sql tool is supposed to be a safe boundary that only allows a single read-only SELECT. But it lets a destructive statement through. Which fix restores the boundary?",
+      "code": "@mcp.tool()\ndef run_sql(sql: str) -> str:\n    \"\"\"Escape hatch: run a single read-only SELECT.\"\"\"\n    clean = sql.strip().rstrip(\";\")\n    # BUG: no validation happens here\n    return _rows(db.execute(clean))",
+      "options": [
+        "Encrypt the sql string before executing it.",
+        "Add: if not clean.lower().startswith(\"select\") or \";\" in clean: return \"Error: only a single read-only SELECT is allowed.\"",
+        "Give the model the database credentials so it can validate the query itself.",
+        "Wrap the call in a try/except and ignore any errors."
+      ],
+      "answerIndex": 1,
+      "explanation": "The server is the boundary — it must validate input before touching the data. Checking that the statement starts with SELECT and contains no extra semicolon rejects writes and chained statements. Encryption and try/except don't stop a DROP or DELETE, and handing the model credentials removes the boundary entirely."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this FastMCP server so it exposes an action the model can invoke and a piece of read-only context.",
+      "codeTemplate": "mcp = FastMCP(\"sales-connector\")\n\n@mcp.{{blank}}()\ndef query_sales(metric: str) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    ...\n\n@mcp.{{blank}}(\"schema://shop\")\ndef schema() -> str:\n    \"\"\"The database schema the model can reason over.\"\"\"\n    return \"orders(id, customer_id, amount, created_at)\"",
+      "blanks": [
+        { "answer": "tool", "accept": ["Tool"] },
+        { "answer": "resource", "accept": ["Resource"] }
+      ],
+      "explanation": "@mcp.tool() exposes a Tool — an action the model can invoke. @mcp.resource(...) exposes a Resource — read-only context the agent can pull in. Together with Prompts, these are the three primitives that make up a server's entire surface area."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the four MCP architecture layers in order, from the app the user talks to, all the way down to the real data.",
+      "lines": [
+        "Host — the app the user interacts with; embeds the LLM and one MCP client per server",
+        "MCP Client — lives inside the host; speaks JSON-RPC 2.0 and relays tool calls",
+        "MCP Server — your connector code; advertises Tools, Resources & Prompts and validates inputs",
+        "Data / Service — the actual DB, API, or filesystem the server gatekeeps"
+      ],
+      "explanation": "Host → MCP Client → MCP Server → Data/Service. The host embeds the model and a client; the client speaks the protocol; your server is the validating boundary; the data lives behind it. This chain is exactly why the model never holds credentials — every request passes through your server first."
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "slug": "build-a-python-server",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Order the four steps of building the FastMCP server as they appear in server.py, top to bottom.",
+      "lines": [
+        "Create the server: mcp = FastMCP(\"sales-connector\")",
+        "Expose a tool: decorate query_sales with @mcp.tool()",
+        "Expose a resource: decorate schema() with @mcp.resource(\"schema://shop\")",
+        "Run over stdio: call mcp.run() inside if __name__ == \"__main__\":"
+      ],
+      "explanation": "Every MCP server, in any SDK, follows the same arc: create the named server, register the tools the agent can call, register any read-only resources, then start listening over a transport (stdio) so a host can launch and talk to it."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the FastMCP tool registration. The decorator plus the function's type hints become the schema the agent reads.",
+      "codeTemplate": "@mcp.{{blank}}()\ndef query_sales(metric: str, group_by: str = \"customer\", limit: {{blank}} = 5) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    ...",
+      "blanks": [
+        { "answer": "tool", "accept": ["tool"] },
+        { "answer": "int", "accept": ["int"] }
+      ],
+      "explanation": "`@mcp.tool()` registers the function as an MCP tool. The type hints are what make it work: `limit: int = 5` tells FastMCP the parameter is an optional integer defaulting to 5, so it can generate the JSON schema the agent reads over tools/list. No hand-written schema required."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "An agent connects to this FastMCP server and asks for the tool list. For the query_sales tool, where does the input schema (parameter names, types, which are optional) come from?",
+      "code": "@mcp.tool()\ndef query_sales(metric: str, group_by: str = \"customer\", limit: int = 5) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    ...",
+      "options": [
+        "From a JSON object you passed as an argument to @mcp.tool()",
+        "From the function's type hints — FastMCP infers metric: str (required), group_by/limit (optional with defaults)",
+        "The agent guesses the schema from the function name",
+        "From a schema.json file the host reads at startup"
+      ],
+      "answerIndex": 1,
+      "explanation": "FastMCP inspects the function signature. `metric: str` becomes a required string; `group_by: str = \"customer\"` and `limit: int = 5` become optional parameters with defaults. The docstring becomes the description. All of it is advertised over tools/list so the agent knows how to call the tool."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This FastMCP tool is meant to be exposed to the agent, but the host reports zero tools available. What's wrong?",
+      "code": "from mcp.server.fastmcp import FastMCP\n\nmcp = FastMCP(\"sales-connector\")\n\n# missing something right here\ndef query_sales(metric: str, limit: int = 5) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    ...\n\nif __name__ == \"__main__\":\n    mcp.run()",
+      "options": [
+        "The function needs an explicit return type of dict instead of list[dict]",
+        "The function is never registered — it's missing the @mcp.tool() decorator above it, so FastMCP doesn't expose it",
+        "mcp.run() must be called before the function is defined",
+        "FastMCP(\"sales-connector\") needs a version argument"
+      ],
+      "answerIndex": 1,
+      "explanation": "A plain function is invisible to MCP. It's the `@mcp.tool()` decorator that registers `query_sales` on the server and generates its schema from the type hints. Without the decorator, the function is just ordinary Python — the server starts but advertises no tools."
+    }
+  ]
+}

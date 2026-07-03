@@ -1,0 +1,33 @@
+{
+  "slug": "class-and-static-methods",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "class Temp:\n    def __init__(self, c):\n        self.c = c\n    @classmethod\n    def freezing(cls):\n        return cls(0)\n\nprint(Temp.freezing().c)",
+      "options": ["0", "None", "cls", "an error"],
+      "answerIndex": 0,
+      "explanation": "freezing is a classmethod that returns cls(0), i.e. Temp(0). Its .c attribute is 0."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This method doesn't use the instance or the class — what should it be?",
+      "code": "class MathUtils:\n    def add(self, a, b):\n        return a + b\n\nMathUtils.add(2, 3)  # TypeError!",
+      "options": [
+        "Mark it @staticmethod and drop self, so it can be called as MathUtils.add(2, 3)",
+        "Add a return type annotation",
+        "Rename add to __add__",
+        "Make it a @classmethod with cls"
+      ],
+      "answerIndex": 0,
+      "explanation": "add uses neither instance nor class state, so it should be a @staticmethod (no self). Then MathUtils.add(2, 3) works without creating an instance."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the decorator that makes `from_dict` receive the class as `cls`.",
+      "codeTemplate": "    @{{blank}}\n    def from_dict(cls, d):\n        return cls(d['x'])",
+      "blanks": [{ "answer": "classmethod", "accept": ["classmethod()"] }],
+      "explanation": "@classmethod makes the method receive the class as cls, so it can act as an alternative constructor: cls(...) builds a new instance."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "slug": "error-handling",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "try {\n  throw new Error('boom');\n} catch (e) {\n  console.log('caught:', e.message);\n} finally {\n  console.log('cleanup');\n}",
+      "options": ["caught: boom\ncleanup", "cleanup\ncaught: boom", "caught: boom", "cleanup"],
+      "answerIndex": 0,
+      "explanation": "The throw jumps to catch, which logs 'caught: boom'. Then finally always runs, logging 'cleanup'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "The rejected fetch isn't being caught. What's the fix?",
+      "code": "try {\n  fetch('/api').then(r => r.json());\n} catch (e) {\n  console.log('failed');\n}",
+      "options": [
+        "A plain try/catch can't catch async rejections — await the promise inside try, or add a .catch()",
+        "fetch must be called with new",
+        "Move the catch above the try",
+        "JSON.parse the response first"
+      ],
+      "answerIndex": 0,
+      "explanation": "try/catch only catches synchronous throws. The fetch promise settles later, so its rejection escapes. Use `await fetch(...)` inside the try (in an async function), or attach `.catch()` to the promise."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the statement that signals an invalid amount.",
+      "codeTemplate": "if (amount < 0) {{blank}} new Error('amount must be positive');",
+      "blanks": [{ "answer": "throw", "accept": ["THROW"] }],
+      "explanation": "`throw` raises an error, stopping normal flow and jumping to the nearest catch. `throw new Error(msg)` is the standard way to signal a failure."
+    }
+  ]
+}

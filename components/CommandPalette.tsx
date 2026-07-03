@@ -52,6 +52,8 @@ export function CommandPalette() {
       { kind: "action", label: "Python 101", icon: "snake", run: () => go("/learn") },
       { kind: "action", label: "Machine Learning", sublabel: "Animated algorithms", icon: "chart", run: () => go("/ml") },
       { kind: "action", label: "Artificial Intelligence", sublabel: "Search, games & neural nets", icon: "robot", run: () => go("/ai") },
+      { kind: "action", label: "Large Language Models", sublabel: "Tokens, attention & how LLMs think", icon: "brain", run: () => go("/llm") },
+      { kind: "action", label: "Model Context Protocol", sublabel: "Connect agents to tools & data", icon: "plug", run: () => go("/mcp") },
       { kind: "action", label: "Playground", sublabel: "Run Python live", icon: "flask", run: () => go("/learn/playground") },
       { kind: "action", label: "Practice", sublabel: "Review past lessons", icon: "loop", run: () => go("/learn/review") },
       { kind: "action", label: "Projects", sublabel: "Capstone builds", icon: "puzzle", run: () => go("/learn/projects") },

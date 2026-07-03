@@ -1,0 +1,53 @@
+{
+  "slug": "what-is-an-llm",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "An LLM is given the prompt below and returns a probability for each candidate next token. Which token will it pick if it always chooses the single most likely one?",
+      "code": "prompt = \"Roses are red, violets are\"\n\nnext_token_probs = {\n    \"blue\":   0.79,\n    \"violet\": 0.06,\n    \"purple\": 0.05,\n    \"red\":    0.03,\n}",
+      "options": [
+        "\"blue\" — it has the highest probability",
+        "\"red\" — it should repeat the earlier word",
+        "\"violet\" — it matches the previous word exactly",
+        "It picks randomly with no relationship to the probabilities"
+      ],
+      "answerIndex": 0,
+      "explanation": "The model outputs a probability distribution over every token, and picking the single most likely token (greedy selection) means choosing the highest-probability one. Here that's \"blue\" at 0.79. The learned pattern of the familiar rhyme dominates the distribution."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A friend describes how an LLM answers a question. Their mental model has a misconception. Which correction is right?",
+      "code": "# Friend's explanation:\n# \"When you ask an LLM a question, it searches a huge\n#  database of facts stored inside it, finds the matching\n#  record, and returns that stored answer word for word.\"",
+      "options": [
+        "Correct as written — an LLM is essentially a searchable fact database.",
+        "An LLM has no fact database; it generates the most plausible next tokens from patterns learned in its weights.",
+        "It's mostly right, but the database is stored on the internet, not inside the model.",
+        "It's right except that the LLM returns the answer backwards, one token at a time."
+      ],
+      "answerIndex": 1,
+      "explanation": "An LLM doesn't store or look up records. Its weights encode statistical patterns of language, and it answers by generating the most plausible continuation one token at a time. This is exactly why it can be fluent yet also confidently produce false statements (hallucinations)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the blanks to complete the core definition of a Large Language Model.",
+      "codeTemplate": "A Large Language Model is a neural network trained\nto predict the next {{blank}} given the ones before it.\nIt generates long text {{blank}}: predict, append, repeat.",
+      "blanks": [
+        { "answer": "token", "accept": ["token", "word"] },
+        { "answer": "autoregressively", "accept": ["autoregressive", "in a loop", "one at a time"] }
+      ],
+      "explanation": "The single training objective is next-token prediction. Long outputs come from applying that one step autoregressively — each predicted token is appended and fed back in to predict the next."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of the LLM generation loop in the correct order for producing one new token and continuing.",
+      "lines": [
+        "Feed the current text into the model",
+        "The model outputs a probability distribution over all possible next tokens",
+        "Choose one token from that distribution",
+        "Append the chosen token to the text",
+        "Feed the now-longer text back in to predict the next token"
+      ],
+      "explanation": "Generation is autoregressive: the model reads the text, produces a distribution over next tokens, one token is chosen and appended, and the longer text is fed back in. Repeating this loop is how a next-token predictor writes whole paragraphs."
+    }
+  ]
+}

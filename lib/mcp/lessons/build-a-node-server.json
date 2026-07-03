@@ -1,0 +1,125 @@
+{
+  "slug": "build-a-node-server",
+  "title": "Build a Node.js Server",
+  "emoji": "⬢",
+  "category": "Build a Server",
+  "difficulty": "Intermediate",
+  "summary": "Build a real MCP connector in Node.js with the official SDK — create the server, register a tool and a resource, and connect over stdio — while the agent never touches your database directly.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've traced how a question flows through the MCP loop. Now let's **build the server** that sits on the far end of that loop. We'll use the official `@modelcontextprotocol/sdk` for Node.js to write a real connector — one that exposes a `query_sales` **tool** (an action the agent invokes) and a `schema` **resource** (read-only context the agent can pull in) to any MCP-aware agent (like Claude) over stdio.\n\nThe whole file is about 70 lines and breaks into four clean steps: **create the server**, **register a tool**, **register a resource**, and **connect**. First, spin up a project and pull in three packages: the MCP SDK itself, `zod` for describing tool inputs, and `better-sqlite3` for the demo database."
+    },
+    {
+      "type": "code",
+      "code": "# create the project\nnpm init -y\nnpm install @modelcontextprotocol/sdk zod better-sqlite3\n\n# run your server\nnode server.js",
+      "lang": "bash",
+      "caption": "terminal"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "This code is read-only here",
+      "md": "An MCP server needs stdio, the real SDK, and a **host** to launch it — so we won't \"run\" it in this lesson. Instead, read the code to understand each piece, then wire the finished file into a host (Claude Desktop, an IDE, or your own agent) to see it live, exactly as the closing config shows."
+    },
+    {
+      "type": "heading",
+      "text": "Step 1 — Create the server"
+    },
+    {
+      "type": "code",
+      "code": "import { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\nimport { StdioServerTransport } from \"@modelcontextprotocol/sdk/server/stdio.js\";\nimport { z } from \"zod\";\nimport Database from \"better-sqlite3\";\n\nconst db = new Database(\"shop.db\", { readonly: true });\n\n// 1. Create the server — this is your MCP \"connector\".\nconst server = new McpServer({\n  name: \"sales-connector\",\n  version: \"1.0.0\",\n});",
+      "lang": "ts",
+      "caption": "server.ts"
+    },
+    {
+      "type": "heading",
+      "text": "Step 2 — Register a tool"
+    },
+    {
+      "type": "text",
+      "md": "Now the interesting part. `registerTool` exposes a capability the agent can invoke. Notice the split: **the agent decides *when* to call it; your code decides *what* it does.** The `inputSchema` is written with `zod` — each field becomes part of the JSON schema the agent reads to learn how to call the tool. The handler receives those validated arguments, builds the SQL, runs it, and returns the rows as text content."
+    },
+    {
+      "type": "code",
+      "code": "// 2. Expose a TOOL. The agent decides *when* to call it;\n//    your code decides *what* it does. The agent never sees the DB directly.\nserver.registerTool(\n  \"query_sales\",\n  {\n    title: \"Query sales\",\n    description: \"Aggregate revenue by customer or by month.\",\n    inputSchema: {\n      metric: z.enum([\"revenue\", \"recency\"]),\n      groupBy: z.enum([\"customer\", \"month\"]).optional(),\n      limit: z.number().int().max(50).default(5),\n    },\n  },\n  async ({ groupBy, limit }) => {\n    const sql =\n      groupBy === \"month\"\n        ? `SELECT strftime('%Y-%m', created_at) AS month,\n             SUM(amount) AS revenue\n           FROM orders GROUP BY month ORDER BY month LIMIT ?`\n        : `SELECT c.name AS customer, SUM(o.amount) AS total\n           FROM orders o JOIN customers c ON c.id = o.customer_id\n           GROUP BY c.name ORDER BY total DESC LIMIT ?`;\n\n    const rows = db.prepare(sql).all(limit);\n    return { content: [{ type: \"text\", text: JSON.stringify(rows, null, 2) }] };\n  }\n);",
+      "lang": "ts",
+      "caption": "server.ts"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The agent never sees the database",
+      "md": "The agent can only send a `tools/call` for `query_sales` with structured arguments — it never gets a database handle, never writes SQL, never learns your connection string. **Your server is the safety boundary.** It decides which tools exist, validates every argument against the `zod` schema, and owns the one and only line that touches the DB (`db.prepare(sql).all(limit)`). Even if the model asked for something reckless, it can only reach the tools you chose to expose."
+    },
+    {
+      "type": "quiz",
+      "question": "In `registerTool`, what job does the `inputSchema` (written with zod) do?",
+      "options": [
+        "It runs the SQL query against the database",
+        "It becomes the schema the agent reads to know how to call the tool, and it validates the incoming arguments",
+        "It connects the server to the host over stdio",
+        "It defines which database tables exist"
+      ],
+      "answerIndex": 1,
+      "explanation": "The zod inputSchema serves two purposes: it's advertised to the agent (so the model knows the tool takes a metric, an optional groupBy, and a limit), and it validates arguments before your handler ever runs. Running SQL is the handler's job; connecting over stdio is Step 4's job."
+    },
+    {
+      "type": "heading",
+      "text": "Step 3 — Register a resource"
+    },
+    {
+      "type": "code",
+      "code": "// 3. Expose a RESOURCE — read-only context the agent can pull in.\nserver.registerResource(\n  \"schema\",\n  \"schema://shop\",\n  { title: \"Database schema\", mimeType: \"text/plain\" },\n  async (uri) => ({\n    contents: [{ uri: uri.href, text: \"orders(id, customer_id, amount, created_at)\" }],\n  })\n);",
+      "lang": "ts",
+      "caption": "server.ts"
+    },
+    {
+      "type": "heading",
+      "text": "Step 4 — Connect over stdio"
+    },
+    {
+      "type": "code",
+      "code": "// 4. Connect over stdio and start listening for the agent.\nconst transport = new StdioServerTransport();\nawait server.connect(transport);",
+      "lang": "ts",
+      "caption": "server.ts"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Wiring it into a host",
+      "md": "Once the file exists, a host launches it and the connection is live. In `claude_desktop_config.json` you add an entry under `mcpServers` pointing at the file (see below). The host runs `node server.js`, speaks JSON-RPC over stdio, and your `query_sales` tool shows up for the agent."
+    },
+    {
+      "type": "code",
+      "lang": "json",
+      "caption": "claude_desktop_config.json",
+      "code": "{\n  \"mcpServers\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\n        \"/absolute/path/to/server.js\"\n      ]\n    }\n  }\n}"
+    },
+    {
+      "type": "quiz",
+      "question": "Why does the server stay silent until you call `server.connect(transport)`?",
+      "options": [
+        "Because the zod schema hasn't been validated yet",
+        "Because a server needs a transport (here, stdio) to actually send and receive protocol messages — registering tools only defines them",
+        "Because the database is opened read-only",
+        "Because the host hasn't sent a tools/list request"
+      ],
+      "answerIndex": 1,
+      "explanation": "registerTool and registerResource only *define* capabilities in memory. Nothing flows in or out until you attach a transport and call connect — that's the moment the server starts speaking MCP over stdio and the host can reach it."
+    }
+  ],
+  "keyTakeaways": [
+    "A Node.js MCP server is built with the official @modelcontextprotocol/sdk in four steps: create the McpServer, register tools, register resources, and connect over a transport.",
+    "registerTool splits responsibility cleanly — the agent decides *when* to call a tool; your handler decides *what* it does. The zod inputSchema both advertises and validates the arguments.",
+    "The agent never sees the database: it only sends tools/call with structured arguments, and the server owns the one line that touches the DB — making the server the safety boundary.",
+    "A resource is read-only context addressed by a URI (schema://shop) that the agent can pull in, distinct from a tool it invokes.",
+    "The server is silent until server.connect(new StdioServerTransport()) attaches a transport; a host then launches it and the tools appear to the agent."
+  ],
+  "exercise": {
+    "prompt": "Extend the connector with a second tool called `inventory_lookup` that lists products whose stock is below a given threshold. Describe (1) the `registerTool` call — its name, a one-line description, and a zod `inputSchema` with a single `below` field (an integer with a sensible default), and (2) the SQL the handler would run against a `products(id, name, stock, reorder_level)` table. In one sentence, explain why adding this tool does *not* give the agent any new access to the database beyond what you allow.",
+    "hint": "Model it on `query_sales`. The inputSchema only needs one field: `below: z.number().int().min(0).default(25)`. The handler runs a SELECT filtering `WHERE stock < ?` and returns the rows as text content, just like `query_sales` does with `JSON.stringify(rows, null, 2)`.",
+    "solution": "1) registerTool:\n\nserver.registerTool(\n  \"inventory_lookup\",\n  {\n    title: \"Inventory lookup\",\n    description: \"List products whose stock is below the given threshold.\",\n    inputSchema: { below: z.number().int().min(0).default(25) },\n  },\n  async ({ below }) => {\n    const rows = db.prepare(\n      `SELECT name AS product, stock, reorder_level\n       FROM products WHERE stock < ? ORDER BY stock ASC`\n    ).all(below);\n    return { content: [{ type: \"text\", text: JSON.stringify(rows, null, 2) }] };\n  }\n);\n\n2) SQL run by the handler:\n\nSELECT name AS product, stock, reorder_level\nFROM products WHERE stock < ? ORDER BY stock ASC\n\nWhy it grants no new access: the agent still can only send a tools/call for inventory_lookup with a single validated `below` argument — the server writes and runs the SQL and owns the read-only DB connection, so the agent's reach is exactly the tools you chose to expose and nothing more."
+  }
+}

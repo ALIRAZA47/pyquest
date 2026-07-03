@@ -1,0 +1,113 @@
+{
+  "slug": "connect-to-a-host",
+  "title": "Connect It to a Host",
+  "emoji": "🧷",
+  "category": "Build a Server",
+  "difficulty": "Intermediate",
+  "summary": "Wire a finished MCP server into a host like Claude Desktop, test it with the MCP Inspector, then ask a plain-English question and watch the server run the SQL for a real, grounded answer.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've built a server — it exposes a `query_sales` tool and a `schema://shop` resource. But a server on its own does nothing. It waits, silently, on stdio for something to talk to it. That something is a **host**: Claude Desktop, an IDE, or your own agent. In this lesson we wire the server into a host, test it, and finally ask it a real question."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The host launches the server",
+      "md": "Your server isn't a service you start and leave running. The **host launches it for you** — like a browser launching a helper process. You just tell the host *how* to start it: a `command` to run and the `args` to pass. When the host boots, it spawns your server, speaks MCP over stdio, and the connection is live."
+    },
+    {
+      "type": "heading",
+      "text": "The config: point the host at your server"
+    },
+    {
+      "type": "text",
+      "md": "For Claude Desktop, that wiring lives in a single JSON file, `claude_desktop_config.json`. Each entry under `mcpServers` names a server and tells the host exactly how to launch it. Here's the config that wires in both the Node and the Python versions of our sales connector:"
+    },
+    {
+      "type": "code",
+      "code": "{\n  \"mcpServers\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/server.js\"]\n    },\n    \"sales-connector-python\": {\n      \"command\": \"uv\",\n      \"args\": [\"run\", \"server.py\"]\n    }\n  }\n}",
+      "lang": "json",
+      "caption": "claude_desktop_config.json"
+    },
+    {
+      "type": "text",
+      "md": "Read it as a launch recipe. `command` is the program the host will run (`node` for the TypeScript build, `uv` for the Python one), and `args` are the arguments it passes. Together they say: *\"to start `sales-connector`, run `node /absolute/path/to/server.js`.\"* The key (`\"sales-connector\"`) is just the name the host shows you."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Paths must be ABSOLUTE",
+      "md": "The host doesn't launch your server from your project folder — it launches it from wherever the host process happens to live. A relative path like `./server.js` will not be found. **Always use the full absolute path**, e.g. `/absolute/path/to/examples/node-mcp-server/server.js`. This is the single most common reason a freshly-added server never shows up."
+    },
+    {
+      "type": "quiz",
+      "question": "In the mcpServers config, what do `command` and `args` actually do?",
+      "options": [
+        "They open a network socket the host connects to over HTTP",
+        "They tell the host how to LAUNCH the server as a subprocess (the program to run and its arguments)",
+        "They are the SQL the server will run",
+        "They are credentials the host uses to log into the database"
+      ],
+      "answerIndex": 1,
+      "explanation": "MCP over stdio means the host spawns your server as a subprocess. `command` is the program to run and `args` are the arguments — together they're the launch recipe. The host starts the process and speaks MCP to it over stdin/stdout."
+    },
+    {
+      "type": "heading",
+      "text": "Test it first with the MCP Inspector"
+    },
+    {
+      "type": "text",
+      "md": "Before you wire a server into a full agent, the easiest way to confirm it works is the **MCP Inspector** — a local UI that connects to your server, lists its tools and resources, and lets you call them by hand. No agent, no config editing, just a direct look at what your server exposes."
+    },
+    {
+      "type": "code",
+      "code": "# Node server\nnpm run inspect\n\n# Python server\nuv run mcp dev server.py",
+      "lang": "bash",
+      "caption": "launch the MCP Inspector"
+    },
+    {
+      "type": "text",
+      "md": "Either command opens a local web UI. You'll see `query_sales` and `run_sql` in the tool list and `schema://shop` under resources. Click a tool, fill in its arguments, and call it — the same `tools/call` an agent would send, but driven by you. If the Inspector can list and call your tools, a host will be able to as well."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Inspector = your MCP dev loop",
+      "md": "Treat the Inspector as your fast feedback loop while building. It surfaces schema errors, bad argument validation, and broken queries immediately — long before you involve a real agent. Get it green in the Inspector, *then* connect it to a host."
+    },
+    {
+      "type": "heading",
+      "text": "Now ask it a real question"
+    },
+    {
+      "type": "text",
+      "md": "With the server wired into a host, you don't call tools by hand anymore — you just talk. Ask the agent something a human would actually type:\n\n> Who are our top 3 customers?\n\nThe agent reasons that this is a sales question, picks the `query_sales` tool, and sends a `tools/call`. Your server runs the real SQL against `shop.db`, rows come back, and the agent turns them into an answer **grounded in real rows** — not a guess, not a hallucination. You can just as easily ask *\"Which products are low on stock?\"* and it reaches for a different tool. Same loop, every question."
+    },
+    {
+      "type": "quiz",
+      "question": "In the database example, why is MCP safer than giving the model raw DB credentials?",
+      "options": [
+        "It isn't — it's exactly the same thing.",
+        "The server mediates access: it can enforce read-only queries, validate inputs, scope tables, and audit every call.",
+        "Because JSON is inherently encrypted.",
+        "Because the model memorizes the whole database first."
+      ],
+      "answerIndex": 1,
+      "explanation": "The MCP server is a controlled boundary. You decide what tools exist, validate every argument, and can enforce read-only access — the model never holds the credentials."
+    }
+  ],
+  "keyTakeaways": [
+    "A host (Claude Desktop, an IDE, your own agent) LAUNCHES your server: the config gives it a `command` and `args` as a launch recipe.",
+    "In claude_desktop_config.json, each entry under `mcpServers` names a server and tells the host how to start it — Node via `node server.js`, Python via `uv run server.py`.",
+    "Paths in the config MUST be absolute; a relative path is the most common reason a server never connects.",
+    "The MCP Inspector (`npm run inspect` / `uv run mcp dev server.py`) is the fastest way to list and call your tools before involving a real agent.",
+    "Once wired in, a plain-English question like \"Who are our top 3 customers?\" makes the agent pick a tool, the server run the SQL, and you get an answer grounded in real rows — with the server as the safety boundary that holds the credentials."
+  ],
+  "exercise": {
+    "prompt": "You've just finished a second MCP server, an `analytics-connector`, whose Python entry point lives at `/Users/you/projects/analytics/server.py`. Write the `mcpServers` block you'd add to `claude_desktop_config.json` to wire it into Claude Desktop alongside the existing `sales-connector`. Then, in one sentence each: (1) name the command you'd run to test `analytics-connector` in the MCP Inspector, and (2) explain what would happen if you used the relative path `server.py` in `args` instead of the absolute path.",
+    "hint": "Look at the `sales-connector-python` entry: Python servers launch with `command: \"uv\"` and `args: [\"run\", \"<path>\"]`. The Inspector for a Python server is `uv run mcp dev <path>`. Remember the absolute-path gotcha.",
+    "solution": "Config:\n{\n  \"mcpServers\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/server.js\"]\n    },\n    \"analytics-connector\": {\n      \"command\": \"uv\",\n      \"args\": [\"run\", \"/Users/you/projects/analytics/server.py\"]\n    }\n  }\n}\n\n1) Test it in the Inspector with: uv run mcp dev /Users/you/projects/analytics/server.py — this opens a local UI to list and call the server's tools by hand.\n\n2) With a relative path (\"server.py\"), the host would try to launch the server from its own working directory, not your project folder, so it would fail to find the file and the server would never connect. Absolute paths avoid this entirely."
+  }
+}

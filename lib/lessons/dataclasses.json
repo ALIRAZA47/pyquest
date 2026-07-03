@@ -1,0 +1,30 @@
+{
+  "slug": "dataclasses",
+  "title": "Dataclasses",
+  "emoji": "🏛️",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Let @dataclass write the boilerplate — __init__, __repr__, and equality — from a few typed fields.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Classes that mostly *hold data* need a repetitive `__init__`, a readable `__repr__`, and often an `__eq__`. The `@dataclass` decorator (from the standard library) generates all of that from a few annotated fields." },
+    { "type": "code", "lang": "py", "caption": "the same class, far less code", "code": "from dataclasses import dataclass\n\n@dataclass\nclass Point:\n    x: int\n    y: int = 0        # a default value\n\np = Point(3, 4)\nprint(p)              # nice repr, for free\nprint(p == Point(3, 4))  # value equality, for free\nprint(Point(5))       # y defaults to 0", "output": "Point(x=3, y=4)\nTrue\nPoint(x=5, y=0)" },
+    { "type": "text", "md": "Without `@dataclass` you'd hand-write `__init__` to assign each field, plus `__repr__` and `__eq__`. The decorator reads the class-level type annotations and does it for you." },
+    { "type": "heading", "text": "Handy options" },
+    { "type": "code", "lang": "py", "caption": "frozen (immutable) & ordering", "code": "from dataclasses import dataclass\n\n@dataclass(frozen=True, order=True)\nclass Version:\n    major: int\n    minor: int\n\nv1 = Version(1, 2)\nprint(v1 < Version(1, 5))  # order=True gives comparisons\n# v1.major = 2  # frozen=True -> raises FrozenInstanceError", "output": "True" },
+    { "type": "callout", "variant": "tip", "title": "When to reach for it", "md": "Use a dataclass whenever a class is mostly a bundle of values (config, records, DTOs, coordinates). `frozen=True` makes instances immutable (and hashable); `order=True` adds `<`, `>`, etc. For heavy behavior, a regular class is still the right call." },
+    { "type": "quiz", "question": "What does @dataclass generate for you from the annotated fields?", "options": ["Only a docstring", "__init__, __repr__, and __eq__ (and more, optionally)", "A database table", "Nothing until you call build()"], "answerIndex": 1, "explanation": "@dataclass reads the class's type-annotated fields and auto-generates __init__ (assigning each field), a readable __repr__, and __eq__ for value equality — plus ordering and immutability with options." }
+  ],
+  "keyTakeaways": [
+    "`@dataclass` auto-generates `__init__`, `__repr__`, and `__eq__` from annotated fields.",
+    "Fields are declared as class-level annotations: `x: int`, with optional defaults (`y: int = 0`).",
+    "`frozen=True` makes instances immutable; `order=True` adds comparison operators.",
+    "Ideal for value/record classes; use a regular class when behavior dominates."
+  ],
+  "exercise": {
+    "prompt": "Turn this plain class into a dataclass with fields `title: str` and `pages: int` (default 0):\n\n```python\nclass Book:\n    def __init__(self, title, pages=0):\n        self.title = title\n        self.pages = pages\n```",
+    "starterCode": "from dataclasses import dataclass\n\n# TODO: rewrite Book as a @dataclass\n\n# print(Book(\"Dune\", 412))",
+    "hint": "Decorate with @dataclass and declare the fields as annotations: title: str and pages: int = 0.",
+    "solution": "from dataclasses import dataclass\n\n@dataclass\nclass Book:\n    title: str\n    pages: int = 0\n\nprint(Book(\"Dune\", 412))  # Book(title='Dune', pages=412)"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "prompting-and-in-context-learning",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "This few-shot prompt establishes a pattern, then gives a new input. Given how in-context learning works, what is the model most likely to output for the last line?",
+      "code": "Convert the word to its plural.\n\nWord: cat    Plural: cats\nWord: bus    Plural: buses\nWord: box    Plural: boxes\nWord: dog    Plural:",
+      "options": [
+        "dogs — the model infers the pattern from the examples and continues it",
+        "\"The plural of dog is dogs.\" — it explains its answer in full sentences",
+        "dog — it just repeats the input word unchanged",
+        "It refuses, because it was never trained on the word 'dog'"
+      ],
+      "answerIndex": 0,
+      "explanation": "The three examples set a clear input→output pattern (word, then its plural, one word, no prose). Through in-context learning the model conditions on that pattern and produces the matching continuation: `dogs`. It doesn't add explanation because none of the examples did — the format is part of what the examples teach."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A beginner wrote these notes about prompting. Exactly one line is a real misconception. Which line is WRONG?",
+      "code": "# Notes on prompting an LLM:\n\n1. Few-shot means putting a few examples in the prompt.\n2. In-context learning permanently updates the model's weights.\n3. The system message sets the model's overall behavior and persona.\n4. Zero-shot means asking with no examples at all.",
+      "options": [
+        "Line 1 — few-shot does mean putting examples in the prompt",
+        "Line 2 — in-context learning does NOT change any weights; the effect lives only in the prompt",
+        "Line 3 — the system message does set behavior and persona",
+        "Line 4 — zero-shot does mean asking with no examples"
+      ],
+      "answerIndex": 1,
+      "explanation": "Line 2 is the misconception. In-context learning changes the model's *behavior* for one request by conditioning on the prompt, but it updates zero weights. The model is frozen; the examples exist only in the context window and are gone once the request ends. Permanently altering weights is fine-tuning, which is a different thing entirely."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the sentences about prompting terminology.",
+      "codeTemplate": "Asking with no examples is called {{blank}} prompting.\nShowing a handful of worked examples in the prompt is called {{blank}} prompting.\nThe role that sets behavior and persona for the whole conversation is the {{blank}} message.",
+      "blanks": [
+        { "answer": "zero-shot", "accept": ["zero shot", "zeroshot"] },
+        { "answer": "few-shot", "accept": ["few shot", "fewshot"] },
+        { "answer": "system", "accept": ["system role"] }
+      ],
+      "explanation": "A 'shot' is an example: zero-shot gives none and leans entirely on training, while few-shot supplies a few examples so the model infers the pattern (in-context learning). The system message is the standing instruction that governs every turn — that's where you put persona and rules."
+    },
+    {
+      "type": "reorder",
+      "prompt": "You're designing a prompt to reliably extract structured data. Put these steps in the order that gives the model the least guesswork.",
+      "lines": [
+        "Set the standing rules and persona in the system message (e.g. 'output only JSON')",
+        "State the task specifically, including the exact output format you want",
+        "Provide a few clean input→output examples that demonstrate the format",
+        "Include the relevant context — the actual text to process — in the window",
+        "Add the real input last so the model continues the established pattern"
+      ],
+      "explanation": "Well-structured prompts move from the most general framing to the most specific ask. First the system message sets rules for every turn; then you state the task and desired format; then few-shot examples demonstrate that format concretely; then you supply the actual context the model needs; and finally the real input goes last, so the model's most-likely continuation is the answer in your established pattern."
+    }
+  ]
+}

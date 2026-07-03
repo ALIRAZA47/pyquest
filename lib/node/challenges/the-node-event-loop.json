@@ -1,0 +1,56 @@
+{
+  "slug": "the-node-event-loop",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this Node program print?",
+      "code": "console.log('start');\nsetTimeout(() => console.log('timeout'), 0);\nPromise.resolve().then(() => console.log('promise'));\nconsole.log('end');",
+      "options": [
+        "start\nend\npromise\ntimeout",
+        "start\nend\ntimeout\npromise",
+        "start\ntimeout\npromise\nend",
+        "start\npromise\nend\ntimeout"
+      ],
+      "answerIndex": 0,
+      "explanation": "Synchronous code runs first ('start', 'end'). Then microtasks drain before any timer, so the promise ('promise') runs before the setTimeout callback ('timeout'), which waits for the timers phase."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "process.nextTick vs a Promise — which prints first?",
+      "code": "Promise.resolve().then(() => console.log('promise'));\nprocess.nextTick(() => console.log('nextTick'));",
+      "options": [
+        "promise\nnextTick",
+        "nextTick\npromise",
+        "They print at the same time",
+        "nextTick never runs"
+      ],
+      "answerIndex": 1,
+      "explanation": "The process.nextTick queue has higher priority than the Promise microtask queue and is drained first, so 'nextTick' prints before 'promise'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A developer expects 'done' to print immediately. Why doesn't it?",
+      "code": "setTimeout(() => console.log('done'), 0);\nfor (let i = 0; i < 1e9; i++) {}\nconsole.log('loop finished');",
+      "options": [
+        "setTimeout is broken with a 0 delay",
+        "The long synchronous for-loop blocks the thread; the timer callback can only run after the loop finishes and the stack is clear",
+        "'done' prints first, before the loop",
+        "You must call setTimeout.run() to start it"
+      ],
+      "answerIndex": 1,
+      "explanation": "The timer callback is queued, but the event loop can't reach the timers phase until the synchronous for-loop finishes and the call stack is empty. Blocking the thread delays every queued callback — so 'loop finished' prints first, then 'done'."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order these by when they run in a single Node program that schedules all of them at once.",
+      "lines": [
+        "synchronous console.log calls",
+        "process.nextTick callbacks",
+        "Promise .then callbacks",
+        "setTimeout(…, 0) callbacks (timers phase)",
+        "setImmediate callbacks (check phase)"
+      ],
+      "explanation": "Sync code runs first. Then microtasks drain — nextTick before promises. Then the loop's phases: timers (setTimeout) before check (setImmediate)."
+    }
+  ]
+}

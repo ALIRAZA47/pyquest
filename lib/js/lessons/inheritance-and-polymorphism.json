@@ -1,0 +1,29 @@
+{
+  "slug": "inheritance-and-polymorphism",
+  "title": "Inheritance & Polymorphism",
+  "emoji": "🧬",
+  "category": "Objects & Classes",
+  "difficulty": "Intermediate",
+  "summary": "Build classes on top of other classes with extends and super, override methods, and let one interface work for many types.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "**Inheritance** lets a class build on another: a subclass gets the parent's properties and methods, then adds or changes what it needs. **Polymorphism** means many different classes can respond to the *same* method call in their own way — so code that uses the interface doesn't care about the concrete type." },
+    { "type": "code", "lang": "js", "caption": "extends and super", "code": "class Animal {\n  constructor(name) { this.name = name; }\n  speak() { return `${this.name} makes a sound`; }\n}\n\nclass Dog extends Animal {\n  speak() {                 // override the parent's method\n    return `${this.name} barks`;\n  }\n}\n\nclass Cat extends Animal {\n  speak() { return `${this.name} meows`; }\n}\n\nconsole.log(new Dog('Rex').speak());\nconsole.log(new Cat('Lu').speak());" },
+    { "type": "text", "md": "`extends` sets up the parent-child link; each subclass **overrides** `speak()` with its own version. When a subclass constructor needs to run the parent's setup, it calls `super(...)` first." },
+    { "type": "heading", "text": "Polymorphism in action" },
+    { "type": "code", "lang": "js", "caption": "one loop, many types", "code": "class Animal {\n  constructor(name) { this.name = name; }\n  speak() { return `${this.name} makes a sound`; }\n}\nclass Dog extends Animal { speak() { return `${this.name} barks`; } }\nclass Cat extends Animal { speak() { return `${this.name} meows`; } }\n\nconst zoo = [new Dog('Rex'), new Cat('Lu'), new Animal('Thing')];\nfor (const a of zoo) {\n  console.log(a.speak());  // each responds in its own way\n}" },
+    { "type": "callout", "variant": "tip", "title": "Program to the shared interface", "md": "The loop above never checks `if (a instanceof Dog)`. It just calls `a.speak()` and trusts each object to do the right thing. That's the power of polymorphism — you can add a new `Bird` class later and the loop works unchanged." },
+    { "type": "quiz", "question": "What does calling `speak()` on a `Dog` that overrides it do?", "options": ["Runs the Animal version, ignoring Dog's", "Runs Dog's version — the subclass override wins", "Throws because speak is already defined", "Runs both versions in sequence"], "answerIndex": 1, "explanation": "A subclass method with the same name overrides the parent's. JS looks up the method on the instance's own class first, so Dog.speak() runs. Use super.speak() if you also want the parent's behavior." }
+  ],
+  "keyTakeaways": [
+    "`class Dog extends Animal` makes Dog inherit Animal's members.",
+    "A subclass can override a method by redefining it; `super.method()` calls the parent's version.",
+    "`super(...)` in a subclass constructor runs the parent constructor (call it before using `this`).",
+    "Polymorphism: many classes implement the same method, so shared code calls it without knowing the concrete type."
+  ],
+  "exercise": {
+    "prompt": "Make a `Square` class extend a `Shape` class. `Shape` has `area()` returning 0; `Square` (constructed with `side`) overrides `area()` to return side * side. `new Square(4).area()` should be 16.",
+    "hint": "class Square extends Shape { constructor(side){ super(); this.side = side; } area(){ return this.side * this.side; } }",
+    "solution": "class Shape {\n  area() { return 0; }\n}\nclass Square extends Shape {\n  constructor(side) { super(); this.side = side; }\n  area() { return this.side * this.side; }\n}\nconsole.log(new Square(4).area()); // 16"
+  }
+}

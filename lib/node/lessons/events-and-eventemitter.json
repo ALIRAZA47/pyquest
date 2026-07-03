@@ -1,0 +1,30 @@
+{
+  "slug": "events-and-eventemitter",
+  "title": "Events & EventEmitter",
+  "emoji": "📣",
+  "category": "Core Modules",
+  "difficulty": "Intermediate",
+  "summary": "Node's event-driven core — emit named events and register listeners with the EventEmitter pattern.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Node is **event-driven**: much of its API is built on the idea of *emitting* named events and *listening* for them. Servers, streams, and many core objects are `EventEmitter`s under the hood. Understanding the pattern unlocks how Node's building blocks talk to each other." },
+    { "type": "code", "lang": "js", "caption": "emit and listen", "code": "const EventEmitter = require('node:events');\n\nconst bus = new EventEmitter();\n\n// register a listener for the 'order' event\nbus.on('order', (item) => {\n  console.log('New order:', item);\n});\n\n// emit the event — every listener runs\nbus.emit('order', 'espresso'); // New order: espresso\nbus.emit('order', 'latte');    // New order: latte" },
+    { "type": "text", "md": "`on(event, listener)` subscribes; `emit(event, ...args)` fires it, calling every registered listener synchronously with the arguments you pass. `once(event, listener)` runs a listener a single time, then removes it." },
+    { "type": "heading", "text": "Your own emitters" },
+    { "type": "code", "lang": "js", "caption": "extend EventEmitter", "code": "const EventEmitter = require('node:events');\n\nclass Timer extends EventEmitter {\n  start() {\n    this.emit('tick', Date.now());\n  }\n}\n\nconst t = new Timer();\nt.on('tick', (at) => console.log('tick at', at));\nt.start();" },
+    { "type": "callout", "variant": "gotcha", "title": "The special 'error' event", "md": "If an EventEmitter emits an `'error'` event and **no listener** is registered for it, Node throws and can crash the process. Always attach an `.on('error', ...)` listener to emitters that might emit errors (like streams and servers)." },
+    { "type": "quiz", "question": "What happens when you call `bus.emit('order', 'latte')` with two 'order' listeners registered?", "options": ["Only the first listener runs", "Both listeners run, each receiving 'latte'", "It throws because there are too many listeners", "Nothing until you call bus.flush()"], "answerIndex": 1, "explanation": "emit() calls every listener registered for that event, in the order they were added, passing along the arguments. So both 'order' listeners run with 'latte'." }
+  ],
+  "keyTakeaways": [
+    "Node is event-driven; many core objects (servers, streams) are EventEmitters.",
+    "`on(event, fn)` subscribes; `emit(event, ...args)` fires all listeners synchronously.",
+    "`once(event, fn)` runs a listener a single time.",
+    "Extend EventEmitter to give your own classes emit/on.",
+    "Always handle the 'error' event — an unhandled one can crash the process."
+  ],
+  "exercise": {
+    "prompt": "Create an EventEmitter `chat`, register a listener for a `'message'` event that logs `'💬 ' + text`, then emit a `'message'` with the text `'hello'`.",
+    "hint": "new EventEmitter(); chat.on('message', text => ...); chat.emit('message', 'hello').",
+    "solution": "const EventEmitter = require('node:events');\nconst chat = new EventEmitter();\nchat.on('message', (text) => console.log('💬 ' + text));\nchat.emit('message', 'hello'); // 💬 hello"
+  }
+}

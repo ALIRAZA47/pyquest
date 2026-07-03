@@ -1,0 +1,51 @@
+{
+  "slug": "use-cases-and-safety",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A team asks an agent: \"Why did latency spike at 2am, and what changed in billing?\" The agent needs data from three different backends (metrics, logs, billing). In an MCP setup, what actually reaches each backend?",
+      "code": "user: \"why did latency spike at 2am, and what changed in billing?\"\n\n// agent has three connectors loaded:\n//   metrics-connector, logs-connector, billing-connector",
+      "options": [
+        "The model opens direct connections to all three backends using credentials it was given.",
+        "Each MCP server touches its own backend on the agent's behalf, after validating the request — the model never connects directly.",
+        "The MCP client runs the queries itself and the servers are skipped.",
+        "Nothing reaches the backends; the model answers from memory."
+      ],
+      "answerIndex": 1,
+      "explanation": "The agent never touches the data. It speaks MCP to each server, and each server is the safety boundary that validates the request and then reaches its own backend. This is exactly what makes 'live operational insight' safe — the model correlates across systems it could never directly access, and it never holds any credentials."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A team wants to expose their internal wiki so an agent can cite it with real sources. A junior dev exposed it as a Tool that can also edit pages. What's the safer fix for a read-only, citable knowledge source?",
+      "code": "@mcp.tool()\ndef wiki(action: str, page: str, body: str = \"\") -> str:\n    \"\"\"Read OR overwrite a wiki page.\"\"\"\n    if action == \"write\":\n        save_page(page, body)   # agent can silently overwrite docs!\n    return load_page(page)",
+      "options": [
+        "Keep it a Tool, but ask the model politely not to write.",
+        "Expose the docs as a read-only Resource (e.g. @mcp.resource) so the agent can only pull them in and cite them, not mutate them.",
+        "Give the model the wiki's admin password so it can decide what to edit.",
+        "Encrypt the body before saving it."
+      ],
+      "answerIndex": 1,
+      "explanation": "Grounding answers in your docs is a Resources story: Resources are read-only context the agent pulls in and cites. Modeling the wiki as a Resource removes the write path entirely, so the agent can never overwrite a page. Tools are for actions you actually want the agent to take — reading to cite isn't one of them."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete this run_sql escape hatch so the server stays a safe boundary: it must only allow a single read-only SELECT before touching the database.",
+      "codeTemplate": "@mcp.tool()\ndef run_sql(sql: str) -> str:\n    \"\"\"Escape hatch: run a single read-only SELECT. The server is the boundary.\"\"\"\n    clean = sql.strip().rstrip(\";\")\n    if not clean.lower().startswith(\"{{blank}}\") or \";\" in clean:\n        return \"Error: only a single read-only SELECT is allowed.\"\n    return _rows(db.execute(clean))",
+      "blanks": [
+        { "answer": "select", "accept": ["SELECT", "Select"] }
+      ],
+      "explanation": "The server is the boundary — it validates input before touching the data. Requiring the statement to start with 'select' rejects writes (INSERT/UPDATE/DELETE/DROP), and rejecting an embedded ';' blocks chained statements. Even a raw-SQL escape hatch stays safe because your code inspects the request first."
+    },
+    {
+      "type": "reorder",
+      "prompt": "You want to try the sales-connector before wiring it into a host. Put the steps in order, from setting up the server to poking at its tools.",
+      "lines": [
+        "npm install — pull in the official MCP SDK and dependencies",
+        "npm run seed — create shop.db with demo data",
+        "npm run inspect — open the MCP Inspector, a local UI",
+        "In the Inspector, list the tools and call query_sales to see real rows"
+      ],
+      "explanation": "Install, then seed the demo database, then launch the MCP Inspector, then list and call the tools. The Inspector lets you exercise a server on its own before adding it to a host's mcpServers config — the fastest way to sanity-check a connector you're building."
+    }
+  ]
+}

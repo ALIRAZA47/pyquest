@@ -1,0 +1,108 @@
+{
+  "slug": "build-a-python-server",
+  "title": "Build a Python Server",
+  "emoji": "🐍",
+  "category": "Build a Server",
+  "difficulty": "Intermediate",
+  "summary": "Build the same sales connector in Python with FastMCP, where decorators and type hints turn plain functions into a typed MCP surface — proving the concept is identical across SDKs, only the syntax changes.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've built this connector before in Node/TypeScript. Now let's build the **exact same thing** in Python with **FastMCP** — the ergonomic server class from the official `mcp` package. Same demo shop, same three tools, same one resource. The point of this lesson isn't a new idea; it's to show you that **MCP is a protocol, not a library**. The concept stays fixed across every SDK. Only the syntax changes."
+    },
+    {
+      "type": "heading",
+      "text": "Set up the project"
+    },
+    {
+      "type": "text",
+      "md": "The Python SDK ships as `mcp[cli]`. The recommended way to install it is with [`uv`](https://docs.astral.sh/uv/), a fast Python package manager. Initialize a project, add the dependency, and you're ready to run a server over stdio:"
+    },
+    {
+      "type": "code",
+      "code": "# using uv (recommended)\nuv init sales-connector && cd sales-connector\nuv add \"mcp[cli]\"\n\n# run your server\nuv run server.py",
+      "lang": "bash",
+      "caption": "terminal",
+      "output": ""
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Decorators are the whole trick",
+      "md": "In FastMCP, `@mcp.tool()` and `@mcp.resource(...)` turn plain Python functions into a typed MCP surface. Here's the magic: **your type hints become the schema the agent reads to know how to call you.** Write `metric: str` and `limit: int = 5`, and FastMCP generates the JSON schema that gets advertised over `tools/list`. The docstring becomes the tool's description. You never hand-write a schema — you just write a normal, well-typed function."
+    },
+    {
+      "type": "heading",
+      "text": "The server, end to end"
+    },
+    {
+      "type": "text",
+      "md": "Here's a complete, runnable FastMCP server. Read it top to bottom — the four numbered comments walk the same arc as the Node version: **create the server → expose tools → expose a resource → run over stdio**."
+    },
+    {
+      "type": "code",
+      "code": "from mcp.server.fastmcp import FastMCP\nimport sqlite3\n\ndb = sqlite3.connect(\"shop.db\", check_same_thread=False)\n\n# 1. Create the server — your MCP \"connector\".\nmcp = FastMCP(\"sales-connector\")\n\n\n# 2. Expose a TOOL. The decorator + type hints become the schema\n#    the agent reads to know how to call this function.\n@mcp.tool()\ndef query_sales(metric: str, group_by: str = \"customer\", limit: int = 5) -> list[dict]:\n    \"\"\"Aggregate revenue by customer or by month.\"\"\"\n    if group_by == \"month\":\n        sql = (\"SELECT strftime('%Y-%m', created_at) AS month, \"\n               \"SUM(amount) AS revenue FROM orders \"\n               \"GROUP BY month ORDER BY month LIMIT ?\")\n    else:\n        sql = (\"SELECT c.name AS customer, SUM(o.amount) AS total \"\n               \"FROM orders o JOIN customers c ON c.id = o.customer_id \"\n               \"GROUP BY c.name ORDER BY total DESC LIMIT ?\")\n\n    cur = db.execute(sql, (limit,))\n    cols = [d[0] for d in cur.description]\n    return [dict(zip(cols, row)) for row in cur.fetchall()]\n\n\n# 3. Expose a RESOURCE — read-only context the agent can pull in.\n@mcp.resource(\"schema://shop\")\ndef schema() -> str:\n    \"\"\"The database schema the model can reason over.\"\"\"\n    return \"orders(id, customer_id, amount, created_at)\"\n\n\n# 4. Run over stdio so a host like Claude can launch and talk to it.\nif __name__ == \"__main__\":\n    mcp.run()",
+      "lang": "python",
+      "caption": "server.py"
+    },
+    {
+      "type": "heading",
+      "text": "Reading the four steps"
+    },
+    {
+      "type": "text",
+      "md": "**Step 1 — Create the server.** `FastMCP(\"sales-connector\")` gives your connector a name. That name is how a host identifies this server among all the others it's connected to.\n\n**Step 2 — Expose a tool.** `@mcp.tool()` registers `query_sales`. Because `metric: str`, `group_by: str = \"customer\"`, and `limit: int = 5` are type-hinted, FastMCP knows the parameter names, their types, and which are optional — and turns that into the input schema. The docstring `\"\"\"Aggregate revenue by customer or by month.\"\"\"` becomes the description the agent reads when deciding *whether* to call it.\n\n**Step 3 — Expose a resource.** `@mcp.resource(\"schema://shop\")` publishes read-only context under a URI the agent can fetch. Here it hands back the schema so the model can reason about the shape of the data.\n\n**Step 4 — Run over stdio.** `mcp.run()` starts the server speaking MCP over standard input/output, so a host can launch the process and talk to it."
+    },
+    {
+      "type": "quiz",
+      "question": "In the FastMCP server, where does the input schema for `query_sales` come from?",
+      "options": [
+        "You write it by hand as a JSON object passed to @mcp.tool()",
+        "FastMCP infers it from the function's type hints (metric: str, limit: int = 5, ...)",
+        "The host generates it after the server starts",
+        "It's read from a separate schema.json file next to server.py"
+      ],
+      "answerIndex": 1,
+      "explanation": "This is FastMCP's core convenience. Your Python type hints ARE the schema. `@mcp.tool()` reads the function signature, turns `metric: str` and `limit: int = 5` into a JSON schema, and uses the docstring as the description — all of which gets advertised over tools/list so the agent knows how to call you."
+    },
+    {
+      "type": "heading",
+      "text": "Same concept, different syntax"
+    },
+    {
+      "type": "text",
+      "md": "Put the Python and Node servers side by side and the shape is identical — create, expose tools, expose a resource, connect over stdio. Only the surface details differ:\n\n- **Schema.** Node uses a `zod` schema passed explicitly (`z.enum([...])`, `z.number().int()`). Python uses **type hints** that FastMCP reads automatically.\n- **Registration.** Node calls `server.registerTool(...)` and `server.registerResource(...)`. Python uses the `@mcp.tool()` and `@mcp.resource(...)` **decorators**.\n- **Transport.** Node wires up a `StdioServerTransport` and calls `server.connect(transport)`. Python just calls `mcp.run()`.\n\nAn agent talking to either server can't tell the difference — it sees the same tool names, the same schemas, the same JSON-RPC over the wire. That's the promise of a protocol: **learn MCP once, and every SDK is just a dialect.**"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The server is the boundary",
+      "md": "Notice the SQL never leaves the server. The agent picks a tool and passes structured arguments (`metric`, `group_by`, `limit`); your Python function decides exactly which query runs and against which database. The agent never sees `shop.db`. Whoever writes the connector owns the boundary — the agent can only ever call the tools you chose to expose."
+    },
+    {
+      "type": "quiz",
+      "question": "What line makes the FastMCP server actually start listening so a host can talk to it?",
+      "options": [
+        "mcp = FastMCP(\"sales-connector\")",
+        "@mcp.tool()",
+        "mcp.run()",
+        "db = sqlite3.connect(\"shop.db\")"
+      ],
+      "answerIndex": 2,
+      "explanation": "`mcp.run()` (inside the `if __name__ == \"__main__\":` block) starts the server speaking MCP over stdio. Creating the FastMCP object and decorating functions only *defines* the server; run() is what launches it so a host can connect and issue tools/list and tools/call."
+    }
+  ],
+  "keyTakeaways": [
+    "FastMCP (from the official `mcp` package) lets you build an MCP server out of plain, type-hinted Python functions.",
+    "`@mcp.tool()` and `@mcp.resource(...)` turn functions into a typed MCP surface — your type hints become the schema, the docstring becomes the description.",
+    "The four steps are the same in every SDK: create the server, expose tools, expose resources, then run over stdio so a host can launch and talk to it.",
+    "The concept is identical to the Node server; only the syntax changes (type hints vs zod, decorators vs registerTool, mcp.run() vs StdioServerTransport).",
+    "The server owns the database connection and the SQL — the agent can only call the tools you chose to expose."
+  ],
+  "exercise": {
+    "prompt": "Extend the FastMCP `server.py` with a fourth tool, `inventory_lookup`, that lists products whose stock is below a threshold. Write the decorated Python function: give it one type-hinted parameter `below: int = 25`, a one-line docstring, and have it run a read-only SELECT against a `products(id, name, stock, reorder_level)` table returning products where `stock < below` ordered by stock ascending. Then, in one or two sentences, explain what schema the agent will see for your new tool and where that schema came from.",
+    "hint": "Copy the shape of `query_sales`: decorate with `@mcp.tool()`, type-hint the parameter with a default, write a docstring (it becomes the description), and reuse the `db.execute(sql, params)` + `cur.description` pattern to shape rows into dicts. Use a `?` placeholder for the threshold so the value is passed safely.",
+    "solution": "@mcp.tool()\ndef inventory_lookup(below: int = 25) -> list[dict]:\n    \"\"\"List products whose stock is below the given threshold.\"\"\"\n    sql = (\"SELECT name AS product, stock, reorder_level FROM products \"\n           \"WHERE stock < ? ORDER BY stock ASC\")\n    cur = db.execute(sql, (below,))\n    cols = [d[0] for d in cur.description]\n    return [dict(zip(cols, row)) for row in cur.fetchall()]\n\nWhat the agent sees: FastMCP reads the function signature and generates an input schema with a single optional integer parameter named `below` (default 25), and uses the docstring \"List products whose stock is below the given threshold.\" as the tool's description. That schema and description come straight from the type hint and docstring — you never hand-write them — and they get advertised to the agent over tools/list so it knows exactly how to call the tool."
+  }
+}

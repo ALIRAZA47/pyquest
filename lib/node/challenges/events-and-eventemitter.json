@@ -1,0 +1,33 @@
+{
+  "slug": "events-and-eventemitter",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "const EventEmitter = require('node:events');\nconst e = new EventEmitter();\ne.on('ping', n => console.log('pong', n));\ne.emit('ping', 1);\ne.emit('ping', 2);",
+      "options": ["pong 1\npong 2", "pong 1", "pong 2", "nothing"],
+      "answerIndex": 0,
+      "explanation": "The listener runs every time 'ping' is emitted, receiving the emitted argument. Two emits → 'pong 1' then 'pong 2'."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This emitter crashes the process. What's the safest fix?",
+      "code": "const e = new EventEmitter();\ne.emit('error', new Error('boom'));",
+      "options": [
+        "Register an 'error' listener (e.on('error', handler)) — an unhandled 'error' event throws",
+        "Rename the event to 'err'",
+        "Wrap emit in try/catch",
+        "Call e.suppressErrors()"
+      ],
+      "answerIndex": 0,
+      "explanation": "An 'error' event with no listener makes Node throw and can crash the process. Always attach an 'error' listener to emitters that may emit one."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the line so the listener runs only the first time 'ready' fires.",
+      "codeTemplate": "emitter.{{blank}}('ready', () => console.log('go'));",
+      "blanks": [{ "answer": "once", "accept": ["ONCE"] }],
+      "explanation": "once() registers a listener that runs a single time and is then removed automatically — unlike on(), which runs on every emit."
+    }
+  ]
+}

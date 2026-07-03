@@ -1,0 +1,41 @@
+{
+  "slug": "usecontext",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "useContext returns the default 'light', ignoring the value the app set. Why?",
+      "code": "const ThemeContext = createContext('light');\nfunction App() {\n  return <Toolbar />; // no Provider!\n}\nfunction Btn() { return <b>{useContext(ThemeContext)}</b>; }",
+      "options": [
+        "There's no <ThemeContext.Provider> above Btn, so it falls back to the createContext default",
+        "createContext must take no argument",
+        "useContext only works in class components",
+        "Btn must import ThemeContext again"
+      ],
+      "answerIndex": 0,
+      "explanation": "Without a <ThemeContext.Provider value={...}> ancestor, consumers receive the default passed to createContext. Wrap the subtree in a Provider to broadcast a real value."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order the three steps to use Context.",
+      "lines": [
+        "const ThemeContext = createContext(defaultValue)",
+        "Wrap the subtree: <ThemeContext.Provider value={theme}>…</ThemeContext.Provider>",
+        "Read it in any descendant: const theme = useContext(ThemeContext)"
+      ],
+      "explanation": "Create the context, provide a value to a subtree with the Provider, then consume it anywhere below with useContext — no prop-drilling."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What does Context primarily let you avoid?",
+      "code": "// theme needed by a deeply nested button",
+      "options": [
+        "Prop-drilling — threading the value through every intermediate component",
+        "Using useState anywhere",
+        "Writing JSX",
+        "Re-rendering entirely"
+      ],
+      "answerIndex": 0,
+      "explanation": "Context distributes a value to any descendant directly, so you don't have to pass it as props through components that don't use it."
+    }
+  ]
+}

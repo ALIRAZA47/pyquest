@@ -1,0 +1,105 @@
+{
+  "slug": "tokens-and-tokenization",
+  "title": "Tokens & Tokenization",
+  "emoji": "🔤",
+  "category": "LLM Foundations",
+  "difficulty": "Beginner",
+  "summary": "Language models don't read letters or words — they read tokens, integer-mapped chunks of text, and understanding them explains model cost, context limits, and a lot of weird behavior.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "When you type a sentence into an LLM, it feels like the model is reading your words the way you do. It isn't. Before a model sees a single thing, your text is chopped into **tokens** — small chunks that can be a whole word, a piece of a word, a space, or a punctuation mark. Each token is then swapped for an **integer ID**, and those numbers are all the model ever actually processes.\n\nThis one idea quietly explains a huge amount: why the API bills you the way it does, why there's a limit on how much text you can send, and why the model sometimes stumbles on things that look trivial to a human — like counting letters or doing arithmetic."
+    },
+    {
+      "type": "heading",
+      "text": "The model sees numbers, not text"
+    },
+    {
+      "type": "text",
+      "md": "A neural network can only do math on numbers. So the very first step of every LLM is a lookup table called the **vocabulary** (or *vocab*): a fixed dictionary that maps each possible token to a unique integer ID. Modern models have vocabularies of roughly **100,000 to 200,000 tokens**.\n\nTokenization is just the process of splitting your text into those known tokens and reading off their IDs."
+    },
+    {
+      "type": "code",
+      "code": "Text:    \"Tokenization is fun!\"\n\nTokens:  [\"Token\", \"ization\", \" is\", \" fun\", \"!\"]\n\nIDs:     [30642,    2065,      374,   2523,   0]",
+      "lang": "text",
+      "caption": "Text becomes tokens, and each token becomes an integer ID. (IDs are illustrative.)"
+    },
+    {
+      "type": "text",
+      "md": "Notice two things. First, `Tokenization` was split into two pieces: `Token` + `ization`. Second, the spaces didn't disappear — many tokenizers attach a leading space to the word, so `\" is\"` (with the space) is its own token, distinct from `\"is\"` at the very start of a sentence."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "LEGO for language",
+      "md": "Think of tokens as LEGO bricks for text. Super-common words like `the`, `and`, or `dog` each get their own dedicated brick. Rare or made-up words don't get a brick of their own — the model builds them out of smaller sub-word bricks. `unbelievable` might come together as `un` + `believ` + `able`. Every word is buildable, even ones the tokenizer has never seen."
+    },
+    {
+      "type": "heading",
+      "text": "Subwords and the BPE intuition"
+    },
+    {
+      "type": "text",
+      "md": "How does the tokenizer decide where to cut? Most models use a scheme called **Byte-Pair Encoding (BPE)** (or a close cousin). You don't need the algorithm's details, just the intuition:\n\n- **Frequent** sequences of characters get merged into a single token. Because `the` appears constantly in text, it earns its own dedicated token.\n- **Rare** sequences never get merged, so they stay broken into smaller pieces.\n\nThe result is an efficiency trade-off: common words cost **one token**, while unusual words, typos, or technical jargon get split into **several**. The vocabulary is learned from a giant pile of text, so it reflects what's common *in that text*."
+    },
+    {
+      "type": "quiz",
+      "question": "You send the words \"cat\" and \"antidisestablishmentarianism\" to a model. Which is more likely to be split into multiple tokens?",
+      "options": [
+        "\"cat\" — short words are always split",
+        "\"antidisestablishmentarianism\" — rare, long words get broken into sub-word pieces",
+        "Neither — every word is exactly one token",
+        "Both are split into individual letters"
+      ],
+      "answerIndex": 1,
+      "explanation": "Common short words like \"cat\" usually get a single dedicated token. Long, rare words weren't frequent enough during training to earn their own token, so BPE builds them from smaller sub-word pieces — often 5 or more tokens for a word like this."
+    },
+    {
+      "type": "heading",
+      "text": "The 4-characters-per-token rule of thumb"
+    },
+    {
+      "type": "text",
+      "md": "You'll constantly need a quick estimate of how many tokens some text is. For typical English prose, a handy rule is:\n\n> **~4 characters ≈ 1 token**, or roughly **¾ of a word per token** (so ~100 tokens ≈ 75 words).\n\nIt's only an approximation, but it's good enough to sanity-check whether a document fits in a model's context window or to ballpark an API bill before you send anything."
+    },
+    {
+      "type": "code",
+      "code": "# Rough token estimate (approximation, not exact)\ndef estimate_tokens(text):\n    return len(text) / 4\n\nestimate_tokens(\"The quick brown fox\")  # 19 chars -> ~4.75 tokens",
+      "lang": "py",
+      "caption": "A back-of-the-envelope estimate. Real tokenizers vary — always measure exactly when it matters."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "The rule breaks on non-English and code",
+      "md": "The ~4-chars-per-token rule assumes ordinary English. It falls apart elsewhere:\n\n- **Other languages** (especially non-Latin scripts like Chinese, Arabic, or Hindi) often tokenize far less efficiently — sometimes 1 token per character, or worse. The same sentence can cost 2–3x more tokens than its English translation.\n- **Numbers** get chopped oddly: `2026` might be one token, but `31415` could split into `314` + `15`. This is a big reason models fumble arithmetic.\n- **Whitespace and code** — indentation, repeated spaces, and symbols each burn tokens, so source code often uses more tokens than you'd guess."
+    },
+    {
+      "type": "heading",
+      "text": "Why tokens matter in practice"
+    },
+    {
+      "type": "text",
+      "md": "Tokens aren't just an implementation detail — they're the unit that everything is measured in:\n\n- **Cost.** APIs bill *per token*, both for what you send (input) and what the model writes back (output). Wordier prompts and verbose outputs cost real money.\n- **Context limits.** A model's **context window** — the maximum text it can consider at once — is measured in tokens, not words or characters. A '200K context' means 200,000 tokens.\n- **Behavior quirks.** Because the model reasons over tokens, not letters, tasks like 'how many R's are in strawberry?' are genuinely hard: it may see `str` + `aw` + `berry`, not ten individual letters."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "See it for yourself",
+      "md": "Tokenization is far more intuitive when you watch it happen. Use the interactive visualizer below to type your own text and see exactly where it gets split, how spaces and numbers behave, and how the token count changes — try an English sentence, then the same idea in another language.\n\nThat's the whole core idea: **text → tokens → IDs**, with common chunks getting their own token and rare ones split into pieces. Keep this mental model handy — it demystifies pricing, context windows, and a surprising share of 'why did the model do *that*?' moments."
+    }
+  ],
+  "keyTakeaways": [
+    "Models never see raw characters or words — text is split into tokens, and each token is mapped to an integer ID before the model does anything.",
+    "Tokenizers (usually BPE-based) give common words their own single token and split rare words into smaller sub-word pieces, so every word is representable.",
+    "A useful rule of thumb for English is ~4 characters ≈ 1 token (about 75 words per 100 tokens).",
+    "Tokens are the unit of cost (APIs bill per token) and of context limits (windows are measured in tokens).",
+    "Numbers, whitespace, code, and non-English text tokenize less efficiently, which drives up cost and causes quirks like poor letter-counting and arithmetic."
+  ],
+  "exercise": {
+    "prompt": "You're sending a support-chat prompt to an LLM API that charges per token. Using the rule of thumb **~4 characters ≈ 1 token**, estimate the token count for this message and reason about the cost:\n\n> `Please summarize the customer's issue in one sentence.`\n\n1. Roughly how many tokens is it?\n2. Your teammate suggests translating all prompts into Japanese to 'save space' since Japanese text looks shorter on screen. Is that a good way to reduce token cost? Why or why not?\n3. Give one concrete rewrite of the prompt that would use fewer tokens while keeping the meaning.",
+    "hint": "For (1), count the characters (including spaces) and divide by 4. For (2), remember that the 4-chars-per-token rule assumes English — think about how non-Latin scripts tokenize. For (3), tokens track length, so trim filler words.",
+    "solution": "1. The message is about 54 characters including spaces, so roughly 54 / 4 ≈ **13–14 tokens** (a real tokenizer might give ~11–12; the estimate just needs to be in the ballpark).\n\n2. **No — it's likely to backfire.** The ~4-chars-per-token rule only holds for English. Non-Latin scripts like Japanese often tokenize far less efficiently, sometimes near one token per character, so the 'shorter looking' text can cost *more* tokens, not fewer. Fewer characters on screen does not mean fewer tokens.\n\n3. A tighter rewrite: `Summarize the issue in one sentence.` — dropping 'Please', 'the customer's', and softening phrasing removes several tokens while preserving intent. Any reasonable trimmed version that stays in English is a valid answer."
+  }
+}

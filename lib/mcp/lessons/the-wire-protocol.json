@@ -1,0 +1,111 @@
+{
+  "slug": "the-wire-protocol",
+  "title": "The Wire Protocol",
+  "emoji": "📡",
+  "category": "How MCP Works",
+  "difficulty": "Intermediate",
+  "summary": "Peek under the hood of MCP: it's just JSON-RPC 2.0 messages flowing over stdio or HTTP, and here's the exact handshake a tool call rides on.",
+  "readingTime": "6 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've seen tools, resources, and prompts as *concepts*. But when an agent actually talks to your connector, what physically travels across the connection? No magic — just plain text messages in a well-known format. Once you can read those messages, MCP stops feeling like a framework and starts feeling like a phone call you can eavesdrop on."
+    },
+    {
+      "type": "heading",
+      "text": "It's JSON-RPC 2.0 all the way down"
+    },
+    {
+      "type": "text",
+      "md": "MCP doesn't invent a new message format. It standardizes on **JSON-RPC 2.0** — a tiny, decades-old convention for \"call a method on the other side and get a result back.\" Every message is a small JSON object with a `jsonrpc` version, an `id` to match requests with their replies, and either a `method` (for requests) or a `result` (for responses)."
+    },
+    {
+      "type": "text",
+      "md": "Those messages need a pipe to travel through. MCP supports a couple of **transports**:\n\n- **stdio** — for local servers. The host launches your server as a subprocess and pipes messages over standard input/output. Fast, private, no network.\n- **Streamable HTTP / SSE** — for remote servers reachable over the network.\n\nThe messages are identical either way; only the delivery truck changes."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The protocol vs. the pipe",
+      "md": "Think of JSON-RPC 2.0 as the **language** two parties speak, and the transport (stdio or HTTP) as the **channel** they speak over — a phone line vs. a walkie-talkie. The words don't change when you switch channels. That separation is why the same server code works locally and remotely."
+    },
+    {
+      "type": "quiz",
+      "question": "What message format does MCP use on the wire?",
+      "options": [
+        "GraphQL over WebSockets only",
+        "Plain CSV files",
+        "JSON-RPC 2.0 (over stdio, HTTP/SSE, etc.)",
+        "Protocol Buffers over gRPC exclusively"
+      ],
+      "answerIndex": 2,
+      "explanation": "MCP standardizes on JSON-RPC 2.0 messages, which can travel over stdio for local servers or streamable HTTP for remote ones."
+    },
+    {
+      "type": "heading",
+      "text": "The handshake, message by message"
+    },
+    {
+      "type": "text",
+      "md": "Here are the four messages that actually flow between the agent's MCP **client** and your **server** when a tool gets called. Read the arrows: `→` is client-to-server, `←` is server-to-client. Notice how each request and its response share the same `id`."
+    },
+    {
+      "type": "code",
+      "lang": "json",
+      "caption": "tools-call.jsonrpc",
+      "code": "// → Agent's MCP client asks the server what tools exist\n{ \"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/list\" }\n\n// ← Server advertises its tools (name + JSON schema)\n{ \"jsonrpc\": \"2.0\", \"id\": 1, \"result\": {\n    \"tools\": [{\n      \"name\": \"query_sales\",\n      \"description\": \"Aggregate revenue by customer or by month.\",\n      \"inputSchema\": { \"type\": \"object\",\n        \"properties\": { \"metric\": { \"type\": \"string\" } } }\n    }]\n} }\n\n// → The model chose to call the tool with these arguments\n{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"name\": \"query_sales\",\n    \"arguments\": { \"metric\": \"revenue\", \"groupBy\": \"customer\", \"limit\": 3 } } }\n\n// ← Server runs the query and returns the result content\n{ \"jsonrpc\": \"2.0\", \"id\": 2, \"result\": {\n    \"content\": [{ \"type\": \"text\",\n      \"text\": \"[{\\\"customer\\\":\\\"Northwind Traders\\\",\\\"total\\\":48210}]\" }]\n} }"
+    },
+    {
+      "type": "text",
+      "md": "**Message 1 — `tools/list` (→).** The client's opening question: *\"What can you do?\"* It's a bare request — a method name and an `id`, no arguments needed."
+    },
+    {
+      "type": "text",
+      "md": "**Message 2 — the tool catalog (←).** The server answers request `1` with a list of tools. Each entry carries a `name`, a `description`, and — crucially — an `inputSchema`. That schema is how the model learns *how* to call the tool: which arguments exist and what types they are. This is the tool advertising itself."
+    },
+    {
+      "type": "text",
+      "md": "**Message 3 — `tools/call` (→).** Now the model has decided to act. It sends a new request with `id: 2`, method `tools/call`, and `params` holding the tool's `name` plus the concrete `arguments` it picked (`metric: \"revenue\"`, `groupBy: \"customer\"`, `limit: 3`). The model chooses *when* and *with what*; your server still decides *what actually happens*."
+    },
+    {
+      "type": "text",
+      "md": "**Message 4 — the result (←).** The server runs the query and replies to request `2` with `result.content` — an array of typed content parts. Here it's a single `text` part carrying the JSON rows. The model reads that text and folds it into its answer."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Why the `id` matters",
+      "md": "JSON-RPC is asynchronous — several requests can be in flight at once. The matching `id` on a request and its response is how the client knows *which* reply belongs to *which* question. Request `1` pairs with result `1`; request `2` pairs with result `2`."
+    },
+    {
+      "type": "quiz",
+      "question": "In the handshake above, how does the model learn what arguments `query_sales` accepts?",
+      "options": [
+        "It guesses based on the tool's name",
+        "From the `inputSchema` returned by `tools/list`",
+        "It reads the server's source code directly",
+        "The user must type the schema by hand each time"
+      ],
+      "answerIndex": 1,
+      "explanation": "The server's response to `tools/list` includes each tool's `inputSchema` — a JSON Schema describing the accepted arguments and their types. That schema is exactly what lets the model construct a valid `tools/call`."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Read it, don't run it",
+      "md": "You won't hand-type these JSON-RPC messages in real life — the SDK serializes and matches them for you. The value here is being able to *read* the wire when you're debugging: if a tool call misbehaves, dumping the raw `tools/call` and its `result` almost always shows you exactly where things went sideways."
+    }
+  ],
+  "keyTakeaways": [
+    "Under the hood, MCP is just JSON-RPC 2.0 messages — each with a `jsonrpc` version, an `id`, and a `method` (request) or `result` (response).",
+    "The same messages ride over different transports: stdio for local servers, streamable HTTP/SSE for remote ones.",
+    "The handshake is `tools/list` → server advertises tools with `name` + `inputSchema` → model sends `tools/call` with name + arguments → server returns `result.content`.",
+    "The `inputSchema` from `tools/list` is what teaches the model how to construct a valid tool call.",
+    "Matching `id` values pair each response with the request that asked for it."
+  ],
+  "exercise": {
+    "prompt": "You've added a second tool to the `sales-connector` server called `top_products`, which takes one argument: `limit` (an integer). Trace the wire protocol by hand.\n\n1. Write the JSON-RPC **request** the client sends to discover tools.\n2. Sketch the entry for `top_products` as it would appear in the server's `tools/list` **result** (name, description, and an `inputSchema` with a `limit` integer property).\n3. Write the `tools/call` **request** the model would send to fetch the top 5 products.\n\nUse matching `id` values and correct arrow direction in comments.",
+    "hint": "Model each message on the four in the lesson. `tools/list` needs no params. For `tools/call`, the `params` object holds `name` and `arguments`. Give the request and its response the same `id`.",
+    "solution": "// → client asks what tools exist\n{ \"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/list\" }\n\n// ← server advertises the new tool\n{ \"jsonrpc\": \"2.0\", \"id\": 1, \"result\": {\n    \"tools\": [{\n      \"name\": \"top_products\",\n      \"description\": \"List the best-selling products.\",\n      \"inputSchema\": { \"type\": \"object\",\n        \"properties\": { \"limit\": { \"type\": \"integer\" } } }\n    }]\n} }\n\n// → model calls it for the top 5\n{ \"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\",\n  \"params\": { \"name\": \"top_products\",\n    \"arguments\": { \"limit\": 5 } } }\n\n// ← server would reply to id 2 with result.content (the rows)"
+  }
+}

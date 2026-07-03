@@ -1,0 +1,60 @@
+{
+  "slug": "the-transformer",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the stages of a transformer in the correct order, from raw text at the bottom to the predicted next token at the top.",
+      "lines": [
+        "Split the text into tokens",
+        "Look up each token to get its embedding vector",
+        "Add positional information so word order is preserved",
+        "Pass the sequence up through the stack of identical blocks",
+        "The final layer produces a score for every token in the vocabulary",
+        "Pick the next token from those scores"
+      ],
+      "explanation": "The pipeline is: text -> tokens -> embeddings -> add position -> stack of transformer blocks -> final scores (logits) over the vocabulary -> choose the next token. The middle stage (the stack of identical blocks, each doing attention then feed-forward) is the transformer itself; everything before prepares the input and everything after reads out a prediction."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the pseudocode for one transformer block. The two main ingredients are self-attention and the feed-forward network, and each is wrapped in a residual connection (add its result back onto x).",
+      "codeTemplate": "def transformer_block(x):\n    # tokens communicate and gather context\n    x = x + {{blank}}(layer_norm(x))\n    # each token is refined on its own\n    x = x + {{blank}}(layer_norm(x))\n    return x",
+      "blanks": [
+        {
+          "answer": "self_attention",
+          "accept": ["self_attention", "attention", "self-attention"]
+        },
+        {
+          "answer": "feed_forward",
+          "accept": ["feed_forward", "feedforward", "mlp", "feed-forward"]
+        }
+      ],
+      "explanation": "Every block runs two sub-layers in sequence: first self-attention (the communication step, where tokens look at each other), then a feed-forward network / MLP (the computation step, where each token is transformed on its own). The `x = x + ...` around each is the residual connection, which lets information flow straight up the stack while each sub-layer only learns a small adjustment."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "A transformer receives its input but, due to a bug, positional information is NEVER added to the embeddings. The model is then asked to distinguish these two sentences:\n\nA: \"dog bites man\"\nB: \"man bites dog\"\n\nWhat happens?",
+      "code": "# positional information step was skipped!\nembeddings = lookup(tokens)   # just the token vectors\n# (no  + positional_info  line)\nx = run_transformer(embeddings)",
+      "options": [
+        "The model reads the two sentences as essentially the same bag of tokens, because without position it has no sense of word order",
+        "The model reads sentence B correctly but reverses sentence A",
+        "The model refuses to run and raises an error",
+        "The model works perfectly — positional information is optional"
+      ],
+      "answerIndex": 0,
+      "explanation": "A transformer sees all tokens at once and has no built-in notion of order. Positional information is what tells it token 1 came before token 2. Skip it, and \"dog bites man\" and \"man bites dog\" contain the same tokens and look identical to the model — word order is lost."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner explains why transformers replaced older RNNs like this: \"Transformers are faster because each token only ever looks at the single token right before it, so there's less work to do.\" What's the correction?",
+      "code": "# The learner's claim:\n# \"Each token only looks at the ONE token before it,\n#  which is why transformers are fast and better than RNNs.\"",
+      "options": [
+        "Correct — transformers only look at the previous token, which is why they're fast",
+        "It's backwards: self-attention lets every token look at ALL other tokens directly, and it's this all-at-once wiring (not looking at fewer tokens) that gives parallelism and better long-range connections",
+        "The real reason is that transformers have no feed-forward network, so there's less to compute",
+        "Transformers are actually slower than RNNs; the claim has the speed backwards but the mechanism right"
+      ],
+      "answerIndex": 1,
+      "explanation": "The claim gets the mechanism exactly backwards. RNNs are the ones that pass information along a chain one step at a time. Self-attention instead lets every token attend directly to every other token in a single step. That direct, all-at-once connectivity is what makes transformers parallelizable on GPUs and far better at linking distant words — not looking at fewer tokens."
+    }
+  ]
+}

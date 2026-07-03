@@ -1,0 +1,30 @@
+{
+  "slug": "classes",
+  "title": "Classes",
+  "emoji": "🏗️",
+  "category": "Objects & Classes",
+  "difficulty": "Intermediate",
+  "summary": "The class syntax for building objects with shared behavior — constructors, methods, inheritance, and what it really is under the hood.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "A **class** is a template for creating objects that share the same shape and behavior. It's cleaner syntax over JavaScript's prototype system (which you met in the Objects lesson) — under the hood, class methods still live on the prototype." },
+    { "type": "code", "lang": "js", "caption": "a class with a constructor and methods", "code": "class Dog {\n  constructor(name) {\n    this.name = name;      // instance property\n  }\n  speak() {                // shared method (on the prototype)\n    return `${this.name} says woof!`;\n  }\n}\n\nconst rex = new Dog('Rex');\nconsole.log(rex.speak()); // Rex says woof!" },
+    { "type": "text", "md": "`new Dog('Rex')` creates an instance: it runs the `constructor`, sets `this.name`, and returns the new object. Every instance shares the same `speak` method rather than each holding its own copy." },
+    { "type": "heading", "text": "Inheritance with extends" },
+    { "type": "code", "lang": "js", "caption": "extend a class", "code": "class Puppy extends Dog {\n  constructor(name) {\n    super(name);        // call the parent constructor\n  }\n  speak() {\n    return `${this.name} says yip!`; // override\n  }\n}\n\nconsole.log(new Puppy('Bit').speak()); // Bit says yip!" },
+    { "type": "callout", "variant": "gotcha", "title": "Forgetting `new`", "md": "You must call a class with `new`. Calling `Dog('Rex')` without `new` throws a TypeError. And inside methods, `this` refers to the instance — which is why arrow functions (that don't bind `this`) make poor methods." },
+    { "type": "quiz", "question": "Where does the `speak` method live for every Dog instance?", "options": ["A separate copy is stored on each instance", "On Dog.prototype, shared by all instances", "In a global functions table", "It is recreated each time speak() is called"], "answerIndex": 1, "explanation": "Class methods are defined once on the class's prototype (Dog.prototype). All instances share that one method via the prototype chain — efficient and the reason classes are just sugar over prototypes." }
+  ],
+  "keyTakeaways": [
+    "A class is a template; `new ClassName(...)` runs the constructor and returns an instance.",
+    "Instance properties are set with `this.x =` in the constructor; methods are shared via the prototype.",
+    "`extends` inherits from a parent; `super(...)` calls the parent constructor.",
+    "Classes are syntactic sugar over JavaScript's prototype system.",
+    "Always call a class with `new`, and use regular methods (not arrows) so `this` binds to the instance."
+  ],
+  "exercise": {
+    "prompt": "Write a `Rectangle` class with a constructor taking `width` and `height`, and an `area()` method that returns their product. `new Rectangle(3, 4).area()` should be 12.",
+    "hint": "Store the values with this.width / this.height in the constructor, then multiply them in area().",
+    "solution": "class Rectangle {\n  constructor(width, height) {\n    this.width = width;\n    this.height = height;\n  }\n  area() {\n    return this.width * this.height;\n  }\n}\n\nnew Rectangle(3, 4).area(); // 12"
+  }
+}

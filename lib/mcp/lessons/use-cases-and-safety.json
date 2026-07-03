@@ -1,0 +1,111 @@
+{
+  "slug": "use-cases-and-safety",
+  "title": "Use Cases & Safety",
+  "emoji": "🚀",
+  "category": "MCP in Practice",
+  "difficulty": "Beginner",
+  "summary": "The categories of work MCP unlocks once an agent can safely reach your tools and data — and the one safety boundary that makes it all possible.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've seen the primitives, the wire protocol, and the safe boundary. Now the fun part: **what does all of this actually let you build?** Once an agent can safely reach your tools and data, whole categories of work become a conversation. Let's walk through what MCP unlocks — then recap the single idea that keeps it safe."
+    },
+    {
+      "type": "heading",
+      "text": "Reaching your data and tools"
+    },
+    {
+      "type": "text",
+      "md": "- **Talk to huge databases.** Point an agent at a warehouse with billions of rows. It writes the SQL, the MCP server runs it read-only, and users get answers in plain language — no dashboards, no analysts in the loop. This is exactly the `sales-connector` pattern: the agent authors a query, but *your* server is what actually touches the database.\n- **Navigate large codebases.** A filesystem or git MCP server lets an agent search, read, and reason across a monorepo far bigger than any context window — pulling in only the files that matter. Instead of dumping a whole repo into the prompt, the agent asks the server for exactly the files it needs, one call at a time.\n- **Automate dev workflows.** GitHub, Jira, and CI connectors let an agent open PRs, triage issues, and check build status — orchestrating tools you already use through one protocol. Each connector is written once, and the same agent can drive all of them because they all speak MCP."
+    },
+    {
+      "type": "heading",
+      "text": "Grounding, orchestration, and ops"
+    },
+    {
+      "type": "text",
+      "md": "- **Ground answers in your docs.** Expose internal wikis, PDFs, and Drive files as **Resources**. The agent cites real sources instead of hallucinating — retrieval without a bespoke RAG pipeline. Resources are read-only context the agent pulls in, so grounding answers in your documents is just another primitive, not a whole separate system to build and maintain.\n- **Multi-agent harmony.** One agent drafts a query, another reviews the results, a connector writes them to Slack. **MCP is the shared bus** that lets specialized agents cooperate on a task. Because every agent and tool speaks the same protocol, you can compose them without writing custom glue between each pair.\n- **Live operational insight.** Connect metrics, logs, and billing APIs. Ask *\"why did latency spike at 2am?\"* and the agent correlates across systems it could never see before. The agent doesn't need direct access to any of those systems — each one sits behind an MCP server that decides what the agent may read."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Resources do the grounding",
+      "md": "Remember the two primitives you use most: **Tools** are actions the model invokes, **Resources** are read-only context it pulls in. Grounding answers in your docs is a Resources story — no custom vector database or retrieval stack required to get started."
+    },
+    {
+      "type": "quiz",
+      "question": "A team wants an agent to answer questions using their internal wiki and PDFs, with real citations and no hallucinations. Which MCP primitive is the natural fit?",
+      "options": [
+        "Tools — the agent should be able to edit the wiki pages.",
+        "Resources — expose the docs as read-only context the agent pulls in and cites.",
+        "Prompts — hardcode every possible answer as a template.",
+        "None — you must build a custom RAG pipeline before MCP can help."
+      ],
+      "answerIndex": 1,
+      "explanation": "Resources are read-only context the agent can pull in. Exposing wikis, PDFs, and Drive files as Resources lets the agent cite real sources — that's retrieval without a bespoke RAG pipeline. Tools would be for actions; here you just want the agent to read and cite."
+    },
+    {
+      "type": "heading",
+      "text": "The safety boundary, one more time"
+    },
+    {
+      "type": "text",
+      "md": "Every use case above rests on the same foundation. It's worth stating as plainly as the example READMEs do — this is *the one idea to take away*."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "The one idea to take away",
+      "md": "The agent **never touches the data**. It speaks MCP to **your** server, and your server is the safety boundary — it validates every argument and keeps everything read-only.\n\nYou decide what tools exist, you can enforce read-only, scope which tables are visible, and audit every call. And the **model never holds your credentials** — it only ever sees the tools you advertise."
+    },
+    {
+      "type": "text",
+      "md": "This is why even a raw-SQL \"escape hatch\" can be safe: the server inspects the request and rejects anything dangerous before it ever reaches the database. The boundary is code you control, not a promise you're trusting the model to keep."
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "caption": "server.py (excerpt)",
+      "code": "@mcp.tool()\ndef run_sql(sql: str) -> str:\n    \"\"\"Escape hatch: run a single read-only SELECT. The server is the boundary.\"\"\"\n    clean = sql.strip().rstrip(\";\")\n    if not clean.lower().startswith(\"select\") or \";\" in clean:\n        return \"Error: only a single read-only SELECT is allowed.\"\n    try:\n        return _rows(db.execute(clean))\n    except sqlite3.Error as exc:  # pragma: no cover - defensive\n        return f\"Error: {exc}\""
+    },
+    {
+      "type": "quiz",
+      "question": "In every use case in this lesson, what actually reaches the underlying data or service?",
+      "options": [
+        "The model connects directly using credentials it was given.",
+        "Your MCP server — it validates the request, then touches the data on the agent's behalf.",
+        "Nothing; the model memorizes the whole system in advance.",
+        "The MCP client executes the SQL and API calls itself."
+      ],
+      "answerIndex": 1,
+      "explanation": "The agent never touches the data. It speaks MCP to your server, and your server is the safety boundary that validates every argument, can enforce read-only, scope tables, and audit calls. The model never holds the credentials."
+    },
+    {
+      "type": "heading",
+      "text": "Where to go next"
+    },
+    {
+      "type": "text",
+      "md": "You now have the full picture — primitives, protocol, boundary, and what they unlock. To keep going:\n\n- **Build your own connector.** Start from the `sales-connector` example and swap in a system you actually use.\n- **Try the MCP Inspector.** It's a local UI that lists and calls your tools so you can poke at a server before wiring it into a host (`npm run inspect`, or `mcp dev server.py` in Python).\n- **Reach for the official SDKs.** The Node SDK (`@modelcontextprotocol/sdk`) and the Python SDK (`mcp`, a.k.a. FastMCP) are the same concepts in two languages — only the syntax changes."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The payoff",
+      "md": "Whole categories of work — analytics, code navigation, dev automation, doc grounding, multi-agent orchestration, and live ops — become a conversation. And because your server is the boundary, you get all of it *without* handing the model your keys."
+    }
+  ],
+  "keyTakeaways": [
+    "MCP unlocks talking to huge databases, navigating large codebases, automating dev workflows, grounding answers in your docs, multi-agent orchestration, and live operational insight — all through one protocol.",
+    "Grounding answers in your docs is a Resources story: expose wikis, PDFs, and Drive files as read-only context for real citations, without building a bespoke RAG pipeline.",
+    "The one idea to take away: the agent never touches the data — it speaks MCP to your server, and your server is the safety boundary that validates every argument and can enforce read-only.",
+    "The model never holds your credentials; it only sees the tools you advertise, which is why even a raw-SQL escape hatch can be safe.",
+    "To go further: build your own connector, poke at it with the MCP Inspector, and use the official Node (@modelcontextprotocol/sdk) and Python (mcp / FastMCP) SDKs."
+  ],
+  "exercise": {
+    "prompt": "Pick one use case from this lesson (say, \"live operational insight\") and design the connector on paper. Answer three things:\n\n1. **Surface** — Which system does it sit in front of (metrics? logs? billing?), and what one Tool and one Resource would you expose?\n2. **Boundary** — Name one argument your server would validate or reject before touching the real system, and one thing it would keep read-only or hide from the model entirely.\n3. **Wire-in** — Write the `mcpServers` config entry that would let a host launch your server.",
+    "hint": "For the boundary, reuse the run_sql pattern: the server inspects the request and rejects anything that isn't allowed before it reaches the real system. For live ops, think about which time ranges, environments, or accounts the model should be scoped to — and remember the model should never receive raw credentials or PII, even through a tool.",
+    "solution": "A strong answer for \"live operational insight\" might look like:\n\n1. **Surface** — An `ops-connector` in front of your metrics + logs backend. Tool: `query_metrics(service, metric, since, until)` (an action). Resource: `schema://metrics` or a `runbook://latency` doc (read-only context the agent can cite).\n2. **Boundary** — Validate that `since`/`until` fall within an allowed window and that `service` is one the caller may see; reject anything else. Keep the connector read-only (no tool can delete logs or change alerts), and never expose raw API keys, customer PII, or billing card data through any tool's output.\n3. **Wire-in** —\n```json\n{\n  \"mcpServers\": {\n    \"ops-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/ops-connector/server.js\"]\n    }\n  }\n}\n```\nThe host launches the server, the agent asks \"why did latency spike at 2am?\", and every request passes through your validating boundary before touching a single system."
+  }
+}

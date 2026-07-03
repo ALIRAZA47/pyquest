@@ -1,0 +1,136 @@
+{
+  "slug": "anatomy-of-a-tool-call",
+  "title": "Anatomy of a Tool Call",
+  "emoji": "🔁",
+  "category": "The Request Loop",
+  "difficulty": "Intermediate",
+  "summary": "Trace one plain-English question all the way through the MCP loop — from reasoning to a JSON-RPC tools/call, real SQL on the server, and a friendly answer back.",
+  "readingTime": "7 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've seen the pieces of MCP — the host, the client, the server, the wire protocol. Now let's watch them **work together** on one real question, following a single request end to end. Here's the whole story in one sentence, straight from the playground's own docs:\n\n> A user asks a question in plain English, the agent reasons about which MCP tool to call, the MCP server runs a real SQL query against a demo database, rows come back, and the agent turns them into a friendly answer.\n\nFive honest steps. Let's take them one at a time."
+    },
+    {
+      "type": "heading",
+      "text": "Steps 1 & 2 — The question, and the agent's reasoning"
+    },
+    {
+      "type": "text",
+      "md": "No SQL. No API. No knowledge of your schema. Just a question a human would actually type — and the agent doesn't guess randomly, it looks at the tools the MCP server has advertised and picks the one that fits:"
+    },
+    {
+      "type": "code",
+      "code": "Who are our top 3 customers by total spend?",
+      "lang": "bash",
+      "caption": "the user's question"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "The agent's reasoning",
+      "md": "\"The user wants ranked customer revenue. I'll call the `query_sales` tool exposed by the MCP server and let it run a grouped SQL query against the orders table.\""
+    },
+    {
+      "type": "heading",
+      "text": "Step 3 — The agent issues a JSON-RPC tools/call"
+    },
+    {
+      "type": "text",
+      "md": "This is the moment MCP kicks in. The agent doesn't run anything itself — it sends a structured `tools/call` request over the protocol, naming the tool (`query_sales`) and the arguments it decided on. The arguments are **structured data**, not raw SQL:"
+    },
+    {
+      "type": "code",
+      "code": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 7,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"query_sales\",\n    \"arguments\": { \"metric\": \"revenue\", \"groupBy\": \"customer\", \"limit\": 3 }\n  }\n}",
+      "lang": "json",
+      "caption": "client → server: tools/call request"
+    },
+    {
+      "type": "quiz",
+      "question": "In step 3, what does the agent actually send to the MCP server?",
+      "options": [
+        "A raw SQL string for the server to execute",
+        "A JSON-RPC tools/call naming the tool and structured arguments",
+        "A direct database connection string",
+        "The final natural-language answer"
+      ],
+      "answerIndex": 1,
+      "explanation": "The agent speaks the protocol, not SQL. It sends a tools/call with the tool name (query_sales) and structured arguments ({metric, groupBy, limit}). It's the server — not the agent — that decides how to turn those arguments into SQL."
+    },
+    {
+      "type": "heading",
+      "text": "Step 4 — The server runs real SQL"
+    },
+    {
+      "type": "text",
+      "md": "Now the MCP server takes over. It receives the `query_sales` call, translates the structured arguments into a real query, and runs it against the demo database. This SQL lives on the server, written by whoever built the connector — the agent never sees or writes it."
+    },
+    {
+      "type": "code",
+      "code": "SELECT c.name AS customer,\n       SUM(o.amount) AS total_spend\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.name\nORDER BY total_spend DESC\nLIMIT 3;",
+      "lang": "sql",
+      "caption": "SQL the MCP server runs (server-side)"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The agent never touches the database",
+      "md": "This is the whole point of MCP. The agent speaks the **protocol** to the server; the server is the one holding the database connection. The server is the **safety boundary** — it decides which tools exist, what arguments they accept, and exactly which SQL runs. Even if the model asked for something dangerous, it can only ever send a `tools/call` for a tool the server chose to expose."
+    },
+    {
+      "type": "heading",
+      "text": "Step 5 — Rows come back, the agent answers"
+    },
+    {
+      "type": "text",
+      "md": "The query returns rows, and the server sends them back over the same protocol as the tool's result:"
+    },
+    {
+      "type": "code",
+      "code": "[\n  { \"customer\": \"Northwind Traders\", \"total_spend\": 48210 },\n  { \"customer\": \"Globex Corp\", \"total_spend\": 39560 },\n  { \"customer\": \"Initech\", \"total_spend\": 27840 }\n]",
+      "lang": "json",
+      "caption": "server → client: the rows"
+    },
+    {
+      "type": "text",
+      "md": "Finally the agent reads those rows and writes something a human actually wants to read:"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "The agent's final answer",
+      "md": "Your top 3 customers by total spend are **Northwind Traders** ($48,210), **Globex Corp** ($39,560), and **Initech** ($27,840). Northwind alone accounts for roughly a third more revenue than Initech."
+    },
+    {
+      "type": "heading",
+      "text": "The same loop, every question"
+    },
+    {
+      "type": "text",
+      "md": "This isn't a one-off. **Every** question flows through the identical five-step loop — only the tool and arguments change:\n\n- *\"How did revenue trend over the last 5 months?\"* → `query_sales` with `{metric: \"revenue\", groupBy: \"month\", limit: 5}`\n- *\"Which products are running low on stock?\"* → `inventory_lookup` with `{below: 25}`\n- *\"Which customers haven't ordered in over 60 days?\"* → `query_sales` with `{metric: \"recency\", inactiveDays: 60}`\n\nAsk → reason → `tools/call` → server runs it → rows back → friendly answer. Learn the loop once, and every MCP interaction reads the same way."
+    },
+    {
+      "type": "quiz",
+      "question": "Why is the MCP server, not the agent, described as the \"safety boundary\"?",
+      "options": [
+        "Because the agent runs slower than the server",
+        "Because the server holds the database connection and decides which tools and SQL are allowed — the agent can only send tools/call requests for tools the server chose to expose",
+        "Because JSON-RPC encrypts every message",
+        "Because the agent has no way to send requests to the server"
+      ],
+      "answerIndex": 1,
+      "explanation": "The agent never touches the database directly. It can only speak the protocol — sending tools/call requests. The server owns the connection, defines the tool list, validates arguments, and writes the actual SQL. That controlled surface is what makes the server the safety boundary."
+    }
+  ],
+  "keyTakeaways": [
+    "Every MCP interaction follows one loop: ask in plain English → agent reasons → JSON-RPC tools/call → server runs it → rows back → friendly answer.",
+    "The agent sends structured arguments (name + arguments), never raw SQL — it speaks the protocol, not the database.",
+    "The MCP server owns the database connection and writes the actual SQL; it is the safety boundary that decides which tools and arguments are allowed.",
+    "Only the tool name and arguments change from question to question — trend, low-stock, and churn-risk questions all map to the exact same loop."
+  ],
+  "exercise": {
+    "prompt": "Trace a brand-new question through all five steps of the loop. Take the question *\"Which products are running low on stock?\"* and write out: (1) the plain-English question, (2) one sentence of agent reasoning, (3) the JSON-RPC `tools/call` the agent would send, (4) a note on where the SQL runs, and (5) a friendly one-line answer. Then, in one sentence, explain who the safety boundary is and why.",
+    "hint": "Look at the `low-stock` scenario for guidance: the tool is `inventory_lookup` and the arguments are `{ below: 25 }`. The SQL runs on the MCP server, not in the agent. Your tools/call should have method `tools/call` and params with `name` and `arguments`.",
+    "solution": "1) Question: \"Which products are running low on stock?\"\n\n2) Reasoning: \"Inventory question. The MCP server exposes an `inventory_lookup` tool with a threshold parameter. I'll query for products below a safe reorder level.\"\n\n3) tools/call:\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 8,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"inventory_lookup\",\n    \"arguments\": { \"below\": 25 }\n  }\n}\n\n4) Where the SQL runs: on the MCP server. The server translates { below: 25 } into a real query (SELECT ... FROM products WHERE stock < 25 ...) and runs it against the database. The agent never writes or sees this SQL.\n\n5) Friendly answer: \"Three products are below their reorder levels: USB-C Hub (only 4 left!), Mechanical Keyboard (11), and Wireless Mouse (18). The USB-C Hub is critically low and should be reordered immediately.\"\n\nSafety boundary: The MCP server is the safety boundary because it holds the database connection and decides which tools exist and what SQL runs — the agent can only send a tools/call for a tool the server chose to expose."
+  }
+}

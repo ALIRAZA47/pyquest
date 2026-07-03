@@ -1,0 +1,113 @@
+{
+  "slug": "embeddings",
+  "title": "Embeddings",
+  "emoji": "🧭",
+  "category": "LLM Foundations",
+  "difficulty": "Beginner",
+  "summary": "Embeddings turn each token into a dense vector so that meaning becomes geometry: similar words land near each other and directions encode relationships.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In the last lesson a tokenizer chopped your text into pieces and handed the model a list of **token IDs** — plain integers like `9906` or `1917`. But an integer is a terrible way to represent meaning. `9906` isn't 'bigger' than `1917`, and the number itself tells the model nothing about what the word *means*.\n\nSo the very first thing a model does is look up each token ID in a giant table and swap it for a list of numbers called an **embedding**. This is where raw text finally becomes something a neural network can reason about."
+    },
+    {
+      "type": "heading",
+      "text": "From ID to vector"
+    },
+    {
+      "type": "text",
+      "md": "An **embedding** is a *dense vector* — an ordered list of floating-point numbers, e.g. `[0.21, -0.83, 0.05, ...]`. Every token in the vocabulary has its own embedding, stored as a row in the **embedding matrix**. Turning a token ID into a vector is literally just picking the row at that index — a table lookup, nothing fancier.\n\nIt's called *dense* because almost every number carries a little meaning — unlike a wasteful *one-hot* vector of 49,999 zeros and a single 1. Real models use *hundreds to thousands* of dimensions per token (GPT-2 used 768; many modern models use 4,096+). We'll use tiny 3-number vectors so we can actually see them."
+    },
+    {
+      "type": "code",
+      "code": "# The embedding matrix: one learned row per token in the vocabulary.\n# 50,000 tokens x 768 dims = a 50,000 x 768 table of numbers.\n\ntoken_id  = 9906              # the id the tokenizer produced for \"hello\"\nembedding = matrix[token_id]  # just grab that row\n\n# embedding -> [0.21, -0.83, 0.05, 0.44, ... 768 numbers ...]",
+      "lang": "py",
+      "caption": "An embedding lookup is indexing into a table — no math, just row selection."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A map of meaning",
+      "md": "Think of every word getting GPS coordinates on a giant map. Words about royalty cluster in one region, words about food in another, words about weather somewhere else. The **coordinates are the embedding**, and 'nearby on the map' means 'similar in meaning'. Training is the process of learning where to place each word so the map is genuinely useful."
+    },
+    {
+      "type": "heading",
+      "text": "Meaning becomes geometry"
+    },
+    {
+      "type": "text",
+      "md": "These vectors aren't random. During training the model nudges each token's coordinates until words used in similar ways end up **close together** — so `cat` and `dog` land near each other, while `cat` and `democracy` end up far apart. In these hand-tuned toy vectors, notice `cat` and `dog` share a shape, and `king` and `queen` share a different one:"
+    },
+    {
+      "type": "code",
+      "code": "cat    = [ 0.91,  0.10,  0.02 ]\ndog    = [ 0.88,  0.14,  0.05 ]   # very close to cat\nking   = [ 0.12,  0.90,  0.71 ]\nqueen  = [ 0.11,  0.88,  0.20 ]\napple  = [ 0.05,  0.09,  0.95 ]   # off in its own direction",
+      "lang": "text",
+      "caption": "Toy 3-D embeddings. Similar words have similar coordinates."
+    },
+    {
+      "type": "text",
+      "md": "It gets better. Because meaning lives in *directions* as well as positions, you can do arithmetic on words. The famous example: take **king**, subtract **man**, add **woman**, and you land almost exactly on **queen**:\n\n`king − man + woman ≈ queen`\n\nThe direction that means 'add femininity' is roughly the same everywhere in the space, so the *same step* also turns `uncle` into `aunt` and `actor` into `actress`. Relationships are encoded as consistent directions."
+    },
+    {
+      "type": "quiz",
+      "question": "Two tokens have embeddings that point in nearly the same direction. What does that tell you?",
+      "options": [
+        "They appear next to each other in the sentence",
+        "They have similar meaning or are used in similar contexts",
+        "They have the same token ID",
+        "One is the plural of the other"
+      ],
+      "answerIndex": 1,
+      "explanation": "Closeness in embedding space reflects similarity in meaning/usage — not position in the sentence, not identity (the same ID would be the same token), and not any single grammatical relationship. Direction ≈ meaning."
+    },
+    {
+      "type": "heading",
+      "text": "Measuring closeness: cosine similarity"
+    },
+    {
+      "type": "code",
+      "code": "# Cosine similarity = the cosine of the angle between two vectors.\n#   1 = same direction (very similar), 0 = perpendicular (unrelated),\n#  -1 = opposite. We compare DIRECTION, not raw distance, because the\n#   pattern of meaning matters more than how long the vector happens to be.\n\ndef cosine(a, b):\n    dot = sum(x * y for x, y in zip(a, b))\n    mag = lambda v: sum(x * x for x in v) ** 0.5\n    return dot / (mag(a) * mag(b))\n\ncosine(cat, dog)     # -> ~0.999  (nearly identical direction)\ncosine(cat, apple)   # -> ~0.15   (mostly unrelated)",
+      "lang": "py",
+      "caption": "Cosine similarity: 1 means aligned, 0 means unrelated, −1 means opposite."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Nearby ≠ synonym",
+      "md": "High similarity means 'used in similar ways', which is *not* the same as 'means the same thing'. **Antonyms** like `hot` and `cold` often sit close together because they appear in the same contexts ('the ___ water'). Embeddings capture topic and usage, not a dictionary definition — so a high score isn't proof two words are interchangeable."
+    },
+    {
+      "type": "quiz",
+      "question": "cosine(a, b) comes out to 0.02. What's the best interpretation?",
+      "options": [
+        "a and b are opposite in meaning",
+        "a and b are essentially unrelated",
+        "a and b are near-synonyms",
+        "a and b are the same token"
+      ],
+      "answerIndex": 1,
+      "explanation": "A cosine near 0 means the vectors are roughly perpendicular — unrelated. Opposite meaning would push toward −1, and near-synonyms or the same token would push toward +1. 0.02 is 'these two have almost nothing to do with each other'."
+    },
+    {
+      "type": "heading",
+      "text": "Why you should care: semantic search & RAG"
+    },
+    {
+      "type": "text",
+      "md": "Embeddings power one of the most useful patterns in modern AI: **semantic search**. Instead of matching keywords, you embed every document into a vector, embed the user's question the same way, and return the documents whose vectors are *closest*. A search for \"how do I reset my password\" can surface a doc titled \"Recovering account access\" even though they share no words.\n\nThis is the engine behind **RAG** (Retrieval-Augmented Generation): before the LLM answers, you retrieve the most relevant chunks by embedding similarity and paste them into the prompt, grounding the answer in fresh, specific facts — the topic of a later lesson.\n\nWant to *see* words snap into clusters and watch king − man + woman line up? Use the interactive visualizer below to drag tokens around and explore the space yourself."
+    }
+  ],
+  "keyTakeaways": [
+    "An embedding is a dense vector (a list of numbers) a model assigns to each token — turning meaningless IDs into representations of meaning.",
+    "Meaning becomes geometry: similar words sit close together, and consistent directions encode relationships (king − man + woman ≈ queen).",
+    "Cosine similarity measures how aligned two embeddings are — 1 is very similar, 0 is unrelated, −1 is opposite.",
+    "Real embeddings have hundreds to thousands of dimensions, packing lots of meaning into each token.",
+    "Embeddings power semantic search and RAG: retrieve by meaning, not keywords, then feed the results to the LLM."
+  ],
+  "exercise": {
+    "prompt": "Using these toy 2-D embeddings, reason about the space by hand (no calculator needed — eyeball the directions):\n\n```\nparis   = [0.9, 0.1]\nfrance  = [0.8, 0.2]\ntokyo   = [0.1, 0.9]\njapan   = [0.2, 0.8]\n```\n\n1. Which pair is more similar in direction: (paris, france) or (paris, japan)? Explain in terms of the angle between the vectors.\n2. The relationship 'city → its country' should be a consistent *direction*. Estimate the 'country' step by computing `france − paris`. Does applying that same step to `tokyo` land you near `japan`?\n3. In one sentence, explain why cosine similarity, not raw distance, is the natural tool here.",
+    "hint": "For direction, ask which two vectors point almost the same way (small angle → high cosine). For the analogy, subtract coordinate-by-coordinate to get the step vector, then add it to `tokyo` and compare the result to `japan`.",
+    "solution": "1. **(paris, france)** is far more similar. Both point strongly along the first axis ([~0.8–0.9, ~0.1–0.2]), so the angle between them is tiny and cosine similarity is near 1. `paris` and `japan` point in almost perpendicular directions (one favors axis 1, the other axis 2), so their cosine is low.\n\n2. The step is `france − paris = [0.8 − 0.9, 0.2 − 0.1] = [−0.1, +0.1]`. Applying it to `tokyo`: `[0.1, 0.9] + [−0.1, 0.1] = [0.0, 1.0]`, which points in nearly the same direction as `japan = [0.2, 0.8]`. So yes — the 'add country-ness' direction is roughly consistent across the space, which is exactly why word analogies work.\n\n3. Cosine similarity compares *direction* (the pattern of meaning) and ignores vector length, so words with the same meaning-pattern score as similar even if one vector happens to be longer than the other."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "slug": "class-and-static-methods",
+  "title": "Class & Static Methods",
+  "emoji": "🏛️",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Beyond instance methods: @classmethod for alternative constructors and @staticmethod for related helpers.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Most methods you've written are **instance methods** — they take `self` and act on one object. Python has two more kinds, marked with decorators: **class methods** (`@classmethod`, receive the class as `cls`) and **static methods** (`@staticmethod`, receive nothing special)." },
+    { "type": "code", "lang": "py", "caption": "all three kinds", "code": "class Pizza:\n    def __init__(self, toppings):\n        self.toppings = toppings\n\n    # instance method — works on one pizza\n    def describe(self):\n        return f\"Pizza with {', '.join(self.toppings)}\"\n\n    # class method — an alternative constructor\n    @classmethod\n    def margherita(cls):\n        return cls([\"tomato\", \"mozzarella\", \"basil\"])\n\n    # static method — a related helper, no self/cls\n    @staticmethod\n    def is_vegetarian(toppings):\n        return \"pepperoni\" not in toppings\n\np = Pizza.margherita()\nprint(p.describe())\nprint(Pizza.is_vegetarian(p.toppings))", "output": "Pizza with tomato, mozzarella, basil\nTrue" },
+    { "type": "heading", "text": "Class methods = alternative constructors" },
+    { "type": "text", "md": "Because a class method receives `cls`, it can build and return a new instance — a clean way to offer named constructors like `Pizza.margherita()`. Using `cls` (not the literal class name) means subclasses get the right type automatically." },
+    { "type": "callout", "variant": "note", "title": "Which one to use?", "md": "**Instance method** — needs the object's data (`self`). **Class method** — needs the class but not a specific instance (factories, config). **Static method** — a plain function that just *belongs* with the class for organization; it touches neither `self` nor `cls`." },
+    { "type": "quiz", "question": "What does a @classmethod receive as its first argument?", "options": ["self — the instance", "cls — the class itself", "Nothing", "The parent class"], "answerIndex": 1, "explanation": "A class method receives the class as `cls`. That lets it act on the class (e.g. build and return a new instance) without needing an existing object, and it respects subclasses." }
+  ],
+  "keyTakeaways": [
+    "Instance methods take `self` and act on one object.",
+    "`@classmethod` takes `cls` (the class) — great for alternative constructors like `Pizza.margherita()`.",
+    "`@staticmethod` takes no special first argument — a helper grouped with the class.",
+    "Use `cls(...)` in class methods so subclasses build the correct type."
+  ],
+  "exercise": {
+    "prompt": "Add a `@classmethod` called `from_string` to a `Point` class that parses \"3,4\" into `Point(3, 4)`. The class stores `self.x` and `self.y`.",
+    "starterCode": "class Point:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    # TODO: add from_string(cls, text) that parses \"3,4\"\n\n# p = Point.from_string(\"3,4\")\n# print(p.x, p.y)  # 3 4",
+    "hint": "Split the text on ',', convert each part to int, and return cls(x, y).",
+    "solution": "class Point:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    @classmethod\n    def from_string(cls, text):\n        x, y = text.split(\",\")\n        return cls(int(x), int(y))\n\np = Point.from_string(\"3,4\")\nprint(p.x, p.y)  # 3 4"
+  }
+}

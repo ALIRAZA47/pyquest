@@ -1,0 +1,29 @@
+{
+  "slug": "higher-order-functions",
+  "title": "Higher-Order Functions",
+  "emoji": "🎁",
+  "category": "Functions & Scope",
+  "difficulty": "Intermediate",
+  "summary": "Functions are values you can pass around and return — the idea behind callbacks and most of the array methods.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "In JavaScript, **functions are values**. You can store them in variables, pass them into other functions, and return them from functions. A **higher-order function** is simply a function that takes another function as an argument, returns a function, or both." },
+    { "type": "code", "lang": "js", "caption": "passing a function as an argument", "code": "function repeat(n, action) {\n  for (let i = 0; i < n; i++) {\n    action(i);\n  }\n}\n\nrepeat(3, i => console.log('tick', i));\n// tick 0\n// tick 1\n// tick 2" },
+    { "type": "text", "md": "`repeat` doesn't know or care what `action` does — you inject the behavior. That's the whole idea behind **callbacks**: you hand a function to code that decides *when* to call it." },
+    { "type": "heading", "text": "Returning a function" },
+    { "type": "code", "lang": "js", "caption": "a function factory", "code": "function multiplier(factor) {\n  return x => x * factor; // returns a new function\n}\n\nconst double = multiplier(2);\nconst triple = multiplier(3);\nconsole.log(double(5), triple(5)); // 10 15" },
+    { "type": "callout", "variant": "tip", "title": "You already use them", "md": "`map`, `filter`, `reduce`, `forEach`, `sort`, and `addEventListener` are all higher-order functions — each takes a function you supply. Mastering this pattern is what makes the array methods click." },
+    { "type": "quiz", "question": "What makes a function a 'higher-order function'?", "options": ["It runs faster than a normal function", "It takes another function as an argument and/or returns a function", "It is defined at the top of the file", "It uses the return keyword"], "answerIndex": 1, "explanation": "A higher-order function operates on other functions — by receiving one as an argument, returning one, or both. Array methods like map and filter are classic examples." }
+  ],
+  "keyTakeaways": [
+    "Functions are values: store them, pass them, return them.",
+    "A higher-order function takes and/or returns a function.",
+    "Callbacks are functions you pass to other code to run later.",
+    "map/filter/reduce/forEach/addEventListener are all higher-order functions."
+  ],
+  "exercise": {
+    "prompt": "Write a higher-order function `applyTwice(fn, value)` that returns the result of applying `fn` to `value` two times. `applyTwice(x => x + 3, 10)` should return 16.",
+    "hint": "Call fn on value, then call fn again on that result.",
+    "solution": "function applyTwice(fn, value) {\n  return fn(fn(value));\n}\n\napplyTwice(x => x + 3, 10); // 16"
+  }
+}

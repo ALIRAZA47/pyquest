@@ -1,0 +1,38 @@
+{
+  "slug": "forms-and-controlled-inputs",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "Typing in this input does nothing. Why?",
+      "code": "function Field() {\n  const [name, setName] = useState('');\n  return <input value={name} />;\n}",
+      "options": [
+        "The input is controlled by state but has no onChange, so React never updates it — add onChange={e => setName(e.target.value)}",
+        "useState must start with null",
+        "value should be defaultValue",
+        "Inputs must be inside a <form>"
+      ],
+      "answerIndex": 0,
+      "explanation": "Setting value={name} makes it controlled, but without onChange the state never changes, so the field is frozen. Pair value with onChange to update state on each keystroke."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "Submitting this form reloads the whole page. What's missing?",
+      "code": "function Form() {\n  function handleSubmit(e) {\n    console.log('sent');\n  }\n  return <form onSubmit={handleSubmit}><button>Go</button></form>;\n}",
+      "options": [
+        "Call e.preventDefault() in handleSubmit to stop the browser's default full-page reload",
+        "Use onClick instead of onSubmit",
+        "Buttons can't submit forms in React",
+        "Add method=\"post\" to the form"
+      ],
+      "answerIndex": 0,
+      "explanation": "By default a form submit reloads the page. Call e.preventDefault() at the top of the handler to keep it a single-page interaction."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the change handler that keeps state in sync with the input.",
+      "codeTemplate": "<input value={q} onChange={e => setQ(e.target.{{blank}})} />",
+      "blanks": [{ "answer": "value", "accept": ["value "] }],
+      "explanation": "The event's target is the input element; e.target.value is the current text the user typed. Passing it to setQ keeps state synced with the field."
+    }
+  ]
+}

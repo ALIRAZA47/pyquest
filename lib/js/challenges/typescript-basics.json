@@ -1,0 +1,33 @@
+{
+  "slug": "typescript-basics",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "TypeScript reports an error on the last line. Why is that a good thing?",
+      "code": "function greet(name: string) {\n  return 'Hi ' + name.toUpperCase();\n}\ngreet(42);",
+      "options": [
+        "42 is a number, not a string — TS catches the wrong argument type before the code runs",
+        "greet must return void",
+        "toUpperCase doesn't exist",
+        "You can't add strings in TypeScript"
+      ],
+      "answerIndex": 0,
+      "explanation": "name is typed as string, so passing 42 is a compile-time error. TS flags the mismatch before runtime — exactly the class of bug it's designed to prevent."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What type does TypeScript infer for `score` here?",
+      "code": "let score = 10;",
+      "options": ["number (inferred from the value)", "any", "string", "You must annotate it or it's an error"],
+      "answerIndex": 0,
+      "explanation": "TypeScript infers types from initial values, so `score` is `number` without any annotation. You mostly annotate parameters, not every variable."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Annotate the parameter so it must be a number.",
+      "codeTemplate": "function square(n{{blank}} number) {\n  return n * n;\n}",
+      "blanks": [{ "answer": ":", "accept": [": "] }],
+      "explanation": "A type annotation is written `name: type`. `n: number` tells TypeScript the parameter must be a number."
+    }
+  ]
+}

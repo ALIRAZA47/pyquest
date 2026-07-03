@@ -1,0 +1,42 @@
+{
+  "slug": "lifting-state-up",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Two siblings must share a counter. Following 'lifting state up', where should the useState live?",
+      "code": "// <App>\n//   <Display />   needs to READ count\n//   <Controls />  needs to CHANGE count",
+      "options": [
+        "In App (their common parent), passed down as props",
+        "Duplicated in both Display and Controls",
+        "In a module-level let variable",
+        "In whichever renders first"
+      ],
+      "answerIndex": 0,
+      "explanation": "Lift the state to the closest common parent (App). App passes count to Display and a setter/callback to Controls, keeping one source of truth."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "The child can't change the parent's state. What should the parent pass down?",
+      "code": "function App() {\n  const [on, setOn] = useState(false);\n  return <Toggle value={on} />; // child needs to flip it\n}",
+      "options": [
+        "Also pass a callback, e.g. <Toggle value={on} onToggle={() => setOn(o => !o)} />",
+        "Export setOn globally",
+        "Let Toggle call useState itself",
+        "Pass setOn.bind(App)"
+      ],
+      "answerIndex": 0,
+      "explanation": "Children change parent state by calling a callback the parent passes down. Give Toggle an onToggle prop wired to setOn; the child calls it, the parent updates, everything re-renders."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order the steps to lift state up so two siblings can share it.",
+      "lines": [
+        "Move the useState into the closest common parent",
+        "Pass the value down to each child as a prop",
+        "Pass a setter or callback down so a child can request a change",
+        "A child calls the callback, the parent updates state, both children re-render"
+      ],
+      "explanation": "Own the state in the common parent, send the value down, send a way to change it down, and let updates flow back up through the callback — a single source of truth."
+    }
+  ]
+}

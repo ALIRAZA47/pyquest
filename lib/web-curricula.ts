@@ -55,8 +55,20 @@ export const JS_CURRICULUM: CategoryMeta[] = [
   {
     name: "Data & Logic",
     emoji: "🧮",
-    blurb: "Arrays, objects, control flow, and functions.",
-    slugs: ["arrays", "objects", "conditionals", "loops", "javascript-functions"],
+    blurb: "Arrays, objects, control flow, and unpacking data.",
+    slugs: ["arrays", "objects", "conditionals", "loops", "destructuring-and-spread"],
+  },
+  {
+    name: "Functions & Scope",
+    emoji: "🔧",
+    blurb: "Functions as values — arrows, closures, and higher-order patterns.",
+    slugs: ["javascript-functions", "arrow-functions", "higher-order-functions"],
+  },
+  {
+    name: "Object-Oriented JS",
+    emoji: "🏗️",
+    blurb: "Model things with classes — inheritance, polymorphism, and encapsulation.",
+    slugs: ["classes", "inheritance-and-polymorphism", "encapsulation"],
   },
   {
     name: "The DOM & Events",
@@ -65,10 +77,16 @@ export const JS_CURRICULUM: CategoryMeta[] = [
     slugs: ["the-dom", "events-and-listeners"],
   },
   {
-    name: "Asynchronous JavaScript",
+    name: "Async & Modern JS",
     emoji: "⏳",
-    blurb: "Promises, async/await, and the event loop under the hood.",
-    slugs: ["promises-and-async", "the-event-loop"],
+    blurb: "Promises, the event loop, error handling, and modules.",
+    slugs: ["promises-and-async", "the-event-loop", "error-handling", "es-modules"],
+  },
+  {
+    name: "Advanced: TypeScript",
+    emoji: "🔷",
+    blurb: "Add a type checker to JavaScript — annotations, interfaces, and generics.",
+    slugs: ["typescript-basics", "typescript-interfaces", "typescript-generics"],
   },
 ];
 
@@ -103,14 +121,14 @@ export const REACT_CURRICULUM: CategoryMeta[] = [
   {
     name: "State & Interaction",
     emoji: "🔁",
-    blurb: "Manage changing data and respond to the user.",
-    slugs: ["state-with-usestate", "handling-events", "conditional-rendering", "lists-and-keys"],
+    blurb: "Manage changing data, forms, and shared state.",
+    slugs: ["state-with-usestate", "handling-events", "conditional-rendering", "lists-and-keys", "forms-and-controlled-inputs", "lifting-state-up"],
   },
   {
     name: "Hooks",
     emoji: "🪝",
-    blurb: "Side effects and reusable logic with hooks.",
-    slugs: ["the-useeffect-hook", "custom-hooks"],
+    blurb: "Side effects, shared data, and reusable logic with hooks.",
+    slugs: ["the-useeffect-hook", "usecontext", "custom-hooks"],
   },
 ];
 
@@ -120,6 +138,18 @@ export const NODE_CURRICULUM: CategoryMeta[] = [
     emoji: "🟩",
     blurb: "JavaScript on the server — modules, npm, and the runtime.",
     slugs: ["what-is-nodejs", "modules-and-npm", "the-node-runtime"],
+  },
+  {
+    name: "The Event Loop",
+    emoji: "♻️",
+    blurb: "The heart of Node's concurrency — build a program and watch every phase fire.",
+    slugs: ["the-node-event-loop"],
+  },
+  {
+    name: "Core Modules",
+    emoji: "🧰",
+    blurb: "The event-driven and streaming primitives Node is built on.",
+    slugs: ["events-and-eventemitter", "streams-and-buffers"],
   },
   {
     name: "Building a Server",

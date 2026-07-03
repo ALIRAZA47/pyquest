@@ -1,0 +1,33 @@
+{
+  "slug": "encapsulation",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "class Counter {\n  #n = 0;\n  bump() { this.#n++; }\n  get value() { return this.#n; }\n}\nconst c = new Counter();\nc.bump(); c.bump(); c.bump();\nconsole.log(c.value);",
+      "options": ["3", "0", "undefined", "NaN"],
+      "answerIndex": 0,
+      "explanation": "#n is private but fully usable inside the class. Three bump() calls make it 3, and the value getter returns it."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "Reading `acc.#balance` outside the class is a SyntaxError. What's the right way to expose it?",
+      "code": "class Acc { #balance = 100; }\nconsole.log(new Acc().#balance);",
+      "options": [
+        "Add a getter inside the class (get balance(){ return this.#balance; }) and read acc.balance",
+        "Remove the # so it becomes public",
+        "Use acc['#balance']",
+        "Private fields can never be read at all"
+      ],
+      "answerIndex": 0,
+      "explanation": "#fields are only accessible inside the class. Expose a controlled, usually read-only view with a getter, then callers use acc.balance."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the declaration of a truly private field.",
+      "codeTemplate": "class Vault {\n  {{blank}}secret = 42;\n}",
+      "blanks": [{ "answer": "#", "accept": ["# "] }],
+      "explanation": "Prefixing a field with # makes it genuinely private — accessible only within the class body, unlike the _underscore convention."
+    }
+  ]
+}

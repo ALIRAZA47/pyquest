@@ -5,12 +5,14 @@ import L_assignment_operators from "./lessons/assignment-operators.json";
 import L_booleans_and_none from "./lessons/booleans-and-none.json";
 import L_break_continue_pass from "./lessons/break-continue-pass.json";
 import L_builtin_tools from "./lessons/builtin-tools.json";
+import L_class_and_static_methods from "./lessons/class-and-static-methods.json";
 import L_classes_and_objects from "./lessons/classes-and-objects.json";
 import L_closures from "./lessons/closures.json";
 import L_comments from "./lessons/comments.json";
 import L_comparison_operators from "./lessons/comparison-operators.json";
 import L_context_managers from "./lessons/context-managers.json";
 import L_data_types from "./lessons/data-types.json";
+import L_dataclasses from "./lessons/dataclasses.json";
 import L_decorators from "./lessons/decorators.json";
 import L_defining_functions from "./lessons/defining-functions.json";
 import L_dictionaries from "./lessons/dictionaries.json";
@@ -39,6 +41,7 @@ import L_pep8_and_style from "./lessons/pep8-and-style.json";
 import L_pip_and_packages from "./lessons/pip-and-packages.json";
 import L_polymorphism from "./lessons/polymorphism.json";
 import L_popular_libraries from "./lessons/popular-libraries.json";
+import L_properties from "./lessons/properties.json";
 import L_raising_and_custom_exceptions from "./lessons/raising-and-custom-exceptions.json";
 import L_reading_writing_files from "./lessons/reading-writing-files.json";
 import L_recursion from "./lessons/recursion.json";
@@ -70,12 +73,14 @@ export const RAW_LESSONS: Record<string, unknown> = {
   "booleans-and-none": L_booleans_and_none,
   "break-continue-pass": L_break_continue_pass,
   "builtin-tools": L_builtin_tools,
+  "class-and-static-methods": L_class_and_static_methods,
   "classes-and-objects": L_classes_and_objects,
   "closures": L_closures,
   "comments": L_comments,
   "comparison-operators": L_comparison_operators,
   "context-managers": L_context_managers,
   "data-types": L_data_types,
+  "dataclasses": L_dataclasses,
   "decorators": L_decorators,
   "defining-functions": L_defining_functions,
   "dictionaries": L_dictionaries,
@@ -104,6 +109,7 @@ export const RAW_LESSONS: Record<string, unknown> = {
   "pip-and-packages": L_pip_and_packages,
   "polymorphism": L_polymorphism,
   "popular-libraries": L_popular_libraries,
+  "properties": L_properties,
   "raising-and-custom-exceptions": L_raising_and_custom_exceptions,
   "reading-writing-files": L_reading_writing_files,
   "recursion": L_recursion,

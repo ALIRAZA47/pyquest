@@ -106,6 +106,8 @@ const challengeValidate = (p) =>
 const CORE_COURSES = [
   { id: "ml", prefix: "ML" },
   { id: "ai", prefix: "AI" },
+  { id: "llm", prefix: "LLM" },
+  { id: "mcp", prefix: "MCP" },
 ];
 const WEB_COURSES = ["html", "css", "js", "ts", "react", "node"];
 

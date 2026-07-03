@@ -1,0 +1,30 @@
+{
+  "slug": "typescript-generics",
+  "title": "TypeScript: Generics",
+  "emoji": "🔷",
+  "category": "Advanced: TypeScript",
+  "difficulty": "Advanced",
+  "summary": "Write reusable code that works with any type while keeping full type safety — the <T> type parameter.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "Sometimes a function or structure should work with *any* type, but you still want the types to line up. **Generics** let you write a placeholder type — usually `T` — that the caller fills in. It's like a parameter, but for types." },
+    { "type": "code", "lang": "ts", "caption": "the problem, then the fix", "code": "// Using 'any' loses all type safety:\nfunction firstAny(arr: any[]): any { return arr[0]; }\n\n// Generic: T is inferred from the argument\nfunction first<T>(arr: T[]): T {\n  return arr[0];\n}\n\nconst n = first([1, 2, 3]);      // n: number\nconst s = first([\"a\", \"b\"]);    // s: string\nconsole.log(n, s);\n// n.toFixed(2) is allowed; s.toUpperCase() is allowed —\n// TS knows each one's real type", "output": "1 a" },
+    { "type": "text", "md": "`<T>` declares a type variable. When you call `first([1,2,3])`, TS infers `T = number`, so the return type is `number` — not `any`. You keep reuse *and* type safety." },
+    { "type": "heading", "text": "Generic types & constraints" },
+    { "type": "code", "lang": "ts", "caption": "a generic interface + a constraint", "code": "interface Box<T> {\n  value: T;\n}\nconst nb: Box<number> = { value: 42 };\n\n// constrain T to things that have a .length\nfunction longest<T extends { length: number }>(a: T, b: T): T {\n  return a.length >= b.length ? a : b;\n}\nconsole.log(longest(\"hello\", \"hi\"));   // works on strings\nconsole.log(longest([1,2,3], [1]));      // and arrays", "output": "hello\n[ 1, 2, 3 ]" },
+    { "type": "callout", "variant": "tip", "title": "You already use generics", "md": "`Array<number>`, `Promise<string>`, `Map<string, User>` are all generics from the standard library. Reach for your own generic when you catch yourself writing `any` just to make a function accept multiple types." },
+    { "type": "quiz", "question": "Why prefer a generic `<T>` over using `any`?", "options": ["Generics run faster", "Generics preserve the specific type, keeping type safety; any throws all type info away", "any is not valid TypeScript", "Generics avoid the need to compile"], "answerIndex": 1, "explanation": "With `any`, TypeScript stops checking — you lose autocomplete and error-catching. A generic remembers the actual type the caller used, so results stay fully typed and safe." }
+  ],
+  "keyTakeaways": [
+    "Generics (`<T>`) are type parameters — reusable code that keeps exact types.",
+    "TS infers the type argument from how you call the function.",
+    "Prefer a generic over `any`, which discards all type information.",
+    "Constrain a generic with `T extends Shape`; `Array<T>`, `Promise<T>`, `Map<K,V>` are built-in generics."
+  ],
+  "exercise": {
+    "prompt": "Write a generic function `wrap<T>(value: T)` that returns `{ value }` typed as `{ value: T }`. `wrap('hi')` should have type `{ value: string }`.",
+    "starterCode": "// TODO: function wrap<T>(value: T) { ... }\n// console.log(wrap('hi'));\n// console.log(wrap(7));",
+    "hint": "Declare <T>, take value: T, return { value }.",
+    "solution": "function wrap<T>(value: T): { value: T } {\n  return { value };\n}\nconsole.log(wrap('hi')); // { value: 'hi' }\nconsole.log(wrap(7));    // { value: 7 }"
+  }
+}

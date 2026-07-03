@@ -1,0 +1,119 @@
+{
+  "slug": "sampling-and-temperature",
+  "title": "Sampling & Temperature",
+  "emoji": "🌡️",
+  "category": "Inside the Model",
+  "difficulty": "Intermediate",
+  "summary": "Once the model has a probability for every next token, how does it actually pick one? Temperature, top-k, and top-p are the knobs that turn that distribution into deterministic-and-safe or wild-and-creative text.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "In the last lesson we watched the model turn its final-layer vector into **logits**, then into a **probability distribution** over every token in its vocabulary — say `mat` 89%, `rug` 10%, `banana` 1%. That distribution is where this lesson begins. The model still has to commit to exactly **one** token, and *how* it makes that pick is the whole game. Pick greedily and you get safe, repetitive text. Roll the dice and you get variety, personality, and the occasional creative leap. The dials that control that trade-off are **temperature**, **top-k**, and **top-p**."
+    },
+    {
+      "type": "heading",
+      "text": "Greedy vs. sampling"
+    },
+    {
+      "type": "text",
+      "md": "The two base strategies sit at opposite ends. The simplest is **greedy decoding**: take the argmax — the single most probable token — every step. It's deterministic (same prompt in, same text out) and never obviously weird, but it has a famous failure mode: it gets **stuck in loops** and sounds flat, because it can only walk the one most-traveled path. The alternative is **sampling**: treat the probabilities as weighted dice and roll. Now `mat` wins ~89% of the time, but `rug` genuinely shows up ~10% and `banana` ~1%. Run the same prompt twice and you get two different but plausible continuations — that randomness is the source of an LLM's variety."
+    },
+    {
+      "type": "code",
+      "code": "probs = {\"mat\": 0.89, \"rug\": 0.10, \"banana\": 0.01}\n\nargmax(probs)   # greedy  -> \"mat\", every single time\nsample(probs)   # sampling-> \"mat\" ~89%, \"rug\" ~10%, \"banana\" ~1%",
+      "lang": "py",
+      "caption": "Greedy always takes the top token; sampling rolls weighted dice."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A loaded die, not a fair one",
+      "md": "Sampling isn't picking uniformly at random — that would be nonsense. It's rolling a die that's **loaded** in proportion to the model's confidence: a token the model gives 89% gets 89 of the 100 faces; a 1% token gets one face. You almost always land on a good token, but the rare faces keep things fresh. The open question is *how loaded* the die should be — and that's exactly what temperature controls."
+    },
+    {
+      "type": "heading",
+      "text": "Temperature: reshaping the distribution"
+    },
+    {
+      "type": "text",
+      "md": "**Temperature** (written `T`) is a single number that rescales the logits **before** softmax: divide every logit by `T`, then softmax as usual. That one division does something intuitive. A **small** `T` (say 0.5) *stretches the logits apart* — the gap between the leader and the rest grows, so the top token dominates even harder. A **large** `T` (say 2.0) *squishes them together* — gaps shrink, so probability leaks into the long tail and the distribution flattens toward uniform. At `T = 1` you get the model's raw, untouched distribution; as `T` approaches 0 you approach greedy."
+    },
+    {
+      "type": "code",
+      "code": "# Temperature divides the logits BEFORE softmax\nprobs = softmax([logit / T for logit in logits])\n\nlogits = [2.0, 1.0, 0.0]      # three candidate tokens\nT = 0.5  ->  [0.87, 0.12, 0.02]   # sharp: top token dominates\nT = 1.0  ->  [0.66, 0.24, 0.09]   # the raw distribution\nT = 2.0  ->  [0.51, 0.31, 0.19]   # flat: tail gets a real shot",
+      "lang": "text",
+      "caption": "Same logits, three temperatures. Low T sharpens; high T flattens."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Why it's called 'temperature'",
+      "md": "The name is borrowed from physics. Picture the tokens as gas molecules. **Cold** (low `T`) and everything settles into the lowest-energy state — calm, predictable, always the same. **Hot** (high `T`) and the molecules jitter everywhere — high energy, lots of surprise, occasional chaos. Turning up the temperature literally adds energy (randomness) to the choice."
+    },
+    {
+      "type": "quiz",
+      "question": "You lower the temperature from 1.0 to 0.2. What happens to the probability distribution over the next token?",
+      "options": [
+        "It flattens out, giving rare tokens a bigger chance",
+        "It sharpens toward the top token, making output more deterministic",
+        "It stays identical — temperature only affects speed, not probabilities",
+        "It becomes perfectly uniform across the whole vocabulary"
+      ],
+      "answerIndex": 1,
+      "explanation": "Dividing logits by a small T (0.2) stretches the gaps between them apart, so after softmax the top token's probability grows and the tail shrinks. Low temperature concentrates mass on the favorite — output gets more focused and repeatable, approaching greedy as T approaches 0."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Temperature redistributes probability — it doesn't add knowledge",
+      "md": "Cranking `T` high doesn't make the model *smarter*; it just hands more probability to tokens the model rated as **less** likely. Sometimes that surfaces a delightful, unexpected word. Just as often it surfaces a wrong fact, broken code, or an incoherent tangent — because you deliberately made low-probability (often low-quality) tokens more reachable. High temperature buys variety, and the bill is paid in reliability."
+    },
+    {
+      "type": "heading",
+      "text": "Top-k and top-p: cutting off the junk tail"
+    },
+    {
+      "type": "text",
+      "md": "Even at a sensible temperature, the tail holds thousands of genuinely bad tokens, each with a tiny probability — add them up and there's a real chance you sample *something* nonsensical. **Truncation** throws the tail away first. **Top-k** keeps only the `k` highest-probability tokens (say 40), zeroes the rest, renormalizes, and samples from those. **Top-p** (**nucleus sampling**) is smarter: it keeps the smallest set of top tokens whose probabilities *add up to* `p` (say 0.9). The difference matters — top-k always keeps a fixed count, while top-p adapts: few tokens when the model is confident, many when it's unsure. In practice these stack *with* temperature: truncation guards **quality** (cut the junk tail), then temperature dials **variety** within what's left."
+    },
+    {
+      "type": "code",
+      "code": "# probs sorted high -> low:\n#   the=0.60  a=0.20  an=0.09  one=0.06  ...long junk tail...\n\n# top-k = 2   -> keep {the, a},          renormalize, sample\n# top-p = 0.9 -> keep {the, a, an, one}  (0.60+0.20+0.09+0.06 >= 0.9)\n#\n# When the model is SURE (the=0.97), top-p keeps just 1 token.\n# When it's UNSURE (many near-ties), top-p keeps a wide set.",
+      "lang": "text",
+      "caption": "Top-k keeps a fixed count; top-p keeps a fixed probability mass."
+    },
+    {
+      "type": "quiz",
+      "question": "The model is very confident: `the` has probability 0.97 and everything else is tiny. Using top-p = 0.9, roughly how many tokens end up in the sampling pool?",
+      "options": [
+        "Exactly 90 tokens, because p = 0.9",
+        "Just 1 — `the` alone already exceeds 0.9 of the mass",
+        "The full vocabulary, since p is a percentage",
+        "Exactly 9 tokens, one for each 0.1 of probability"
+      ],
+      "answerIndex": 1,
+      "explanation": "Top-p keeps the smallest set of top tokens whose probabilities sum to at least p. Since `the` alone is 0.97 (already above 0.9), the nucleus is just that one token — sampling is effectively deterministic here. That adaptivity is top-p's whole advantage: few tokens when the model is sure, many when it's uncertain."
+    },
+    {
+      "type": "heading",
+      "text": "When to turn the dial which way"
+    },
+    {
+      "type": "text",
+      "md": "There's no universally 'correct' temperature — it depends entirely on the job:\n\n- **Low `T` (~0–0.3):** factual Q&A, extraction, classification, math, code, strict formats. You want the single best answer, reproducibly.\n- **Medium `T` (~0.7–1.0):** general chat, explanations, summaries, everyday writing — the sweet spot most chat products default to.\n- **High `T` (~1.2+):** brainstorming, poetry, character dialogue, wild idea generation — when surprise is a feature and the occasional miss is fine.\n\nOne caveat for 2026: many frontier *reasoning* models manage sampling internally and expose temperature only weakly (or ignore it), so turning the knob may barely move the output. When temperature *is* exposed — classic chat/completion endpoints, open-weight models — everything here applies directly. Want to *feel* the dial? **Use the interactive visualizer below** to drag the temperature slider and watch the same set of logits melt from a sharp spike into a flat plateau — and see how the sampled token changes as you do."
+    }
+  ],
+  "keyTakeaways": [
+    "Greedy decoding always takes the top token: deterministic, safe, but prone to flat, repetitive text.",
+    "Sampling draws from the probability distribution like weighted dice, giving text variety and creativity.",
+    "Temperature divides logits before softmax: low T sharpens toward the top token (safe), high T flattens the distribution (creative but error-prone).",
+    "Top-k keeps a fixed number of top tokens; top-p (nucleus) keeps the smallest set summing to probability p — both prune the low-quality tail before sampling.",
+    "Use low temperature for facts, code, and format-following; higher temperature for brainstorming and creative writing."
+  ],
+  "exercise": {
+    "prompt": "Reason about temperature by hand — no computation needed, just the direction of the effect.\n\nA model is choosing the next token after **\"The capital of France is\"**. Its top four candidate tokens have these logits:\n\n| token | logit |\n|---|---|\n| Paris | 9.0 |\n| Lyon | 4.0 |\n| Marseille | 3.5 |\n| baguette | 1.0 |\n\n**Part A.** Under **greedy decoding**, which token is chosen, and will the answer ever change if you run it again?\n\n**Part B.** You switch to sampling. To make the output as **safe and reproducible** as possible (you want `Paris` essentially every time), should you set temperature **low** or **high**? Explain what happens to the four probabilities.\n\n**Part C.** A colleague sets **temperature = 2.5** for this factual question and is surprised to sometimes see `Lyon` or even `baguette`. In one or two sentences, explain *why* that happens and whether it means the model 'forgot' the right answer.",
+    "hint": "Greedy always takes the largest logit and is deterministic. Temperature divides every logit by T before softmax: small T stretches the gaps apart (sharpens), large T squishes them together (flattens). Nothing about temperature changes what the model *knows* — only how much probability the tail tokens receive.",
+    "solution": "**Part A.** Greedy takes the `argmax`, which is **`Paris`** (logit 9.0, far above the rest). Greedy is deterministic, so re-running the exact same prompt yields `Paris` every single time — the answer never changes.\n\n**Part B.** Set temperature **low** (e.g. 0.2). Dividing every logit by a small number *stretches the gaps apart*: 9.0 vs 4.0 becomes 45 vs 20, so after softmax `Paris` grabs almost all the probability mass and the other three shrink toward zero. Sampling from that distribution returns `Paris` essentially every time — you've recovered near-greedy, reproducible behavior while still technically sampling.\n\n**Part C.** At `T = 2.5` every logit is divided by 2.5, *squishing them together*: 9.0/2.5 = 3.6 vs 4.0/2.5 = 1.6 — the gap between `Paris` and the field collapses, so `Lyon`, `Marseille`, and even `baguette` receive meaningfully more probability and get sampled sometimes. The model did **not** forget the answer — `Paris` still has the highest logit and remains most likely. High temperature simply redistributed probability toward the tail on purpose, which is exactly the wrong setting for a factual question."
+  }
+}

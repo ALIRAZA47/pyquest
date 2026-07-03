@@ -1,0 +1,55 @@
+{
+  "slug": "limitations-and-hallucinations",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate wrote a checklist explaining why LLMs hallucinate. Exactly one line is a real misconception. Which one is WRONG?",
+      "code": "# Why do LLMs hallucinate?\n\n1. The model predicts plausible next tokens, not verified facts.\n2. There is no built-in fact-checker comparing output to a source of truth.\n3. When it hallucinates, the model KNOWS it's unsure and clearly warns you.\n4. Well-formed patterns (like citations) are easy to fabricate convincingly.",
+      "options": [
+        "Line 1 — the model does predict plausible tokens rather than verified facts",
+        "Line 2 — there really is no built-in fact-checker in the loop",
+        "Line 3 — the model does NOT reliably signal uncertainty; wrong answers sound just as confident",
+        "Line 4 — patterned strings like citations really are easy to fabricate"
+      ],
+      "answerIndex": 2,
+      "explanation": "Line 3 is the misconception. A hallucinated answer arrives with the same fluent, confident tone as a correct one — the model has no reliable internal 'I'm unsure' signal that surfaces as a warning. That's precisely why you can't use how confident it sounds to judge whether it's right."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "You send this to a PLAIN LLM — no tools, no web access, no retrieval. Its training cutoff was in 2024. What's the honest description of the answer you'll get?",
+      "code": "prompt = \"What is the current top news story right now,\n          today, and who is the source?\"\n\n# model: bare LLM, knowledge cutoff = 2024,\n#        no browsing / no tools enabled",
+      "options": [
+        "A fresh, accurate headline — the model quietly checks the news for you",
+        "A confident but stale or fabricated answer, because the model can't see past its cutoff and has no live access",
+        "An error, because models refuse any question about the present",
+        "The literal text 'I cannot know that' every time, guaranteed"
+      ],
+      "answerIndex": 1,
+      "explanation": "A bare model can't browse and knows nothing after its cutoff, so it can't actually retrieve today's news. Instead of reliably refusing, it typically produces a confident-sounding answer drawn from stale training data or simply invented to fit the pattern. Getting real current news requires a tool or retrieval step, not a better-worded prompt."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the blanks to complete the summary of LLM limits and their fixes.",
+      "codeTemplate": "A model's knowledge is frozen at its training {{blank}}, so it's stale on recent events.\nBecause it predicts plausible text with no fact-checker, it can {{blank}} — state false things confidently.\nThe root-cause fix is to feed it truth: {{blank}} the answer in retrieved documents, or give the model real {{blank}}.",
+      "blanks": [
+        { "answer": "cutoff", "accept": ["cut-off", "cut off", "date"] },
+        { "answer": "hallucinate", "accept": ["hallucinates", "hallucination", "make things up", "fabricate"] },
+        { "answer": "ground", "accept": ["grounding", "anchor", "base"] },
+        { "answer": "tools", "accept": ["tool", "tooling"] }
+      ],
+      "explanation": "Knowledge ends at the training cutoff (staleness); predicting plausible tokens with no verification causes hallucination; and both are attacked at the root by grounding the answer in retrieved source documents (RAG) and by giving the model real tools to fetch facts, calculate, or query data instead of guessing."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Order the steps of a grounded (retrieval-augmented) answer that avoids hallucinating an out-of-date fact — the pattern that fixes the bare model's limits.",
+      "lines": [
+        "User asks a question that needs current or private information",
+        "Retrieve the relevant, up-to-date documents from a trusted source",
+        "Insert those documents into the model's prompt (the context window)",
+        "The model generates an answer grounded in the supplied documents",
+        "The answer includes citations so a human can verify each claim"
+      ],
+      "explanation": "Grounding flips the model from 'source of truth' to 'reader of truth': catch the question, fetch real up-to-date documents, put them in the context window, let the model answer *from* them, and attach citations for verification. This directly attacks hallucination, knowledge-cutoff staleness, and the lack of live access — the exact problems a bare LLM has."
+    }
+  ]
+}

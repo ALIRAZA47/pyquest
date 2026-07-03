@@ -1,0 +1,28 @@
+{
+  "slug": "destructuring-and-spread",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "const { a, b = 2 } = { a: 1 };\nconsole.log(a, b);",
+      "options": ["1 2", "1 undefined", "undefined 2", "1 1"],
+      "answerIndex": 0,
+      "explanation": "`a` is destructured as 1. `b` has no matching property, so its default value 2 is used. Result: 1 2."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "What is `combined`?",
+      "code": "const x = [1, 2];\nconst y = [3, 4];\nconst combined = [...x, ...y];\nconsole.log(combined);",
+      "options": ["[1, 2, 3, 4]", "[[1,2],[3,4]]", "[1, 2]", "[4, 3, 2, 1]"],
+      "answerIndex": 0,
+      "explanation": "Spread expands each array's elements into the new array, concatenating them: [1, 2, 3, 4]."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the copy-with-override to set `read` to true without mutating `msg`.",
+      "codeTemplate": "const seen = { {{blank}}msg, read: true };",
+      "blanks": [{ "answer": "...", "accept": ["… "] }],
+      "explanation": "The spread operator `...msg` copies all of msg's properties into the new object; listing `read: true` after it overrides that one property."
+    }
+  ]
+}

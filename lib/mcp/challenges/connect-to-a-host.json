@@ -1,0 +1,52 @@
+{
+  "slug": "connect-to-a-host",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the steps to get a finished MCP server working inside a host in the order you'd actually do them.",
+      "lines": [
+        "Test the server directly with the MCP Inspector (npm run inspect / uv run mcp dev server.py)",
+        "Add an entry under mcpServers in claude_desktop_config.json with the command and absolute-path args",
+        "Restart the host so it launches the server as a subprocess over stdio",
+        "Ask the agent a plain-English question like \"Who are our top 3 customers?\" and get an answer grounded in real rows"
+      ],
+      "explanation": "Prove the server in the Inspector first, then write the launch recipe (command + absolute args) in the host config, let the host spawn it, and finally just talk to the agent — it picks the tool and your server runs the SQL."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate added this to claude_desktop_config.json but the server never shows up in the host. What's the problem?",
+      "code": "{\n  \"mcpServers\": {\n    \"sales-connector\": {\n      \"command\": \"node\",\n      \"args\": [\"./server.js\"]\n    }\n  }\n}",
+      "options": [
+        "The key should be \"servers\" not \"mcpServers\"",
+        "The path in args is relative — it must be an ABSOLUTE path like /absolute/path/to/server.js, because the host launches the server from its own directory, not your project folder",
+        "\"command\" must be a full path to the node binary, not just \"node\"",
+        "You can only list one server, so the mcpServers object is invalid"
+      ],
+      "answerIndex": 1,
+      "explanation": "The host spawns your server as a subprocess from wherever the host process lives, not your project folder, so a relative path like ./server.js is never found. Absolute paths are required — this is the single most common reason a freshly-added server never connects."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the config entry that wires the Python sales connector into Claude Desktop.",
+      "codeTemplate": "{\n  \"mcpServers\": {\n    \"sales-connector-python\": {\n      \"command\": \"{{blank}}\",\n      \"args\": [\"{{blank}}\", \"server.py\"]\n    }\n  }\n}",
+      "blanks": [
+        { "answer": "uv", "accept": ["uv"] },
+        { "answer": "run", "accept": ["run"] }
+      ],
+      "explanation": "The Python server launches with the uv package runner: command \"uv\" and args [\"run\", \"server.py\"], so the host effectively runs `uv run server.py`. (In a real config that path should be absolute.)"
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Your server is wired into the host and you ask the agent: \"Who are our top 3 customers?\" What actually happens?",
+      "code": "// Server is connected. You type a plain-English question:\n//   \"Who are our top 3 customers?\"",
+      "options": [
+        "The host runs the SQL itself and never contacts the server",
+        "The agent reasons this is a sales question, sends a tools/call for query_sales, your server runs the SQL against shop.db, and the agent answers grounded in the returned rows",
+        "The model answers from memory of the database it was trained on",
+        "The agent asks you to paste the database credentials first"
+      ],
+      "answerIndex": 1,
+      "explanation": "Once connected, you just talk. The agent picks the query_sales tool, sends a tools/call, and your server runs the real SQL and returns rows — so the answer is grounded in actual data. The server holds the credentials and stays the safety boundary; the model never sees them."
+    }
+  ]
+}

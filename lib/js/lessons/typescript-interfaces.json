@@ -1,0 +1,30 @@
+{
+  "slug": "typescript-interfaces",
+  "title": "TypeScript: Interfaces & Types",
+  "emoji": "🔷",
+  "category": "Advanced: TypeScript",
+  "difficulty": "Advanced",
+  "summary": "Describe the shape of objects with interfaces and type aliases — optional fields, unions, and why structural typing is so flexible.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "Beyond primitives, you'll want to describe the **shape of objects**. TypeScript offers `interface` and `type` for exactly that — a contract the compiler enforces everywhere the object is used." },
+    { "type": "code", "lang": "ts", "caption": "an interface", "code": "interface User {\n  name: string;\n  age: number;\n  admin?: boolean;   // optional (the ? )\n}\n\nfunction greet(u: User): string {\n  return `Hi ${u.name} (${u.age})`;\n}\n\nconsole.log(greet({ name: \"Ada\", age: 36 }));\n// greet({ name: \"Bea\" })  // ❌ missing 'age'", "output": "Hi Ada (36)" },
+    { "type": "text", "md": "The `?` marks an optional property. Pass an object missing a required field and TS errors. Note **structural typing**: any object with the right shape *is* a `User` — you don't have to explicitly declare that it implements the interface." },
+    { "type": "heading", "text": "Type aliases & unions" },
+    { "type": "code", "lang": "ts", "caption": "type alias + union types", "code": "type ID = string | number;      // union: either type is allowed\ntype Status = \"todo\" | \"doing\" | \"done\";  // literal union\n\nfunction setStatus(s: Status) {\n  console.log(\"status:\", s);\n}\n\nsetStatus(\"done\");   // ✅\n// setStatus(\"nope\") // ❌ not one of the allowed literals\nlet userId: ID = 42;\nconsole.log(userId);", "output": "status: done\n42" },
+    { "type": "callout", "variant": "tip", "title": "interface vs type", "md": "Both describe shapes. Rule of thumb: use `interface` for object shapes you might extend or implement; use `type` for unions, primitives, and combinations (`A | B`, `A & B`). In practice they overlap a lot — pick one and stay consistent." },
+    { "type": "quiz", "question": "What does the `?` in `admin?: boolean` mean?", "options": ["admin can be null only", "admin is optional — the property may be omitted", "admin is private", "admin is a boolean that defaults to true"], "answerIndex": 1, "explanation": "A `?` after a property name makes it optional: objects of that type may include it or leave it out, and its type becomes `boolean | undefined`." }
+  ],
+  "keyTakeaways": [
+    "`interface` and `type` describe the shape of objects.",
+    "`?` marks an optional property.",
+    "TypeScript is structurally typed: any object with the right shape matches.",
+    "Union types (`string | number`, or literal unions like `\"todo\" | \"done\"`) allow a value to be one of several options."
+  ],
+  "exercise": {
+    "prompt": "Define an interface `Product` with `name: string`, `price: number`, and an optional `onSale: boolean`. Then write a function `label(p: Product)` that returns the name.",
+    "starterCode": "// TODO: interface Product { ... }\n// TODO: function label(p: Product): string { ... }\n// console.log(label({ name: \"Hub\", price: 20 }));",
+    "hint": "Use ? for the optional onSale. label just returns p.name.",
+    "solution": "interface Product {\n  name: string;\n  price: number;\n  onSale?: boolean;\n}\nfunction label(p: Product): string {\n  return p.name;\n}\nconsole.log(label({ name: \"Hub\", price: 20 })); // Hub"
+  }
+}

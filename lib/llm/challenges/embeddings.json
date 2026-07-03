@@ -1,0 +1,45 @@
+{
+  "slug": "embeddings",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "Given these toy embeddings, which word is MOST similar to `cat` by cosine similarity (most aligned direction)?",
+      "code": "cat    = [0.90, 0.10, 0.05]\ndog    = [0.86, 0.14, 0.08]\ncar    = [0.05, 0.10, 0.92]\nqueen  = [0.10, 0.88, 0.15]\n\n# cosine(cat, ?) is highest for which word?",
+      "options": ["dog", "car", "queen", "They are all equally similar"],
+      "answerIndex": 0,
+      "explanation": "`dog` points in almost the same direction as `cat` (both dominated by the first coordinate, ~0.9), so the angle between them is tiny and cosine similarity is near 1. `car` leans on the third axis and `queen` on the second, so both point away from `cat`. Closeness of direction = similarity of meaning."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner explains what an embedding is. Which statement is the misconception that needs fixing?",
+      "code": "# Which claim about embeddings is WRONG?",
+      "options": [
+        "An embedding is a dense vector of numbers assigned to a token.",
+        "The token ID is just an index; the embedding is looked up from a table using it.",
+        "A token's embedding is its ID converted to binary, so bigger IDs give bigger vectors.",
+        "Similar words end up with embeddings that point in similar directions."
+      ],
+      "answerIndex": 2,
+      "explanation": "The wrong claim is that the embedding is the ID in binary. The ID is only an *index* — the model looks up a learned row in the embedding matrix. There's no numeric relationship between the size of an ID and its vector; token 9906 and token 12 can sit right next to each other in the space if their words mean similar things."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the classic word-analogy that embeddings make possible.",
+      "codeTemplate": "king - man + woman  ≈  {{blank}}",
+      "blanks": [{ "answer": "queen", "accept": ["Queen", "QUEEN"] }],
+      "explanation": "Because relationships are encoded as consistent directions, subtracting the 'man' direction and adding the 'woman' direction moves you from `king` to `queen`. The same femininity step also turns `uncle` into `aunt` and `actor` into `actress`."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of semantic search / RAG retrieval in the correct order.",
+      "lines": [
+        "Embed every document chunk into vectors and store them",
+        "The user asks a question",
+        "Embed the question into the same vector space",
+        "Rank chunks by cosine similarity to the question",
+        "Paste the top-matching chunks into the prompt as context"
+      ],
+      "explanation": "You build the vector index first (embed all chunks). Then, per query, you embed the question the same way, compare it to the stored vectors with cosine similarity, and feed the closest chunks to the model. Retrieval by *meaning* is what lets a query surface relevant docs even with zero shared keywords."
+    }
+  ]
+}

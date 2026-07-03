@@ -1,0 +1,30 @@
+{
+  "slug": "arrow-functions",
+  "title": "Arrow Functions",
+  "emoji": "🏹",
+  "category": "Functions & Scope",
+  "difficulty": "Beginner",
+  "summary": "The compact => function syntax, implicit returns, and the one big difference: arrow functions don't rebind this.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Arrow functions are a shorter way to write functions, introduced in ES6. They're everywhere in modern JavaScript — especially as callbacks passed to array methods and event handlers." },
+    { "type": "code", "lang": "js", "caption": "same function, three ways", "code": "// traditional\nfunction add(a, b) {\n  return a + b;\n}\n\n// arrow, with a block body\nconst add2 = (a, b) => {\n  return a + b;\n};\n\n// arrow, with an implicit return (no braces, no return keyword)\nconst add3 = (a, b) => a + b;" },
+    { "type": "heading", "text": "Concise bodies" },
+    { "type": "text", "md": "If the body is a single expression, you can drop the braces and the `return` — the expression's value is returned automatically. With exactly one parameter you can even drop the parentheses." },
+    { "type": "code", "lang": "js", "caption": "great for callbacks", "code": "const nums = [1, 2, 3, 4];\n\nconst doubled = nums.map(n => n * 2);   // [2, 4, 6, 8]\nconst evens = nums.filter(n => n % 2 === 0); // [2, 4]\n\nconsole.log(doubled, evens);" },
+    { "type": "callout", "variant": "gotcha", "title": "Arrows don't have their own `this`", "md": "Unlike regular functions, an arrow function does **not** create its own `this` — it uses `this` from the surrounding scope. That's usually exactly what you want inside a callback (no more `const self = this`), but it means arrows are a poor choice for object **methods** that need to refer to the object via `this`." },
+    { "type": "quiz", "question": "What does `const square = n => n * n;` return when called as `square(5)`?", "options": ["undefined — it's missing a return statement", "25 — a single-expression arrow returns its expression implicitly", "A syntax error — arrows need braces", "The function itself"], "answerIndex": 1, "explanation": "With no braces, the arrow's body is a single expression that is returned implicitly. So square(5) evaluates 5 * 5 = 25." },
+    { "type": "text", "md": "Rule of thumb: reach for arrow functions for short callbacks and helpers; use a regular `function` (or a class method) when you specifically need its own `this` or the `arguments` object." }
+  ],
+  "keyTakeaways": [
+    "Arrow functions are compact: `(a, b) => a + b`.",
+    "A single-expression body returns that expression implicitly — no braces, no return.",
+    "With one parameter, the parentheses are optional: `n => n * 2`.",
+    "Arrows inherit `this` from the enclosing scope instead of creating their own — ideal for callbacks, wrong for object methods that need `this`."
+  ],
+  "exercise": {
+    "prompt": "Rewrite this function as a one-line arrow function with an implicit return:\n\n```js\nfunction greet(name) {\n  return 'Hello, ' + name + '!';\n}\n```",
+    "hint": "Drop `function` and the braces, put `=>` after the parameters, and remove the `return` keyword.",
+    "solution": "const greet = name => 'Hello, ' + name + '!';\n\n// or with a template literal:\nconst greet2 = name => `Hello, ${name}!`;"
+  }
+}

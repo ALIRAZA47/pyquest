@@ -1,0 +1,119 @@
+{
+  "slug": "what-is-an-llm",
+  "title": "What Is an LLM?",
+  "emoji": "🧠",
+  "category": "LLM Foundations",
+  "difficulty": "Beginner",
+  "summary": "A Large Language Model is a neural network trained to predict the next token — and at massive scale, that one simple goal produces fluent, reasoning, coding-capable AI like Claude and GPT.",
+  "readingTime": "8 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You've talked to Claude or ChatGPT. You've watched it write an essay, fix your code, or explain a hard idea in plain words. It feels like there's *someone* in there. But under the hood, an LLM is doing something almost comically simple, over and over, faster than you can blink.\n\nThis lesson answers the big question at the heart of the whole course: **what actually is a Large Language Model?** Once this clicks, everything else — tokens, attention, training, prompting — is just detail on top of one core idea."
+    },
+    {
+      "type": "heading",
+      "text": "The one-sentence definition"
+    },
+    {
+      "type": "text",
+      "md": "A **Large Language Model (LLM)** is a **neural network trained to predict the next token given the tokens before it.**\n\nThat's the whole objective. Not \"understand language,\" not \"answer questions,\" not \"be helpful.\" Just: *given this chunk of text, what token most likely comes next?* Everything impressive an LLM does is a side effect of getting extremely good at that single guessing game."
+    },
+    {
+      "type": "text",
+      "md": "A **token** is a chunk of text — often a word or a piece of a word (you'll go deep on this in the next lesson). For now, picture the model reading text left to right and, at every step, filling in the blank:\n\n```\nThe cat sat on the ___\n```\n\nGiven `The cat sat on the`, a well-trained model puts high probability on `mat`, some on `floor` or `roof`, and almost none on `banana`. It doesn't return one answer — it returns a **probability for every possible next token**."
+    },
+    {
+      "type": "code",
+      "code": "prompt = \"The cat sat on the\"\n\n# The model outputs a probability distribution\n# over its entire vocabulary:\nnext_token_probs = {\n    \"mat\":    0.41,\n    \"floor\":  0.18,\n    \"roof\":   0.07,\n    \"couch\":  0.05,\n    \"banana\": 0.00003,\n    # ...tens of thousands more tokens...\n}",
+      "lang": "py",
+      "caption": "An LLM's real output: a probability over every token it knows, not a single word"
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "Autocomplete on steroids",
+      "md": "You already know a baby version of this: your phone's keyboard suggesting the next word. An LLM is that same idea — **autocomplete** — but scaled up almost unimaginably.\n\nYour phone learned from a modest amount of text and predicts one word at a time with a tiny model. An LLM learned from **trillions of tokens** with **billions of parameters**. Cross enough scale and the humble \"guess the next word\" trick stops looking like autocomplete and starts looking like intelligence."
+    },
+    {
+      "type": "heading",
+      "text": "One token at a time: the generation loop"
+    },
+    {
+      "type": "text",
+      "md": "If the model only predicts *one* token, how does it write whole paragraphs? It **loops.** It predicts a token, sticks it onto the end of the text, and feeds the longer text right back in to predict the *next* one. This is called **autoregressive** generation — each new token depends on everything that came before it."
+    },
+    {
+      "type": "code",
+      "code": "text = \"The cat sat on the\"\n\nfor step in range(4):\n    probs = model.predict_next(text)   # distribution over all tokens\n    token = pick(probs)                # choose one (e.g. the likeliest)\n    text = text + \" \" + token          # append it, then repeat\n\n# step 0 -> \"mat\"    text = \"The cat sat on the mat\"\n# step 1 -> \".\"      text = \"The cat sat on the mat.\"\n# step 2 -> \"It\"     text = \"The cat sat on the mat. It\"\n# step 3 -> \"was\"    text = \"The cat sat on the mat. It was\"",
+      "lang": "py",
+      "caption": "Generation is a loop: predict, append, feed back in, repeat"
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "See it in motion",
+      "md": "Use the interactive visualizer below to watch the loop run: type a prompt, and step through the model predicting a token, appending it, and predicting again. Watching the probabilities shift as the text grows is the fastest way to make \"next-token prediction\" feel real."
+    },
+    {
+      "type": "quiz",
+      "question": "What is an LLM fundamentally trained to do?",
+      "options": [
+        "Look up facts in a database and return the matching entry",
+        "Predict the next token given the tokens that came before it",
+        "Translate every sentence into a fixed internal logic language",
+        "Store the entire internet so it can copy answers back verbatim"
+      ],
+      "answerIndex": 1,
+      "explanation": "An LLM's single training objective is next-token prediction. It has no database to look things up in — it learned statistical patterns of language. Facts, reasoning, and translation all emerge from becoming extremely good at that one prediction task."
+    },
+    {
+      "type": "heading",
+      "text": "Why scale changes everything: emergence"
+    },
+    {
+      "type": "text",
+      "md": "Here's the surprising part. \"Predict the next token\" sounds too simple to produce anything smart. But to predict the next token *really well* across all of human writing, the model is quietly forced to learn a staggering amount:\n\n- To finish `2 + 2 =` it has to learn **arithmetic**.\n- To finish `The French word for cat is` it has to learn **translation**.\n- To finish a half-written function it has to learn **how code works**.\n- To finish `The detective realized the killer was` it has to track **plot, motive, and logic**.\n\nAt small scale these abilities are absent. Crank up the size and training data, and they appear — often suddenly. Capabilities that weren't explicitly trained for, showing up on their own, are called **emergent abilities**."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "\"Large\" is doing real work in the name",
+      "md": "The word **Large** isn't marketing. Reasoning, multi-step problem solving, and coding tend to *not exist* in small models and then *emerge* past certain scales of parameters and data. The same next-token objective at a bigger scale is a genuinely different beast — which is exactly why we say **Large** Language Model."
+    },
+    {
+      "type": "heading",
+      "text": "A crucial nuance: patterns, not a database"
+    },
+    {
+      "type": "text",
+      "md": "It's tempting to imagine the model has a giant lookup table of facts inside it. It doesn't. An LLM is a **fixed set of numbers** (its parameters, or *weights*) that encode **patterns of language** — how words, ideas, and structures tend to relate. When you ask a question, it isn't retrieving a stored record; it's generating the most plausible continuation based on those learned patterns."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "This is why models can 'hallucinate'",
+      "md": "Because an LLM produces the most *plausible-sounding* continuation — not a verified lookup — it can state something false with total confidence. A fake citation or a made-up API method is just a very *likely-looking* sequence of tokens that happens not to be true.\n\nThat's not a bug you can fully patch away; it's a direct consequence of what an LLM *is*. You'll dig into this in the **Limitations & Hallucinations** lesson."
+    },
+    {
+      "type": "heading",
+      "text": "Where this course goes next"
+    },
+    {
+      "type": "text",
+      "md": "Every remaining lesson zooms in on one part of the machine you just met:\n\n1. **Tokens & Tokenization** — how text becomes the chunks the model reads.\n2. **Embeddings** — how each token turns into a vector of numbers with meaning.\n3. **The Transformer** — the architecture that processes those vectors.\n4. **Attention** — how the model decides which earlier tokens matter right now.\n5. **Next-Token Prediction & Sampling** — turning the output distribution into actual text.\n6. **Training** — pretraining, fine-tuning, and RLHF that shape the weights.\n7. **Using LLMs** — context windows, prompting, and the limits that make tools (like MCP) necessary.\n\nModern assistants like **Claude** (Anthropic) and **GPT** (OpenAI) are exactly this: giant transformers trained on next-token prediction, then polished to be helpful. Keep the core idea in your pocket and the rest of the course is just filling in *how*."
+    }
+  ],
+  "keyTakeaways": [
+    "An LLM is a neural network with one training objective: predict the next token given the tokens before it.",
+    "It generates text autoregressively — predict a token, append it, feed it back in, and loop — so long outputs are just that one step repeated.",
+    "The model outputs a probability distribution over every token it knows, not a single fixed answer.",
+    "At massive scale (billions of parameters, trillions of tokens), abilities like reasoning, translation, and coding emerge from that simple objective.",
+    "An LLM stores learned patterns of language in its weights, not a database of facts — which is why it's fluent but can also confidently hallucinate."
+  ],
+  "exercise": {
+    "prompt": "No code to run — just reason it through on paper.\n\nSuppose an LLM has this prompt: `The capital of France is`.\n\n1. Describe, in your own words, what the model produces at this single step. (What is the *shape* of its output — one word, or something bigger?)\n2. Sketch a plausible mini probability distribution over 4 candidate next tokens, and say which one the model is most likely to pick.\n3. Now the model appends its chosen token and runs again. Write out what the new input to the model is for the second step, and name what this predict-append-repeat process is called.\n4. Bonus: this model was never given a table of `country -> capital` facts. Explain in one or two sentences how it can still answer correctly.",
+    "hint": "Remember the model never returns just a word — it returns a probability for *every* token. Generation is a loop where the output of one step becomes part of the input to the next. For the bonus, think about what the model had to learn to get good at completing sentences drawn from all of human text.",
+    "solution": "**1. The output shape.** At this step the model does *not* return the word \"Paris.\" It returns a **probability distribution over its entire vocabulary** — a number for every token it knows, saying how likely each is to come next.\n\n**2. A plausible distribution.**\n```\nParis   0.88\nLyon    0.04\nlocated 0.02\na       0.01\n(...thousands more, each tiny...)\n```\nThe model is most likely to pick **`Paris`**, since it has by far the highest probability.\n\n**3. The second step.** After appending its choice, the new input becomes: `The capital of France is Paris`. The model now predicts the *next* token after that (perhaps `.` or `,`). This predict → append → feed-back-in → repeat process is called **autoregressive generation**.\n\n**4. Bonus — no fact table needed.** The model was trained to predict the next token across a huge amount of text, in which the phrase \"The capital of France is Paris\" (and countless variations) appeared many times. It didn't memorize a `country -> capital` lookup; it learned the *statistical pattern* that this phrase is overwhelmingly followed by \"Paris.\" The correct answer emerges from pattern-matching, not database retrieval."
+  }
+}

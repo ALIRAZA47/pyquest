@@ -1,0 +1,38 @@
+{
+  "slug": "es-modules",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "`add` is a named export, but this import fails. What's wrong?",
+      "code": "// math.js\nexport function add(a, b) { return a + b; }\n\n// app.js\nimport add from './math.js';",
+      "options": [
+        "Named exports must be imported with braces: import { add } from './math.js'",
+        "You can't export functions",
+        "math.js needs a default export",
+        "The file extension must be omitted"
+      ],
+      "answerIndex": 0,
+      "explanation": "`add` is a named export, so it must be imported inside braces: `import { add } from './math.js'`. Importing without braces looks for a default export, which math.js doesn't have."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Given `export default function greet() { return 'hi'; }`, which import is correct?",
+      "code": "// which line correctly imports the default?",
+      "options": [
+        "import greet from './greet.js'",
+        "import { greet } from './greet.js'",
+        "import { default } from './greet.js'",
+        "import * from './greet.js'"
+      ],
+      "answerIndex": 0,
+      "explanation": "Default exports are imported without braces and you choose the local name: `import greet from './greet.js'`. Braces are only for named exports."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the line to export PI as a named export.",
+      "codeTemplate": "{{blank}} const PI = 3.14159;",
+      "blanks": [{ "answer": "export", "accept": ["EXPORT"] }],
+      "explanation": "Prefixing a declaration with `export` makes it a named export other modules can import with `import { PI } from ...`."
+    }
+  ]
+}

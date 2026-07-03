@@ -1,0 +1,29 @@
+{
+  "slug": "forms-and-controlled-inputs",
+  "title": "Forms & Controlled Inputs",
+  "emoji": "📝",
+  "category": "State & Interaction",
+  "difficulty": "Intermediate",
+  "summary": "Wire form fields to state so React is the single source of truth — the controlled-component pattern.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "In plain HTML, an `<input>` keeps its own value in the DOM. In React we usually make inputs **controlled**: their value comes from state, and every keystroke updates that state. React becomes the single source of truth for what's in the field." },
+    { "type": "code", "lang": "jsx", "caption": "a controlled input", "code": "import { useState } from 'react';\n\nfunction NameField() {\n  const [name, setName] = useState('');\n  return (\n    <input\n      value={name}\n      onChange={e => setName(e.target.value)}\n      placeholder=\"Your name\"\n    />\n  );\n}" },
+    { "type": "text", "md": "Two bindings make it controlled: `value={name}` (state → input) and `onChange` (input → state). Because the value always mirrors state, you can validate, format, or disable the submit button based on it." },
+    { "type": "callout", "variant": "gotcha", "title": "value without onChange = read-only", "md": "If you set `value={name}` but forget `onChange`, React locks the field — typing does nothing, and you'll see a console warning. Always pair `value` with an `onChange` (or use `defaultValue` for an uncontrolled field)." },
+    { "type": "heading", "text": "Handling submit" },
+    { "type": "code", "lang": "jsx", "caption": "prevent the default reload", "code": "function Form() {\n  const [email, setEmail] = useState('');\n  function handleSubmit(e) {\n    e.preventDefault();      // stop the full-page reload\n    console.log('submit', email);\n  }\n  return (\n    <form onSubmit={handleSubmit}>\n      <input value={email} onChange={e => setEmail(e.target.value)} />\n      <button>Send</button>\n    </form>\n  );\n}" },
+    { "type": "quiz", "question": "What makes an input a *controlled* component?", "options": ["It has a placeholder", "Its value comes from state and changes flow through onChange back into state", "It is inside a <form>", "It uses defaultValue"], "answerIndex": 1, "explanation": "A controlled input's value is driven by React state (value={...}) and every change updates that state (onChange). React is the source of truth. defaultValue makes an UNcontrolled input." }
+  ],
+  "keyTakeaways": [
+    "Controlled inputs derive their value from state and update it on every change.",
+    "Bind both `value={state}` and `onChange={e => setState(e.target.value)}`.",
+    "value without onChange makes the field read-only (and warns).",
+    "Call `e.preventDefault()` in onSubmit to stop the browser's full-page reload."
+  ],
+  "exercise": {
+    "prompt": "Build a controlled `<textarea>` whose current character count is shown below it (e.g. '12 characters'). Store the text in state.",
+    "hint": "Bind value and onChange to a `text` state, then render `{text.length} characters`.",
+    "solution": "function Note() {\n  const [text, setText] = useState('');\n  return (\n    <div>\n      <textarea value={text} onChange={e => setText(e.target.value)} />\n      <p>{text.length} characters</p>\n    </div>\n  );\n}"
+  }
+}

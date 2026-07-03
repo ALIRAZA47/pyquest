@@ -1,0 +1,33 @@
+{
+  "slug": "higher-order-functions",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "What does this print?",
+      "code": "function makeAdder(n) {\n  return x => x + n;\n}\nconst add10 = makeAdder(10);\nconsole.log(add10(5));",
+      "options": ["15", "10", "5", "undefined"],
+      "answerIndex": 0,
+      "explanation": "makeAdder returns a function that adds n. add10 remembers n = 10 (a closure), so add10(5) returns 5 + 10 = 15."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the call so `forEach` logs each name.",
+      "codeTemplate": "['Ada', 'Bea'].forEach({{blank}} => console.log(name));",
+      "blanks": [{ "answer": "name", "accept": ["(name)"] }],
+      "explanation": "forEach calls the callback once per element, passing the element as the argument. Naming that parameter `name` lets you log each one."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "This should run the callback, but it logs the function instead of calling it. Fix?",
+      "code": "function run(cb) {\n  console.log(cb);\n}\nrun(() => 'hi');",
+      "options": [
+        "Change console.log(cb) to console.log(cb()) so the callback is actually invoked",
+        "Callbacks can't be called inside functions",
+        "Remove the arrow function",
+        "Add the new keyword: new cb()"
+      ],
+      "answerIndex": 0,
+      "explanation": "`cb` is the function value; to run it you must call it with parentheses: `cb()`. Logging `cb` just prints the function itself."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "typescript-interfaces",
+  "challenges": [
+    {
+      "type": "fix-bug",
+      "prompt": "This object is rejected by TypeScript. Why?",
+      "code": "interface User { name: string; age: number; }\nconst u: User = { name: 'Ada' };",
+      "options": [
+        "'age' is required but missing — add it, or mark it optional with age?: number",
+        "name must be optional",
+        "Interfaces can't type objects",
+        "You must write class User"
+      ],
+      "answerIndex": 0,
+      "explanation": "The interface requires both name and age. The object omits age, so TS errors. Provide age, or make it optional with `age?: number` if it may be absent."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "Which values are allowed for `s: Status`?",
+      "code": "type Status = 'todo' | 'doing' | 'done';\nlet s: Status;",
+      "options": [
+        "Only the strings 'todo', 'doing', or 'done'",
+        "Any string",
+        "Any value at all",
+        "Only numbers"
+      ],
+      "answerIndex": 0,
+      "explanation": "A literal union type restricts the value to exactly those literals. Assigning any other string (e.g. 'nope') is a compile-time error."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Mark `nickname` as an optional property.",
+      "codeTemplate": "interface Person {\n  name: string;\n  nickname{{blank}}: string;\n}",
+      "blanks": [{ "answer": "?", "accept": ["? "] }],
+      "explanation": "A `?` after the property name makes it optional, so objects of this type may include nickname or leave it out."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "slug": "how-llms-are-trained",
+  "title": "How LLMs Are Trained",
+  "emoji": "🎓",
+  "category": "Training an LLM",
+  "difficulty": "Intermediate",
+  "summary": "Pretraining teaches an LLM by making it predict the next token across trillions of words — no human labels needed, because the text supplies its own answers.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "You know that an LLM predicts the next token. But *how does it learn* to make those predictions well? Nobody sits down and hand-labels the right answer for every sentence on the internet. The trick is elegant: the model teaches itself by playing a fill-in-the-blank game with ordinary text, billions of times. This stage is called **pretraining**, and it's where a random pile of numbers slowly turns into something that has read most of the web."
+    },
+    {
+      "type": "heading",
+      "text": "The core idea: the text is its own answer key"
+    },
+    {
+      "type": "text",
+      "md": "Training a model usually needs labeled examples — a photo tagged \"cat,\" a review tagged \"positive.\" Labels are expensive; humans have to make them. Pretraining sidesteps this entirely with **self-supervised learning**: take any sentence, hide the next token, and ask the model to guess it. The hidden token *is* the label — and it came free with the text.\n\nBecause every position in every document gives one more (context → next token) example, a single web page yields thousands of training examples, and the whole internet yields trillions. No annotators required."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A book with the answer taped to the next line",
+      "md": "Imagine studying from a book where the answer to each question is printed on the following line. You cover it, guess, then slide your hand down to check. Every sentence is a fresh quiz that grades itself — that's self-supervision. The model quizzes itself on real text, and the *actual next word* tells it whether it was right."
+    },
+    {
+      "type": "heading",
+      "text": "Measuring surprise: the loss"
+    },
+    {
+      "type": "text",
+      "md": "To learn, the model needs a number that says *how wrong* it was. That number is the **loss**, and for next-token prediction we use **cross-entropy loss**. In plain terms, it measures how **surprised** the model was by the true next token.\n\nRemember that the model outputs a probability for every possible next token. Cross-entropy just looks at the probability it assigned to the *correct* one, via `-log(p)`. If it was confident and right, the loss is tiny. If it was confident and wrong, the loss is huge — the log shape makes the penalty explode as confidence in the truth drops toward zero, so the model is punished hardest for being confidently wrong."
+    },
+    {
+      "type": "code",
+      "code": "# The true next token is \"mat\". What probability did the model give it?\n\n#  guess         P(\"mat\")     loss = -log(P(\"mat\"))\n#  confident-right   0.90        0.11   <- barely surprised\n#  unsure            0.20        1.61   <- fairly surprised\n#  confident-wrong   0.01        4.61   <- very surprised = big penalty\n\nloss = -log(prob_of_correct_token)   # cross-entropy, one token",
+      "lang": "text",
+      "caption": "Cross-entropy loss = the negative log-probability of the correct token. Lower = less surprised."
+    },
+    {
+      "type": "heading",
+      "text": "How the parameters actually change"
+    },
+    {
+      "type": "text",
+      "md": "The model's knowledge lives in its **parameters** (also called weights) — billions of numbers that start out random. Training nudges each one, over and over, to make the loss smaller. Two ideas do the heavy lifting:\n\n- **Backpropagation** figures out, for every single parameter, which direction to nudge it (up or down) to reduce the loss. It's calculus running backward through the network.\n- **Gradient descent** takes a small step in that direction. Do this on batch after batch of text and the loss drifts steadily downward.\n\nThe step size is the **learning rate** — too big and training becomes unstable; too small and it crawls.\n\nPicture a mixing board with billions of knobs and one dial reading *\"how wrong am I.\"* Backprop whispers which way to nudge every knob at once; a gradient step makes all those tiny adjustments; the dial ticks down. Nobody says what any single knob *means* — the meaning emerges from relentlessly chasing a lower number."
+    },
+    {
+      "type": "code",
+      "code": "params = random_init()          # billions of weights, all garbage at first\n\nfor step in range(num_steps):        # often hundreds of thousands of steps\n    batch = sample(corpus)           # a chunk of text (many sequences)\n    preds = model(batch, params)     # predict next token at every position\n    loss  = cross_entropy(preds, batch.next_tokens)   # how surprised were we?\n\n    grads  = backprop(loss, params)  # which way to nudge each parameter\n    params = params - lr * grads     # gradient descent: take one small step\n\n# after enough steps, params encode a huge amount about language",
+      "lang": "py",
+      "caption": "The pretraining loop, stripped to its essence: predict, measure surprise, nudge, repeat."
+    },
+    {
+      "type": "quiz",
+      "question": "Why is pretraining called 'self-supervised' rather than 'unsupervised'?",
+      "options": [
+        "Because a human supervises the model in real time as it trains",
+        "Because there's a training signal — the true next token — but it comes free from the text itself, no human labels needed",
+        "Because the model has no objective and just clusters similar text",
+        "Because it only works on text that was written by other AIs"
+      ],
+      "answerIndex": 1,
+      "explanation": "There genuinely is a supervision signal (the correct next token), so it isn't 'unsupervised.' The twist is that the label is harvested automatically from the raw text — every sentence hides its own answer — so no human has to label anything. That's what 'self-supervised' means."
+    },
+    {
+      "type": "heading",
+      "text": "Scale is the secret ingredient"
+    },
+    {
+      "type": "text",
+      "md": "One next-token guess teaches the model almost nothing. The magic comes from doing it at staggering scale. Pretraining runs for weeks or months on thousands of specialized chips — **GPUs** or **TPUs** — chewing through many passes over a corpus of trillions of tokens.\n\nCrucially, researchers found this improvement is *predictable*. **Scaling laws** show that as you increase three things together — the number of **parameters**, the amount of **data**, and the **compute** you spend — the loss keeps dropping in a smooth, forecastable curve. That predictability is why labs invest so heavily up front: they can estimate how good a model will be *before* building it."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Scale isn't just 'make it bigger'",
+      "md": "It's a myth that you only grow the model. A giant model trained on too little data is *undertrained* and wastes its capacity. Scaling laws are about **balance**: parameters, data, and compute must grow together. Throwing more parameters at a fixed dataset hits diminishing returns fast."
+    },
+    {
+      "type": "heading",
+      "text": "What you get: a base model"
+    },
+    {
+      "type": "text",
+      "md": "After pretraining, you have a **base model** (also called a foundation or pretrained model). It's an extraordinary text *completer*: give it the start of anything and it continues in a statistically plausible way. It has absorbed grammar, facts, reasoning patterns, code, and countless writing styles.\n\nBut it is **not yet a helpful assistant**. Ask a raw base model \"What is the capital of France?\" and it might reply with more questions — because on the web, questions are often followed by *more questions*, not answers. It completes text; it doesn't reliably *follow instructions* or behave like a chatbot. Turning it into the polite assistant you actually chat with takes a second stage — **post-training** (instruction tuning and techniques like RLHF), a lesson of its own. The one-liner to remember: **pretraining builds raw knowledge; post-training shapes behavior.**"
+    },
+    {
+      "type": "quiz",
+      "question": "You type 'What is the capital of France?' into a raw base model (no post-training). What's the most likely reason it might NOT just answer 'Paris'?",
+      "options": [
+        "Base models don't contain any factual knowledge",
+        "It was never trained on any text about France",
+        "It only completes text plausibly — and online, a question is often followed by more questions, not a clean answer",
+        "It's broken; a working model would always answer directly"
+      ],
+      "answerIndex": 2,
+      "explanation": "A base model almost certainly 'knows' the capital of France from pretraining. But it wasn't taught to behave like a helpful assistant — it just continues text the way the training data tends to. Reliable question-answering and instruction-following are installed later, during post-training."
+    }
+  ],
+  "keyTakeaways": [
+    "Pretraining is self-supervised: the next token in ordinary text acts as the label, so no human annotation is needed and the whole web becomes training data.",
+    "Cross-entropy loss measures how surprised the model was by the true token; backpropagation plus gradient descent nudge billions of parameters to shrink that surprise, batch after batch.",
+    "Scaling laws say that growing parameters, data, and compute together yields predictably better models — but they must grow in balance, not just bigger.",
+    "Training runs for weeks or months on thousands of GPUs/TPUs, making many passes over trillions of tokens.",
+    "The output is a base model: a superb text completer that has absorbed knowledge but is not yet a helpful, instruction-following assistant (that comes from post-training)."
+  ],
+  "exercise": {
+    "prompt": "Reason about the loss, no computation required beyond comparing numbers.\n\nThe true next token in a sentence is `Paris`. Three snapshots of the same model — early in training, mid-training, and late in training — assign these probabilities to `Paris`:\n\n| Snapshot | P(\"Paris\") |\n|---|---|\n| Early | 0.02 |\n| Mid | 0.30 |\n| Late | 0.85 |\n\nCross-entropy loss for this token is `-log(P(\"Paris\"))`.\n\n1. Without computing exact values, rank the three snapshots from **highest loss** to **lowest loss**.\n2. Explain what is happening to the model between the Early and Late snapshots, in terms of 'surprise.'\n3. A friend says: 'The Late model has 0.85 on Paris, so its loss on this token is basically zero — training is done.' What's wrong with that reasoning?",
+    "hint": "`-log(p)` gets larger as `p` gets smaller. So the snapshot that gave `Paris` the *lowest* probability has the *highest* loss. For part 3, think about what a loss of exactly zero would require, and remember training optimizes over ALL tokens in ALL documents, not one.",
+    "solution": "**1. Highest to lowest loss: Early → Mid → Late.**\nBecause loss is `-log(p)`, smaller probability means bigger loss. Early gave `Paris` only 0.02 (very surprised, so `-log(0.02) ≈ 3.9` — high loss); Mid gave 0.30 (`-log(0.30) ≈ 1.2`); Late gave 0.85 (`-log(0.85) ≈ 0.16` — barely surprised, low loss).\n\n**2. What's happening:** Between Early and Late, gradient descent has repeatedly nudged the parameters so the model piles more and more probability onto the token that actually comes next. In 'surprise' terms, the model started out shocked to see `Paris` (2% is basically 'I didn't expect that') and ended up almost expecting it (85%). Lower surprise = lower loss = better prediction.\n\n**3. What's wrong:** A loss of exactly zero would require `P(\"Paris\") = 1.0`, and 0.85 is not that — there's still real loss (~0.16) on this token. More importantly, this is the loss on a *single* token in *one* sentence. Training minimizes the *average* loss across trillions of tokens in millions of documents. Nailing one token says nothing about the rest; 'training is done' is a judgment about the whole corpus, not one lucky prediction."
+  }
+}

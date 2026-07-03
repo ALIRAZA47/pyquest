@@ -5,12 +5,14 @@ import C_assignment_operators from "./challenges/assignment-operators.json";
 import C_booleans_and_none from "./challenges/booleans-and-none.json";
 import C_break_continue_pass from "./challenges/break-continue-pass.json";
 import C_builtin_tools from "./challenges/builtin-tools.json";
+import C_class_and_static_methods from "./challenges/class-and-static-methods.json";
 import C_classes_and_objects from "./challenges/classes-and-objects.json";
 import C_closures from "./challenges/closures.json";
 import C_comments from "./challenges/comments.json";
 import C_comparison_operators from "./challenges/comparison-operators.json";
 import C_context_managers from "./challenges/context-managers.json";
 import C_data_types from "./challenges/data-types.json";
+import C_dataclasses from "./challenges/dataclasses.json";
 import C_decorators from "./challenges/decorators.json";
 import C_defining_functions from "./challenges/defining-functions.json";
 import C_dictionaries from "./challenges/dictionaries.json";
@@ -39,6 +41,7 @@ import C_pep8_and_style from "./challenges/pep8-and-style.json";
 import C_pip_and_packages from "./challenges/pip-and-packages.json";
 import C_polymorphism from "./challenges/polymorphism.json";
 import C_popular_libraries from "./challenges/popular-libraries.json";
+import C_properties from "./challenges/properties.json";
 import C_raising_and_custom_exceptions from "./challenges/raising-and-custom-exceptions.json";
 import C_reading_writing_files from "./challenges/reading-writing-files.json";
 import C_recursion from "./challenges/recursion.json";
@@ -70,12 +73,14 @@ export const RAW_CHALLENGES: Record<string, unknown> = {
   "booleans-and-none": C_booleans_and_none,
   "break-continue-pass": C_break_continue_pass,
   "builtin-tools": C_builtin_tools,
+  "class-and-static-methods": C_class_and_static_methods,
   "classes-and-objects": C_classes_and_objects,
   "closures": C_closures,
   "comments": C_comments,
   "comparison-operators": C_comparison_operators,
   "context-managers": C_context_managers,
   "data-types": C_data_types,
+  "dataclasses": C_dataclasses,
   "decorators": C_decorators,
   "defining-functions": C_defining_functions,
   "dictionaries": C_dictionaries,
@@ -104,6 +109,7 @@ export const RAW_CHALLENGES: Record<string, unknown> = {
   "pip-and-packages": C_pip_and_packages,
   "polymorphism": C_polymorphism,
   "popular-libraries": C_popular_libraries,
+  "properties": C_properties,
   "raising-and-custom-exceptions": C_raising_and_custom_exceptions,
   "reading-writing-files": C_reading_writing_files,
   "recursion": C_recursion,

@@ -1,0 +1,51 @@
+{
+  "slug": "tokens-and-tokenization",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "A tokenizer gives super-common words their own single token and splits rare words into sub-word pieces. Given the sentence below, which word is MOST likely to become a single token?",
+      "code": "Sentence: \"The hyperparameterization was the problem.\"\n\nCandidates: \"The\"  vs.  \"hyperparameterization\"",
+      "options": [
+        "\"hyperparameterization\", because longer words are always one token",
+        "\"The\", because extremely common short words earn their own dedicated token",
+        "Neither — every word is split into individual letters",
+        "Both are exactly one token each"
+      ],
+      "answerIndex": 1,
+      "explanation": "\"The\" is one of the most frequent words in English, so BPE merges it into a single dedicated token. \"hyperparameterization\" is rare, so it gets built from several sub-word pieces (something like \"hyper\" + \"parameter\" + \"ization\"). Length works against a word being a single token, not for it."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A teammate is estimating cost and writes down this reasoning. One statement is a misconception. Which line should be corrected?",
+      "code": "1. APIs bill per token, for both input and output.\n2. A ~200K context window means ~200,000 tokens.\n3. Translating an English prompt to Chinese always uses fewer tokens\n   because the text looks shorter on screen.\n4. Numbers can split into multiple tokens (e.g. 31415 -> 314 + 15).",
+      "options": [
+        "Line 1 — APIs only bill for output, not input",
+        "Line 3 — non-English text (especially non-Latin scripts) often tokenizes LESS efficiently, so it can cost MORE tokens, not fewer",
+        "Line 2 — context windows are measured in words, not tokens",
+        "Line 4 — numbers are always exactly one token each"
+      ],
+      "answerIndex": 1,
+      "explanation": "Line 3 is the misconception. The ~4-chars-per-token intuition only holds for English. Non-Latin scripts often tokenize near one token per character, so a translation can cost more tokens even though it looks shorter. The other lines are all correct: billing is per token (input and output), context is measured in tokens, and numbers frequently split into multiple tokens."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Complete the rule of thumb for estimating token counts in typical English text.",
+      "codeTemplate": "Rule of thumb: about {{blank}} characters is roughly 1 token in English.",
+      "blanks": [
+        { "answer": "4", "accept": ["four", "~4"] }
+      ],
+      "explanation": "For ordinary English prose, ~4 characters ≈ 1 token (about 75 words per 100 tokens). It's an approximation — always measure exactly for code, numbers, or non-English text — but it's great for a quick sanity check on cost and context limits."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the tokenization pipeline in the correct order — from the text you type to the numbers the model actually processes.",
+      "lines": [
+        "You provide raw text, e.g. \"Tokenization is fun!\"",
+        "The tokenizer splits the text into tokens (whole words or sub-word pieces)",
+        "Each token is looked up in the vocabulary to get its integer ID",
+        "The list of integer IDs is fed into the model"
+      ],
+      "explanation": "Everything starts with your raw text. The tokenizer splits it into known tokens (common words stay whole; rare words break into sub-word pieces). Each token is then mapped to its integer ID via the vocabulary lookup table, and it's that list of IDs — never the letters themselves — that the model computes on."
+    }
+  ]
+}

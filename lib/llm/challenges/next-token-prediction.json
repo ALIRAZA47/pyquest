@@ -1,0 +1,54 @@
+{
+  "slug": "next-token-prediction",
+  "challenges": [
+    {
+      "type": "predict-output",
+      "prompt": "The model's output head produced these logits for the next token. Under greedy decoding, which token is chosen?",
+      "code": "logits = {\n    \"sat\":  7.4,\n    \"ran\":  7.9,\n    \"slept\": 2.1,\n    \"the\":  -3.0,\n}\n\nnext_token = argmax(softmax(logits))",
+      "options": [
+        "\"sat\" — it looks like the most natural word",
+        "\"ran\" — it has the highest logit",
+        "\"the\" — function words are always most likely",
+        "It's random, so you can't tell"
+      ],
+      "answerIndex": 1,
+      "explanation": "Softmax preserves order: the largest logit becomes the largest probability. Greedy decoding takes the argmax, so it picks the token with the highest logit — \"ran\" (7.9), edging out \"sat\" (7.4). Greedy is deterministic, so there's nothing random about it."
+    },
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of the autoregressive generation loop in the correct order for producing ONE token.",
+      "lines": [
+        "Feed the current sequence of tokens through the model",
+        "Take the final position's output and compute one logit per vocabulary token",
+        "Apply softmax to turn the logits into a probability distribution",
+        "Pick the next token (e.g. argmax for greedy decoding)",
+        "Append the chosen token to the sequence",
+        "Check the stop condition: stop token emitted or max length reached"
+      ],
+      "explanation": "Each generation step flows the same way: run the model, get logits from the last position, softmax into probabilities, choose a token, append it, then check whether to stop or loop again. The appended token becomes part of the input for the very next step — that feedback is what makes it autoregressive."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner explains next-token prediction like this. One sentence contains a real misconception. Which one is WRONG?",
+      "code": "# A learner's notes on how an LLM generates text:\n\n1. The model reads the prompt and predicts the next token.\n2. Softmax turns the logits into probabilities that sum to 1.\n3. Greedy decoding picks the token with the highest probability.\n4. The model plans the whole answer up front, then types it out.",
+      "options": [
+        "Line 1 — the model does predict the next token from the prompt",
+        "Line 2 — softmax does produce probabilities that sum to 1",
+        "Line 3 — greedy decoding does take the highest-probability token",
+        "Line 4 — the model does NOT plan ahead; it commits to one token at a time"
+      ],
+      "answerIndex": 3,
+      "explanation": "Line 4 is the misconception. An LLM never drafts a full answer in advance. At each step it sees only the tokens so far and commits to a single next token with no lookahead or revision. Coherent output emerges because each locally-good token, chained together, tends to stay on track."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the two blanks that describe how the generation loop ends.",
+      "codeTemplate": "The loop keeps generating until one of two things happens:\n(1) the model emits a special {{blank}} token that means \"I'm done\", or\n(2) the sequence reaches the maximum {{blank}} allowed by the caller.",
+      "blanks": [
+        { "answer": "stop", "accept": ["end", "end-of-text", "eos", "end-of-turn", "END"] },
+        { "answer": "length", "accept": ["length limit", "max length", "token limit", "max_tokens"] }
+      ],
+      "explanation": "Generation halts on whichever comes first: a learned stop token (end-of-text / end-of-turn) where the model signals it's finished, or a hard maximum-length cap set by the caller. That's why responses either end cleanly with punctuation or get cut off mid-thought when they hit the length limit."
+    }
+  ]
+}

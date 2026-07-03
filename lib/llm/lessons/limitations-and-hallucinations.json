@@ -1,0 +1,127 @@
+{
+  "slug": "limitations-and-hallucinations",
+  "title": "Limitations & Hallucinations",
+  "emoji": "⚠️",
+  "category": "Using LLMs",
+  "difficulty": "Beginner",
+  "summary": "Because an LLM predicts plausible next tokens rather than checking truth, it can state false things with total confidence, is frozen at its training cutoff, and has no live access to your data or the internet — so knowing its limits and how to work around them is a core skill.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "By now you know the machine underneath: an LLM is a next-token predictor. Given some text, it produces a probability distribution over what comes next, samples a token, and repeats. That single mechanism is astonishingly powerful — and it's also the source of every serious limitation in this lesson.\n\nThe honest version of the story is this: **the model optimizes for *plausible*, not for *true*.** Most of the time plausible and true line up, which is why LLMs feel so capable. But when they diverge, the model will happily hand you something that *sounds* right and is completely wrong — with the exact same confident tone it uses when it's correct. Knowing where and why that happens is what separates a careful user from a burned one."
+    },
+    {
+      "type": "heading",
+      "text": "Hallucination: confident, fluent, and wrong"
+    },
+    {
+      "type": "text",
+      "md": "A **hallucination** is when a model states something false as if it were fact — a made-up citation, a nonexistent function, a wrong date, a plausible but fabricated quote. It's not lying (that would require knowing the truth and hiding it) and it's not a bug in the usual sense. It's the mechanism working exactly as designed.\n\nRemember what training rewarded: producing text that looks like the text humans write. Nothing in that objective is a **fact-checker**. There is no internal database the model consults, no little green 'verified' light. When you ask for the title of a 2019 paper by a specific author, the model doesn't *look it up* — it generates the sequence of tokens that most plausibly follows your question. If a real title is well-represented in its training data, that plausible sequence *is* the real title. If it isn't, the model still produces a plausible-sounding title, because a plausible title is exactly what the pattern demands."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "The improv actor with no script",
+      "md": "Picture a brilliant improv actor playing 'world expert.' Ask a question and they will *always* stay in character and answer smoothly — that's the whole game. If they happen to know the fact, great, the answer is right. If they don't, they don't break character to say 'I have no idea'; they invent something that fits the scene perfectly. The fluency is identical either way. An LLM is that actor: it never steps off stage to check whether the line it's about to deliver is actually true."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Confidence is not calibration",
+      "md": "The most dangerous part of hallucination is that **the tone doesn't change.** A wrong answer arrives with the same polished, assured phrasing as a right one. The model has no reliable internal signal of 'I'm unsure here' that surfaces as hedging. So you cannot use *how confident it sounds* as a proxy for *how likely it is to be correct.* Treat fluency and certainty as style, not evidence."
+    },
+    {
+      "type": "quiz",
+      "question": "You ask an LLM for a citation and it returns a real-sounding author, title, journal, and year — but the paper doesn't exist. Why did this happen?",
+      "options": [
+        "The model looked up a database and returned a corrupted record",
+        "The model predicts plausible token sequences and has no built-in check for whether the citation is real",
+        "The model was deliberately trying to mislead you",
+        "The citation exists but the model's internet connection failed"
+      ],
+      "answerIndex": 1,
+      "explanation": "A citation is a very patterned string — Author, Title, Journal, Year. The model can generate a *plausible* one from that pattern even when no matching paper exists in reality. There's no fact-checker in the loop verifying the output against a source, so a fabricated-but-well-formed citation is exactly the kind of confident error the mechanism produces."
+    },
+    {
+      "type": "heading",
+      "text": "Knowledge cutoff: frozen in time"
+    },
+    {
+      "type": "text",
+      "md": "A model's knowledge comes entirely from its **training data**, which was collected up to a certain point — its **knowledge cutoff**. After training, the weights are frozen. The model does not keep learning from your conversations, and it does not know anything that happened after that date.\n\nSo if you ask about a product released last week, an election held yesterday, or a library version shipped this morning, the model is answering from a snapshot of the past. Worse, it often won't *say* it's out of date — it'll answer confidently from stale knowledge, or hallucinate to fill the gap. 'What's the latest version of X?' is one of the most reliable ways to get a wrong, outdated, or invented answer."
+    },
+    {
+      "type": "code",
+      "code": "Training data collected  ──────────────►│  (knowledge cutoff)\n                                         │\n   Everything here the model \"knows\"     │   Everything here is\n   (frozen into its weights)             │   INVISIBLE to the model:\n                                         │   - news after the cutoff\n                                         │   - your private files\n                                         │   - today's stock price\n                                         │   - that API you shipped today\n\n   You ask a question ─────────────────────────────►  ● (now)",
+      "lang": "text",
+      "caption": "The model's knowledge ends at the cutoff. Recent events and anything outside its training data are simply not there."
+    },
+    {
+      "type": "heading",
+      "text": "No live access — to anything — by default"
+    },
+    {
+      "type": "text",
+      "md": "This one surprises people. A bare LLM cannot browse the web, read your files, run code, query your database, or check today's weather. On its own it is a **closed box**: text in, text out. It has no senses and no hands.\n\nSo when a model 'answers a question about your company's Q3 numbers,' one of two things is true. Either (a) those numbers were pasted into the prompt and it's reading them from the context window, or (b) it's making them up. There is no third option where the model 'went and looked.' Any real capability to fetch fresh or private information has to be *given* to the model explicitly — which is exactly what tools do (more on that in a moment)."
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "title": "\"It answered, so it must have checked\" — no",
+      "md": "Getting a specific, detailed answer feels like proof the model consulted a source. It isn't. Unless a tool or retrieval step is wired in (and you can usually tell — there'll be a search step, a browsing indicator, or a document you provided), a plain model is generating from its frozen weights and whatever is in the prompt. Specificity is not sourcing."
+    },
+    {
+      "type": "heading",
+      "text": "The rest of the limitation list"
+    },
+    {
+      "type": "text",
+      "md": "Beyond hallucination, staleness, and no live access, a few more weaknesses fall out of the same 'predict plausible tokens' design:\n\n- **Bias.** The model learned from human-written text, so it absorbs the patterns, stereotypes, and skews present in that data. It can reproduce them, sometimes subtly.\n- **Prompt sensitivity.** Reword a question and you can get a meaningfully different answer. Because output is a probabilistic function of the input tokens, small phrasing changes ('explain simply' vs 'explain rigorously', or even word order) can shift the result.\n- **Math and precise recall.** The model isn't a calculator; it predicts what a plausible answer *looks like*. Multi-step arithmetic, exact figures, long ID numbers, and verbatim quotes are all shaky, because 'plausible-looking' and 'exactly correct' aren't the same target.\n- **No true memory across chats.** As you saw with context windows, the model is stateless. It doesn't remember you between conversations unless something outside the model stores and re-supplies that history."
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "title": "Why 2 + 2 can go wrong",
+      "md": "It feels absurd that a system that writes flawless essays can flub arithmetic. But it's the same mechanism: the model isn't *computing* 47 × 89, it's predicting the tokens that tend to follow that expression. For small, common sums the pattern is everywhere in training data and it's usually right. For larger or unusual calculations the pattern is sparse, so it produces a plausible-looking number that may be off. The fix isn't a smarter guess — it's handing the model an actual calculator (a tool)."
+    },
+    {
+      "type": "heading",
+      "text": "Mitigations: how to work around the limits"
+    },
+    {
+      "type": "text",
+      "md": "None of this makes LLMs unusable — it makes them *tools you drive carefully*. The standard mitigations all share one idea: **stop asking the model to be a source of truth, and start feeding it truth.**\n\n- **Grounding / retrieval (RAG).** Fetch the relevant, up-to-date documents and put them in the prompt, then ask the model to answer *from those*. Now the facts come from your source, not the model's memory.\n- **Citations.** Have the model point to *where* each claim came from, so a human (or another check) can verify it instead of trusting fluency.\n- **Verification.** For anything that matters, check the output — run the code, confirm the number, click the link. Treat the model's answer as a draft to be validated, not a verdict.\n- **Give the model tools.** Let it call a calculator for math, a search engine for fresh facts, a database for private data, a file reader for your documents. A model *with* the right tool stops guessing and starts fetching."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these actually attacks the *root cause* of both hallucination and knowledge-cutoff staleness?",
+      "options": [
+        "Asking the model to 'please be accurate and don't make things up'",
+        "Turning the temperature all the way down to 0",
+        "Grounding the answer in retrieved, up-to-date source documents (and/or giving the model a tool to fetch them)",
+        "Making the prompt as long and detailed as possible"
+      ],
+      "answerIndex": 2,
+      "explanation": "Politely asking for accuracy, or lowering temperature, changes tone and randomness but doesn't give the model any new true information — it will still confidently fill gaps from stale, frozen weights. Grounding (RAG) and tools attack the actual cause: they supply real, current facts the model can answer *from*, instead of asking it to recall or invent them."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Next up: connecting the model to real tools and data (MCP)",
+      "md": "Notice the common thread in every mitigation: the model gets better the moment you connect it to something *outside itself* — a document store, a calculator, a live database, the web. The obvious next question is *how* you plug those in cleanly and safely. That's the entire subject of the next course, the **Model Context Protocol (MCP)** — a standard way to give an LLM real tools and real data so it can look things up instead of guessing. Everything you just learned about limits is the reason MCP exists."
+    }
+  ],
+  "keyTakeaways": [
+    "LLMs optimize for plausible tokens, not truth — so they can hallucinate false facts, citations, and code with complete, unwavering confidence.",
+    "A model's knowledge is frozen at its training cutoff; it doesn't know recent events and won't reliably tell you it's out of date.",
+    "By default a bare LLM has no live access to the web, your files, tools, or private data — a detailed answer is not proof it 'looked anything up.'",
+    "Related weaknesses — bias, prompt sensitivity, shaky math and exact recall — all trace back to the same predict-plausible-text mechanism.",
+    "The fix is to feed the model truth rather than trust its memory: grounding/retrieval (RAG), citations, human verification, and giving it real tools."
+  ],
+  "exercise": {
+    "prompt": "A colleague builds an internal assistant on top of a plain LLM (no tools, no retrieval) and asks it three questions. For **each**, decide whether the answer is trustworthy as-is, and name the specific limitation at play if not:\n\n1. \"Summarize the key argument of this contract\" — with the full contract text pasted into the prompt.\n2. \"What is the current version number of our internal billing library, released two days ago?\"\n3. \"Multiply these two 6-digit invoice totals and give me the exact result.\"\n\nThen: pick the **one** question whose answer you'd trust most, and explain in one sentence why the mechanism makes it safer than the others.",
+    "hint": "Ask for each question: does the needed information live *inside the prompt/training data*, or does it require something the bare model can't do — recent knowledge, live access, or exact calculation? Match each failure to a named limitation from the lesson (knowledge cutoff, no live access, math/precise recall, hallucination).",
+    "solution": "1. **Trustworthy (with normal care).** The contract text is *in the context window*, so the model is summarizing from provided source, not recalling from memory. This plays to the model's strength — reading and compressing text that's right in front of it. (Still worth a skim, but it's not a hallucination-prone ask.)\n\n2. **Not trustworthy — knowledge cutoff + no live access.** A library released two days ago is almost certainly after the model's training cutoff, and a bare model can't check a package registry. It will either answer with a stale/old version or hallucinate a plausible-looking version number. Fix: retrieval or a tool that queries the actual registry.\n\n3. **Not trustworthy — math / precise recall.** The model predicts a plausible-looking product, not a computed one; multi-digit multiplication is exactly where 'plausible' and 'exact' diverge. Fix: give it a calculator tool (or do the arithmetic outside the model).\n\n**Most trustworthy: Question 1.** The mechanism is safest here because the needed facts are *supplied in the prompt* — the model is grounded in the actual document rather than being asked to recall frozen knowledge, fetch something it can't reach, or compute an exact value. That's the whole logic behind grounding: put the truth in front of the model instead of trusting its memory."
+  }
+}

@@ -2,6 +2,8 @@ import type { Course } from "./course-factory";
 import { pythonCourse } from "./content";
 import { mlCourse } from "./ml/course";
 import { aiCourse } from "./ai/course";
+import { llmCourse } from "./llm/course";
+import { mcpCourse } from "./mcp/course";
 import {
   htmlCourse,
   cssCourse,
@@ -49,6 +51,20 @@ export const COURSES: Record<string, CourseInfo> = {
     glyph: "robot", runtime: "python", lang: "py", track: "core",
     accent: "147 51 234", accent2: "168 85 247", course: aiCourse,
   },
+  llm: {
+    id: "llm", base: "/llm", name: "LLMs", title: "Large Language Models",
+    tagline: "See how AI actually thinks.",
+    description: "Open the black box: how LLMs turn text into tokens and vectors, how attention and the transformer work, how they predict one token at a time, and how they're trained — every mechanism brought to life with animations.",
+    glyph: "brain", runtime: "web", lang: "py", track: "core",
+    accent: "217 119 6", accent2: "245 158 11", course: llmCourse,
+  },
+  mcp: {
+    id: "mcp", base: "/mcp", name: "MCP", title: "Model Context Protocol",
+    tagline: "Give your agents superpowers.",
+    description: "Learn the open standard that lets AI agents plug into your databases, files, and APIs — how it works under the hood, and how to build a real connector in Node.js and Python.",
+    glyph: "plug", runtime: "web", lang: "py", track: "core",
+    accent: "217 70 239", accent2: "240 171 252", course: mcpCourse,
+  },
   html: {
     id: "html", base: "/html", name: "HTML", title: "HTML",
     tagline: "The structure of the web.",
@@ -94,7 +110,7 @@ export const COURSES: Record<string, CourseInfo> = {
 };
 
 export const COURSE_LIST: CourseInfo[] = [
-  COURSES.python, COURSES.ml, COURSES.ai,
+  COURSES.python, COURSES.ml, COURSES.ai, COURSES.llm, COURSES.mcp,
   COURSES.html, COURSES.css, COURSES.js, COURSES.ts, COURSES.react, COURSES.node,
 ];
 
@@ -113,7 +129,7 @@ export const TRACKS: TrackInfo[] = [
     id: "core",
     label: "AI & Python",
     tagline: "Learn to code, then teach machines to think.",
-    description: "Master Python from scratch, then explore Machine Learning and Artificial Intelligence — with animated visualizers that show how algorithms really work.",
+    description: "Master Python from scratch, then explore Machine Learning, Large Language Models, Artificial Intelligence, and the Model Context Protocol — with animated visualizers and hands-on connectors that show how it all really works.",
     glyph: "robot",
   },
   {

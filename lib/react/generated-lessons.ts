@@ -2,21 +2,27 @@
 import REACT_components_and_props from "./lessons/components-and-props.json";
 import REACT_conditional_rendering from "./lessons/conditional-rendering.json";
 import REACT_custom_hooks from "./lessons/custom-hooks.json";
+import REACT_forms_and_controlled_inputs from "./lessons/forms-and-controlled-inputs.json";
 import REACT_handling_events from "./lessons/handling-events.json";
 import REACT_jsx from "./lessons/jsx.json";
+import REACT_lifting_state_up from "./lessons/lifting-state-up.json";
 import REACT_lists_and_keys from "./lessons/lists-and-keys.json";
 import REACT_state_with_usestate from "./lessons/state-with-usestate.json";
 import REACT_the_useeffect_hook from "./lessons/the-useeffect-hook.json";
+import REACT_usecontext from "./lessons/usecontext.json";
 import REACT_what_is_react from "./lessons/what-is-react.json";
 
 export const RAW_REACT_LESSONS: Record<string, unknown> = {
   "components-and-props": REACT_components_and_props,
   "conditional-rendering": REACT_conditional_rendering,
   "custom-hooks": REACT_custom_hooks,
+  "forms-and-controlled-inputs": REACT_forms_and_controlled_inputs,
   "handling-events": REACT_handling_events,
   "jsx": REACT_jsx,
+  "lifting-state-up": REACT_lifting_state_up,
   "lists-and-keys": REACT_lists_and_keys,
   "state-with-usestate": REACT_state_with_usestate,
   "the-useeffect-hook": REACT_the_useeffect_hook,
+  "usecontext": REACT_usecontext,
   "what-is-react": REACT_what_is_react,
 };

@@ -1,0 +1,29 @@
+{
+  "slug": "properties",
+  "title": "Properties",
+  "emoji": "🏛️",
+  "category": "Object-Oriented Programming",
+  "difficulty": "Intermediate",
+  "summary": "Use @property to expose methods like attributes — computed values and validated setters, without changing how callers use your object.",
+  "readingTime": "6 min",
+  "blocks": [
+    { "type": "text", "md": "Sometimes an attribute should be **computed** on the fly, or a value should be **validated** before it's stored. Python's `@property` lets a method be accessed like a plain attribute — no parentheses — so you can add logic later without breaking callers." },
+    { "type": "code", "lang": "py", "caption": "a computed, read-only property", "code": "class Circle:\n    def __init__(self, radius):\n        self.radius = radius\n\n    @property\n    def area(self):\n        return 3.14159 * self.radius ** 2\n\nc = Circle(10)\nprint(c.area)   # accessed like an attribute, no ()\nc.radius = 20\nprint(c.area)   # recomputed automatically", "output": "314.159\n1256.636" },
+    { "type": "heading", "text": "Validated setters" },
+    { "type": "code", "lang": "py", "caption": "guard how a value is set", "code": "class Account:\n    def __init__(self, balance):\n        self._balance = balance\n\n    @property\n    def balance(self):\n        return self._balance\n\n    @balance.setter\n    def balance(self, value):\n        if value < 0:\n            raise ValueError(\"balance cannot be negative\")\n        self._balance = value\n\na = Account(100)\na.balance = 50      # goes through the setter\nprint(a.balance)    # 50", "output": "50" },
+    { "type": "callout", "variant": "tip", "title": "Start simple, upgrade later", "md": "Begin with a plain attribute (`self.radius = radius`). If you later need validation or computation, turn it into a `@property` — callers still write `obj.radius`, so nothing else changes. This is why Python doesn't need Java-style getters/setters up front." },
+    { "type": "quiz", "question": "How do you access a value defined with @property?", "options": ["obj.area() — with parentheses", "obj.area — like a plain attribute, no parentheses", "obj.get_area()", "Circle.area(obj)"], "answerIndex": 1, "explanation": "A @property is accessed like an attribute (obj.area) — the method runs behind the scenes. That's the point: it looks like data but can compute or validate." }
+  ],
+  "keyTakeaways": [
+    "`@property` turns a method into a read-only attribute accessed without ().",
+    "Add a matching `@<name>.setter` to validate or transform values on assignment.",
+    "Store the backing value in a `_name` attribute by convention.",
+    "You can convert a plain attribute to a property later without changing calling code."
+  ],
+  "exercise": {
+    "prompt": "Give a `Temperature` class (storing `self.celsius`) a read-only `@property` called `fahrenheit` that returns `celsius * 9/5 + 32`.",
+    "starterCode": "class Temperature:\n    def __init__(self, celsius):\n        self.celsius = celsius\n\n    # TODO: add a fahrenheit property\n\n# print(Temperature(100).fahrenheit)  # 212.0",
+    "hint": "Decorate a method named fahrenheit with @property and return self.celsius * 9/5 + 32.",
+    "solution": "class Temperature:\n    def __init__(self, celsius):\n        self.celsius = celsius\n\n    @property\n    def fahrenheit(self):\n        return self.celsius * 9 / 5 + 32\n\nprint(Temperature(100).fahrenheit)  # 212.0"
+  }
+}

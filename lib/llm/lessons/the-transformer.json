@@ -1,0 +1,113 @@
+{
+  "slug": "the-transformer",
+  "title": "The Transformer",
+  "emoji": "⚙️",
+  "category": "Inside the Model",
+  "difficulty": "Intermediate",
+  "summary": "Meet the transformer — the stack-of-blocks architecture behind every modern LLM, where each layer mixes tokens with attention and refines them with a small neural network.",
+  "readingTime": "9 min",
+  "blocks": [
+    {
+      "type": "text",
+      "md": "Every modern large language model — GPT, Claude, Gemini, Llama — is built on the same core design: the **transformer**. It was introduced in a 2017 paper with a bold title, *\"Attention Is All You Need\"*, and it has dominated the field ever since.\n\nIn earlier lessons you saw how text becomes **tokens**, and how each token becomes a list of numbers called an **embedding**. This lesson is about what happens next: how the transformer takes those vectors and, layer after layer, turns them into a prediction for the next token."
+    },
+    {
+      "type": "callout",
+      "variant": "analogy",
+      "title": "A factory assembly line",
+      "md": "Picture a long assembly line. A row of tokens rides in on a conveyor belt. At each station (a **transformer block**), every token gets to look at all the others, gather what it needs, and then get a little polish from a small workshop. The line is made of many *identical* stations stacked one after another — and by the end, the tokens are refined enough to predict what comes next."
+    },
+    {
+      "type": "heading",
+      "text": "The Big Picture: A Stack of Identical Blocks"
+    },
+    {
+      "type": "text",
+      "md": "The single most important mental model is this: **a transformer is a tall stack of identical blocks.**\n\nInput text flows in at the bottom, passes up through every block in order, and a prediction comes out the top. Each block has the same *shape* and the same two ingredients — but its own learned settings, so each one does a slightly different job. The overall flow looks like this:"
+    },
+    {
+      "type": "code",
+      "code": "Text\n  -> tokens                      (\"The cat sat\" -> [The][ cat][ sat])\n  -> token embeddings            each token becomes a vector\n  -> + positional information     so the model knows the order\n  ---------------------------------------------\n  -> Transformer Block 1   \\\n  -> Transformer Block 2    |  a stack of N identical blocks\n  -> ...                    |  (N might be 12, 32, 80, 100+)\n  -> Transformer Block N   /\n  ---------------------------------------------\n  -> final layer  ->  scores over the whole vocabulary\n  -> the next token",
+      "lang": "text",
+      "caption": "End-to-end flow. The middle — the stack of blocks — is the transformer."
+    },
+    {
+      "type": "text",
+      "md": "**Depth matters.** A small model might have 12 blocks; a large one can have 80, 100, or more. Early blocks tend to pick up simple, local patterns (grammar, nearby words); deeper blocks build richer, more abstract features (who *she* refers to, the topic, the intended tone). Stacking blocks is how a transformer builds understanding in layers. Use the interactive visualizer below to watch a sequence of tokens flow up through this stack as you read the rest of the lesson.\n\n**First, the input.** Before the stack, two things happen to prepare each token:\n\n1. **Token embeddings** — each token id is looked up in a big table and turned into a vector (a list of numbers, maybe 768 or 4096 long). This vector is the token's starting \"meaning.\"\n2. **Positional information** — a transformer sees all tokens at once, so on its own it has *no idea* what order they came in. We add position information to each embedding so that `\"dog bites man\"` and `\"man bites dog\"` look different to the model."
+    },
+    {
+      "type": "callout",
+      "variant": "gotcha",
+      "title": "Without position, word order vanishes",
+      "md": "This surprises people: a raw transformer treats its input like a *bag* of tokens with no order. Skip the positional-information step and `\"Alice paid Bob\"` and `\"Bob paid Alice\"` become completely indistinguishable to the model — same tokens, no sense of order. Position info is what rescues word order."
+    },
+    {
+      "type": "heading",
+      "text": "Inside One Block: Two Ingredients"
+    },
+    {
+      "type": "text",
+      "md": "Every transformer block is made of exactly two main parts, run in sequence:\n\n1. **Self-attention** — the *communication* step. Each token looks at all the other tokens and pulls in relevant context. This is how the token for `\"it\"` figures out whether it refers to `\"the cat\"` or `\"the mat\"`. (Attention gets its own full lesson next.)\n2. **A feed-forward network (MLP)** — the *thinking* step. After gathering context, each token is passed through a small two-layer neural network that transforms it on its own. This is where a lot of the model's learned knowledge lives.\n\nA handy slogan: **attention lets tokens talk to each other; the feed-forward network lets each token think for itself.** In pseudocode, one block looks like this:"
+    },
+    {
+      "type": "code",
+      "code": "# One transformer block, in pseudocode.\n# `x` is the whole sequence of token vectors.\n\ndef transformer_block(x):\n    # 1. Communication: tokens gather context from each other\n    x = x + self_attention(layer_norm(x))\n\n    # 2. Computation: each token is refined on its own\n    x = x + feed_forward(layer_norm(x))\n\n    return x  # same shape as the input, but richer\n\n# The full model just runs many of these in a row:\nfor block in blocks:      # e.g. 32 blocks\n    x = block(x)",
+      "lang": "py",
+      "caption": "A block takes a sequence in and returns a same-shaped, more refined sequence out."
+    },
+    {
+      "type": "quiz",
+      "question": "A transformer block contains a self-attention part and a feed-forward (MLP) part. Which statement best describes their division of labor?",
+      "options": [
+        "Attention picks the final output token; the feed-forward network stores the vocabulary",
+        "Attention lets tokens exchange information with each other; the feed-forward network transforms each token on its own",
+        "They do the same thing, just repeated for safety",
+        "The feed-forward network handles word order; attention handles spelling"
+      ],
+      "answerIndex": 1,
+      "explanation": "Self-attention is the communication step — each token gathers relevant context from the others. The feed-forward network is the per-token computation step — it processes each token independently, and it's where much of the model's stored knowledge sits. Communicate, then compute: that pairing, repeated across many blocks, is the heart of the transformer."
+    },
+    {
+      "type": "text",
+      "md": "Two small but crucial details appear in that pseudocode — `x = x + (...)` and `layer_norm(x)` — and they're the plumbing that makes deep stacks trainable:\n\n- **Residual connections** — the `x = x + (...)` pattern. Instead of *replacing* a token's vector, each sub-layer *adds* its result to what was already there. Information can flow straight up the stack untouched, and each block only has to learn a small *adjustment*. Without residuals, stacking dozens of blocks would cause the signal to degrade and training to fail.\n- **Layer normalization** — a rescaling step applied before each sub-layer. It keeps the numbers in a healthy, stable range so a stack of 80+ blocks doesn't blow up or collapse to zero during training.\n\nYou don't need the math — just remember: **residuals let information skip ahead, and layer norm keeps the numbers well-behaved.** It's like editing with *track changes* on: each block suggests edits on top of the document rather than rewriting it from scratch, so nothing important gets lost passing through editor after editor.\n\nAfter the input has passed through every block, a **final layer** takes the vector for the last position and produces one score for *every* token in the vocabulary (which might be 50,000 to 200,000+ tokens). These raw scores are called **logits**. Turn the logits into probabilities and you have the model's guess for the next token: `\"The capital of France is\"` produces a high score for `\" Paris\"` and low scores for almost everything else. Choosing *which* token to actually emit is the job of sampling — a later lesson."
+    },
+    {
+      "type": "heading",
+      "text": "Why This Beat the Old Approach"
+    },
+    {
+      "type": "text",
+      "md": "Before 2017, the leading models for text were **RNNs** (recurrent neural networks), which read one token at a time and passed a running summary forward. Transformers won for two reasons:\n\n- **Parallelism.** Because attention looks at all tokens at once, a transformer can process a whole sequence in parallel on a GPU. RNNs are stuck going step by step. This made it practical to train on internet-scale data.\n- **Direct long-range links.** In an RNN, connecting the first and last words of a long paragraph means passing information through every word in between — and it fades. Attention gives any token a *direct* line to any other, no matter how far apart.\n\nThat combination — parallel training plus direct connections — is what unlocked the enormous models we have today."
+    },
+    {
+      "type": "quiz",
+      "question": "Why can a transformer process all the tokens in a sentence at the same time, while older RNNs had to go one token at a time?",
+      "options": [
+        "Because the transformer has more layers than an RNN",
+        "Because self-attention lets every token directly look at every other token in one step, instead of passing information along a chain",
+        "Because transformers don't use embeddings",
+        "Because transformers only ever look at the most recent token"
+      ],
+      "answerIndex": 1,
+      "explanation": "RNNs read a sequence step by step, threading a hidden state from one token to the next — so token 100 only learns about token 1 through 99 hops. Self-attention removes that chain: in a single step, any token can attend directly to any other. That direct, all-at-once wiring is both why transformers parallelize so well (great for GPUs) and why they handle long-range connections better."
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Put it all together",
+      "md": "That's the whole architecture at a high level: **prepare the input (embeddings + position), run it up a tall stack of identical blocks (attention + feed-forward, wrapped in residuals and layer norm), and read off scores over the vocabulary at the top.** Everything else in an LLM is a variation on this theme — and the next lesson zooms all the way into the star of the show, attention."
+    }
+  ],
+  "keyTakeaways": [
+    "A transformer is a tall stack of identical blocks; input flows up from embeddings to a prediction, and depth (many layers) is what builds richer, more abstract understanding.",
+    "Each block has two parts: self-attention (tokens communicate and gather context) and a feed-forward network (each token is refined on its own) — communicate, then compute.",
+    "Residual connections (add, don't replace) and layer normalization are the plumbing that make very deep stacks trainable.",
+    "Because a transformer sees all tokens at once, it must add positional information — otherwise word order is lost.",
+    "Attention gives any token a direct link to any other and lets the model process a whole sequence in parallel — the two advantages that made transformers beat older step-by-step RNNs."
+  ],
+  "exercise": {
+    "prompt": "No code to run here — just trace the design in your head and on paper.\n\nA tiny transformer has **4 blocks**. You feed it the tokens for the sentence:\n\n`\"The trophy did not fit in the suitcase because it was too big.\"`\n\n1. List, in order, everything that happens to this input *before* it reaches Block 1.\n2. For the token `\"it\"`, which of the two ingredients inside a block — self-attention or the feed-forward network — is responsible for figuring out that `\"it\"` refers to `\"trophy\"` (and not `\"suitcase\"`)? Explain in one sentence why.\n3. Suppose someone deletes the residual connections (`x = x + ...` becomes just `x = ...`). Name one thing that would get worse, and say whether it would affect a 4-block model or a 100-block model more.",
+    "hint": "For part 1, think about the two preparation steps every input goes through. For part 2, ask yourself: which step is the one where tokens are allowed to look at *each other*? For part 3, remember that residuals let information (and training signal) flow straight up the stack — the taller the stack, the more that matters.",
+    "solution": "1. **Before Block 1:** the sentence is split into **tokens**; each token id is looked up in the embedding table to become a **vector (token embedding)**; then **positional information is added** to each vector so the model knows the word order. That prepared sequence is what enters Block 1.\n\n2. **Self-attention.** Resolving what `\"it\"` refers to means `\"it\"` has to look at the *other* tokens in the sentence and decide which one it connects to — and the only step where tokens communicate with each other is self-attention. The feed-forward network processes each token in isolation, so it can't compare `\"it\"` to `\"trophy\"` or `\"suitcase\"`.\n\n3. Removing residual connections makes the model **much harder to train** (the training signal weakens as it passes down through the blocks, and information can't skip ahead untouched). It would hurt the **100-block model far more** than the 4-block one: a shallow stack can survive without the shortcut, but a very deep stack depends on residuals to keep signal flowing all the way through — without them, deep transformers effectively fail to learn."
+  }
+}

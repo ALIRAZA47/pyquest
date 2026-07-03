@@ -1,0 +1,54 @@
+{
+  "slug": "how-llms-are-trained",
+  "challenges": [
+    {
+      "type": "reorder",
+      "prompt": "Put the steps of ONE pretraining update in the correct order.",
+      "lines": [
+        "Sample a batch of text from the corpus",
+        "Run the model to predict the next token at every position",
+        "Compute the cross-entropy loss against the true next tokens",
+        "Backpropagate to get a gradient for every parameter",
+        "Take a gradient-descent step: nudge each parameter to lower the loss"
+      ],
+      "explanation": "Every training step is the same rhythm: grab some text, predict, measure how surprised you were (loss), figure out which way to nudge each weight (backprop), then take one small step (gradient descent). Repeat this hundreds of thousands of times over trillions of tokens and a random network becomes a base model."
+    },
+    {
+      "type": "predict-output",
+      "prompt": "The true next token is `mat`. Two model snapshots assign it different probabilities. Cross-entropy loss is `-log(P(correct))`. Which snapshot has the LOWER loss on this token?",
+      "code": "true_next_token = \"mat\"\n\nsnapshot_A = { \"mat\": 0.10, ... }   # P(\"mat\") = 0.10\nsnapshot_B = { \"mat\": 0.70, ... }   # P(\"mat\") = 0.70\n\nloss = -log(P_of(\"mat\"))",
+      "options": [
+        "Snapshot A, because a lower probability means a lower loss",
+        "Snapshot B, because higher probability on the correct token means less surprise and lower loss",
+        "They have the same loss — only the ranking of tokens matters",
+        "You can't tell without seeing the other tokens"
+      ],
+      "answerIndex": 1,
+      "explanation": "Cross-entropy only cares about the probability assigned to the correct token. `-log(0.70) ≈ 0.36` is much smaller than `-log(0.10) ≈ 2.30`. More probability on the truth = less surprise = lower loss, so Snapshot B is the better predictor here."
+    },
+    {
+      "type": "fix-bug",
+      "prompt": "A learner summarizes how LLMs are trained. One line is a real misconception. Which one is WRONG?",
+      "code": "# Notes on pretraining:\n\n1. It's self-supervised: the next token in the text acts as the label.\n2. Cross-entropy loss measures how surprised the model was by the true token.\n3. Backprop + gradient descent nudge the parameters to lower the loss.\n4. Pretraining alone produces a polite assistant ready to follow instructions.",
+      "options": [
+        "Line 1 — pretraining really is self-supervised on the next token",
+        "Line 2 — cross-entropy really does measure surprise at the true token",
+        "Line 3 — backprop and gradient descent really do update the parameters",
+        "Line 4 — pretraining yields a base model, NOT a ready-made assistant"
+      ],
+      "answerIndex": 3,
+      "explanation": "Line 4 is the misconception. Pretraining produces a base model — a powerful text completer full of knowledge — but not an instruction-following assistant. Ask it a question and it may just continue with more text in a plausible-but-unhelpful way. Turning it into a helpful chatbot requires a separate post-training stage (instruction tuning, RLHF)."
+    },
+    {
+      "type": "fill-blank",
+      "prompt": "Fill in the blanks about what makes models better at scale.",
+      "codeTemplate": "Scaling laws say that as you grow three things together — the number of {{blank}}, the amount of training {{blank}}, and the {{blank}} you spend — the loss drops in a smooth, predictable curve.",
+      "blanks": [
+        { "answer": "parameters", "accept": ["weights", "parameter"] },
+        { "answer": "data", "accept": ["tokens", "text"] },
+        { "answer": "compute", "accept": ["computation", "FLOPs", "flops"] }
+      ],
+      "explanation": "The three levers of scaling are parameters (model size), data (how many tokens it trains on), and compute (how much processing you throw at it). Scaling laws show these must grow together for predictable gains — a huge model starved of data is undertrained and wastes its capacity."
+    }
+  ]
+}

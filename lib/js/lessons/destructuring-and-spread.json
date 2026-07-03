@@ -1,0 +1,30 @@
+{
+  "slug": "destructuring-and-spread",
+  "title": "Destructuring & Spread",
+  "emoji": "📦",
+  "category": "Data & Logic",
+  "difficulty": "Intermediate",
+  "summary": "Unpack values out of arrays and objects, and spread them back in — the modern syntax you'll see in every codebase.",
+  "readingTime": "7 min",
+  "blocks": [
+    { "type": "text", "md": "**Destructuring** pulls values out of arrays and objects into variables in one line. **Spread** (`...`) does the opposite — it expands an array or object into another one. Together they make working with data far cleaner." },
+    { "type": "heading", "text": "Destructuring" },
+    { "type": "code", "lang": "js", "caption": "arrays by position, objects by name", "code": "const [first, second] = ['a', 'b', 'c'];\nconsole.log(first, second); // a b\n\nconst user = { name: 'Ada', age: 36, city: 'London' };\nconst { name, age } = user;\nconsole.log(name, age); // Ada 36\n\n// with defaults + renaming\nconst { city: hometown = 'Unknown' } = user;\nconsole.log(hometown); // London" },
+    { "type": "text", "md": "Objects destructure **by property name** (order doesn't matter); arrays destructure **by position**. It's especially handy for function parameters." },
+    { "type": "code", "lang": "js", "caption": "spread: copy & combine", "code": "const a = [1, 2];\nconst b = [3, 4];\nconst all = [...a, ...b];        // [1, 2, 3, 4]\n\nconst base = { theme: 'dark' };\nconst settings = { ...base, fontSize: 14 }; // { theme: 'dark', fontSize: 14 }\n\n// rest: collect the remainder\nconst [head, ...tail] = [10, 20, 30];\nconsole.log(head, tail); // 10 [20, 30]" },
+    { "type": "callout", "variant": "note", "title": "Spread makes a shallow copy", "md": "`{ ...obj }` and `[...arr]` create a **new** top-level array/object — great for updating state immutably. But nested objects are still shared references, so it's a *shallow* copy." },
+    { "type": "quiz", "question": "What is `rest` after `const [x, ...rest] = [1, 2, 3, 4];`?", "options": ["1", "[2, 3, 4]", "[1, 2, 3, 4]", "4"], "answerIndex": 1, "explanation": "`x` takes the first element (1), and the rest pattern `...rest` collects all the remaining elements into a new array: [2, 3, 4]." }
+  ],
+  "keyTakeaways": [
+    "Array destructuring is by position; object destructuring is by property name.",
+    "You can set defaults and rename while destructuring: `{ city: hometown = 'Unknown' }`.",
+    "Spread `...` expands arrays/objects to copy or combine them.",
+    "The rest pattern `...rest` collects leftover elements/properties.",
+    "Spread copies are shallow — nested values are shared."
+  ],
+  "exercise": {
+    "prompt": "Use destructuring and spread to (1) pull `title` out of `post`, and (2) create `updated`, a copy of `post` with `views` set to 0.\n\n```js\nconst post = { title: 'Hi', author: 'Ada', views: 42 };\n```",
+    "hint": "Destructure with `const { title } = post;`. Copy-with-override using `{ ...post, views: 0 }`.",
+    "solution": "const { title } = post;\nconst updated = { ...post, views: 0 };\n// title === 'Hi'; updated === { title: 'Hi', author: 'Ada', views: 0 }"
+  }
+}

@@ -12,8 +12,8 @@ Nine interactive courses. Runnable code in the browser. XP, streaks, badges, and
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-0055FF?logo=framer&logoColor=white)
-![lessons](https://img.shields.io/badge/lessons-143-6366F1)
-![challenges](https://img.shields.io/badge/challenges-577-8B5CF6)
+![lessons](https://img.shields.io/badge/lessons-185-6366F1)
+![challenges](https://img.shields.io/badge/challenges-726-8B5CF6)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 
 </div>
@@ -24,23 +24,25 @@ Nine interactive courses. Runnable code in the browser. XP, streaks, badges, and
 
 Quest is a self-contained, static learning platform for programming. Pick a path — **AI & Python** or **Web Development** — and work through gorgeous, interactive lessons where you can *actually run the code you're reading*, take auto-graded challenges, and watch algorithms animate step by step. Every completed lesson earns XP, feeds your streak, and unlocks badges. It runs entirely in the browser: no accounts, no backend, works offline once loaded.
 
-Think of it as the lovechild of an interactive textbook, a live playground, and a video game — for **Python, Machine Learning, AI, HTML, CSS, JavaScript, TypeScript, React, and Node.js**.
+Think of it as the lovechild of an interactive textbook, a live playground, and a video game — for **Python, Machine Learning, AI, Large Language Models, the Model Context Protocol, HTML, CSS, JavaScript, TypeScript, React, and Node.js**.
 
 ## The courses
 
 | # | Course | Lessons | Runs in-browser | Extras |
 |---|--------|:-------:|-----------------|--------|
-| 🐍 | **Python** | 63 | ✅ real Python (Pyodide) | slide decks · capstone projects · certificate |
+| 🐍 | **Python** | 66 | ✅ real Python (Pyodide) | full OOP · slide decks · capstone projects · certificate |
 | 📊 | **Machine Learning** | 13 | ✅ real Python | 8 animated algorithm visualizers |
 | 🤖 | **Artificial Intelligence** | 14 | ✅ real Python | 4 animated search / game / net visualizers |
+| 🧠 | **Large Language Models** | 12 | interactive visualizers | tokens, embeddings, attention, sampling & more |
+| 🔌 | **Model Context Protocol** | 10 | reference examples | build a real agent connector in Node & Python |
 | 🧱 | **HTML** | 8 | ✅ live page preview | semantic & accessible markup |
 | 🎨 | **CSS** | 9 | ✅ live style preview | box model · Flexbox · Grid · animations |
-| ⚡ | **JavaScript** | 12 | ✅ live console | the DOM, events, the event loop |
+| ⚡ | **JavaScript** | 23 | ✅ live console | closures, OOP, the event loop & a TypeScript primer |
 | 🔷 | **TypeScript** | 7 | ✅ compiles & runs | types · generics · narrowing |
-| ⚛️ | **React** | 9 | ✅ live component preview | JSX · props · state · hooks |
-| 🟢 | **Node.js** | 8 | reference examples | modules · HTTP · Express · REST |
+| ⚛️ | **React** | 12 | ✅ live component preview | JSX · state · hooks · context · forms |
+| 🟢 | **Node.js** | 11 | reference examples | the event loop · streams · events · Express · REST |
 
-> **143 lessons · 577 auto-graded challenges · 63 interactive slide decks · 12 algorithm visualizers.**
+> **185 lessons · 726 auto-graded challenges · 63 interactive slide decks · 42 animated visualizers.**
 
 ## Features
 
