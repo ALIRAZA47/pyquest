@@ -4,16 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { courseFor } from "@/lib/courses";
 import { useProgress } from "./ProgressContext";
-import { ProgressRing } from "./ProgressRing";
-import { Glyph, categoryGlyph, lessonGlyph } from "./glyphs";
-import { WebIllustration, AiIllustration } from "./Illustrations";
-import { CheckIcon, ArrowRight, TargetIcon } from "./Icons";
-
-const DIFF_DOT: Record<string, string> = {
-  Beginner: "bg-emerald-500",
-  Intermediate: "bg-amber-500",
-  Advanced: "bg-rose-500",
-};
+import { CheckIcon, ArrowRight } from "./Icons";
 
 export function CourseDashboard({ courseId }: { courseId: string }) {
   const info = courseFor(courseId);
@@ -21,135 +12,134 @@ export function CourseDashboard({ courseId }: { courseId: string }) {
   const sections = info.course.getNavSections();
   const allSlugs = info.course.allSlugs;
   const total = info.course.totalLessons;
-  const { isComplete, ready } = useProgress();
+  const { isComplete } = useProgress();
 
   const done = allSlugs.filter((s) => isComplete(s)).length;
-  const pct = total ? done / total : 0;
+  const pct = total ? Math.round((done / total) * 100) : 0;
   const nextSlug = allSlugs.find((s) => !isComplete(s)) ?? allSlugs[0];
-  const allDone = ready && done >= total;
+  const allDone = done >= total && total > 0;
+
+  const metaBySlug = Object.fromEntries(
+    sections.flatMap((s) => s.lessons.map((l) => [l.slug, l]))
+  );
+  const nextMeta = metaBySlug[nextSlug];
+  const currentSection = sections.find((s) =>
+    s.lessons.some((l) => l.slug === nextSlug)
+  );
+
+  const subtitle = allDone
+    ? "You've finished every lesson. 🎉"
+    : done === 0
+    ? `Start with ${currentSection?.name ?? "the basics"}.`
+    : `You're on ${currentSection?.name ?? "your course"}. Pick up where you left off.`;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
+    <div className="mx-auto w-full max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
+      {/* Hero */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-accent/[0.08] via-surface to-accent-2/[0.06] p-6 sm:p-8"
+        className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10"
       >
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-          <ProgressRing value={pct} size={92} stroke={7}>
-            <div className="grid place-items-center text-accent">
-              <Glyph name={info.glyph} className="h-8 w-8" />
-            </div>
-          </ProgressRing>
-          <div className="flex-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-accent">
-              {info.title}
-            </div>
-            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">
-              {allDone ? "Course complete! 🎉" : info.tagline}
-            </h1>
-            <p className="mt-1.5 max-w-2xl text-muted">{info.description}</p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Link
-                href={`${base}/${nextSlug}`}
-                className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-br from-accent to-accent-2 px-5 py-3 font-semibold text-white shadow-glow transition-transform hover:scale-[1.03]"
-              >
-                {done > 0 && !allDone ? "Continue" : "Start course"}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <span className="text-sm text-muted">
-                {done} of {total} lessons complete
-              </span>
-            </div>
+        <div className="shrink-0">
+          <div className="font-display text-5xl font-bold tabular-nums text-fg">
+            {pct}%
           </div>
-          <div className="hidden w-64 shrink-0 lg:block">
-            {info.track === "web" ? (
-              <WebIllustration className="w-full" />
-            ) : (
-              <AiIllustration className="w-full" />
+          <div className="mt-1 font-mono text-sm text-faint">
+            {done}/{total}
+          </div>
+        </div>
+        <div className="flex-1">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-fg sm:text-4xl">
+            {info.title}
+          </h1>
+          <p className="mt-2 text-muted">{subtitle}</p>
+          <Link
+            href={`${base}/${nextSlug}`}
+            className="group mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-accent to-accent-2 px-5 py-3 font-semibold text-white shadow-glow transition-transform hover:scale-[1.03]"
+          >
+            {allDone ? "Review from the start" : done > 0 ? "Continue" : "Start course"}
+            {!allDone && nextMeta && (
+              <>
+                <ArrowRight className="h-4 w-4 opacity-70" />
+                <span className="opacity-90">{nextMeta.title}</span>
+              </>
             )}
-          </div>
+          </Link>
         </div>
       </motion.div>
 
-      <div className="mt-10 space-y-10">
+      {/* Chapters */}
+      <div className="mt-12 space-y-9">
         {sections.map((section, si) => {
-          const doneInSection = section.lessons.filter((l) =>
-            isComplete(l.slug)
-          ).length;
+          const doneInSection = section.lessons.filter((l) => isComplete(l.slug)).length;
+          const total = section.lessons.length;
+          const complete = doneInSection === total;
+          const started = doneInSection > 0;
           return (
             <section key={section.name}>
-              <div className="mb-4 flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent">
-                  <Glyph name={categoryGlyph(section.name)} className="h-5 w-5" />
-                </span>
-                <div className="flex-1">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-faint">
-                    Chapter {si + 1}
-                  </div>
-                  <h2 className="text-lg font-bold text-fg">{section.name}</h2>
-                </div>
-                <span className="rounded-full border border-border bg-surface-2 px-2.5 py-1 font-mono text-xs text-muted">
-                  {doneInSection}/{section.lessons.length}
-                </span>
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="font-display text-xl font-bold tracking-tight text-fg">
+                  <span className="text-faint">Chapter {si + 1} · </span>
+                  {section.name}
+                </h2>
+                {complete ? (
+                  <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-bold text-emerald-500">
+                    Complete
+                  </span>
+                ) : started ? (
+                  <span className="text-[13px] font-semibold text-accent-text">
+                    In progress
+                  </span>
+                ) : null}
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-2xl border border-border bg-surface">
                 {section.lessons.map((lesson, li) => {
-                  const complete = isComplete(lesson.slug);
-                  const num = allSlugs.indexOf(lesson.slug) + 1;
+                  const isDone = isComplete(lesson.slug);
+                  const isCurrent = lesson.slug === nextSlug && !allDone;
                   return (
-                    <motion.div
+                    <Link
                       key={lesson.slug}
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.35, delay: (li % 2) * 0.04 }}
+                      href={`${base}/${lesson.slug}`}
+                      className={`group flex items-center gap-3.5 px-4 py-3.5 transition-colors hover:bg-surface-2/60 sm:px-5 ${
+                        li > 0 ? "border-t border-border/70" : ""
+                      }`}
                     >
-                      <Link
-                        href={`${base}/${lesson.slug}`}
-                        className="group flex h-full items-start gap-3 rounded-2xl border border-border bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-soft"
+                      <span
+                        className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+                          isDone
+                            ? "border-emerald-500 bg-emerald-500 text-white"
+                            : isCurrent
+                            ? "border-accent"
+                            : "border-border"
+                        }`}
                       >
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-surface-2 text-accent">
-                          <Glyph name={lessonGlyph(lesson.slug)} className="h-5 w-5" />
+                        {isDone ? (
+                          <CheckIcon className="h-3 w-3" />
+                        ) : isCurrent ? (
+                          <span className="h-2 w-2 rounded-full bg-accent" />
+                        ) : null}
+                      </span>
+                      <span
+                        className={`min-w-0 flex-1 truncate ${
+                          isCurrent ? "font-semibold text-fg" : "text-fg/90"
+                        }`}
+                      >
+                        {lesson.title}
+                      </span>
+                      {isCurrent ? (
+                        <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-accent-text">
+                          Resume
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                         </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-faint">
-                              {String(num).padStart(2, "0")}
-                            </span>
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${
-                                DIFF_DOT[lesson.difficulty] ?? "bg-emerald-500"
-                              }`}
-                            />
-                            <span className="text-[11px] text-faint">
-                              {lesson.difficulty}
-                            </span>
-                          </div>
-                          <h3 className="mt-0.5 truncate font-semibold text-fg group-hover:text-accent">
-                            {lesson.title}
-                          </h3>
-                          <p className="mt-0.5 line-clamp-2 text-sm text-muted">
-                            {lesson.summary}
-                          </p>
-                        </div>
-                        <span
-                          className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border ${
-                            complete
-                              ? "border-emerald-500 bg-emerald-500 text-white"
-                              : "border-border text-transparent group-hover:border-accent/50"
-                          }`}
-                        >
-                          {complete ? (
-                            <CheckIcon className="h-3.5 w-3.5" />
-                          ) : (
-                            <TargetIcon className="h-3 w-3 text-transparent group-hover:text-accent/60" />
-                          )}
+                      ) : (
+                        <span className="shrink-0 font-mono text-xs text-faint">
+                          {lesson.readingTime}
                         </span>
-                      </Link>
-                    </motion.div>
+                      )}
+                    </Link>
                   );
                 })}
               </div>

@@ -21,16 +21,19 @@ const config: Config = {
         accent: "rgb(var(--accent) / <alpha-value>)",
         "accent-2": "rgb(var(--accent-2) / <alpha-value>)",
         "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
+        "accent-text": "rgb(var(--accent-text) / <alpha-value>)",
+        "accent-fill": "rgb(var(--accent-fill) / <alpha-value>)",
         python: "rgb(var(--python) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
+        display: ["var(--font-display)"],
         mono: ["var(--font-mono)"],
       },
       boxShadow: {
         glow: "0 0 0 1px rgb(var(--accent) / 0.25), 0 8px 40px -8px rgb(var(--accent) / 0.35)",
-        soft: "0 1px 2px rgb(0 0 0 / 0.04), 0 8px 30px -12px rgb(0 0 0 / 0.18)",
-        card: "0 1px 0 rgb(255 255 255 / 0.03) inset, 0 10px 40px -18px rgb(0 0 0 / 0.35)",
+        soft: "0 1px 2px rgb(var(--shadow) / calc(var(--shadow-op) * 0.4)), 0 8px 30px -12px rgb(var(--shadow) / var(--shadow-op))",
+        card: "0 1px 0 rgb(255 255 255 / 0.03) inset, 0 18px 50px -20px rgb(var(--shadow) / var(--shadow-op))",
       },
       keyframes: {
         "fade-up": {

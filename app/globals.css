@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", "Fira Code",
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, "Fira Code",
     "Cascadia Code", Menlo, Consolas, monospace;
 }
 
@@ -13,14 +15,19 @@
 :root {
   --bg: 248 249 252;
   --surface: 255 255 255;
-  --surface-2: 244 246 251;
-  --border: 226 229 239;
+  --surface-2: 244 245 250;
+  --border: 224 227 236;
   --fg: 22 25 43;
-  --muted: 86 94 118;
-  --faint: 140 148 172;
+  --muted: 92 98 120;
+  --faint: 150 156 178;
   --accent: 99 91 241;
   --accent-2: 168 85 247;
   --accent-soft: 238 236 254;
+  --accent-text: 79 70 229; /* legible accent for text on light surfaces */
+  --accent-fill: 99 91 241; /* solid fill behind white text */
+  --shadow: 120 130 170;
+  --shadow-op: 0.14;
+  --ring-target: 179;
   --python: 55 118 171;
 
   /* syntax highlighting */
@@ -46,13 +53,18 @@
   --bg: 8 10 20;
   --surface: 16 19 33;
   --surface-2: 23 27 46;
-  --border: 38 43 66;
+  --border: 40 45 70;
   --fg: 231 234 246;
-  --muted: 151 159 186;
-  --faint: 99 107 136;
+  --muted: 150 157 184;
+  --faint: 96 103 132;
   --accent: 129 140 248;
   --accent-2: 192 132 252;
   --accent-soft: 30 30 62;
+  --accent-text: 141 133 255; /* legible accent for text on dark surfaces */
+  --accent-fill: 99 91 241; /* solid fill behind white text */
+  --shadow: 0 0 0;
+  --shadow-op: 0.5;
+  --ring-target: 179;
   --python: 255 212 59;
 
   --syn-keyword: 198 120 221;
@@ -87,6 +99,16 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Display type — Space Grotesk for headings and hero titles */
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
 }
 
 /* Nice, subtle scrollbars */

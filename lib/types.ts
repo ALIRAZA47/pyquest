@@ -102,4 +102,5 @@ export interface LessonMeta {
   category: string;
   difficulty: Difficulty;
   summary: string;
+  readingTime: string;
 }

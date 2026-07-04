@@ -203,6 +203,7 @@ export function toMeta(lesson: Lesson): LessonMeta {
     category: lesson.category,
     difficulty: lesson.difficulty,
     summary: lesson.summary,
+    readingTime: lesson.readingTime,
   };
 }
 

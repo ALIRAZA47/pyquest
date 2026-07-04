@@ -23,27 +23,27 @@ interface QuickLink {
 
 const QUICK_LINKS: Record<string, QuickLink[]> = {
   python: [
-    { href: "/learn/playground", icon: "flask", label: "Play" },
-    { href: "/learn/projects", icon: "puzzle", label: "Build" },
+    { href: "/learn/playground", icon: "flask", label: "Playground" },
     { href: "/learn/review", icon: "loop", label: "Review" },
-    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+    { href: "/learn/projects", icon: "puzzle", label: "Projects" },
+    { href: "/learn/profile", icon: "trophy", label: "Achievements" },
   ],
   ml: [
-    { href: "/tracks/core", icon: "compass", label: "Courses" },
-    { href: "/learn/playground", icon: "flask", label: "Play" },
-    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+    { href: "/learn/playground", icon: "flask", label: "Playground" },
+    { href: "/learn/profile", icon: "trophy", label: "Achievements" },
+    { href: "/tracks/core", icon: "compass", label: "All courses" },
   ],
   ai: [
-    { href: "/tracks/core", icon: "compass", label: "Courses" },
-    { href: "/learn/playground", icon: "flask", label: "Play" },
-    { href: "/learn/profile", icon: "trophy", label: "Stats" },
+    { href: "/learn/playground", icon: "flask", label: "Playground" },
+    { href: "/learn/profile", icon: "trophy", label: "Achievements" },
+    { href: "/tracks/core", icon: "compass", label: "All courses" },
   ],
 };
 
 // Web courses (no Python runner) — link to the web track + the shared profile.
 const WEB_QUICK_LINKS: QuickLink[] = [
-  { href: "/tracks/web", icon: "compass", label: "Courses" },
-  { href: "/learn/profile", icon: "trophy", label: "Stats" },
+  { href: "/learn/profile", icon: "trophy", label: "Achievements" },
+  { href: "/tracks/web", icon: "compass", label: "All courses" },
 ];
 
 export function Sidebar({
@@ -68,6 +68,9 @@ export function Sidebar({
     : "";
 
   const courseDone = info.course.allSlugs.filter((s) => isComplete(s)).length;
+  const coursePct = info.course.totalLessons
+    ? Math.round((courseDone / info.course.totalLessons) * 100)
+    : 0;
   const quickLinks = QUICK_LINKS[courseId] ?? WEB_QUICK_LINKS;
 
   const filtered = useMemo(() => {
@@ -88,74 +91,46 @@ export function Sidebar({
 
   const content = (
     <div className="flex h-full flex-col">
-      {/* Brand */}
-      <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
-        <Link href="/" className="flex items-center gap-2.5" onClick={onClose}>
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-white shadow-glow">
-            <Glyph name="snake" className="h-5 w-5" />
-          </span>
-          <span className="text-xl font-black tracking-tight">
-            <span className="text-gradient">Quest</span>
-          </span>
+      {/* Course header */}
+      <div className="flex items-center gap-3 px-5 pb-4 pt-5">
+        <Link
+          href={base}
+          onClick={onClose}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-white shadow-glow"
+        >
+          <Glyph name={info.glyph} className="h-5 w-5" />
         </Link>
-        <span className="ml-1 flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-faint">
-          <Glyph name={info.glyph} className="h-3 w-3" />
-          {info.name}
+        <Link href={base} onClick={onClose} className="min-w-0 flex-1">
+          <div className="truncate font-display text-lg font-bold tracking-tight text-fg">
+            {info.name}
+          </div>
+        </Link>
+        <span className="font-mono text-xs font-semibold text-accent-text">
+          {coursePct}%
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="ml-auto grid h-8 w-8 place-items-center rounded-lg border border-border text-muted lg:hidden"
+          className="grid h-8 w-8 place-items-center rounded-lg border border-border text-muted lg:hidden"
           aria-label="Close menu"
         >
           <CloseIcon className="h-4 w-4" />
         </button>
       </div>
 
-      {/* Player card */}
-      <Link
-        href="/learn/profile"
-        onClick={onClose}
-        className="mx-4 mb-2 block rounded-2xl border border-border bg-surface-2/60 p-3 transition-colors hover:border-accent/40"
-      >
-        <div className="flex items-center gap-2.5">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent-2/20 text-accent">
-            <Glyph name={rankGlyph(rankName)} className="h-5 w-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="truncate text-sm font-bold text-fg">
-                Lv {level} · {rankName}
-              </span>
-              {streak > 0 && (
-                <span className="ml-auto flex shrink-0 items-center gap-0.5 text-xs font-bold text-orange-500">
-                  <FlameIcon className="h-3.5 w-3.5" />
-                  {streak}
-                </span>
-              )}
-            </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-border">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-accent to-accent-2 transition-all duration-500"
-                style={{ width: `${Math.round(levelFraction * 100)}%` }}
-              />
-            </div>
-            <div className="mt-1 flex justify-between text-[10px] text-faint">
-              <span>{xp} XP</span>
-              <span>
-                {courseDone}/{info.course.totalLessons} in {info.name}
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
+      {/* Search */}
+      <div className="relative mx-4 mb-3">
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search…"
+          className="w-full rounded-xl border border-border bg-surface-2/60 py-2 pl-9 pr-3 text-sm text-fg placeholder:text-faint focus:border-accent/50 focus:outline-none"
+        />
+      </div>
 
-      {/* Quick links */}
-      <div
-        className={`mx-4 mb-2 grid gap-1.5 ${
-          quickLinks.length === 4 ? "grid-cols-4" : "grid-cols-3"
-        }`}
-      >
+      {/* Quick links (vertical) */}
+      <div className="mb-2 space-y-0.5 px-3">
         {quickLinks.map((q) => {
           const active = pathname === q.href;
           return (
@@ -163,10 +138,10 @@ export function Sidebar({
               key={q.href + q.label}
               href={q.href}
               onClick={onClose}
-              className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-[10px] font-semibold transition-colors ${
+              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "border-accent/50 bg-accent/10 text-accent"
-                  : "border-border bg-surface-2/60 text-muted hover:border-accent/40 hover:text-accent"
+                  ? "bg-accent/10 text-accent-text"
+                  : "text-muted hover:bg-surface-2/70 hover:text-fg"
               }`}
             >
               <Glyph name={q.icon} className="h-4 w-4" />
@@ -176,19 +151,10 @@ export function Sidebar({
         })}
       </div>
 
-      {/* Search */}
-      <div className="relative mx-4 mb-2">
-        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search lessons…"
-          className="w-full rounded-xl border border-border bg-surface-2/60 py-2 pl-9 pr-3 text-sm text-fg placeholder:text-faint focus:border-accent/50 focus:outline-none"
-        />
-      </div>
+      <div className="mx-5 mb-1 border-t border-border" />
 
       {/* Nav */}
-      <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-6 pt-1">
+      <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-1">
         {filtered.length === 0 && (
           <p className="px-3 py-6 text-center text-sm text-faint">
             No lessons match “{query}”.
@@ -277,6 +243,39 @@ export function Sidebar({
           );
         })}
       </nav>
+
+      {/* Level card (pinned bottom) */}
+      <Link
+        href="/learn/profile"
+        onClick={onClose}
+        className="m-3 flex items-center gap-2.5 rounded-2xl border border-border bg-surface-2/60 p-3 transition-colors hover:border-accent/40"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent/20 to-accent-2/20 text-accent-text">
+          <Glyph name={rankGlyph(rankName)} className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="truncate text-sm font-bold text-fg">
+              Lv {level} · {rankName}
+            </span>
+            {streak > 0 && (
+              <span className="ml-auto flex shrink-0 items-center gap-0.5 text-xs font-bold text-orange-500">
+                <FlameIcon className="h-3.5 w-3.5" />
+                {streak}
+              </span>
+            )}
+          </div>
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-border">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-accent to-accent-2 transition-all duration-500"
+              style={{ width: `${Math.round(levelFraction * 100)}%` }}
+            />
+          </div>
+          <div className="mt-1 font-mono text-[10px] text-faint">
+            {xp.toLocaleString()} XP
+          </div>
+        </div>
+      </Link>
     </div>
   );
 
