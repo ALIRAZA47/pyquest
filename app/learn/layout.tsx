@@ -1,9 +1,9 @@
-import { CourseShell } from "@/components/CourseShell";
+import { LearnShell } from "@/components/LearnShell";
 
 export default function LearnLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <CourseShell courseId="python">{children}</CourseShell>;
+  return <LearnShell>{children}</LearnShell>;
 }

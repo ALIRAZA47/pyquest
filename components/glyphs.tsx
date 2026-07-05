@@ -614,6 +614,14 @@ export const GLYPHS: Record<string, (p: P) => JSX.Element> = {
       <path d="M12 5.5V18" />
     </S>
   ),
+  share: (p) => (
+    <S {...p}>
+      <circle cx="18" cy="5" r="2.5" />
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="18" cy="19" r="2.5" />
+      <path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6" />
+    </S>
+  ),
 };
 
 export type GlyphName = keyof typeof GLYPHS;

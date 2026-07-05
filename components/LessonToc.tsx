@@ -32,7 +32,7 @@ export function LessonToc({ headings }: { headings: TocItem[] }) {
   if (headings.length < 3) return null;
 
   return (
-    <aside className="fixed right-6 top-24 z-10 hidden w-52 xl:block">
+    <aside className="sticky top-24">
       <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-faint">
         On this page
       </div>

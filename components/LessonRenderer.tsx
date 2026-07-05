@@ -166,8 +166,8 @@ export function LessonRenderer({
   }, [lesson.slug]);
 
   return (
-    <article className="mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
-      <LessonToc headings={headings} />
+    <div className="mx-auto flex w-full max-w-6xl gap-10 px-5 py-8 sm:px-8 sm:py-12">
+      <article className="min-w-0 flex-1">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: 14 }}
@@ -379,6 +379,13 @@ export function LessonRenderer({
           )}
         </nav>
       </div>
-    </article>
+      </article>
+
+      {headings.length >= 3 && (
+        <div className="hidden w-56 shrink-0 xl:block">
+          <LessonToc headings={headings} />
+        </div>
+      )}
+    </div>
   );
 }
